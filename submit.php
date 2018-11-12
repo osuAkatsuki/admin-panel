@@ -109,6 +109,10 @@ try {
 			sessionCheckAdmin(Privileges::AdminWipeUsers);
 			D::WipeAccount();
 		break;
+		case 'wipeAccountRelax':
+			sessionCheckAdmin(Privileges::AdminWipeUsers);
+			D::WipeAccountRelax();
+		break;
 		/*case 'processRankRequest':
 			sessionCheckAdmin(Privileges::AdminManageBeatmaps);
 			D::ProcessRankRequest();
@@ -132,6 +136,10 @@ try {
 		case 'rollback':
 			sessionCheckAdmin(Privileges::AdminWipeUsers);
 			D::Rollback();
+		break;
+		case 'rollbackRelax':
+			sessionCheckAdmin(Privileges::AdminWipeUsers);
+			D::RollbackRelax();
 		break;
 		case 'toggleCustomBadge':	// TODO
 			sessionCheckAdmin(Privileges::AdminManageUsers);
@@ -184,6 +192,14 @@ try {
 		case 'restoreScores':
 			sessionCheckAdmin(Privileges::AdminWipeUsers);
 			D::RestoreScores();
+		break;
+		case 'restoreScoresSearchUserRelax':
+			sessionCheckAdmin(Privileges::AdminWipeUsers);
+			D::RestoreScoresSearchUserRelax();
+		break;
+		case 'restoreScoresRelax':
+			sessionCheckAdmin(Privileges::AdminWipeUsers);
+			D::RestoreScoresRelax();
 		break;
 		case 'setMainMenuIcon':
 			sessionCheckAdmin(Privileges::AdminManageSettings);
