@@ -41,7 +41,6 @@ require_once $df.'/pages/Verify.php';
 require_once $df.'/pages/Welcome.php';
 require_once $df.'/pages/Discord.php';
 require_once $df.'/pages/BlockTotp2fa.php';
-require_once $df.'/../secret/fringuellina.php';
 $pages = [
 	new Login(),
 	new Beatmaps(),
@@ -318,10 +317,16 @@ function printPage($p) {
 				P::AdminRollback();
 			break;
 
-			// Admin panel - Wipe User
+			// Admin panel - Wipe User (Regular)
 			case 123:
 				sessionCheckAdmin(Privileges::AdminWipeUsers);
 				P::AdminWipe();
+			break;
+
+			// Admin panel - Wipe User (Relax)
+			case 223:
+				sessionCheckAdmin(Privileges::AdminWipeUsers);
+				P::AdminWipeRelax();
 			break;
 
 			// Admin panel - Rank beatmap
@@ -346,31 +351,6 @@ function printPage($p) {
 			case 127:
 				sessionCheckAdmin(Privileges::AdminManageReports);
 				P::AdminViewReport();
-			break;
-
-			// Admin panel - Caker
-			case 128:
-				sessionCheckAdmin(Privileges::AdminCaker);
-				Fringuellina::PrintPage();
-			break;
-
-			// Admin panel - Edit caker
-			case 129:
-				sessionCheckAdmin(Privileges::AdminCaker);
-				Fringuellina::PrintInfoPage();
-			break;
-
-			// Admin panel - Caker list
-			// MARTIN GARRIX SI VOLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-			case 130:
-				sessionCheckAdmin(Privileges::AdminCaker);
-				Fringuellina::PrintCakesSummary();
-			break;
-
-			// Admin panel - Edit caker
-			case 131:
-				sessionCheckAdmin(Privileges::AdminCaker);
-				Fringuellina::PrintEditCake();
 			break;
 
 			// Admin panel - View anticheat reports
@@ -504,12 +484,6 @@ function printAdminSidebar() {
 						if (hasPrivilege(Privileges::AdminWipeUsers)) {
 							echo '<li><a href="index.php?p=134"><i class="fa fa-undo"></i>	Restore scores</a></li>';
 						}
-
-						if (hasPrivilege(Privileges::AdminCaker))
-							echo Fringuellina::RAPButton();
-
-						if (hasPrivilege(Privileges::AdminCaker))
-							echo Fringuellina::RAPCakesListButton();
 
 						if (hasPrivilege(Privileges::AdminManageReports))
 							echo '<li><a href="index.php?p=126"><i class="fa fa-flag"></i>	Reports</a></li>';
@@ -1958,3 +1932,4 @@ function updateMainMenuIconBancho() {
 	redisConnect();
 	$GLOBALS["redis"]->publish("peppy:reload_settings", "reload");
 }
+

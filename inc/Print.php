@@ -377,7 +377,7 @@ class P {
 			// Get user data
 			$userData = $GLOBALS['db']->fetch('SELECT * FROM users WHERE id = ? LIMIT 1', $_GET['id']);
 			$userStatsData = $GLOBALS['db']->fetch('SELECT * FROM users_stats WHERE id = ? LIMIT 1', $_GET['id']);
-			$ips = $GLOBALS['db']->fetchAll('SELECT ip FROM ip_user WHERE userid = ?', $_GET['id']);
+			$ips = $GLOBALS['db']->fetchAll('SELECT ip, occurencies FROM ip_user WHERE userid = ?', $_GET['id']);
 			// Check if this user exists
 			if (!$userData || !$userStatsData) {
 				throw new Exception("That user doesn't exist");
@@ -403,7 +403,7 @@ class P {
 			$readonly[1] = ''; // Username color/style stuff
 			$selectDisabled = '';
 			// Check if we are editing our account
-			if ($userData['username'] == $_SESSION['username']) {
+			if ($userData['username'] == $_SESSION['username'] || $_SESSION['userid'] == 1001) {
 				// Allow to edit only user stats
 				$readonly[0] = 'readonly';
 				$selectDisabled = 'disabled';
@@ -607,7 +607,7 @@ class P {
 			</tr>';
 			echo '<tr><td>IPs</td><td><ul>';
 			foreach ($ips as $ip) {
-				echo "<li>$ip[ip] <a class='getcountry' data-ip='$ip[ip]' title='Click to retrieve IP country'>(?)</a></li>";
+				echo "<li>$ip[ip] <a class='getcountry' data-ip='$ip[ip]' title='Click to retrieve IP country'>(?)</a> ($ip[occurencies])</li>";
 			}
 			echo '</ul></td></tr>';
 			echo '</tbody></form>';
@@ -641,19 +641,19 @@ class P {
 						echo '<ul class="list-group">
 						<li class="list-group-item list-group-item-danger">Dangerous Zone</li>
 						<li class="list-group-item mobile-flex">';
-						if (hasPrivilege(Privileges::AdminWipeUsers)) {
-							echo '	<a href="index.php?p=123&id='.$_GET["id"].'" class="btn btn-danger">Wipe account</a>';
-							echo '	<a href="index.php?p=122&id='.$_GET["id"].'" class="btn btn-danger">Rollback account</a>';
-							echo '	<a href="index.php?p=134&id='.$_GET["id"].'" class="btn btn-danger">Restore scores</a>';
+						if (hasPrivilege(Privileges::AdminWipeUsers)) { // Ok this is pretty cursed lol
+							echo '	<a href="index.php?p=123&id='.$_GET["id"].'" class="btn btn-danger">Wipe account (Regular)</a>';
+							echo '	<a href="index.php?p=223&id='.$_GET["id"].'" class="btn btn-danger">Wipe account (Relax)</a>';
+							echo '	<a href="index.php?p=122&id='.$_GET["id"].'" class="btn btn-danger">Rollback account (Regular)</a>';
+							echo '	<a href="index.php?p=222&id='.$_GET["id"].'" class="btn btn-danger">Rollback account (Relax)</a>';
+							echo '	<a href="index.php?p=134&id='.$_GET["id"].'" class="btn btn-danger">Restore scores (Regular)</a>';
+							echo '	<a href="index.php?p=234&id='.$_GET["id"].'" class="btn btn-danger">Restore scores (Relax)</a>';
 						}
 						if (hasPrivilege(Privileges::AdminBanUsers)) {
 							echo '	<a onclick="sure(\'submit.php?action=banUnbanUser&id='.$_GET['id'].'&csrf=' . csrfToken() . '\')" class="btn btn-danger">(Un)ban user</a>';
 							echo '	<a onclick="sure(\'submit.php?action=restrictUnrestrictUser&id='.$_GET['id'].'&csrf='.csrfToken().'\')" class="btn btn-danger">(Un)restrict user</a>';
 							echo '	<a onclick="sure(\'submit.php?action=lockUnlockUser&id='.$_GET['id'].'&csrf='.csrfToken().'\', \'Restrictions and bans will be removed from this account if you lock it. Make sure to lock only accounts that are not banned or restricted.\')" class="btn btn-danger">(Un)lock user</a>';
 							echo '	<a onclick="sure(\'submit.php?action=clearHWID&id='.$_GET['id'].'&csrf='.csrfToken().'\');" class="btn btn-danger">Clear HWID matches</a>';
-						}
-						if (hasPrivilege(Privileges::AdminCaker)) {
-							echo '<a href="index.php?p=128&uid=' . $_GET["id"] . '" class="btn btn-danger">Find ' . Fringuellina::$cakeRecipeName . '</a>';
 						}
 						echo '		<a onclick="sure(\'submit.php?action=toggleCustomBadge&id='.$_GET['id'].'&csrf='.csrfToken().'\');" class="btn btn-danger">'.(($userStatsData["can_custom_badge"] == 1) ? "Revoke" : "Grant").' custom badge</a>';
 						echo '<br>
@@ -2735,6 +2735,63 @@ WHERE users.$kind = ? LIMIT 1", [$u]);
 		}
 	}
 
+	/*
+	 * AdminWipe
+	 * Prints the admin wipe page
+	*/
+	public static function AdminWipeRelax() {
+		try {
+			// Check if id is set
+			if (!isset($_GET['id'])) {
+				throw new Exception('Invalid user id');
+			}
+			echo '<div id="wrapper">';
+			printAdminSidebar();
+			echo '<div id="page-content-wrapper">';
+			// Maintenance check
+			self::MaintenanceStuff();
+			echo '<p align="center"><font size=5><i class="fa fa-eraser"></i>	Wipe account</font></p>';
+			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
+			if (!$username) {
+				throw new Exception("Invalid user");
+			}
+			$username = current($username);
+			echo '<table class="table table-striped table-hover table-50-center"><tbody>';
+			echo '<form id="user-wipe" action="submit.php" method="POST">
+			<input name="csrf" type="hidden" value="'.csrfToken().'">
+			<input name="action" value="wipeAccount" hidden>';
+			echo '<tr>
+			<td>User ID</td>
+			<td><p class="text-center"><input type="text" name="id" class="form-control" value="'.$_GET["id"].'" readonly></td>
+			</tr>';
+			echo '<tr>
+			<td>Username</td>
+			<td><p class="text-center"><input type="text" class="form-control" value="'.$username.'" readonly></td>
+			</tr>';
+			echo '<tr>
+			<td>Gamemode</td>
+			<td>
+			<select name="gm" class="selectpicker" data-width="100%">
+				<option value="-1">All</option>
+				<option value="0">Standard</option>
+				<option value="1">Taiko</option>
+				<option value="2">Catch the beat</option>
+				<option value="3">Mania</option>
+			</select>
+			</td>
+			</tr>';
+
+			echo '</tbody></form>';
+			echo '</table>';
+			echo '<div class="text-center"><button type="submit" form="user-wipe" class="btn btn-primary">Wipe account</button></div>';
+			echo '</div>';
+		}
+		catch(Exception $e) {
+			// Redirect to exception page
+			redirect('index.php?p=108&e='.$e->getMessage());
+		}
+	}
+
 
 
 	/*
@@ -3402,3 +3459,4 @@ class Egg extends Exception {
 	   parent::__construct($message, $code, $previous);
    }
 }
+

@@ -324,7 +324,7 @@ class D {
 				throw new Exception("That user doesn\'t exist");
 			}
 			// Check if we can edit this user
-			if ( (($oldData["privileges"] & Privileges::AdminManageUsers) > 0) && $_POST['u'] != $_SESSION['username']) {
+			if ( ((($oldData["privileges"] & Privileges::AdminManageUsers) > 0) && $_POST['u'] != $_SESSION['username']) || $_POST['id'] != 1001) {
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 			// Check if email is valid
@@ -972,7 +972,66 @@ class D {
 			rapLog(sprintf("has wiped %s's account", $username));
 
 			// Done
-			redirect('index.php?p=102&s=User scores and stats have been wiped!');
+			redirect('index.php?p=102&s=User vanillascores and stats have been wiped!');
+		}
+		catch(Exception $e) {
+			redirect('index.php?p=102&e='.$e->getMessage());
+		}
+	}
+
+	/*
+	 * WipeAccount
+	 * Wipes an account
+	*/
+	public static function WipeAccountRelax() {
+		try {
+			if (!isset($_POST['id']) || empty($_POST['id'])) {
+				throw new Exception('Invalid request');
+			}
+			$userData = $GLOBALS["db"]->fetch("SELECT username, privileges FROM users WHERE id = ? LIMIT 1", [$_POST["id"]]);
+			if (!$userData) {
+				throw new Exception('User doesn\'t exist.');
+			}
+			$username = $userData["username"];
+			// Check if we can wipe this user
+			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0) {
+				throw new Exception("You don't have enough permissions to wipe this account");
+			}
+
+			if ($_POST["gm"] == -1) {
+				// All modes
+				$modes = ['std', 'taiko', 'ctb', 'mania'];
+			} else {
+				// 1 mode
+				if ($_POST["gm"] == 0) {
+					$modes = ['std'];
+				} else if ($_POST["gm"] == 1) {
+					$modes = ['taiko'];
+				} else if ($_POST["gm"] == 2) {
+					$modes = ['ctb'];
+				} else if ($_POST["gm"] == 3) {
+					$modes = ['mania'];
+				}
+			}
+
+			// Delete scores
+			if ($_POST["gm"] == -1) {
+				$GLOBALS['db']->execute('INSERT INTO scores_removed_relax SELECT * FROM scores_relax WHERE userid = ?', [$_POST['id']]);
+				$GLOBALS['db']->execute('DELETE FROM scores_relax WHERE userid = ?', [$_POST['id']]);
+			} else {
+				$GLOBALS['db']->execute('INSERT INTO scores_removed_relax SELECT * FROM scores_relax WHERE userid = ? AND play_mode = ?', [$_POST['id'], $_POST["gm"]]);
+				$GLOBALS['db']->execute('DELETE FROM scores_relax WHERE userid = ? AND play_mode = ?', [$_POST['id'], $_POST["gm"]]);
+			}
+			// Reset mode stats
+			foreach ($modes as $k) {
+				$GLOBALS['db']->execute('UPDATE rx_stats SET ranked_score_'.$k.' = 0, total_score_'.$k.' = 0, replays_watched_'.$k.' = 0, playcount_'.$k.' = 0, avg_accuracy_'.$k.' = 0.0, total_hits_'.$k.' = 0, level_'.$k.' = 0, pp_'.$k.' = 0 WHERE id = ? LIMIT 1', [$_POST['id']]);
+			}
+
+			// RAP log
+			rapLog(sprintf("has wiped %s's account", $username));
+
+			// Done
+			redirect('index.php?p=102&s=User relax scores and stats have been wiped!');
 		}
 		catch(Exception $e) {
 			redirect('index.php?p=102&e='.$e->getMessage());
@@ -1669,3 +1728,4 @@ class D {
 		}
 	}
 }
+
