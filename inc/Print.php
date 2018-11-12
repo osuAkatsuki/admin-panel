@@ -2759,7 +2759,7 @@ WHERE users.$kind = ? LIMIT 1", [$u]);
 			echo '<table class="table table-striped table-hover table-50-center"><tbody>';
 			echo '<form id="user-wipe" action="submit.php" method="POST">
 			<input name="csrf" type="hidden" value="'.csrfToken().'">
-			<input name="action" value="wipeAccount" hidden>';
+			<input name="action" value="wipeAccountRelax" hidden>';
 			echo '<tr>
 			<td>User ID</td>
 			<td><p class="text-center"><input type="text" name="id" class="form-control" value="'.$_GET["id"].'" readonly></td>
