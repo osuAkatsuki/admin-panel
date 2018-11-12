@@ -2677,6 +2677,65 @@ WHERE users.$kind = ? LIMIT 1", [$u]);
 	}
 
 
+	/*
+	 * AdminRollbackRelax
+	 * Prints the admin rollback page
+	*/
+	public static function AdminRollbackRelax() {
+		try {
+			// Check if id is set
+			if (!isset($_GET['id'])) {
+				throw new Exception('Invalid user id');
+			}
+			echo '<div id="wrapper">';
+			printAdminSidebar();
+			echo '<div id="page-content-wrapper">';
+			// Maintenance check
+			self::MaintenanceStuff();
+			echo '<p align="center"><font size=5><i class="fa fa-fast-backward"></i>	Rollback account</font></p>';
+			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
+			if (!$username) {
+				throw new Exception("Invalid user");
+			}
+			$username = current($username);
+			echo '<table class="table table-striped table-hover table-50-center"><tbody>';
+			echo '<form id="user-rollback" action="submit.php" method="POST">
+			<input name="csrf" type="hidden" value="'.csrfToken().'">
+			<input name="action" value="rollbackRelax" hidden>';
+			echo '<tr>
+			<td>User ID</td>
+			<td><p class="text-center"><input type="text" name="id" class="form-control" value="'.$_GET["id"].'" readonly></td>
+			</tr>';
+			echo '<tr>
+			<td>Username</td>
+			<td><p class="text-center"><input type="text" class="form-control" value="'.$username.'" readonly></td>
+			</tr>';
+			echo '<tr>
+			<td>Period</td>
+			<td>
+			<input type="number" name="length" class="form-control" style="width: 40%; display: inline;">
+			<div style="width: 5%; display: inline-block;"></div>
+			<select name="period" class="selectpicker" data-width="53%">
+				<option value="d">Days</option>
+				<option value="w">Weeks</option>
+				<option value="m">Months</option>
+				<option value="y">Years</option>
+			</select>
+			</td>
+			</tr>';
+
+			echo '</tbody></form>';
+			echo '</table>';
+			echo '<div class="text-center"><button type="submit" form="user-rollback" class="btn btn-primary">Rollback account</button></div>';
+			echo '</div>';
+		}
+		catch(Exception $e) {
+			// Redirect to exception page
+			redirect('index.php?p=108&e='.$e->getMessage());
+		}
+	}
+
+
 
 	/*
 	 * AdminWipe
@@ -2736,7 +2795,7 @@ WHERE users.$kind = ? LIMIT 1", [$u]);
 	}
 
 	/*
-	 * AdminWipe
+	 * AdminWipeRelax
 	 * Prints the admin wipe page
 	*/
 	public static function AdminWipeRelax() {
@@ -3426,6 +3485,163 @@ WHERE users.$kind = ? LIMIT 1", [$u]);
 					echo '<form id="restore-scores" action="submit.php" method="POST">
 					<input name="csrf" type="hidden" value="'.csrfToken().'">
 					<input name="action" value="restoreScores" hidden>
+					<input name="gm" value="' . $_POST["gm"] . '" hidden>
+					<input name="userid" value="' . $_GET["id"] . '" hidden>';
+					if (isset($startts)) {
+						echo '<input name="starrts" value="' . $startts . '" hidden>';
+					}
+					if (isset($endts)) {
+						echo '<input name="endts" value="' . $endts . '" hidden>';
+					}
+					echo '</form>';
+					echo '<div class="text-center"><button type="submit" form="restore-scores" class="btn btn-danger">Restore scores</button></div>';
+				}
+			}
+			echo '</div>';
+		}
+		catch(Exception $e) {
+			// Redirect to exception page
+			redirect('index.php?p=108&e='.$e->getMessage());
+		}
+	}
+
+	public static function AdminRestoreScoresRelax() {
+		try {
+			// Check if id is set
+			$choosingUser = !isset($_GET['id']);
+			if (!$choosingUser) {
+				$username = getUserUsername($_GET['id']);
+				if (!$username) {
+					throw new Exception("Invalid user");
+				}
+			}
+
+			$confirm = isset($_GET["id"]) && isset($_POST["gm"]);
+			
+			echo '<div id="wrapper">';
+			printAdminSidebar();
+			echo '<div id="page-content-wrapper">';
+			// Maintenance check
+			self::MaintenanceStuff();
+			// Alerts
+			if (isset($_GET['s']) && !empty($_GET['s'])) {
+				self::SuccessMessageStaccah($_GET['s']);
+			}
+			if (isset($_GET['e']) && !empty($_GET['e'])) {
+				self::ExceptionMessageStaccah($_GET['e']);
+			}
+			echo '<p align="center"><font size=5><i class="fa fa-undo"></i>	Restore scores</font></p>';
+			echo '<table class="table table-striped table-hover table-50-center"><tbody>';
+
+			echo '<form id="restore-lookup" action="' . ($choosingUser ? 'submit.php' : 'index.php') . (!$choosingUser ? "?p=234&id=$_GET[id]" : "") . '" method="POST">
+			<input name="csrf" type="hidden" value="'.csrfToken().'">
+			<input name="action" value="' . ($choosingUser ? 'restoreScoresSearchUserRelax' : 'restoreScoresSearchScoresRelax') . '" hidden>';
+
+			if (!$choosingUser) {
+				echo '<tr>
+				<td>User ID</td>
+				<td><p class="text-center"><input type="text" name="id" class="form-control" value="' . $_GET["id"] . '" readonly></p></td>
+				</tr>';
+			}
+			echo '<tr>
+			<td>Username</td>
+			<td><p class="text-center"><input type="text" name="username" class="form-control" value="' . (!$choosingUser ? $username : '') . '" ' . (!$choosingUser ? 'readonly' : '') . '></p></td>
+			</tr>';
+			if (!$choosingUser) {
+				echo '<tr>
+				<td>Gamemode</td>
+				<td>
+				<select name="gm" class="selectpicker" data-width="100%">
+					<option value="-1">All</option>
+					<option value="0">Standard</option>
+					<option value="1">Taiko</option>
+					<option value="2">Catch the beat</option>
+					<option value="3">Mania</option>
+				</select>
+				</td>
+				</tr>';
+				echo '<tr>
+				<td>Start timestamp</td>
+				<td>
+				<p class="datetimecontainer">
+				<input type="text" name="startdate" class="form-control datepicker" placeholder="YYYY-MM-DD">
+				<span>at</span>
+				<input type="text" name="starttime" class="form-control" placeholder="HH:MM"></p>
+				</td>
+				</tr>';
+				echo '<tr>
+				<td>End timestamp</td>
+				<td>
+				<p class="datetimecontainer">
+				<input type="text" name="enddate" class="form-control datepicker" placeholder="YYYY-MM-DD">
+				<span>at</span>
+				<input type="text" name="endtime" class="form-control" placeholder="HH:MM"></p>
+				</td>
+				</tr>';
+				echo '<tr class="text-center"><td colspan="2"><i>Leave start timestamp and end timestamp to restore all scores.<br>You can also leave only one of them empty. Hour is optional as well.</i></td></tr>';
+			}
+			echo '</tbody></form>';
+			echo '</table>';
+			echo '<div class="text-center"><button type="submit" form="restore-lookup" class="btn btn-primary">Look up ' . ($choosingUser ? 'user' : 'scores') . '</button></div>';
+
+			if ($confirm) {
+				echo '<hr>';
+				$scoresCount = 0;
+				$scoresPreview = [];
+				foreach (["scores_removed_relax.id, song_name, play_mode, pp", "COUNT(*) AS c"] as $i => $v) {				
+					$q = "SELECT $v FROM scores_removed_relax JOIN beatmaps USING(beatmap_md5) WHERE userid = ?";
+					$qp = [$_GET["id"]];
+					if ($_POST["gm"] > -1 && $_POST["gm"] <= 3) {
+						$q .= " AND play_mode = ?";
+						array_push($qp, $_POST["gm"]);
+					}
+					if (isset($_POST["startdate"]) && !empty($_POST["startdate"])) {
+						$h = isset($_POST["starttime"]) && !empty($_POST["starttime"]) ? $_POST["starttime"] : "00:00";
+						$startts = getTimestampFromStr("$_POST[startdate] $h");
+						$q .= " AND time >= ?";
+						array_push($qp, $startts);
+					}
+					if (isset($_POST["enddate"])  && !empty($_POST["enddate"])) {
+						$h = isset($_POST["endtime"]) && !empty($_POST["endtime"]) ? $_POST["endtime"] : "00:00";
+						$endts = getTimestampFromStr("$_POST[enddate] $h");
+						$q .= " AND time <= ?";
+						array_push($qp, $endts);
+					}
+
+					if ($i == 0) {
+						$q .= " AND completed = 3 ORDER BY completed, pp DESC LIMIT 10";
+						// var_dump($q);
+						$scoresPreview = $GLOBALS["db"]->fetchAll($q, $qp);
+					} else {
+						$scoresCount = $GLOBALS["db"]->fetch($q, $qp)["c"];
+					}
+				}
+
+				echo '<p align="center"><font size=5><i class="fa fa-search-plus"></i>	Matching scores</font></p>';
+				echo '<p align="center">Total: ' . $scoresCount . ' scores (including non-top scores)</p>';
+				// var_dump($scoresPreview);
+				if (count($scoresPreview) > 0) {
+					echo '<table class="table table-striped table-hover table-50-center">';
+
+					echo '<thead><tr>';
+					foreach ($scoresPreview[0] as $k => $v) {
+						echo "<th>$k</th>";
+					}
+					echo '</tr></thead>';
+
+					echo '<tbody>';
+					foreach ($scoresPreview as $score) {
+						echo '<tr>';
+						foreach ($score as $key => $value) {
+							echo "<td>$value</td>";
+						}
+						echo '</tr>';
+					}
+					echo '</tbody></table>';
+
+					echo '<form id="restore-scores" action="submit.php" method="POST">
+					<input name="csrf" type="hidden" value="'.csrfToken().'">
+					<input name="action" value="restoreScoresRelax" hidden>
 					<input name="gm" value="' . $_POST["gm"] . '" hidden>
 					<input name="userid" value="' . $_GET["id"] . '" hidden>';
 					if (isset($startts)) {
