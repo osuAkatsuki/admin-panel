@@ -165,7 +165,12 @@ function setTitle($p) {
 			131 => 'View cake recipe',
 			132 => 'View anticheat reports',
 			133 => 'View anticheat report',
-			134 => 'Restore scores'
+			134 => 'Restore scores',
+			// cmyui's Additions
+			222 => 'Rollback user (Relax)',
+			223 => 'Wipe user (Relax)',
+			234 => 'Restore scores (Relax)',
+			
 		];
 		if (isset($namesRipple[$p])) {
 			return __maketitle('Ripple', $namesRipple[$p]);
@@ -311,10 +316,16 @@ function printPage($p) {
 				P::AdminGiveDonor();
 			break;
 
-			// Admin panel - Rollback User
+			// Admin panel - Rollback User (Regular)
 			case 122:
 				sessionCheckAdmin(Privileges::AdminWipeUsers);
 				P::AdminRollback();
+			break;
+
+			// Admin panel - Rollback User (Relax)
+			case 122:
+				sessionCheckAdmin(Privileges::AdminWipeUsers);
+				P::AdminRollbackRelax();
 			break;
 
 			// Admin panel - Wipe User (Regular)
@@ -365,10 +376,16 @@ function printPage($p) {
 				P::AdminViewAnticheatReport();
 			break;
 
-			// Admin panel - Restore scores
+			// Admin panel - Restore scores (Regular)
 			case 134:
 				sessionCheckAdmin(Privileges::AdminWipeUsers);
 				P::AdminRestoreScores();
+			break;
+
+			// Admin panel - Restore scores (Relax)
+			case 234:
+				sessionCheckAdmin(Privileges::AdminWipeUsers);
+				P::AdminRestoreScoresRelax();
 			break;
 
 			// 404 page
