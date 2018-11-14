@@ -122,10 +122,13 @@ class P {
 	public static function AdminUsers() {
 		// Get admin dashboard data
 		$totalUsers = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users'));
-		$supporters = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & '.Privileges::UserDonor.' > 0'));
+		$supporters = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & '.Privileges::UserDonor.' > 0 AND privileges & '.Privileges::Premium.' < 0'));
+		$premiums = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & '.Privileges::Premium.' > 0'));
 		$bannedUsers = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & 1 = 0'));
+		/* Unused, premium used instead 4head
 		$modUsers = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & '.Privileges::AdminAccessRAP.'> 0'));
-		// Multiple pages
+		 Multiple pages
+		*/
 		$pageInterval = 100;
 		$from = (isset($_GET["from"])) ? $_GET["from"] : 999;
 		$to = $from+$pageInterval;
@@ -149,8 +152,9 @@ class P {
 		echo '<div class="row">';
 		printAdminPanel('primary', 'fa fa-user fa-5x', $totalUsers, 'Total users');
 		printAdminPanel('red', 'fa fa-thumbs-down fa-5x', $bannedUsers, 'Banned users');
-		printAdminPanel('yellow', 'fa fa-money fa-5x', $supporters, 'Donors');
-		printAdminPanel('green', 'fa fa-star fa-5x', $modUsers, 'Admins');
+		printAdminPanel('pink', 'fa fa-money fa-5x', $supporters, 'Donors');
+		//printAdminPanel('green', 'fa fa-star fa-5x', $modUsers, 'Admins');
+		printAdminPanel('yellow', 'fa fa-money fa-5x', $premiums, 'Premium members');
 		echo '</div>';
 		// Quick edit/silence/kick user button
 		echo '<br><p align="center" class="mobile-flex"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#quickEditUserModal">Quick edit user (username)</button>';
@@ -631,7 +635,7 @@ class P {
 									echo '	<a onclick="sure(\'submit.php?action=removeDonor&id='.$_GET['id'].'&csrf='.csrfToken().'\');" class="btn btn-danger">Remove donor</a>';
 								}
 								echo '	<a href="index.php?p=121&id='.$_GET['id'].'" class="btn btn-warning">Give donor</a>';
-								echo '	<a href="index.php?u='.$_GET['id'].'" class="btn btn-primary">View profile</a>';
+								echo '	<a href="https://akatsuki.pw/u/'.$_GET['id'].'" class="btn btn-primary">View profile</a>';
 								if (hasPrivilege(Privileges::AdminManageUsers)) {
 									echo '	<a href="index.php?p=132&uid=' . $_GET['id'] . '" class="btn btn-danger">View anticheat reports</a>';
 								}
