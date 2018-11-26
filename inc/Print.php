@@ -122,7 +122,7 @@ class P {
 	public static function AdminUsers() {
 		// Get admin dashboard data
 		$totalUsers = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users'));
-		$supporters = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & '.Privileges::UserDonor.' > 0 AND privileges & '.Privileges::Premium.' < 0'));
+		$supporters = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & '.Privileges::UserDonor.' > 0 AND NOT privileges & '.Privileges::Premium.' > 0'));
 		$premiums = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & '.Privileges::Premium.' > 0'));
 		$bannedUsers = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & 1 = 0'));
 		/* Unused, premium used instead 4head
