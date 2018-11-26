@@ -47,12 +47,12 @@ $pages = [
 	new BlockTotpTwoFa()
 ];
 // Set timezone to UTC
-date_default_timezone_set('Europe/Rome');
+date_default_timezone_set('America/Toronto');
 // Connect to MySQL Database
 $GLOBALS['db'] = new DBPDO();
 // Birthday
 global $isBday;
-$isBday = date("dm") == "2611";
+$isBday = date("dm") == "0510";
 /****************************************
  **			GENERAL FUNCTIONS 		   **
  ****************************************/
@@ -173,11 +173,11 @@ function setTitle($p) {
 			
 		];
 		if (isset($namesRipple[$p])) {
-			return __maketitle('Ripple', $namesRipple[$p]);
+			return __maketitle('Akatsuki', $namesRipple[$p]);
 		} else if (isset($namesRAP[$p])) {
-			return __maketitle('RAP', $namesRAP[$p]);
+			return __maketitle('Akatsuki Admin', $namesRAP[$p]);
 		} else {
-			return __maketitle('Ripple', '404');
+			return __maketitle('Akatsuki', '404');
 		}
 	}
 }
@@ -1092,7 +1092,7 @@ function getChangelog() {
 	echo '<p align="center"><h1><i class="fa fa-code"></i>	Changelog</h1>';
 	echo 'Welcome to the changelog page.<br>As soon as a change is made, it will be posted here.<br>Hover a change to know when it was done.<br><br>';
 	if (!file_exists(dirname(__FILE__).'/../../ci-system/ci-system/changelog.txt')) {
-		echo '<b>Unfortunately, no changelog for this Ripple instance is available. Slap the sysadmin and tell him to configure it.</b>';
+		echo '<b>Unfortunately, no changelog for this Akatsuki instance is available. Slap the sysadmin and tell him to configure it.</b>';
 	} else {
 		$_GET['page'] = (isset($_GET['page']) && $_GET['page'] > 0 ? intval($_GET['page']) : 1);
 		$data = getChangelogPage($_GET['page']);
@@ -1871,16 +1871,16 @@ function giveDonor($userID, $months, $add=true) {
 	if ($months >= 20) $TheMoreYouKnow = "Did you know that your donation accounts for roughly one month of keeping the main server up? That's crazy! Thank you so much!";
 	else if ($months >= 15 && $months < 20) $TheMoreYouKnow = "Normally we would say how much of our expenses a certain donation pays for, but your donation is halfway through paying the domain for 1 year and paying the main server for 1 month. So we don't really know what to say here: your donation pays for about 75% of keeping the server up one month. Thank you so much!";
 	else if ($months >= 10 && $months < 15) $TheMoreYouKnow = "You know what we could do with the amount you donated? We could probably renew the domain for one more year! Although your money is more likely to end up being spent on paying the main server. Thank you so much!";
-	else if ($months >= 4 && $months < 10) $TheMoreYouKnow = "Your donation will help to keep the beatmap mirror we set up for Ripple up for one month! Thanks a lot!";
+	else if ($months >= 4 && $months < 10) $TheMoreYouKnow = "Your donation will help to keep the beatmap mirror we set up for Akatsuki up for one month! Thanks a lot!";
 	else if ($months >= 1 && $months < 4) $TheMoreYouKnow =  "With your donation, we can afford to keep up the error logging server, which is a little VPS on which we host an error logging service (Sentry). Thanks a lot!";
 	
 	global $MailgunConfig;
 	$mailer = new SimpleMailgun($MailgunConfig);
 	$mailer->Send(
-		'Ripple <noreply@'.$MailgunConfig['domain'].'>', $userData['email'],
+		'Akatsuki <noreply@'.$MailgunConfig['domain'].'>', $userData['email'],
 		'Thank you for donating!',
 		sprintf(
-			"Hey %s! Thanks for donating to Ripple. It's thanks to the support of people like you that we can afford keeping the service up. Your donation has been processed, and you should now be able to get the donator role on discord, and have access to all the other perks listed on the \"Support us\" page.<br><br>%s<br><br>Your donor expires in %s months. Until then, have fun!<br>The Ripple Team",
+			"Hey %s! Thanks for donating to Akatsuki. It's thanks to the support of people like you that we can afford keeping the service up. Your donation has been processed, and you should now be able to get the donator role on discord, and have access to all the other perks listed on the \"Support us\" page.<br><br>%s<br><br>Your donor expires in %s months. Until then, have fun!<br>The Akatsuki Team",
 			$username,
 			$TheMoreYouKnow,
 			$monthsExpire

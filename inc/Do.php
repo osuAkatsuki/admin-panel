@@ -83,7 +83,7 @@ class D {
 				}
 				$multiUsername = $multiUserInfo["username"];
 				$multiUserID = $multiUserInfo["userid"];
-				@Schiavo::CM("User **$_POST[u]** registered from same $criteria as **$multiUsername** (https://ripple.moe/?u=$multiUserID). **POSSIBLE MULTIACCOUNT!!!**. Waiting for ingame verification...");
+				@Schiavo::CM("User **$_POST[u]** registered from same $criteria as **$multiUsername** (https://akatsuki.pw/u/$multiUserID). **POSSIBLE MULTIACCOUNT!!!**. Waiting for ingame verification...");
 			}
 			// Create password
 			$md5Password = password_hash(md5($_POST['p1']), PASSWORD_DEFAULT);
@@ -173,7 +173,7 @@ class D {
 			$key = randomString(80);
 			$GLOBALS['db']->execute('INSERT INTO password_recovery (k, u) VALUES (?, ?);', [$key, $username]);
 			$mailer = new SimpleMailgun($MailgunConfig);
-			$mailer->Send('Ripple <noreply@'.$MailgunConfig['domain'].'>', $user['email'], 'Ripple password recovery instructions', sprintf("Hey %s! Someone, which we really hope was you, requested a password reset for your account. In case it was you, please <a href='%s'>click here</a> to reset your password on Ripple. Otherwise, silently ignore this email.", $username, 'http://'.$_SERVER['HTTP_HOST'].'/index.php?p=19&k='.$key.'&user='.$username));
+			$mailer->Send('Akatsuki <noreply@'.$MailgunConfig['domain'].'>', $user['email'], 'Akatsuki password recovery instructions', sprintf("Hey %s! Someone, which we really hope was you, requested a password reset for your account. In case it was you, please <a href='%s'>click here</a> to reset your password on Akatsuki. Otherwise, silently ignore this email.", $username, 'http://'.$_SERVER['HTTP_HOST'].'/index.php?p=19&k='.$key.'&user='.$username));
 			redirect('index.php?p=18&s=sent');
 		}
 		catch(Exception $e) {
@@ -1469,7 +1469,7 @@ class D {
 			} else {
 				$bsid = $GLOBALS["db"]->fetch("SELECT beatmapset_id FROM beatmaps WHERE beatmap_id = ? LIMIT 1", [$_POST["id"]]);
 				if (!$bsid) {
-					throw new Exception("Beatmap set not found in ripple's database. Please use beatmap set id or load at least one difficulty in game before trying to rank a beatmap by its id.");
+					throw new Exception("Beatmap set not found in Akatsuki's database. Please use beatmap set id or load at least one difficulty in game before trying to rank a beatmap by its id.");
 				}
 				$bsid = current($bsid);
 			}
