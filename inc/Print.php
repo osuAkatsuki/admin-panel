@@ -152,7 +152,7 @@ class P {
 		echo '<div class="row">';
 		printAdminPanel('primary', 'fa fa-user fa-5x', $totalUsers, 'Total users');
 		printAdminPanel('red', 'fa fa-thumbs-down fa-5x', $bannedUsers, 'Banned users');
-		printAdminPanel('pink', 'fa fa-money fa-5x', $supporters, 'Donors');
+		printAdminPanel('yellow', 'fa fa-money fa-5x', $supporters, 'Donors');
 		//printAdminPanel('green', 'fa fa-star fa-5x', $modUsers, 'Admins');
 		printAdminPanel('yellow', 'fa fa-money fa-5x', $premiums, 'Premium members');
 		echo '</div>';
