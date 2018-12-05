@@ -2,15 +2,15 @@
 // Database config
 define('DATABASE_HOST', 'localhost');	// MySQL host. usually localhost
 define('DATABASE_USER', 'root');		// MySQL username
-define('DATABASE_PASS', 'meme');		// MySQL password
-define('DATABASE_NAME', 'allora');		// Database name
+define('DATABASE_PASS', 'changeme');		// MySQL password
+define('DATABASE_NAME', 'akatsuki');		// Database name
 define('DATABASE_WHAT', 'host');		// "host" or unix socket path
 
 // Server urls, no slash
 $URL = [
-	'avatar' => 'https://a.ripple.moe',
-	'server' => 'https://ripple.moe',
-	'bancho' => 'http://c.ripple.moe',
+	'avatar' => 'https://a.akatsuki.pw',
+	'server' => 'https://akatsuki.pw',
+	'bancho' => 'http://c.akatsuki.pw',
 	'scores' => 'http://127.0.0.1:5002'
 ];
 

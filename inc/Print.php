@@ -1234,7 +1234,7 @@ class P {
 		if ($isBday) {
 			echo '<h1>Happy birthday Akatsuki!</h1>';
 		} else {
-			echo '<h1>Welcome to Akatsuki</h1>';
+			echo '<h1>Welcome to Akatsuki\'s Admin Panel.</h1>';
 		}
 		// Home alert
 		self::HomeAlert();
