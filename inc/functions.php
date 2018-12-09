@@ -567,6 +567,7 @@ function updateUserCountry($u, $field = 'username') {
 	if ($c == 'XX')
 		return;
 	$GLOBALS['db']->execute("UPDATE users_stats SET country = ? WHERE $field = ?", [$c, $u]);
+	$GLOBALS['db']->execute("UPDATE rx_stats SET country = ? WHERE $field = ?", [$c, $u]);
 }
 function countryCodeToReadable($cc) {
 	require_once dirname(__FILE__).'/countryCodesReadable.php';
