@@ -384,6 +384,18 @@ function printPage($p) {
 				P::AdminRestoreScores();
 			break;
 
+			// Admin panel - Search users by IP
+			case 135:
+				sessionCheckAdmin(Privileges::AdminManageUsers);
+				P::AdminSearchUserByIP();
+			break;
+
+			// Admin panel - Search users by IP - Results
+			case 136:
+				sessionCheckAdmin(Privileges::AdminManageUsers);
+				P::AdminSearchUserByIPResults();
+			break;
+
 			// Admin panel - Restore scores (Relax)
 			case 234:
 				sessionCheckAdmin(Privileges::AdminWipeUsers);
