@@ -1802,11 +1802,14 @@ function stripSuccessError($url) {
 	return $parts["path"] . "?" .  http_build_query($query);
 }
 
-function appendNotes($userID, $notes, $addNl=true) {
-	if ($addNl) {
-		$notes = "\n" . $notes;
-	}
-	$GLOBALS["db"]->execute("UPDATE users SET notes=CONCAT(COALESCE(notes, ''),?) WHERE id = ? LIMIT 1", [$notes, $userID]);
+function appendNotes($userID, $notes, $addNl=true, $addTimestamp=true) {
+	$wowo = "";
+	if ($addNl)
+		$wowo .= "\n";
+	if ($addTimestamp)
+		$wowo .= date("[Y-m-d H:i:s] ");
+	$wowo .= $notes;
+	$GLOBALS["db"]->execute("UPDATE users SET notes=CONCAT(COALESCE(notes, ''),?) WHERE id = ? LIMIT 1", [$wowo, $userID]);
 }
 
 function removeFromLeaderboard($userID) {
