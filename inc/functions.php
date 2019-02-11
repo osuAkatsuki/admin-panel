@@ -167,7 +167,7 @@ function setTitle($p) {
 			133 => 'View anticheat report',
 			134 => 'Restore scores',
 			135 => 'Search users by IP',
-			136 => 'Search users by IP - Results'
+			136 => 'Search users by IP - Results',
 			// cmyui's Additions
 			222 => 'Rollback user (Relax)',
 			223 => 'Wipe user (Relax)',
