@@ -3757,8 +3757,6 @@ WHERE users.$kind = ? LIMIT 1", [$u]);
 			redirect('index.php?p=108&e='.$e->getMessage());
 		}
 	}
-
-
 	
 	public static function AdminSearchUserByIP() {
 		echo '<div id="wrapper">';
