@@ -166,6 +166,8 @@ function setTitle($p) {
 			132 => 'View anticheat reports',
 			133 => 'View anticheat report',
 			134 => 'Restore scores',
+			135 => 'Search users by IP',
+			136 => 'Search users by IP - Results'
 			// cmyui's Additions
 			222 => 'Rollback user (Relax)',
 			223 => 'Wipe user (Relax)',
@@ -380,6 +382,18 @@ function printPage($p) {
 			case 134:
 				sessionCheckAdmin(Privileges::AdminWipeUsers);
 				P::AdminRestoreScores();
+			break;
+
+			// Admin panel - Search users by IP
+			case 135:
+				sessionCheckAdmin(Privileges::AdminManageUsers);
+				P::AdminSearchUserByIP();
+			break;
+
+			// Admin panel - Search users by IP - Results
+			case 136:
+				sessionCheckAdmin(Privileges::AdminManageUsers);
+				P::AdminSearchUserByIPResults();
 			break;
 
 			// Admin panel - Restore scores (Relax)
@@ -1788,12 +1802,14 @@ function stripSuccessError($url) {
 	return $parts["path"] . "?" .  http_build_query($query);
 }
 
-function appendNotes($userID, $notes, $addNl=true) {
-	if ($addNl) {
-		$notes = "\n" . $notes;
-	}
-	$GLOBALS["db"]->execute("UPDATE users SET notes=CONCAT(COALESCE(notes, ''),?) WHERE id = ? LIMIT 1", [$notes, $userID]);
-}
+function appendNotes($userID, $notes, $addNl=true, $addTimestamp=true) {
+	$wowo = "";
+	if ($addNl)
+		$wowo .= "\n";
+	if ($addTimestamp)
+		$wowo .= date("[Y-m-d H:i:s] ");
+	$wowo .= $notes;
+	$GLOBALS["db"]->execute("UPDATE users SET notes=CONCAT(COALESCE(notes, ''),?) WHERE id = ? LIMIT 1", [$wowo, $userID]);
 
 function removeFromLeaderboard($userID) {
 	redisConnect();

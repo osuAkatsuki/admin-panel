@@ -3019,10 +3019,6 @@ WHERE users.$kind = ? LIMIT 1", [$u]);
 		echo '</div>';
 	}
 
-
-
-
-
 	public static function AdminViewReports() {
 		echo '<div id="wrapper">';
 		printAdminSidebar();
