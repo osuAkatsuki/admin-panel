@@ -236,17 +236,14 @@ if ($p < 100) {
             if (r == true) window.location.replace(redr);
         }
 
-        function reallysuredialog()
+        function reallysure(redr)
         {
             var r = confirm("This action cannot be undone. Are you sure you want to continue?");
             if (r == true)
                 r = confirm("Are you REALLY sure?");
-                return r == true;
+                if (r == true)
+                    window.location.replace(redr);
         }
-
-        function reallysure(redr) {
-			reallysuredialog() && window.location.replace(redr)
-		}
 
 		function play(id) {
 			var audio = $('#audio_'+id)[0];
@@ -283,14 +280,6 @@ if ($p < 100) {
 			})
 			updateResolution()
 		})
-
-		$(".getcountry").click(function() {
-			var i = $(this);
-			$.get("https://ip.zxq.co/" + $(this).data("ip") + "/country", function(data) {
-				data = (data === "" ? "dunno" : data);
-				i.text("(" + data + ")");
-			});
-		});
     </script>
 
 
@@ -354,6 +343,13 @@ switch ($p) {
 							$(".bottom-fixed.enabled>.alert").fadeOut(1000);
 						}, 1500)
 					}
+					$(".getcountry").click(function() {
+						var i = $(this);
+						$.get("https://ip.zxq.co/" + $(this).data("ip") + "/country", function(data) {
+							data = (data === "" ? "dunno" : data);
+							i.text("(" + data + ")");
+						});
+					});
 					$(".unpin").click(function () {
 						$(".bottom-fixed").toggleClass("enabled")
 						$(".bottom-padded").toggleClass("enabled")
