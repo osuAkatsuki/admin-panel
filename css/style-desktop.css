@@ -963,10 +963,6 @@ tr.text-center > td {
     padding: 5px;
 }
 
-tr.bold>* {
-    font-weight: bold;
-}
-
 @media only screen and (max-width: 768px) {
     .mobile-only {
         display: initial;
