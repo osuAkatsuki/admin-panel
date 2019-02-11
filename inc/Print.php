@@ -7,10 +7,15 @@ class P {
 	*/
 	public static function AdminDashboard() {
 		// Get admin dashboard data
+		/*
 		$submittedScoresFull = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM scores LIMIT 1'));
 		$submittedScores = number_format($submittedScoresFull / 1000000, 2) . "m";
-		$totalScoresFull = current($GLOBALS['db']->fetch('SELECT SUM(playcount_std) + SUM(playcount_taiko) + SUM(playcount_ctb) + SUM(playcount_mania) FROM users_stats WHERE 1'));
-		$totalScores = number_format($totalScoresFull  / 1000000, 2) . "m";
+		*/
+		$totalScoresFullVanilla = current($GLOBALS['db']->fetch('SELECT SUM(playcount_std) + SUM(playcount_taiko) + SUM(playcount_ctb) + SUM(playcount_mania) FROM users_stats WHERE 1'));
+		$totalScoresVanilla = number_format($totalScoresFullVanilla  / 1000000, 2) . "m";
+
+		$totalScoresFullRelax = current($GLOBALS['db']->fetch('SELECT SUM(playcount_std) + SUM(playcount_taiko) + SUM(playcount_ctb) + SUM(playcount_mania) FROM rx_stats WHERE 1'));
+		$totalScoresRelax = number_format($totalScoresFullRelax  / 1000000, 2) . "m";
 		// $betaKeysLeft = "∞";
 		/*$totalPPQuery = $GLOBALS['db']->fetch("SELECT SUM(pp) FROM scores WHERE completed = 3 LIMIT 1");
 		$totalPP = 0;
@@ -19,7 +24,7 @@ class P {
 		}
 		$totalPP = number_format($totalPP);*/
 		$totalPP = "🍆";
-		$recentPlays = $GLOBALS['db']->fetchAll('
+		$recentPlaysVanilla = $GLOBALS['db']->fetchAll('
 		SELECT
 			beatmaps.song_name, scores.beatmap_md5, users.username,
 			scores.userid, scores.time, scores.score, scores.pp,
@@ -27,18 +32,44 @@ class P {
 		FROM scores
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores.beatmap_md5
 		LEFT JOIN users ON users.id = scores.userid
+		WHERE scores.completed = 3 AND beatmaps.ranked = 2
 		ORDER BY scores.id DESC
 		LIMIT 10');
-		$topPlays = [];
-		/*$topPlays = $GLOBALS['db']->fetchAll('SELECT
+
+		$recentPlaysRelax = $GLOBALS['db']->fetchAll('
+		SELECT
+			beatmaps.song_name, scores_relax.beatmap_md5, users.username,
+			scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp,
+			scores_relax.play_mode, scores_relax.mods
+		FROM scores_relax
+		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores_relax.beatmap_md5
+		LEFT JOIN users ON users.id = scores_relax.userid
+                WHERE scores_relax.completed = 3 AND beatmaps.ranked = 2
+		ORDER BY scores_relax.id DESC
+		LIMIT 10');
+
+		$topPlaysVanilla = [];
+		$topPlaysVanilla = $GLOBALS['db']->fetchAll('SELECT
 			beatmaps.song_name, scores.beatmap_md5, users.username,
 			scores.userid, scores.time, scores.score, scores.pp,
 			scores.play_mode, scores.mods
 		FROM scores
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores.beatmap_md5
 		LEFT JOIN users ON users.id = scores.userid
-		WHERE users.privileges & 1 > 0
-		ORDER BY scores.pp DESC LIMIT 30');*/
+		WHERE users.privileges & 1 > 0 AND scores.completed = 3 AND scores.play_mode = 0 AND beatmaps.ranked = 2
+		ORDER BY scores.pp DESC LIMIT 10');
+
+		$topPlaysRelax = [];
+		$topPlaysRelax = $GLOBALS['db']->fetchAll('SELECT
+			beatmaps.song_name, scores_relax.beatmap_md5, users.username,
+			scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp,
+			scores_relax.play_mode, scores_relax.mods
+		FROM scores_relax
+		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores_relax.beatmap_md5
+		LEFT JOIN users ON users.id = scores_relax.userid
+		WHERE users.privileges & 1 > 0 AND scores_relax.completed = 3 AND scores_relax.play_mode = 0 AND beatmaps.ranked = 2
+		ORDER BY scores_relax.pp DESC LIMIT 10');
+
 		$onlineUsers = getJsonCurl("http://127.0.0.1:5001/api/v1/onlineUsers");
 		if ($onlineUsers == false) {
 			$onlineUsers = 0;
@@ -55,18 +86,20 @@ class P {
 		self::GlobalAlert();
 		// Stats panels
 		echo '<div class="row">';
-		printAdminPanel('primary', 'fa fa-gamepad fa-5x', $submittedScores, 'Submitted scores', number_format($submittedScoresFull));
-		printAdminPanel('red', 'fa fa-wheelchair-alt fa-5x', $totalScores, 'Total plays', number_format($totalScoresFull));
+		//printAdminPanel('primary', 'fa fa-gamepad fa-5x', $submittedScores, 'Submitted scores', number_format($submittedScoresFull));
+		printAdminPanel('red', 'fa fa-wheelchair-alt fa-5x', $totalScoresVanilla, 'Vanilla plays', number_format($totalScoresFullVanilla));
+		printAdminPanel('red', 'fa fa-wheelchair-alt fa-5x', $totalScoresRelax, 'Relax plays', number_format($totalScoresFullRelax));
 		printAdminPanel('green', 'fa fa-street-view fa-5x', $onlineUsers, 'Online users');
 		printAdminPanel('yellow', 'fa fa-dot-circle-o fa-5x', $totalPP, 'Total PP');
 		echo '</div>';
-		// Recent plays table
+
+		// Recent plays table (Vanilla)
 		echo '<table class="table table-striped table-hover">
 		<thead>
-		<tr><th class="text-left"><i class="fa fa-clock-o"></i>	Recent plays</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th>Score</th><th class="text-right">PP</th></tr>
+		<tr><th class="text-left"><i class="fa fa-clock-o"></i>	Recent plays (Vanilla)</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th>Score</th><th class="text-right">PP</th></tr>
 		</thead>
 		<tbody>';
-		foreach ($recentPlays as $play) {
+		foreach ($recentPlaysVanilla as $play) {
 			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
 			$bn = $play['song_name'];
 			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
@@ -86,14 +119,42 @@ class P {
 			echo '</tr>';
 		}
 		echo '</tbody>';
-		// Top plays table
+
+		// Recent plays table (Relax)
 		echo '<table class="table table-striped table-hover">
 		<thead>
-		<tr><th class="text-left"><i class="fa fa-trophy"></i>	Top plays</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
+		<tr><th class="text-left"><i class="fa fa-clock-o"></i>	Recent plays (Relax)</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th>Score</th><th class="text-right">PP</th></tr>
 		</thead>
 		<tbody>';
-		echo '<tr class="danger"><td colspan=5>Disabled</td></tr>';
-		foreach ($topPlays as $play) {
+		foreach ($recentPlaysRelax as $play) {
+			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
+			$bn = $play['song_name'];
+			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
+			if (!$bn) {
+				$bn = $play['beatmap_md5'];
+			}
+			// Get readable play_mode
+			$pm = getPlaymodeText($play['play_mode']);
+			// Print row
+			echo '<tr class="success">';
+			echo '<td><p class="text-left"><b><a href="index.php?u='.$play["username"].'">'.$play['username'].'</a></b></p></td>';
+			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left">'.$pm.'</p></td>';
+			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
+			echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
+			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'pp</b></p></td>';
+			echo '</tr>';
+		}
+		echo '</tbody>';
+
+		// Top plays table (Vanilla)
+		echo '<table class="table table-striped table-hover">
+		<thead>
+		<tr><th class="text-left"><i class="fa fa-trophy"></i>	Top plays (Vanilla)</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
+		</thead>
+		<tbody>';
+		//echo '<tr class="danger"><td colspan=5>Disabled</td></tr>';
+		foreach ($topPlaysVanilla as $play) {
 			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
 			$bn = $play['song_name'];
 			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
@@ -112,6 +173,34 @@ class P {
 			echo '</tr>';
 		}
 		echo '</tbody>';
+
+		// Top plays table (Relax)
+		echo '<table class="table table-striped table-hover">
+		<thead>
+		<tr><th class="text-left"><i class="fa fa-trophy"></i>	Top plays (Relax)</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
+		</thead>
+		<tbody>';
+		//echo '<tr class="danger"><td colspan=5>Disabled</td></tr>';
+		foreach ($topPlaysRelax as $play) {
+			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
+			$bn = $play['song_name'];
+			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
+			if (!$bn) {
+				$bn = $play['beatmap_md5'];
+			}
+			// Get readable play_mode
+			$pm = getPlaymodeText($play['play_mode']);
+			// Print row
+			echo '<tr class="warning">';
+			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
+			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left">'.$pm.'</p></td>';
+			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
+			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'</b></p></td>';
+			echo '</tr>';
+		}
+		echo '</tbody>';
+
 		echo '</div>';
 	}
 
@@ -159,6 +248,7 @@ class P {
 		// Quick edit/silence/kick user button
 		echo '<br><p align="center" class="mobile-flex"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#quickEditUserModal">Quick edit user (username)</button>';
 		echo '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#quickEditEmailModal">Quick edit user (email)</button>';
+		echo '<a href="index.php?p=135" type="button" class="btn btn-warning">Search user by IP</a>';
 		echo '<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#silenceUserModal">Silence user</button>';
 		echo '<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#kickUserModal">Kick user from Bancho</button>';
 		echo '</p>';
@@ -609,7 +699,7 @@ class P {
 			<i>(visible only from RAP)</i></td>
 			<td><textarea name="ncm" class="form-control" style="overflow:auto;resize:vertical;height:500px">' . $userData["notes"] . '</textarea></td>
 			</tr>';
-			echo '<tr><td>IPs</td><td><ul>';
+			echo '<tr><td>IPs<br><i><a href="index.php?p=136&uid=' . $_GET["id"] . '">(search users with these IPs)</a></i></td><td><ul>';
 			foreach ($ips as $ip) {
 				echo "<li>$ip[ip] <a class='getcountry' data-ip='$ip[ip]' title='Click to retrieve IP country'>(?)</a> ($ip[occurencies])</li>";
 			}
@@ -2931,6 +3021,8 @@ WHERE users.$kind = ? LIMIT 1", [$u]);
 
 
 
+
+
 	public static function AdminViewReports() {
 		echo '<div id="wrapper">';
 		printAdminSidebar();
@@ -3665,6 +3757,147 @@ WHERE users.$kind = ? LIMIT 1", [$u]);
 			redirect('index.php?p=108&e='.$e->getMessage());
 		}
 	}
+
+
+	
+	public static function AdminSearchUserByIP() {
+		echo '<div id="wrapper">';
+		printAdminSidebar();
+		echo '<div id="page-content-wrapper">';
+		// Maintenance check
+		self::MaintenanceStuff();
+		// Print Exception if set
+		if (isset($_GET['e']) && !empty($_GET['e'])) {
+			self::ExceptionMessageStaccah($_GET['e']);
+		}
+		echo '<p align="center"><h2><i class="fa fa-map-marker"></i>	Search user by IP</h2></p>';
+
+		echo '<br>';
+
+		echo '
+		<div class="narrow-content">
+			<form action="index.php?p=136" method="POST">
+				<input name="csrf" type="hidden" value="'.csrfToken().'">
+				<div>
+					Specify 1 IP per line
+					<textarea name="ips" class="form-control" style="overflow:auto;resize:vertical;min-height:200px; margin-bottom: 10px;"></textarea>
+				</div>
+				<div>
+					<button type="submit" class="btn btn-primary">Search</button>
+				</div>
+			</form>
+		</div>';
+
+		echo '</div>';
+		echo '</div>';
+	}
+
+	public static function AdminSearchUserByIPResults() {
+		try {
+			echo '<div id="wrapper">';
+			printAdminSidebar();
+			echo '<div id="page-content-wrapper">';
+			// Maintenance check
+			self::MaintenanceStuff();
+			// Print Exception if set
+			if (isset($_GET['e']) && !empty($_GET['e'])) {
+				self::ExceptionMessageStaccah($_GET['e']);
+			}
+			$ips = [];
+			$userFilter = isset($_GET["uid"]) && !empty($_GET["uid"]);
+			if ($userFilter) {
+				if ($_GET["uid"] != $_SESSION["userid"] && hasPrivilege(Privileges::AdminManageUsers, $_GET["uid"])) {
+					throw new Exception("You don't have enough privileges to do that");
+				}
+				$results = $GLOBALS["db"]->fetchAll("SELECT ip FROM ip_user WHERE userid = ? AND ip != ''", [$_GET["uid"]]);
+				foreach ($results as $row) {
+					array_push($ips, $row["ip"]);
+				}
+			} else if (isset($_POST["ips"]) && !empty($_POST["ips"])) {
+				$ips = explode("\n", $_POST["ips"]);
+			} else {
+				throw new Exception("No IPs or uid passed.");
+			}
+			
+			echo '<p align="center"><h2><i class="fa fa-map-marker"></i>	Search user by IP ' . ($userFilter ? '(user filter mode)' : '') . '</h2></p>';
+			echo '<br>';
+			$conditions = "";
+			foreach ($ips as $i => $ip) {
+				$conditions .= "?, ";
+				$ips[$i] = trim($ips[$i]);
+			}
+			$conditions = trim($conditions, ", ");
+			$results = $GLOBALS["db"]->fetchAll("SELECT ip_user.*, users.username, users.privileges FROM ip_user JOIN users ON ip_user.userid = users.id WHERE ip IN ($conditions) ORDER BY ip DESC", $ips);
+
+			echo '<table class="table table-striped table-hover table-75-center">
+			<thead>
+			<tr>';
+			echo '<th><i class="fa fa-umbrella"></i>	IP</th>
+				<th>User</th>
+				<th>Privileges</th>
+				<th>Occurrencies</th>
+			</tr>
+			</thead>';
+			echo '<tbody>';
+
+			$hax = false;
+			foreach ($results as $row) {
+				if (($row["privileges"] & 3) >= 3) {
+					$groupColor = "success";
+					$groupText = "Ok";
+				} else if (($row["privileges"] & 2) >= 2) {
+					$groupColor = "warning";
+					$groupText = "Restricted";
+				} else {
+					$groupColor = "danger";
+					$groupText = "Banned";
+				}
+				if ($userFilter && $row["userid"] != $_GET["uid"]) {
+					$hax = true;
+				}
+				echo "<tr class='" . ($userFilter && $row["userid"] != $_GET["uid"] ? "danger bold" : "") . "'>
+				<td>$row[ip] <a class='getcountry' data-ip='$row[ip]'>(?)</a></td>
+				<td><a href='index.php?p=103&id=$row[userid]' target='_blank'>$row[username]</a> <i>($row[userid])</i></td>
+				<td><span class='label label-$groupColor'>$groupText</span></td>
+				<td>$row[occurencies]</td>
+				</tr>";
+			}
+
+			if ($userFilter && !$hax) {
+				echo '<td class="success" style="text-align: center" colspan=4><i class="fa fa-thumbs-up"></i>	<b>Looking good!</b></td>';
+			} else if ($userFilter) {
+				echo '<td class="warning" style="text-align: center" colspan=4><i class="fa fa-warning"></i>	<b>Ohoh, opsie wopsie!</b></td>';
+			}
+
+			echo '</tbody>
+			</table><hr>';
+
+			echo '<h4><i class="fa fa-map-marker"></i>	The above are all the users that used one of these IPs at least once:</h4>';
+			foreach ($ips as $ip) {
+				echo "$ip<br>";
+			}
+
+			echo '<hr>';
+			echo '<form action="submit.php" method="POST">
+			<input name="csrf" type="hidden" value="'.csrfToken().'">
+			<input name="action" value="bulkBan" hidden>';
+			foreach ($results as $row) {
+				echo '<input hidden name="uid[]" value="' . $row["userid"] . '">';
+			}
+			echo '<b>Bulk notes (will be added to already banned users too):</b>
+			<div>
+				<textarea name="notes" class="form-control" style="overflow:auto;resize:vertical;min-height:80px; width: 50%; margin: 0 auto 10px auto;"></textarea>
+			</div>';
+			echo '<a onclick="reallysuredialog() && $(\'form\').submit();" class="btn btn-danger">Bulk ban</a>
+			</form>';
+
+			echo '</div>';
+			echo '</div>';
+		} catch (Exception $e) {
+			redirect('index.php?p=135&e='.$e->getMessage());
+		}
+	}
+
 }
 
 // LISCIAMI LE MELE SUDICIO
