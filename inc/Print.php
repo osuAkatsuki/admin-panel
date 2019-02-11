@@ -34,7 +34,7 @@ class P {
 		LEFT JOIN users ON users.id = scores.userid
 		WHERE scores.completed = 3 AND beatmaps.ranked = 2
 		ORDER BY scores.id DESC
-		LIMIT 10');
+		LIMIT 20');
 
 		$recentPlaysRelax = $GLOBALS['db']->fetchAll('
 		SELECT
@@ -46,7 +46,7 @@ class P {
 		LEFT JOIN users ON users.id = scores_relax.userid
                 WHERE scores_relax.completed = 3 AND beatmaps.ranked = 2
 		ORDER BY scores_relax.id DESC
-		LIMIT 10');
+		LIMIT 20');
 
 		$topPlaysVanilla = [];
 		$topPlaysVanilla = $GLOBALS['db']->fetchAll('SELECT
@@ -57,7 +57,7 @@ class P {
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores.beatmap_md5
 		LEFT JOIN users ON users.id = scores.userid
 		WHERE users.privileges & 1 > 0 AND scores.completed = 3 AND scores.play_mode = 0 AND beatmaps.ranked = 2
-		ORDER BY scores.pp DESC LIMIT 10');
+		ORDER BY scores.pp DESC LIMIT 20');
 
 		$topPlaysRelax = [];
 		$topPlaysRelax = $GLOBALS['db']->fetchAll('SELECT
@@ -68,7 +68,7 @@ class P {
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores_relax.beatmap_md5
 		LEFT JOIN users ON users.id = scores_relax.userid
 		WHERE users.privileges & 1 > 0 AND scores_relax.completed = 3 AND scores_relax.play_mode = 0 AND beatmaps.ranked = 2
-		ORDER BY scores_relax.pp DESC LIMIT 10');
+		ORDER BY scores_relax.pp DESC LIMIT 20');
 
 		$onlineUsers = getJsonCurl("http://127.0.0.1:5001/api/v1/onlineUsers");
 		if ($onlineUsers == false) {
