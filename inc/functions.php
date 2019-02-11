@@ -166,7 +166,6 @@ function setTitle($p) {
 			132 => 'View anticheat reports',
 			133 => 'View anticheat report',
 			134 => 'Restore scores',
-<<<<<<< HEAD
 			135 => 'Search users by IP',
 			136 => 'Search users by IP - Results',
 			// cmyui's Additions
