@@ -325,7 +325,7 @@ function printPage($p) {
 			break;
 
 			// Admin panel - Rollback User (Relax)
-			case 122:
+			case 222:
 				sessionCheckAdmin(Privileges::AdminWipeUsers);
 				P::AdminRollbackRelax();
 			break;
