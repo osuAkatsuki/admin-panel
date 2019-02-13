@@ -1320,6 +1320,43 @@ class D {
 		}
 	}
 
+	public static function RollbackRelax() {
+		try {
+			if (!isset($_POST["id"]) || empty($_POST["id"]))
+				throw new Exception("Invalid user");
+			$userData = $GLOBALS["db"]->fetch("SELECT username, privileges FROM users WHERE id = ? LIMIT 1", [$_POST["id"]]);
+			if (!$userData) {
+				throw new Exception("That user doesn't exist");
+			}
+			$username = $userData["username"];
+			// Check if we can rollback this user
+			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0) {
+				throw new Exception("You don't have enough permissions to rollback this account");
+			}
+			switch ($_POST["period"]) {
+				case "d": $periodSeconds = 86400; $periodName = "Day"; break;
+				case "w": $periodSeconds = 86400*7; $periodName = "Week"; break;
+				case "m": $periodSeconds = 86400*30; $periodName = "Month"; break;
+				case "y": $periodSeconds = 86400*365; $periodName = "Year"; break;
+			}
+
+			//$removeAfterOsuTime = UNIXTimestampToOsuDate(time()-($_POST["length"]*$periodSeconds));
+			$removeAfter = time()-($_POST["length"]*$periodSeconds);
+			$rollbackString = $_POST["length"]." ".$periodName;
+			if ($_POST["length"] > 1) {
+				$rollbackString .= "s";
+			}
+
+			$GLOBALS["db"]->execute("INSERT INTO scores_removed_relax SELECT * FROM scores_relax WHERE userid = ? AND time >= ?", [$_POST["id"], $removeAfter]);
+			$GLOBALS["db"]->execute("DELETE FROM scores_relax WHERE userid = ? AND time >= ?", [$_POST["id"], $removeAfter]);
+
+			rapLog(sprintf("has rolled back %s %s's account", $rollbackString, $username), $_SESSION["userid"]);
+			redirect("index.php?p=102&s=User account has been rolled back!");
+		} catch(Exception $e) {
+			redirect('index.php?p=102&e='.$e->getMessage());
+		}
+	}
+
 	public static function ToggleCustomBadge() {
 		try {
 			if (!isset($_GET["id"]) || empty($_GET["id"]))
