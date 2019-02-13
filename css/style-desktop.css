@@ -170,7 +170,6 @@ hr {
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-
 /* Admin Panel Style */
 #wrapper {
     position: relative;
@@ -506,16 +505,6 @@ a.silent {
 	color: inherit;
 }
 
-
-
-
-
-
-
-
-
-
-
 .card {
     padding-top: 20px;
     margin: 10px 0 20px 0;
@@ -791,7 +780,6 @@ a.silent {
 	background-color: #FC912B;
 	color: #FFFFFF;
 }
-
 
 /* The ribbons */
 

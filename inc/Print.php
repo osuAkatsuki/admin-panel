@@ -241,9 +241,9 @@ class P {
 		echo '<div class="row">';
 		printAdminPanel('primary', 'fa fa-user fa-5x', $totalUsers, 'Total users');
 		printAdminPanel('red', 'fa fa-thumbs-down fa-5x', $bannedUsers, 'Banned users');
-		printAdminPanel('yellow', 'fa fa-money fa-5x', $supporters, 'Donors');
+		printAdminPanel('yellow', 'fa fa-money fa-5x', $supporters, 'Supporters');
 		//printAdminPanel('green', 'fa fa-star fa-5x', $modUsers, 'Admins');
-		printAdminPanel('yellow', 'fa fa-money fa-5x', $premiums, 'Premium members');
+		printAdminPanel('info', 'fa fa-star fa-5x', $premiums, 'Premium members');
 		echo '</div>';
 		// Quick edit/silence/kick user button
 		echo '<br><p align="center" class="mobile-flex"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#quickEditUserModal">Quick edit user (username)</button>';
@@ -1350,12 +1350,12 @@ class P {
 
 			// Check banned status
 			$userData = $GLOBALS['db']->fetch("
-SELECT
-	users_stats.*, users.privileges, users.id as usersuid, users.latest_activity,
-	users.silence_end, users.silence_reason, users.register_datetime
-FROM users_stats
-LEFT JOIN users ON users.id=users_stats.id
-WHERE users.$kind = ? LIMIT 1", [$u]);
+			SELECT
+				users_stats.*, users.privileges, users.id as usersuid, users.latest_activity,
+				users.silence_end, users.silence_reason, users.register_datetime
+			FROM users_stats
+			LEFT JOIN users ON users.id=users_stats.id
+			WHERE users.$kind = ? LIMIT 1", [$u]);
 
 			if (!$userData) {
 				// LISCIAMI LE MELE SUDICIO

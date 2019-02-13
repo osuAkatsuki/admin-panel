@@ -408,7 +408,7 @@ class D {
 				throw new Exception("User doesn't exist");
 			}
 			// Check if we can ban this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0) {
+			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to ban this user");
 			}
 			// Get new allowed value
@@ -938,7 +938,7 @@ class D {
 			}
 			$username = $userData["username"];
 			// Check if we can wipe this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0) {
+			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to wipe this account");
 			}
 
@@ -997,7 +997,7 @@ class D {
 			}
 			$username = $userData["username"];
 			// Check if we can wipe this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0) {
+			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to wipe this account");
 			}
 
@@ -1209,7 +1209,7 @@ class D {
 				throw new Exception("User doesn't exist");
 			}
 			// Check if we can ban this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0) {
+			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to ban this user");
 			}
 			// Get new allowed value
@@ -1293,7 +1293,7 @@ class D {
 			}
 			$username = $userData["username"];
 			// Check if we can rollback this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0) {
+			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to rollback this account");
 			}
 			switch ($_POST["period"]) {
@@ -1367,7 +1367,7 @@ class D {
 			}
 			$username = $userData["username"];
 			// Check if we can edit this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0) {
+			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to grant/revoke custom badge privilege on this account");
 			}
 
@@ -1394,7 +1394,7 @@ class D {
 				throw new Exception("That user doesn't exist");
 			}
 			// Check if we can edit this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0) {
+			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to lock this account");
 			}
 			// Make sure the user is not banned/restricted
@@ -1668,6 +1668,62 @@ class D {
 				}
 				$GLOBALS["db"]->execute("INSERT INTO scores SELECT * FROM scores_removed WHERE id = ? LIMIT 1", [$lostScore["id"]]);
 				$GLOBALS["db"]->execute("DELETE FROM scores_removed WHERE id = ? LIMIT 1", [$lostScore["id"]]);
+				echo "Restored $lostScore[id]<br>";
+			}
+
+			// redirect(index.php?p=134&id=" . $userID);
+		} catch (Exception $e) {
+			redirect("index.php?p=134&e=" . $e->getMessage());
+		}
+	}
+
+	public static function RestoreScoresRelax() {
+		try {
+			if (!isset($_POST["userid"]) || empty($_POST["userid"]) || !isset($_POST["gm"]) || empty($_POST["gm"])) {
+				throw new Exception("Missing required parameters");
+			}
+
+			$q = "SELECT * FROM scores_removed_relax WHERE userid = ?";
+			$qp = [$_POST["userid"]];
+			if ($_POST["gm"] > -1 && $_POST["gm"] <= 3) {
+				$q .= " AND play_mode = ?";
+				array_push($qp, $_POST["gm"]);
+			}
+			if (isset($_POST["startdate"]) && !empty($_POST["startdate"])) {
+				$h = isset($_POST["starttime"]) && !empty($_POST["starttime"]) ? $_POST["starttime"] : "00:00";
+				$startts = getTimestampFromStr("$_POST[startdate] $h");
+				$q .= " AND time >= ?";
+				array_push($qp, $startts);
+			}
+			if (isset($_POST["enddate"])  && !empty($_POST["enddate"])) {
+				$h = isset($_POST["endtime"]) && !empty($_POST["endtime"]) ? $_POST["endtime"] : "00:00";
+				$endts = getTimestampFromStr("$_POST[enddate] $h");
+				$q .= " AND time <= ?";
+				array_push($qp, $endts);
+			}
+
+			$scoresToRecover = $GLOBALS["db"]->fetchAll($q, $qp);
+			foreach ($scoresToRecover as $lostScore) {
+				$restore = false;
+				if ($lostScore["completed"] == 3) {
+					// Restore completed 3 scores only if they havent been replaced by better scores
+					$betterScore = $GLOBALS["db"]->fetch("SELECT id FROM scores_relax WHERE userid = ? AND play_mode = ? AND beatmap_md5 = ? AND completed = 3 AND pp > ? LIMIT 1", [
+						$lostScore["userid"],
+						$lostScore["play_mode"],
+						$lostScore["beatmap_md5"],
+						$lostScore["pp"]
+					]);
+					$restore = !$betterScore;
+				} else {
+					// Restore all completed < 3 scores
+					$restore = true;
+				}
+				if (!$restore) {
+					echo "$lostScore[id] has a better score, not restoring<br>";
+					continue;
+				}
+				$GLOBALS["db"]->execute("INSERT INTO scores_relax SELECT * FROM scores_removed_relax WHERE id = ? LIMIT 1", [$lostScore["id"]]);
+				$GLOBALS["db"]->execute("DELETE FROM scores_removed_relax WHERE id = ? LIMIT 1", [$lostScore["id"]]);
 				echo "Restored $lostScore[id]<br>";
 			}
 
