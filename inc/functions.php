@@ -1639,9 +1639,6 @@ function redirect2FA() {
 	}
 }
 
-
-
-
 /*
    RIP Documentation and comments from now on.
    Those functions are the last ones that we've added to old-frontend
@@ -1654,8 +1651,6 @@ function redirect2FA() {
    I'd just like to interject for a moment. You do not just 'fuck' PHP, you 'fuck' PHP with a CACTUS!
    -- Howl
 */
-
-
 
 function get2FAType($userID) {
 	$result = $GLOBALS["db"]->fetch("SELECT IFNULL((SELECT 2 FROM 2fa_totp WHERE userid = ? AND enabled = 1 LIMIT 1), 0) AS x", [$userID]);

@@ -3818,6 +3818,7 @@ class P {
 			}
 			
 			echo '<p align="center"><h2><i class="fa fa-map-marker"></i>	Search user by IP ' . ($userFilter ? '(user filter mode)' : '') . '</h2></p>';
+			echo '<p align="center"><h2>TAKE THESE WITH A GRIAN OF SALT, THIS IS NOT EVIDENCE FOR A RESTRICTION MOST OF THE TIME!</h2></p>';
 			echo '<br>';
 			$conditions = "";
 			foreach ($ips as $i => $ip) {
