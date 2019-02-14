@@ -189,13 +189,13 @@ try {
 			sessionCheckAdmin(Privileges::AdminWipeUsers);
 			D::RestoreScoresSearchUser();
 		break;
-		case 'restoreScores':
-			sessionCheckAdmin(Privileges::AdminWipeUsers);
-			D::RestoreScores();
-		break;
 		case 'restoreScoresSearchUserRelax':
 			sessionCheckAdmin(Privileges::AdminWipeUsers);
 			D::RestoreScoresSearchUserRelax();
+		break;
+		case 'restoreScores':
+			sessionCheckAdmin(Privileges::AdminWipeUsers);
+			D::RestoreScores();
 		break;
 		case 'restoreScoresRelax':
 			sessionCheckAdmin(Privileges::AdminWipeUsers);
