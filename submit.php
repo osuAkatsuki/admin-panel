@@ -129,10 +129,6 @@ try {
 			sessionCheckAdmin(Privileges::AdminCaker);
 			D::GiveDonor();
 		break;
-		case 'givePremium':
-			sessionCheckAdmin(Privileges::AdminCaker);
-			D::GivePremium();
-		break;
 		case 'removeDonor':	// TODO
 			sessionCheckAdmin(Privileges::AdminCaker);
 			D::RemoveDonor();

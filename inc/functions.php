@@ -384,12 +384,6 @@ function printPage($p) {
 				P::AdminSearchUserByIPResults();
 			break;
 
-			// Admin panel - Give premium to user
-			case 221:
-				sessionCheckAdmin(Privileges::AdminCaker);
-				P::AdminGivePremium();
-			break;
-
 			// Admin panel - Rollback User (Relax)
 			case 222:
 				sessionCheckAdmin(Privileges::AdminWipeUsers);
@@ -1859,13 +1853,21 @@ function csrfCheck($givenToken=NULL, $regen=true) {
 	return hash_equals($rightToken, $givenToken);
 }
 
-function giveDonor($userID, $months, $add=true) {
+function giveDonor($userID, $months, $add=true, $premium=false) {
 	$userData = $GLOBALS["db"]->fetch("SELECT username, email, donor_expire FROM users WHERE id = ? LIMIT 1", [$userID]);
+
 	if (!$userData) {
-		throw new Exception("That user doesn't exist");
+		throw new Exception("That user doesn't exist")
 	}
-	$isDonor = hasPrivilege(Privileges::UserDonor, $userID);
+
+	if ($premium) {
+		$isDonor = hasPrivilege(Privileges::UserDonor, $userID) && hasPrivilege(Privileges::UserPremium, $userID);
+	} else {
+		$isDonor = hasPrivilege(Privileges::UserDonor, $userID);
+	}
+
 	$username = $userData["username"];
+
 	if (!$isDonor || !$add) {
 		$start = time();
 	} else {
@@ -1874,69 +1876,30 @@ function giveDonor($userID, $months, $add=true) {
 			$start = time();
 		}
 	}
+
 	$unixExpire = $start + ((30 * 86400) * $months);
 	$monthsExpire = round(($unixExpire - time()) / (30 * 86400));
-	$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | ".Privileges::UserDonor.", donor_expire = ? WHERE id = ?", [$unixExpire, $userID]);
 
-	$donorBadge = $GLOBALS["db"]->fetch("SELECT id FROM badges WHERE name = 'supporter' OR name = 'support' LIMIT 1");
-	if (!$donorBadge) {
-		throw new Exception("There's no Supporter badge in the database.");
+	if ($premium) {
+		$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | ".Privileges::UserPremium." | ".Privileges::UserDonor.", donor_expire = ? WHERE id = ?", [$unixExpire, $userID]);
+		$donorBadge = $GLOBALS["db"]->fetch("SELECT id FROM badges WHERE name = 'premium' LIMIT 1");
+		$donorText = "premium";
+	} else {
+		$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | ".Privileges::UserDonor.", donor_expire = ? WHERE id = ?", [$unixExpire, $userID]);
+		$donorBadge = $GLOBALS["db"]->fetch("SELECT id FROM badges WHERE name = 'supporter' OR name = 'support' LIMIT 1");
+		$donorText = "supporter";
 	}
+
+	if (!$donorBadge) {
+		throw new Exception("There's no " + $donorText + " badge in the database.");
+	}
+
 	$hasAlready = $GLOBALS["db"]->fetch("SELECT id FROM user_badges WHERE user = ? AND badge = ? LIMIT 1", [$userID, $donorBadge["id"]]);
+
 	if (!$hasAlready) {
 		$GLOBALS["db"]->execute("INSERT INTO user_badges(user, badge) VALUES (?, ?);", [$userID, $donorBadge["id"]]);
 	}
-	// Send email
-	/* Feelin' peppy-y
-	if ($months >= 20) $TheMoreYouKnow = "Did you know that your donation accounts for roughly one month of keeping the main server up? That's crazy! Thank you so much!";
-	else if ($months >= 15 && $months < 20) $TheMoreYouKnow = "Normally we would say how much of our expenses a certain donation pays for, but your donation is halfway through paying the domain for 1 year and paying the main server for 1 month. So we don't really know what to say here: your donation pays for about 75% of keeping the server up one month. Thank you so much!";
-	else if ($months >= 10 && $months < 15) $TheMoreYouKnow = "You know what we could do with the amount you donated? We could probably renew the domain for one more year! Although your money is more likely to end up being spent on paying the main server. Thank you so much!";
-	else if ($months >= 4 && $months < 10) $TheMoreYouKnow = "Your donation will help to keep the beatmap mirror we set up for Akatsuki up for one month! Thanks a lot!";
-	else if ($months >= 1 && $months < 4) $TheMoreYouKnow =  "With your donation, we can afford to keep up the error logging server, which is a little VPS on which we host an error logging service (Sentry). Thanks a lot!";
-	
-	global $MailgunConfig;
-	$mailer = new SimpleMailgun($MailgunConfig);
-	$mailer->Send(
-		'Akatsuki <noreply@'.$MailgunConfig['domain'].'>', $userData['email'],
-		'Thank you for donating!',
-		sprintf(
-			"Hey %s! Thanks for donating to Akatsuki. It's thanks to the support of people like you that we can afford keeping the service up. Your donation has been processed, and you should now be able to get the donator role on discord, and have access to all the other perks listed on the \"Support us\" page.<br><br>%s<br><br>Your donor expires in %s months. Until then, have fun!<br>The Akatsuki Team",
-			$username,
-			$TheMoreYouKnow,
-			$monthsExpire
-		)
-	);
-	*/
-	return $monthsExpire;
-}
 
-function givePremium($userID, $months, $add=true) {
-	$userData = $GLOBALS["db"]->fetch("SELECT username, email, donor_expire FROM users WHERE id = ? LIMIT 1", [$userID]);
-	if (!$userData) {
-		throw new Exception("That user doesn't exist");
-	}
-	$isPremium = hasPrivilege(Privileges::UserDonor, $userID) && hasPrivilege(Privileges::UserPremium, $userID);
-	$username = $userData["username"];
-	if (!$isPremium || !$add) {
-		$start = time();
-	} else {
-		$start = $userData["donor_expire"];
-		if ($start < time()) {
-			$start = time();
-		}
-	}
-	$unixExpire = $start + ((30 * 86400) * $months);
-	$monthsExpire = round(($unixExpire - time()) / (30 * 86400));
-	$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | ".Privileges::UserPremium." | ".Privileges::UserDonor.", donor_expire = ? WHERE id = ?", [$unixExpire, $userID]);
-
-	$premiumBadge = $GLOBALS["db"]->fetch("SELECT id FROM badges WHERE name = 'premium' LIMIT 1");
-	if (!$premiumBadge) {
-		throw new Exception("There's no Premium badge in the database.");
-	}
-	$hasAlready = $GLOBALS["db"]->fetch("SELECT id FROM user_badges WHERE user = ? AND badge = ? LIMIT 1", [$userID, $premiumBadge["id"]]);
-	if (!$hasAlready) {
-		$GLOBALS["db"]->execute("INSERT INTO user_badges(user, badge) VALUES (?, ?);", [$userID, $premiumBadge["id"]]);
-	}
 	// Send email
 	/* Feelin' peppy-y
 	if ($months >= 20) $TheMoreYouKnow = "Did you know that your donation accounts for roughly one month of keeping the main server up? That's crazy! Thank you so much!";

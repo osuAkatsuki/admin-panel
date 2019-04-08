@@ -2705,72 +2705,19 @@ class P {
 				<option value=1>Replace months</option>
 			</select></td>
 			</tr>';
-
-
-			echo '</tbody></form>';
-			echo '</table>';
-			echo '<div class="text-center"><button type="submit" form="edit-user-badges" class="btn btn-primary">Give supporter</button></div>';
-			echo '</div>';
-		}
-		catch(Exception $e) {
-			// Redirect to exception page
-			redirect('index.php?p=108&e='.$e->getMessage());
-		}
-	}
-
-
-	/*
-	 * AdminGivePremium
-	 * Prints the admin give premium page
-	*/
-	public static function AdminGivePremium() {
-		try {
-			// Check if id is set
-			if (!isset($_GET['id'])) {
-				throw new Exception('Invalid user id');
-			}
-			echo '<div id="wrapper">';
-			printAdminSidebar();
-			echo '<div id="page-content-wrapper">';
-			// Maintenance check
-			self::MaintenanceStuff();
-			echo '<p align="center"><font size=5><i class="fa fa-money"></i>	Give premium</font></p>';
-			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
-			if (!$username) {
-				throw new Exception("Invalid user");
-			}
-			$username = current($username);
-			echo '<table class="table table-striped table-hover table-50-center"><tbody>';
-			echo '<form id="edit-user-badges" action="submit.php" method="POST">
-			<input name="csrf" type="hidden" value="'.csrfToken().'">
-			<input name="action" value="givePremium" hidden>';
 			echo '<tr>
-			<td>User ID</td>
-			<td><p class="text-center"><input type="text" name="id" class="form-control" value="'.$_GET["id"].'" readonly></td>
-			</tr>';
-			echo '<tr>
-			<td>Username</td>
-			<td><p class="text-center"><input type="text" class="form-control" value="'.$username.'" readonly></td>
-			</tr>';
-			echo '<tr>
-			<td>Period</td>
+			<td> Supporter type</td>
 			<td>
-			<input name="m" type="number" class="form-control" placeholder="Months" required></input>
-			</td>
-			</tr>';
-			echo '<tr>
-			<td>Operation type</td>
-			<td>
-			<select name="type" class="selectpicker" data-width="100%">
-				<option value=0 selected>Add months</option>
-				<option value=1>Replace months</option>
+			<select name="stype" class="selectpicker" data-width="100%">
+				<option value=0 selected>Supporter</option>
+				<option value=1>Premium</option>
 			</select></td>
 			</tr>';
 
 
 			echo '</tbody></form>';
 			echo '</table>';
-			echo '<div class="text-center"><button type="submit" form="edit-user-badges" class="btn btn-primary">Give premium</button></div>';
+			echo '<div class="text-center"><button type="submit" form="edit-user-badges" class="btn btn-primary">Give supporter</button></div>';
 			echo '</div>';
 		}
 		catch(Exception $e) {
