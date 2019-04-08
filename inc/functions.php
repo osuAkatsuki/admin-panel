@@ -173,7 +173,6 @@ function setTitle($p) {
 			222 => 'Rollback user (Relax)',
 			223 => 'Wipe user (Relax)',
 			234 => 'Restore scores (Relax)',
-			
 		];
 		if (isset($namesRipple[$p])) {
 			return __maketitle('Akatsuki', $namesRipple[$p]);
@@ -319,34 +318,16 @@ function printPage($p) {
 				P::AdminGiveDonor();
 			break;
 
-			// Admin panel - Give premium to user
-			case 221:
-				sessionCheckAdmin(Privileges::AdminCaker);
-				P::AdminGivePremium();
-			break;
-
 			// Admin panel - Rollback User (Regular)
 			case 122:
 				sessionCheckAdmin(Privileges::AdminWipeUsers);
 				P::AdminRollback();
 			break;
 
-			// Admin panel - Rollback User (Relax)
-			case 222:
-				sessionCheckAdmin(Privileges::AdminWipeUsers);
-				P::AdminRollbackRelax();
-			break;
-
 			// Admin panel - Wipe User (Regular)
 			case 123:
 				sessionCheckAdmin(Privileges::AdminWipeUsers);
 				P::AdminWipe();
-			break;
-
-			// Admin panel - Wipe User (Relax)
-			case 223:
-				sessionCheckAdmin(Privileges::AdminWipeUsers);
-				P::AdminWipeRelax();
 			break;
 
 			// Admin panel - Rank beatmap
@@ -390,23 +371,41 @@ function printPage($p) {
 				sessionCheckAdmin(Privileges::AdminWipeUsers);
 				P::AdminRestoreScores();
 			break;
-
-			// Admin panel - Restore scores (Relax)
-			case 234:
-				sessionCheckAdmin(Privileges::AdminWipeUsers);
-				P::AdminRestoreScoresRelax();
-			break;
 			
 			// Admin panel - Search users by IP
 			case 135:
 				sessionCheckAdmin(Privileges::AdminManageUsers);
 				P::AdminSearchUserByIP();
 			break;
-		 
+
 			// Admin panel - Search users by IP - Results
 			case 136:
 				sessionCheckAdmin(Privileges::AdminManageUsers);
 				P::AdminSearchUserByIPResults();
+			break;
+
+			// Admin panel - Give premium to user
+			case 221:
+				sessionCheckAdmin(Privileges::AdminCaker);
+				P::AdminGivePremium();
+			break;
+
+			// Admin panel - Rollback User (Relax)
+			case 222:
+				sessionCheckAdmin(Privileges::AdminWipeUsers);
+				P::AdminRollbackRelax();
+			break;
+
+			// Admin panel - Wipe User (Relax)
+			case 223:
+				sessionCheckAdmin(Privileges::AdminWipeUsers);
+				P::AdminWipeRelax();
+			break;
+
+			// Admin panel - Restore scores (Relax)
+			case 234:
+				sessionCheckAdmin(Privileges::AdminWipeUsers);
+				P::AdminRestoreScoresRelax();
 			break;
 
 			// 404 page
@@ -576,7 +575,6 @@ function getUserCountry() {
 	$ip = getIP();
 	if (!$ip || $ip == '127.0.0.1') {
 		return 'XX'; // Return XX if $ip isn't valid.
-
 	}
 	// otherwise, retrieve the contents from ip.zxq.co's API
 	$data = get_contents_http("http://ip.vanilla.rocks/$ip/country");
@@ -1888,8 +1886,8 @@ function giveDonor($userID, $months, $add=true) {
 	if (!$hasAlready) {
 		$GLOBALS["db"]->execute("INSERT INTO user_badges(user, badge) VALUES (?, ?);", [$userID, $donorBadge["id"]]);
 	}
-	/* Send email
-	// Feelin' peppy-y
+	// Send email
+	/* Feelin' peppy-y
 	if ($months >= 20) $TheMoreYouKnow = "Did you know that your donation accounts for roughly one month of keeping the main server up? That's crazy! Thank you so much!";
 	else if ($months >= 15 && $months < 20) $TheMoreYouKnow = "Normally we would say how much of our expenses a certain donation pays for, but your donation is halfway through paying the domain for 1 year and paying the main server for 1 month. So we don't really know what to say here: your donation pays for about 75% of keeping the server up one month. Thank you so much!";
 	else if ($months >= 10 && $months < 15) $TheMoreYouKnow = "You know what we could do with the amount you donated? We could probably renew the domain for one more year! Although your money is more likely to end up being spent on paying the main server. Thank you so much!";
@@ -1917,10 +1915,9 @@ function givePremium($userID, $months, $add=true) {
 	if (!$userData) {
 		throw new Exception("That user doesn't exist");
 	}
-	$isDonor = hasPrivilege(Privileges::UserDonor, $userID);
-	$isPremium = hasPrivilege(Privileges::UserPremium, $userID);
+	$isPremium = hasPrivilege(Privileges::UserDonor, $userID) && hasPrivilege(Privileges::UserPremium, $userID);
 	$username = $userData["username"];
-	if ((!$isDonor && !$isPremium ) || !$add)) {
+	if (!$isPremium || !$add)) {
 		$start = time();
 	} else {
 		$start = $userData["donor_expire"];
@@ -1940,8 +1937,8 @@ function givePremium($userID, $months, $add=true) {
 	if (!$hasAlready) {
 		$GLOBALS["db"]->execute("INSERT INTO user_badges(user, badge) VALUES (?, ?);", [$userID, $premiumBadge["id"]]);
 	}
-	/* Send email
-	// Feelin' peppy-y
+	// Send email
+	/* Feelin' peppy-y
 	if ($months >= 20) $TheMoreYouKnow = "Did you know that your donation accounts for roughly one month of keeping the main server up? That's crazy! Thank you so much!";
 	else if ($months >= 15 && $months < 20) $TheMoreYouKnow = "Normally we would say how much of our expenses a certain donation pays for, but your donation is halfway through paying the domain for 1 year and paying the main server for 1 month. So we don't really know what to say here: your donation pays for about 75% of keeping the server up one month. Thank you so much!";
 	else if ($months >= 10 && $months < 15) $TheMoreYouKnow = "You know what we could do with the amount you donated? We could probably renew the domain for one more year! Although your money is more likely to end up being spent on paying the main server. Thank you so much!";
@@ -2024,4 +2021,3 @@ function updateMainMenuIconBancho() {
 	redisConnect();
 	$GLOBALS["redis"]->publish("peppy:reload_settings", "reload");
 }
-
