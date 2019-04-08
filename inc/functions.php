@@ -1917,7 +1917,7 @@ function givePremium($userID, $months, $add=true) {
 	}
 	$isPremium = hasPrivilege(Privileges::UserDonor, $userID) && hasPrivilege(Privileges::UserPremium, $userID);
 	$username = $userData["username"];
-	if (!$isPremium || !$add)) {
+	if (!$isPremium || !$add) {
 		$start = time();
 	} else {
 		$start = $userData["donor_expire"];
