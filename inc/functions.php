@@ -169,7 +169,6 @@ function setTitle($p) {
 			135 => 'Search users by IP',
  			136 => 'Search users by IP - Results',
 			// cmyui's Additions
-			221 => 'Give Premium',
 			222 => 'Rollback user (Relax)',
 			223 => 'Wipe user (Relax)',
 			234 => 'Restore scores (Relax)',
