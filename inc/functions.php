@@ -1883,15 +1883,13 @@ function giveDonor($userID, $months, $add=true, $premium=false) {
 	if ($premium) {
 		$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | ".Privileges::UserPremium." | ".Privileges::UserDonor.", donor_expire = ? WHERE id = ?", [$unixExpire, $userID]);
 		$donorBadge = $GLOBALS["db"]->fetch("SELECT id FROM badges WHERE name = 'premium' LIMIT 1");
-		$donorText = "premium";
 	} else {
 		$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | ".Privileges::UserDonor.", donor_expire = ? WHERE id = ?", [$unixExpire, $userID]);
 		$donorBadge = $GLOBALS["db"]->fetch("SELECT id FROM badges WHERE name = 'supporter' OR name = 'support' LIMIT 1");
-		$donorText = "supporter";
 	}
 
 	if (!$donorBadge) {
-		throw new Exception("There's no " + $donorText + " badge in the database.");
+		throw new Exception("There's no such badge in the database.");
 	}
 
 	$hasAlready = $GLOBALS["db"]->fetch("SELECT id FROM user_badges WHERE user = ? AND badge = ? LIMIT 1", [$userID, $donorBadge["id"]]);
