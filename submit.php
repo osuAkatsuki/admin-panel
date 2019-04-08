@@ -126,11 +126,15 @@ try {
 			D::savePrivilegeGroup();
 		break;
 		case 'giveDonor':
-			sessionCheckAdmin(Privileges::AdminManageUsers);
+			sessionCheckAdmin(Privileges::AdminCaker);
 			D::GiveDonor();
 		break;
+		case 'givePremium':
+			sessionCheckAdmin(Privileges::AdminCaker);
+			D::GivePremium();
+		break;
 		case 'removeDonor':	// TODO
-			sessionCheckAdmin(Privileges::AdminManageUsers);
+			sessionCheckAdmin(Privileges::AdminCaker);
 			D::RemoveDonor();
 		break;
 		case 'rollback':

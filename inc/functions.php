@@ -23,7 +23,7 @@ require_once $df.'/helpers/UsernameHelper.php';
 require_once $df.'/helpers/URL.php';
 require_once $df.'/helpers/Schiavo.php';
 require_once $df.'/helpers/APITokens.php';
-// controller system v2
+// Controller system v2
 require_once $df.'/pages/Login.php';
 require_once $df.'/pages/Leaderboard.php';
 require_once $df.'/pages/PasswordFinishRecovery.php';
@@ -118,7 +118,7 @@ function getIP() {
 function setTitle($p) {
 	if (isset($_COOKIE['st']) && $_COOKIE['st'] == 1) {
 		// Safe title, so Peppy doesn't know we are browsing Ripple
-		return '<title>Google</title>';
+		return '<title>Solis</title>'; // Very safe -> Solis :^)
 	} else {
 		$namesRipple = [
 			1 =>   'Custom osu! server',
@@ -152,7 +152,7 @@ function setTitle($p) {
 			118 => 'Privilege Groups',
 			119 => 'Edit privilege group',
 			120 => 'View users in privilege group',
-			121 => 'Give Donor',
+			121 => 'Give Supporter',
 			122 => 'Rollback user',
 			123 => 'Wipe user',
 			124 => 'Rank beatmap',
@@ -167,8 +167,9 @@ function setTitle($p) {
 			133 => 'View anticheat report',
 			134 => 'Restore scores',
 			135 => 'Search users by IP',
-			136 => 'Search users by IP - Results',
+ 			136 => 'Search users by IP - Results',
 			// cmyui's Additions
+			221 => 'Give Premium',
 			222 => 'Rollback user (Relax)',
 			223 => 'Wipe user (Relax)',
 			234 => 'Restore scores (Relax)',
@@ -314,8 +315,14 @@ function printPage($p) {
 
 			// Admin panel - Give donor to user
 			case 121:
-				sessionCheckAdmin(Privileges::AdminManageUsers);
+				sessionCheckAdmin(Privileges::AdminCaker);
 				P::AdminGiveDonor();
+			break;
+
+			// Admin panel - Give premium to user
+			case 221:
+				sessionCheckAdmin(Privileges::AdminCaker);
+				P::AdminGivePremium();
 			break;
 
 			// Admin panel - Rollback User (Regular)
@@ -384,22 +391,22 @@ function printPage($p) {
 				P::AdminRestoreScores();
 			break;
 
+			// Admin panel - Restore scores (Relax)
+			case 234:
+				sessionCheckAdmin(Privileges::AdminWipeUsers);
+				P::AdminRestoreScoresRelax();
+			break;
+			
 			// Admin panel - Search users by IP
 			case 135:
 				sessionCheckAdmin(Privileges::AdminManageUsers);
 				P::AdminSearchUserByIP();
 			break;
-
+		 
 			// Admin panel - Search users by IP - Results
 			case 136:
 				sessionCheckAdmin(Privileges::AdminManageUsers);
 				P::AdminSearchUserByIPResults();
-			break;
-
-			// Admin panel - Restore scores (Relax)
-			case 234:
-				sessionCheckAdmin(Privileges::AdminWipeUsers);
-				P::AdminRestoreScoresRelax();
 			break;
 
 			// 404 page
@@ -509,12 +516,13 @@ function printAdminSidebar() {
 
 						if (hasPrivilege(Privileges::AdminManageUsers)) {
 							echo '<li><a href="index.php?p=102"><i class="fa fa-user"></i>	Users</a></li>';
-							echo '<li><a href="index.php?p=132"><i class="fa fa-fire"></i>	Anticheat reports</a></li>';
+							//echo '<li><a href="index.php?p=132"><i class="fa fa-fire"></i>	Anticheat reports</a></li>';
 						}
 
+						/*
 						if (hasPrivilege(Privileges::AdminWipeUsers)) {
 							echo '<li><a href="index.php?p=134"><i class="fa fa-undo"></i>	Restore scores</a></li>';
-						}
+						}*/
 
 						if (hasPrivilege(Privileges::AdminManageReports))
 							echo '<li><a href="index.php?p=126"><i class="fa fa-flag"></i>	Reports</a></li>';
@@ -525,10 +533,11 @@ function printAdminSidebar() {
 						if (hasPrivilege(Privileges::AdminManageBadges))
 							echo '<li><a href="index.php?p=108"><i class="fa fa-certificate"></i>	Badges</a></li>';
 
+						/*
 						if (hasPrivilege(Privileges::AdminManageBeatmaps)) {
 							echo '<li><a href="index.php?p=117"><i class="fa fa-music"></i>	Rank requests</a></li>';
 							echo '<li><a href="index.php?p=125"><i class="fa fa-level-up"></i>	Rank beatmap manually</a></li>';
-						}
+						}*/
 
 						if (hasPrivilege(Privileges::AdminViewRAPLogs))
 							echo '<li class="animated infinite pulse"><a href="index.php?p=116"><i class="fa fa-calendar"></i>	Admin log&nbsp;&nbsp;&nbsp;<div class="label label-primary">Free botnets</div></a></li>';
@@ -1867,19 +1876,19 @@ function giveDonor($userID, $months, $add=true) {
 			$start = time();
 		}
 	}
-	$unixExpire = $start+((30*86400)*$months);
-	$monthsExpire = round(($unixExpire-time())/(30*86400));
+	$unixExpire = $start + ((30 * 86400) * $months);
+	$monthsExpire = round(($unixExpire - time()) / (30 * 86400));
 	$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | ".Privileges::UserDonor.", donor_expire = ? WHERE id = ?", [$unixExpire, $userID]);
 
-	$donorBadge = $GLOBALS["db"]->fetch("SELECT id FROM badges WHERE name = 'Donator' OR name = 'Donor' LIMIT 1");
+	$donorBadge = $GLOBALS["db"]->fetch("SELECT id FROM badges WHERE name = 'supporter' OR name = 'support' LIMIT 1");
 	if (!$donorBadge) {
-		throw new Exception("There's no Donor badge in the database. Please run bdzr to migrate the database to the latest version.");
+		throw new Exception("There's no Supporter badge in the database.");
 	}
 	$hasAlready = $GLOBALS["db"]->fetch("SELECT id FROM user_badges WHERE user = ? AND badge = ? LIMIT 1", [$userID, $donorBadge["id"]]);
 	if (!$hasAlready) {
 		$GLOBALS["db"]->execute("INSERT INTO user_badges(user, badge) VALUES (?, ?);", [$userID, $donorBadge["id"]]);
 	}
-	// Send email
+	/* Send email
 	// Feelin' peppy-y
 	if ($months >= 20) $TheMoreYouKnow = "Did you know that your donation accounts for roughly one month of keeping the main server up? That's crazy! Thank you so much!";
 	else if ($months >= 15 && $months < 20) $TheMoreYouKnow = "Normally we would say how much of our expenses a certain donation pays for, but your donation is halfway through paying the domain for 1 year and paying the main server for 1 month. So we don't really know what to say here: your donation pays for about 75% of keeping the server up one month. Thank you so much!";
@@ -1899,6 +1908,59 @@ function giveDonor($userID, $months, $add=true) {
 			$monthsExpire
 		)
 	);
+	*/
+	return $monthsExpire;
+}
+
+function givePremium($userID, $months, $add=true) {
+	$userData = $GLOBALS["db"]->fetch("SELECT username, email, donor_expire FROM users WHERE id = ? LIMIT 1", [$userID]);
+	if (!$userData) {
+		throw new Exception("That user doesn't exist");
+	}
+	$isDonor = hasPrivilege(Privileges::UserDonor, $userID);
+	$isPremium = hasPrivilege(Privileges::UserPremium, $userID);
+	$username = $userData["username"];
+	if ((!$isDonor && !$isPremium ) || !$add)) {
+		$start = time();
+	} else {
+		$start = $userData["donor_expire"];
+		if ($start < time()) {
+			$start = time();
+		}
+	}
+	$unixExpire = $start + ((30 * 86400) * $months);
+	$monthsExpire = round(($unixExpire - time()) / (30 * 86400));
+	$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | ".Privileges::UserPremium." | ".Privileges::UserDonor.", donor_expire = ? WHERE id = ?", [$unixExpire, $userID]);
+
+	$premiumBadge = $GLOBALS["db"]->fetch("SELECT id FROM badges WHERE name = 'premium' LIMIT 1");
+	if (!$premiumBadge) {
+		throw new Exception("There's no Premium badge in the database.");
+	}
+	$hasAlready = $GLOBALS["db"]->fetch("SELECT id FROM user_badges WHERE user = ? AND badge = ? LIMIT 1", [$userID, $premiumBadge["id"]]);
+	if (!$hasAlready) {
+		$GLOBALS["db"]->execute("INSERT INTO user_badges(user, badge) VALUES (?, ?);", [$userID, $premiumBadge["id"]]);
+	}
+	/* Send email
+	// Feelin' peppy-y
+	if ($months >= 20) $TheMoreYouKnow = "Did you know that your donation accounts for roughly one month of keeping the main server up? That's crazy! Thank you so much!";
+	else if ($months >= 15 && $months < 20) $TheMoreYouKnow = "Normally we would say how much of our expenses a certain donation pays for, but your donation is halfway through paying the domain for 1 year and paying the main server for 1 month. So we don't really know what to say here: your donation pays for about 75% of keeping the server up one month. Thank you so much!";
+	else if ($months >= 10 && $months < 15) $TheMoreYouKnow = "You know what we could do with the amount you donated? We could probably renew the domain for one more year! Although your money is more likely to end up being spent on paying the main server. Thank you so much!";
+	else if ($months >= 4 && $months < 10) $TheMoreYouKnow = "Your donation will help to keep the beatmap mirror we set up for Akatsuki up for one month! Thanks a lot!";
+	else if ($months >= 1 && $months < 4) $TheMoreYouKnow =  "With your donation, we can afford to keep up the error logging server, which is a little VPS on which we host an error logging service (Sentry). Thanks a lot!";
+	
+	global $MailgunConfig;
+	$mailer = new SimpleMailgun($MailgunConfig);
+	$mailer->Send(
+		'Akatsuki <noreply@'.$MailgunConfig['domain'].'>', $userData['email'],
+		'Thank you for donating!',
+		sprintf(
+			"Hey %s! Thanks for donating to Akatsuki. It's thanks to the support of people like you that we can afford keeping the service up. Your donation has been processed, and you should now be able to get the donator role on discord, and have access to all the other perks listed on the \"Support us\" page.<br><br>%s<br><br>Your donor expires in %s months. Until then, have fun!<br>The Akatsuki Team",
+			$username,
+			$TheMoreYouKnow,
+			$monthsExpire
+		)
+	);
+	*/
 	return $monthsExpire;
 }
 

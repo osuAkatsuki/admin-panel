@@ -1252,8 +1252,21 @@ class D {
 			if (!isset($_POST["id"]) || empty($_POST["id"]) || !isset($_POST["m"]) || empty($_POST["m"]))
 				throw new Exception("Invalid user");
 			$months = giveDonor($_POST["id"], $_POST["m"], $_POST["type"] == 0);
-			rapLog(sprintf("has given donor for %s months to user %s", $_POST["m"], $username), $_SESSION["userid"]);
-			redirect("index.php?p=102&s=Donor status changed. Donor for that user now expires in ".$months." months!");
+			rapLog(sprintf("has given supporter for %s months to user %s", $_POST["m"], $username), $_SESSION["userid"]);
+			redirect("index.php?p=102&s=Supporter status changed. Supporter for that user now expires in ".$months." months!");
+		}
+		catch(Exception $e) {
+			redirect('index.php?p=102&e='.$e->getMessage());
+		}
+	}
+
+	public static function GivePremium() {
+		try {
+			if (!isset($_POST["id"]) || empty($_POST["id"]) || !isset($_POST["m"]) || empty($_POST["m"]))
+				throw new Exception("Invalid user");
+			$months = givePremium($_POST["id"], $_POST["m"], $_POST["type"] == 0);
+			rapLog(sprintf("has given premium for %s months to user %s", $_POST["m"], $username), $_SESSION["userid"]);
+			redirect("index.php?p=102&s=Premium status changed. Premium for that user now expires in ".$months." months!");
 		}
 		catch(Exception $e) {
 			redirect('index.php?p=102&e='.$e->getMessage());
@@ -1271,12 +1284,12 @@ class D {
 			$username = current($username);
 			$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges & ~".Privileges::UserDonor.", donor_expire = 0 WHERE id = ? LIMIT 1", [$_GET["id"]]);
 
-			// Remove donor badge
-			// 14 = donor badge id
+			// Remove supporter badge
+			// 14 = supporter badge id
 			$GLOBALS["db"]->execute("DELETE FROM user_badges WHERE user = ? AND badge = ?", [$_GET["id"], 14]);
 
-			rapLog(sprintf("has removed donor from user %s", $username), $_SESSION["userid"]);
-			redirect("index.php?p=102&s=Donor status changed!");
+			rapLog(sprintf("has removed supporter from user %s", $username), $_SESSION["userid"]);
+			redirect("index.php?p=102&s=Supporter status changed!");
 		}
 		catch(Exception $e) {
 			redirect('index.php?p=102&e='.$e->getMessage());
