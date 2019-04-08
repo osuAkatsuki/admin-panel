@@ -1856,7 +1856,7 @@ function giveDonor($userID, $months, $add=true, $premium=false) {
 	$userData = $GLOBALS["db"]->fetch("SELECT username, email, donor_expire FROM users WHERE id = ? LIMIT 1", [$userID]);
 
 	if (!$userData) {
-		throw new Exception("That user doesn't exist")
+		throw new Exception("That user doesn't exist");
 	}
 
 	$isDonor = hasPrivilege(Privileges::UserDonor, $userID);
