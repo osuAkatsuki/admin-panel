@@ -60,7 +60,7 @@ class P {
 		AND scores.completed = 3
 		AND scores.play_mode = 0
 		AND beatmaps.ranked = 2
-		ORDER BY scores.pp DESC LIMIT 30');
+		ORDER BY scores.pp DESC LIMIT 10');
 
 		$topPlaysRelax = [];
 		$topPlaysRelax = $GLOBALS['db']->fetchAll('SELECT
@@ -74,7 +74,7 @@ class P {
 		AND scores_relax.completed = 3
 		AND scores_relax.play_mode = 0
 		AND beatmaps.ranked = 2
-		ORDER BY scores_relax.pp DESC LIMIT 30');
+		ORDER BY scores_relax.pp DESC LIMIT 10');
 
 		$onlineUsers = getJsonCurl("http://127.0.0.1:5001/api/v1/onlineUsers");
 		if ($onlineUsers == false) {
