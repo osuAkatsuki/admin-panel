@@ -2,7 +2,7 @@
 /*
  * Ripple functions file
  * include this to include the world
-*/
+ */
 // Include config file and db class
 $df = dirname(__FILE__);
 require_once $df.'/config.php';
@@ -61,17 +61,21 @@ function redisConnect() {
 		$GLOBALS["redis"] = new Predis\Client();
 	}
 }
+
+
 /*
  * redirect
  * Redirects to a URL.
  *
  * @param (string) ($url) Destination URL.
-*/
+ */
 function redirect($url) {
 	header('Location: '.$url);
 	session_commit();
 	exit();
 }
+
+
 /*
  * outputVariable
  * Output $v variable to $fn file
@@ -79,10 +83,12 @@ function redirect($url) {
  *
  * @param (string) ($fn) Output file name
  * @param ($v) Variable to output
-*/
+ */
 function outputVariable($v, $fn = "/tmp/ripple.txt") {
 	file_put_contents($fn, var_export($v, true), FILE_APPEND);
 }
+
+
 /*
  * randomString
  * Generate a random string.
@@ -90,7 +96,7 @@ function outputVariable($v, $fn = "/tmp/ripple.txt") {
  *
  * @param (int) ($l) Length of the generated string
  * @return (string) Generated string
-*/
+ */
 function randomString($l, $c = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789') {
 	$res = '';
 	srand((float) microtime() * 1000000);
@@ -106,6 +112,8 @@ function getIP() {
 	// It can easily be spoofed.
 
 }
+
+
 /****************************************
  **		HTML/PAGES   FUNCTIONS 		   **
  ****************************************/
@@ -114,7 +122,7 @@ function getIP() {
  * sets the title of the current $p page.
  *
  * @param (int) ($p) page ID.
-*/
+ */
 function setTitle($p) {
 	if (isset($_COOKIE['st']) && $_COOKIE['st'] == 1) {
 		// Safe title, so Peppy doesn't know we are browsing Ripple
@@ -185,6 +193,8 @@ function setTitle($p) {
 function __maketitle($b1, $b2) {
 	return "<title>$b1 - $b2</title>";
 }
+
+
 /*
  * printPage
  * Prints the content of a page.
@@ -192,7 +202,7 @@ function __maketitle($b1, $b2) {
  * For guest pages (logged out only pages), call first checkLoggedIn() and if false print the page.
  *
  * @param (int) ($p) page ID.
-*/
+ */
 function printPage($p) {
 	$exceptions = ['pls goshuujin-sama do not hackerino &gt;////&lt;', 'Only administrators are allowed to see that documentation file.', "<div style='font-size: 40pt;'>ATTEMPTED USER ACCOUNT VIOLATION DETECTED</div>
 			<p>We detected an attempt to violate an user account. If you didn't do this on purpose, you can ignore this message and login into your account normally. However if you changed your cookies on purpose and you were trying to access another user's account, don't do that.</p>
@@ -429,6 +439,8 @@ function printPage($p) {
 		}
 	}
 }
+
+
 /*
  * printNavbar
  * Prints the navbar.
@@ -440,7 +452,7 @@ function printPage($p) {
  *
  * To print tabs for both guests and logged in users, do
  *	echo('stuff');
-*/
+ */
 function printNavbar() {
 	global $discordConfig;
 	echo '<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -490,10 +502,12 @@ function printNavbar() {
 	// Navbar end
 	echo '</ul></div></div></nav>';
 }
+
+
 /*
  * printAdminSidebar
  * Prints the admin left sidebar
-*/
+ */
 function printAdminSidebar() {
 	echo '<div id="sidebar-wrapper" class="collapse" aria-expanded="false">
 					<ul class="sidebar-nav">
@@ -537,6 +551,8 @@ function printAdminSidebar() {
 						echo "</ul>
 				</div>";
 }
+
+
 /*
  * printAdminPanel
  * Prints an admin dashboard panel, used to show
@@ -546,7 +562,7 @@ function printAdminSidebar() {
  * @i (string) font awesome icon of that panel. Recommended doing fa-5x (Eg: fa fa-gamepad fa-5x)
  * @bt (string) big text, usually the value
  * @st (string) small text, usually the name of that stat
-*/
+ */
 function printAdminPanel($c, $i, $bt, $st, $tt="") {
 	echo '<div class="col-lg-3 col-md-6">
 			<div class="panel panel-'.$c.'">
@@ -558,12 +574,14 @@ function printAdminPanel($c, $i, $bt, $st, $tt="") {
 				<div>'.$st.'</div>
 			</div></div></div></div></div>';
 }
+
+
 /*
  * getUserCountry
  * Does a call to ip.zxq.co to get the user's IP address.
  *
  * @returns (string) A 2-character string containing the user's country.
-*/
+ */
 function getUserCountry() {
 	$ip = getIP();
 	if (!$ip || $ip == '127.0.0.1') {
@@ -588,6 +606,8 @@ function countryCodeToReadable($cc) {
 
 	return isset($c[$cc]) ? $c[$cc] : 'unknown country';
 }
+
+
 /*
  * getAllowedUsers()
  * Get an associative array, saying whether a user is banned or not on Ripple.
@@ -614,18 +634,20 @@ function getAllowedUsers($by = 'username') {
 /*
  * startSessionIfNotStarted
  * Starts a session only if not started yet.
-*/
+ */
 function startSessionIfNotStarted() {
 	if (session_status() == PHP_SESSION_NONE)
 		session_start();
 	if (isset($_SESSION['username']) && !isset($_SESSION['userid']))
 		$_SESSION['userid'] = getUserID($_SESSION['username']);
 }
+
+
 /*
  * sessionCheck
  * Check if we are logged in, otherwise go to login page.
  * Used for logged-in only pages
-*/
+ */
 function sessionCheck() {
 	try {
 		// Start session
@@ -668,12 +690,14 @@ function sessionCheck() {
 		redirect('index.php?p=2');
 	}
 }
+
+
 /*
  * sessionCheckAdmin
  * Check if we are logged in, and we are admin.
  * Used for admin pages (like admin cp)
  * Call this function instead of sessionCheck();
-*/
+ */
 function sessionCheckAdmin($privilege = -1, $e = 0) {
 	sessionCheck();
 	try {
@@ -691,25 +715,31 @@ function sessionCheckAdmin($privilege = -1, $e = 0) {
 		return false;
 	}
 }
+
+
 /*
  * updateLatestActivity
  * Updates the latest_activity column for $u user
  *
  * @param ($u) (string) User ID
-*/
+ */
 function updateLatestActivity($u) {
 	$GLOBALS['db']->execute('UPDATE users SET latest_activity = ? WHERE id = ?', [time(), $u]);
 }
+
+
 /*
  * updateSafeTitle
  * Updates the st cookie, if 1 title is "Google" instead
  * of Ripple - pagename, so Peppy doesn't know that
  * we are browsing Ripple
-*/
+ */
 function updateSafeTitle() {
 	$safeTitle = $GLOBALS['db']->fetch('SELECT safe_title FROM users_stats WHERE username = ?', $_SESSION['username']);
 	setcookie('st', current($safeTitle));
 }
+
+
 /*
  * timeDifference
  * Returns a string with difference from $t1 and $t2
@@ -718,7 +748,7 @@ function updateSafeTitle() {
  * @param (int) ($t2) Event time.
  * @param (bool) ($ago) Output "ago" after time difference
  * @return (string) A string in "x minutes/hours/days (ago)" format
-*/
+ */
 function timeDifference($t1, $t2, $ago = true, $leastText = "Right Now") {
 	// Calculate difference in seconds
 	// abs and +1 should fix memes
@@ -772,7 +802,7 @@ $checkLoggedInCache = -100;
  * Similar to sessionCheck(), but let the user choose what to do if logged in or not
  *
  * @return (bool) true: logged in / false: not logged in
-*/
+ */
 function checkLoggedIn() {
 	global $checkLoggedInCache;
 	// Start session
@@ -803,6 +833,8 @@ function checkLoggedIn() {
 
 	return true;
 }
+
+
 /*
  * getUserRank
  * Gets the rank of the $u user
@@ -848,7 +880,7 @@ $cachedID = false;
  *
  * @param (string) ($u) Username
  * @return (string) user ID of $u
-*/
+ */
 function getUserID($u) {
 	global $cachedID;
 	if (isset($cachedID[$u])) {
@@ -864,13 +896,15 @@ function getUserID($u) {
 
 	return $cachedID[$u];
 }
+
+
 /*
  * getUserUsername
  * Get the username for $uid user
  *
  * @param (int) ($uid) user ID
  * @return (string) username
-*/
+ */
 function getUserUsername($uid) {
 	$username = $GLOBALS['db']->fetch('SELECT username FROM users WHERE id = ? LIMIT 1', $uid);
 	if ($username) {
@@ -879,13 +913,15 @@ function getUserUsername($uid) {
 		return 'unknown';
 	}
 }
+
+
 /*
  * getPlaymodeText
  * Returns a text representation of a playmode integer.
  *
  * @param (int) ($playModeInt) an integer from 0 to 3 (inclusive) stating the play mode.
  * @param (bool) ($readable) set to false for returning values to be inserted into the db. set to true for having something human readable (osu!standard / Taiko...)
-*/
+ */
 function getPlaymodeText($playModeInt, $readable = false) {
 	switch ($playModeInt) {
 		case 1:
@@ -904,13 +940,15 @@ function getPlaymodeText($playModeInt, $readable = false) {
 		break;
 	}
 }
+
+
 /*
  * getScoreMods
  * Gets the mods for the $m mod flag
  *
  * @param (int) ($m) Mod flag
  * @returns (string) Eg: "+ HD, HR"
-*/
+ */
 function getScoreMods($m) {
 	require_once dirname(__FILE__).'/ModsEnum.php';
 	$r = '';
@@ -1010,6 +1048,8 @@ function getScoreMods($m) {
 		return '';
 	}
 }
+
+
 /*
  * calculateAccuracy
  * Calculates the accuracy of a score in a given gamemode.
@@ -1021,7 +1061,7 @@ function getScoreMods($m) {
  * @param int $nkatu The number of katu hits in a song.
  * @param int $nmiss The number of missed hits in a song.
  * @param int $mode The game mode.
-*/
+ */
 function calculateAccuracy($n300, $n100, $n50, $ngeki, $nkatu, $nmiss, $mode) {
 	// For reference, see: http://osu.ppy.sh/wiki/Accuracy
 	switch ($mode) {
@@ -1052,13 +1092,15 @@ function calculateAccuracy($n300, $n100, $n50, $ngeki, $nkatu, $nmiss, $mode) {
 	return $accuracy * 100; // we're doing * 100 because $accuracy is like 0.9823[...]
 
 }
+
+
 /*
  * getRequiredScoreForLevel
  * Gets the required score for $l level
  *
  * @param (int) ($l) level
  * @return (int) required score
-*/
+ */
 function getRequiredScoreForLevel($l) {
 	// Calcolate required score
 	if ($l <= 100) {
@@ -1072,12 +1114,14 @@ function getRequiredScoreForLevel($l) {
 		return 26931190829 + 100000000000 * ($l - 100);
 	}
 }
+
+
 /*
  * getLevel
  * Gets the level for $s score
  *
  * @param (int) ($s) ranked score number
-*/
+ */
 function getLevel($s) {
 	$level = 1;
 	while (true) {
@@ -1099,6 +1143,8 @@ function getLevel($s) {
 		}
 	}
 }
+
+
 /**************************
  ** CHANGELOG FUNCTIONS  **
  **************************/
@@ -1129,12 +1175,14 @@ function getChangelog() {
 		echo "<a href='index.php?p=17&page=".($_GET['page'] + 1)."'>Next page &gt;</a>";
 	}
 }
+
+
 /*
  * getChangelogPage()
  * Gets a page from the changelog.json with some commits.
  *
  * @param (int) ($p) Page. Optional. Default is 1.
-*/
+ */
 function getChangelogPage($p = 1) {
 	global $ChangelogConfig;
 	// Retrieve data from changelog.json
@@ -1220,6 +1268,8 @@ function getChangelogPage($p = 1) {
 
 	return $ret;
 }
+
+
 /**************************
  **   OTHER   FUNCTIONS  **
  **************************/
@@ -1276,6 +1326,8 @@ function post_content_http($url, $content, $timeout=10) {
 
 	return $output;
 }
+
+
 /*
  * printBadgeSelect()
  * Prints a select with every badge available as options
@@ -1283,7 +1335,7 @@ function post_content_http($url, $content, $timeout=10) {
  * @param (string) ($sn) Name of the select, for php form stuff
  * @param (string) ($sid) Name of the selected item (badge ID)
  * @param (array) ($bd) Badge data array (SELECT * FROM badges)
-*/
+ */
 function printBadgeSelect($sn, $sid, $bd) {
 	echo '<select name="'.$sn.'" class="selectpicker" data-width="100%">';
 	foreach ($bd as $b) {
@@ -1296,6 +1348,8 @@ function printBadgeSelect($sn, $sid, $bd) {
 	}
 	echo '</select>';
 }
+
+
 /**
  * BwToString()
  * Bitwise enum number to string.
@@ -1314,13 +1368,15 @@ function BwToString($num, $bwenum, $sep = '<br>') {
 
 	return implode($sep, $ret);
 }
+
+
 /*
  * checkUserExists
  * Check if given user exists
  *
  * @param (string) ($i) username/id
  * @param (bool) ($id) if true, search by id. Default: false
-*/
+ */
 function checkUserExists($u, $id = false) {
 	if ($id) {
 		return $GLOBALS['db']->fetch('SELECT id FROM users WHERE id = ?', [$u]);
@@ -1328,6 +1384,8 @@ function checkUserExists($u, $id = false) {
 		return $GLOBALS['db']->fetch('SELECT id FROM users WHERE username = ?', [$u]);
 	}
 }
+
+
 /*
  * getFriendship
  * Check friendship between u0 and u1
@@ -1336,7 +1394,7 @@ function checkUserExists($u, $id = false) {
  * @param (int/string) ($u1) u1 id/username
  * @param (bool) ($id) If true, u0 and u1 are ids, if false they are usernames
  * @return (int) 0: no friendship, 1: u0 friend with u1, 2: mutual
-*/
+ */
 function getFriendship($u0, $u1, $id = false) {
 	// Get id if needed
 	if (!$id) {
@@ -1358,6 +1416,8 @@ function getFriendship($u0, $u1, $id = false) {
 	// Otherwise, it's just no friendship.
 	return 0;
 }
+
+
 /*
  * addFriend
  * Add $newFriend to $dude's friendlist
@@ -1366,7 +1426,7 @@ function getFriendship($u0, $u1, $id = false) {
  * @param (int/string) ($newFriend) dude's new friend
  * @param (bool) ($id) If true, $dude and $newFriend are ids, if false they are usernames
  * @return (bool) true if added, false if not (already in friendlist, invalid user...)
-*/
+ */
 function addFriend($dude, $newFriend, $id = false) {
 	try {
 		// Get id if needed
@@ -1395,6 +1455,8 @@ function addFriend($dude, $newFriend, $id = false) {
 		return false;
 	}
 }
+
+
 /*
  * removeFriend
  * Remove $oldFriend from $dude's friendlist
@@ -1403,7 +1465,7 @@ function addFriend($dude, $newFriend, $id = false) {
  * @param (int/string) ($oldFriend) dude's old friend
  * @param (bool) ($id) If true, $dude and $oldFriend are ids, if false they are usernames
  * @return (bool) true if removed, false if not (not in friendlist, invalid user...)
-*/
+ */
 function removeFriend($dude, $oldFriend, $id = false) {
 	try {
 		// Get id if needed
@@ -1435,11 +1497,13 @@ function clir($must = false, $redirTo = 'index.php?p=2&e=3') {
 		redirect($redirTo);
 	}
 }
+
+
 /*
  * checkMustHave
  * Makes sure a request has the "Must Have"s of a page.
  * (Must Haves = $mh_GET, $mh_POST)
-*/
+ */
 function checkMustHave($page) {
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		if (isset($page->mh_POST) && count($page->mh_POST) > 0) {
@@ -1459,13 +1523,15 @@ function checkMustHave($page) {
 		}
 	}
 }
+
+
 /*
  * accuracy
  * Convert accuracy to string, having 2 decimal digits.
  *
  * @param (float) accuracy
  * @return (string) accuracy, formatted into a string
-*/
+ */
 function accuracy($acc) {
 	return number_format(round($acc, 2), 2);
 }
@@ -1571,7 +1637,7 @@ function postJsonCurl($url, $data, $timeout = 1) {
  * @param (array) ($arr) Bloodcat data array
  * @param (bool) ($np) If true, output chat np beatmap, otherwise output osu direct search beatmap
  * @return (string) osu!direct-like string
-*/
+ */
 function bloodcatDirectString($arr, $np = false) {
 	$s = '';
 	if ($np) {
@@ -1650,7 +1716,7 @@ function redirect2FA() {
 
    I'd just like to interject for a moment. You do not just 'fuck' PHP, you 'fuck' PHP with a CACTUS!
    -- Howl
-*/
+ */
 
 function get2FAType($userID) {
 	$result = $GLOBALS["db"]->fetch("SELECT IFNULL((SELECT 2 FROM 2fa_totp WHERE userid = ? AND enabled = 1 LIMIT 1), 0) AS x", [$userID]);

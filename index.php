@@ -297,8 +297,7 @@ if ($p < 100) {
     <!-- Custom JavaScript for this page here -->
     <?php
 switch ($p) {
-		// Admin cp - edit user
-
+	// Admin cp - edit user
 	case 103:
 		echo '
                 <script type="text/javascript">

@@ -43,7 +43,8 @@ try {
 			redirect('index.php');
 		break;
 		break;
-			// Admin functions, need sessionCheckAdmin() because can be performed only by admins
+		
+		// Admin functions, need sessionCheckAdmin() because can be performed only by admins
 
 		case 'saveSystemSettings':
 			sessionCheckAdmin(Privileges::AdminManageSettings);

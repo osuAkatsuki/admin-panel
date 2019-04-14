@@ -5,7 +5,7 @@ class D {
 	/*
 	 * Register
 	 * Register function
-	*/
+	 */
 	public static function Register() {
 		global $reCaptchaConfig;
 		try {
@@ -119,7 +119,7 @@ class D {
 	/*
 	 * ChangePassword
 	 * Change password function
-	*/
+	 */
 	public static function ChangePassword() {
 		try {
 			// Check if we are logged in
@@ -155,7 +155,7 @@ class D {
 	/*
 	 * RecoverPassword()
 	 * Form submission for printPasswordRecovery.
-	*/
+	 */
 	public static function RecoverPassword() {
 		global $MailgunConfig;
 		try {
@@ -185,7 +185,7 @@ class D {
 	/*
 	 * SaveSystemSettings
 	 * Save system settings function (ADMIN CP)
-	*/
+	 */
 	public static function SaveSystemSettings() {
 		try {
 			// Get values
@@ -234,7 +234,7 @@ class D {
 	/*
 	 * SaveBanchoSettings
 	 * Save bancho settings function (ADMIN CP)
-	*/
+	 */
 	public static function SaveBanchoSettings() {
 		try {
 			// Get values
@@ -298,7 +298,7 @@ class D {
 	/*
 	 * RunCron
 	 * Runs cron.php from admin cp with exec/redirect
-	*/
+	 */
 	public static function RunCron() {
 		if ($CRON['adminExec']) {
 			// howl master linux shell pr0
@@ -312,7 +312,7 @@ class D {
 	/*
 	 * SaveEditUser
 	 * Save edit user function (ADMIN CP)
-	*/
+	 */
 	public static function SaveEditUser() {
 		try {
 			// Check if everything is set (username color, username style, rank, allowed and notes can be empty)
@@ -395,7 +395,7 @@ class D {
 	/*
 	 * BanUnbanUser
 	 * Ban/Unban user function (ADMIN CP)
-	*/
+	 */
 	public static function BanUnbanUser() {
 		try {
 			// Check if everything is set
@@ -442,7 +442,7 @@ class D {
 	/*
 	 * QuickEditUser
 	 * Redirects to the edit user page for the user with $_POST["u"] username
-	*/
+	 */
 	public static function QuickEditUser($email = false) {
 		try {
 			// Check if everything is set
@@ -467,7 +467,7 @@ class D {
 	/*
 	 * QuickEditUserBadges
 	 * Redirects to the edit user badges page for the user with $_POST["u"] username
-	*/
+	 */
 	public static function QuickEditUserBadges() {
 		try {
 			// Check if everything is set
@@ -492,7 +492,7 @@ class D {
 	/*
 	 * ChangeIdentity
 	 * Change identity function (ADMIN CP)
-	*/
+	 */
 	public static function ChangeIdentity() {
 		try {
 			// Check if everything is set
@@ -536,7 +536,7 @@ class D {
 	/*
 	 * SaveBadge
 	 * Save badge function (ADMIN CP)
-	*/
+	 */
 	public static function SaveBadge() {
 		try {
 			// Check if everything is set
@@ -563,7 +563,7 @@ class D {
 	/*
 	 * SaveUserBadges
 	 * Save user badges function (ADMIN CP)
-	*/
+	 */
 	public static function SaveUserBadges() {
 		try {
 			// Check if everything is set
@@ -597,7 +597,7 @@ class D {
 	/*
 	 * RemoveBadge
 	 * Remove badge function (ADMIN CP)
-	*/
+	 */
 	public static function RemoveBadge() {
 		try {
 			// Make sure that this is not the "None badge"
@@ -628,7 +628,7 @@ class D {
 	/*
 	 * SilenceUser
 	 * Silence someone (ADMIN CP)
-	*/
+	 */
 	public static function silenceUser() {
 		try {
 			// Check if everything is set
@@ -677,7 +677,7 @@ class D {
 	/*
 	 * KickUser
 	 * Kick someone from bancho (ADMIN CP)
-	*/
+	 */
 	public static function KickUser() {
 		try {
 			// Check if everything is set
@@ -708,7 +708,7 @@ class D {
 	/*
 	 * ResetAvatar
 	 * Reset soneone's avatar (ADMIN CP)
-	*/
+	 */
 	public static function ResetAvatar() {
 		try {
 			// Check if everything is set
@@ -736,7 +736,7 @@ class D {
 	/*
 	 * Logout
 	 * Logout and return to home
-	*/
+	 */
 	public static function Logout() {
 		// Logging out without being logged in doesn't make much sense
 		if (checkLoggedIn()) {
@@ -757,7 +757,7 @@ class D {
 	/*
 	 * ForgetEveryCookie
 	 * Allows the user to delete every field in the remember database table with their username, so that it is logged out of every computer they were logged in.
-	*/
+	 */
 	public static function ForgetEveryCookie() {
 		startSessionIfNotStarted();
 		$rch = new RememberCookieHandler();
@@ -768,7 +768,7 @@ class D {
 	/*
 	 * saveUserSettings
 	 * Save user settings functions
-	*/
+	 */
 	public static function saveUserSettings() {
 		global $PlayStyleEnum;
 		try {
@@ -846,7 +846,7 @@ class D {
 	/*
 	 * SaveUserpage
 	 * Save userpage functions
-	*/
+	 */
 	public static function SaveUserpage() {
 		try {
 			// Check if we are logged in
@@ -880,7 +880,7 @@ class D {
 	/*
 	 * ChangeAvatar
 	 * Chhange avatar functions
-	*/
+	 */
 	public static function ChangeAvatar() {
 		try {
 			// Check if we are logged in
@@ -926,7 +926,7 @@ class D {
 	/*
 	 * WipeAccount
 	 * Wipes an account
-	*/
+	 */
 	public static function WipeAccount() {
 		try {
 			if (!isset($_POST['id']) || empty($_POST['id'])) {
@@ -985,7 +985,7 @@ class D {
 	/*
 	 * WipeAccount
 	 * Wipes an account
-	*/
+	 */
 	public static function WipeAccountRelax() {
 		try {
 			if (!isset($_POST['id']) || empty($_POST['id'])) {
@@ -1044,7 +1044,7 @@ class D {
 	/*
 	 * AddRemoveFriend
 	 * Add remove friends
-	*/
+	 */
 	public static function AddRemoveFriend() {
 		try {
 			// Check if we are logged in
@@ -1072,7 +1072,7 @@ class D {
 	/*
 	 * ProcessRankRequest
 	 * Rank/unrank a beatmap
-	*/
+	 */
 	public static function ProcessRankRequest() {
 		global $URL;
 		global $ScoresConfig;
@@ -1133,7 +1133,7 @@ class D {
 	/*
 	 * BlacklistRankRequest
 	 * Toggle blacklist for a rank request
-	*/
+	 */
 	public static function BlacklistRankRequest() {
 		try {
 			if (!isset($_GET["id"]) || empty($_GET["id"]))
@@ -1195,7 +1195,7 @@ class D {
 	/*
 	 * RestrictUnrestrictUser
 	 * restricte/unrestrict user function (ADMIN CP)
-	*/
+	 */
 	public static function RestrictUnrestrictUser() {
 		try {
 			// Check if everything is set

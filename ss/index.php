@@ -1,7 +1,7 @@
 <?php
 /*
  * Exception stuff for screenshot upload
-*/
+ */
 if (isset($_GET['s']) && !empty($_GET['s'])) {
 	switch ($_GET['s']) {
 		case 1:
