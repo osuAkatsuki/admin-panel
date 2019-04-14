@@ -4,7 +4,7 @@ class P {
 	/*
 	 * AdminDashboard
 	 * Prints the admin panel dashborad page
-	*/
+	 */
 	public static function AdminDashboard() {
 		// Get admin dashboard data
 		/*
@@ -12,10 +12,10 @@ class P {
 		$submittedScores = number_format($submittedScoresFull / 1000000, 2) . "m";
 		*/
 		$totalScoresFullVanilla = current($GLOBALS['db']->fetch('SELECT SUM(playcount_std) + SUM(playcount_taiko) + SUM(playcount_ctb) + SUM(playcount_mania) FROM users_stats WHERE 1'));
-		$totalScoresVanilla = number_format($totalScoresFullVanilla  / 1000000, 2) . "m";
+		$totalScoresVanilla = number_format($totalScoresFullVanilla / 1000000, 2) . "m";
 
 		$totalScoresFullRelax = current($GLOBALS['db']->fetch('SELECT SUM(playcount_std) + SUM(playcount_taiko) + SUM(playcount_ctb) + SUM(playcount_mania) FROM rx_stats WHERE 1'));
-		$totalScoresRelax = number_format($totalScoresFullRelax  / 1000000, 2) . "m";
+		$totalScoresRelax = number_format($totalScoresFullRelax / 1000000, 2) . "m";
 		// $betaKeysLeft = "∞";
 		/*$totalPPQuery = $GLOBALS['db']->fetch("SELECT SUM(pp) FROM scores WHERE completed = 3 LIMIT 1");
 		$totalPP = 0;
@@ -23,7 +23,7 @@ class P {
 			$totalPP += $pp;
 		}
 		$totalPP = number_format($totalPP);*/
-		$totalPP = "🍆";
+		$totalPP = "Too much..";
 		$recentPlaysVanilla = $GLOBALS['db']->fetchAll('
 		SELECT
 			beatmaps.song_name, scores.beatmap_md5, users.username,
@@ -206,14 +206,14 @@ class P {
 			echo '</tr>';
 		}
 		echo '</tbody>';
-
 		echo '</div>';
 	}
+
 
 	/*
 	 * AdminUsers
 	 * Prints the admin panel users page
-	*/
+	 */
 	public static function AdminUsers() {
 		// Get admin dashboard data
 		$totalUsers = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users'));
@@ -464,10 +464,11 @@ class P {
 		</div>';
 	}
 
+
 	/*
 	 * AdminEditUser
 	 * Prints the admin panel edit user page
-	*/
+	 */
 	public static function AdminEditUser() {
 		try {
 			// Check if id is set
@@ -594,7 +595,7 @@ class P {
 			echo '</td>
 			</tr>';
 			if (isBanned($userData["id"]) || isRestricted($userData["id"])) {
-				$canAppeal = time()-$userData["ban_datetime"] >= 86400*30;
+				$canAppeal = time()-$userData["ban_datetime"] >= 86400 * 30;
 				echo '<tr class="'; echo $canAppeal ? 'success' : 'warning'; echo '">
 				<td>Ban/Restricted Date<br><i>(dd/mm/yyyy)</i></td>
 				<td>' . date('d/m/Y', $userData["ban_datetime"]) . "<br>";
@@ -770,10 +771,11 @@ class P {
 		}
 	}
 
+
 	/*
 	 * AdminChangeIdentity
 	 * Prints the admin panel change identity page
-	*/
+	 */
 	public static function AdminChangeIdentity() {
 		try {
 			// Get user data
@@ -829,10 +831,11 @@ class P {
 		}
 	}
 
+
 	/*
 	 * AdminSystemSettings
 	 * Prints the admin panel system settings page
-	*/
+	 */
 	public static function AdminSystemSettings() {
 		// Print stuff
 		echo '<div id="wrapper">';
@@ -923,10 +926,11 @@ class P {
 		echo '</div>';
 	}
 
+
 	/*
 	 * AdminBadges
 	 * Prints the admin panel badges page
-	*/
+	 */
 	public static function AdminBadges() {
 		// Get data
 		$badgesData = $GLOBALS['db']->fetchAll('SELECT * FROM badges');
@@ -1000,10 +1004,11 @@ class P {
 		</div>';
 	}
 
+
 	/*
 	 * AdminEditBadge
 	 * Prints the admin panel edit badge page
-	*/
+	 */
 	public static function AdminEditBadge() {
 		try {
 			// Check if id is set
@@ -1054,10 +1059,11 @@ class P {
 		}
 	}
 
+
 	/*
 	 * AdminEditUserBadges
 	 * Prints the admin panel edit user badges page
-	*/
+	 */
 	public static function AdminEditUserBadges() {
 		try {
 			// Check if id is set
@@ -1110,10 +1116,11 @@ class P {
 		}
 	}
 
+
 	/*
 	 * AdminBanchoSettings
 	 * Prints the admin panel bancho settings page
-	*/
+	 */
 	public static function AdminBanchoSettings() {
 		// Print stuff
 		echo '<div id="wrapper">';
@@ -1238,10 +1245,11 @@ class P {
 		echo '</div>';
 	}
 
+
 	/*
 	 * AdminLog
 	 * Prints the admin log page
-	*/
+	 */
 	public static function AdminLog() {
 		// TODO: Ask stampa piede COME SI DICHIARANO LE COSTANTY IN PIACCAPPI??
 		$pageInterval = 50;
@@ -1276,7 +1284,7 @@ class P {
 		// Main page content here
 		echo '<div class="bubbles-container">';
 		if (!$logs) {
-			printBubble(999, "You", "have reached the end of the life the universe and everything. Now go fuck a donkey.", time()-(43*60), "The Hitchhiker's Guide to the Galaxy");
+			printBubble(999, "You", "have reached the end of the life the universe and everything. Now go OD on some meth or something because ur done.", time() - (43 * 60), "The Hitchhiker's Guide to the Galaxy");
 		} else {
 			$lastDay = -1;
 			foreach ($logs as $entry) {
@@ -1299,10 +1307,11 @@ class P {
 		echo '</div>';
 	}
 
+
 	/*
 	 * HomePage
 	 * Prints the homepage
-	*/
+	 */
 	public static function HomePage() {
 		P::GlobalAlert();
 		// Home success message
@@ -1336,13 +1345,14 @@ class P {
 		self::HomeAlert();
 	}
 
+
 	/*
 	 * UserPage
 	 * Print user page for $u user
 	 *
 	 * @param (int) ($u) ID of user.
 	 * @param (int) ($m) Playmode.
-	*/
+	 */
 	public static function UserPage($u, $m = -1) {
 		global $ScoresConfig;
 		global $PlayStyleEnum;
@@ -1400,7 +1410,7 @@ class P {
 			$username = $userData["username"];
 			$userID = $userData["usersuid"];
 			// Set default modes texts, selected is bolded below
-			$modesText = [0 => 'osu!standard', 1 => 'Taiko', 2 => 'Catch the Beat', 3 => 'osu!mania'];
+			$modesText = [0 => 'osu!', 1 => 'osu!taiko', 2 => 'osu!catch', 3 => 'osu!mania'];
 			// Get stats for selected mode
 			$m = ($m < 0 || $m > 3 ? $userData['favourite_mode'] : $m);
 			$modeForDB = getPlaymodeText($m);
@@ -1444,7 +1454,7 @@ class P {
 			// Set custom badge
 			$showCustomBadge = hasPrivilege(Privileges::UserDonor, $userData['id']) && $userData["show_custom_badge"] == 1 && $userData["can_custom_badge"] == 1;
 			if ($showCustomBadge) {
-				for ($i=0; $i < 6; $i++) {
+				for ($i = 0; $i < 6; $i++) {
 					if (@$badgeID[$i] == 0) {
 						$badgeID[$i] = -1;
 						$badgeIcon[$i] = htmlspecialchars($userData["custom_badge_icon"]);
@@ -1480,50 +1490,6 @@ class P {
 			// Get userpage
 			$userpageContent = $userData['userpage_content'];
 
-			// seriosuly fuck this shit who the fuck thought it was sane to write this fucking piece
-			// of fucking shit like holy titties fuck tits cock the whole code of oldfrontend is absolutely
-			// fucked but i still can't believe how FUCKED the code of the user profiles are why are they
-			// even called userpages in this fucking code they're supposed to be profiles not pages
-			// userpages are the ones with custom data written in bbcode
-			// why are userpages in bbcode
-			// like
-			// markdown is much superior
-			// anyway
-			// you might wonder why the fuck i am doing the next thing
-			// and that is $u used to always be an userid
-			// and then changes happened and the validation to check $_GET["u"] was an username or
-			// an userid was moved into the userpage() function
-			// problem is though
-			// i forgot there was another check of more or less the same thing in functions.php
-			// (fuck functions.php by the way)
-			// and so yeah
-			// $u then became either an username or an userid
-			// except I didn't know it was used in other places apart from the initial lookup of the user.
-			// fuck
-			// this
-			// gay
-			// earth
-			// https://www.youtube.com/watch?v=HnrjygAG18o
-			// TOOONIGHT IM GONNA HAVE MYSELF A REAL GOOD TIME
-			// I FEEL ALIIIVE AH AH AAAH
-			// AND THE WORLD
-			// IS TURNING INSIDE OUT YEAH
-			// I'M FLOATING AROUND IN ECSTASY
-			// SO DON'T STOP ME NOW
-			// SO DON'T STOP ME NOW
-			// CAUSE IM HAVING A GOOD TIME
-			// HAVING A GOOD TIME
-			// I'M A SUPERSTARE LEAKING THROUGH THE SKYES LIKE A TIGER
-			// DEFYING THE LAWS OF GRAVITY'
-			// I'M A RACING CAR PASSING BY LIKE LADY GODDIVA
-			// I GOTTA GO
-			// GO
-			// GO
-			// THERE'S NO STOPPING ME
-			// Now that I filled my whole screen with this comment I can finally procede writing
-			// some more shitty code
-			// I hope my nonsense has made your day
-			// And don't you dare post this on reddit.
 			$u = $userData["id"];
 
 			// Friend button
@@ -1729,10 +1695,11 @@ class P {
 		}
 	}
 
+
 	/*
 	 * AboutPage
 	 * Prints the about page.
-	*/
+	 */
 	public static function AboutPage() {
 		// Maintenance check
 		self::MaintenanceStuff();
@@ -1741,10 +1708,11 @@ class P {
 		echo file_get_contents('./html_static/about.html');
 	}
 
+
 	/*
 	 * StopSign
 	 * For preventing future multiaccounters.
-	*/
+	 */
 	public static function StopSign() {
 		// Maintenance check
 		self::MaintenanceStuff();
@@ -1757,10 +1725,11 @@ class P {
 		echo str_replace("{}", htmlspecialchars($_GET["user"]), file_get_contents('./html_static/elmo_stop.html'));
 	}
 
+
 	/*
 	 * ChangelogPage
 	 * Prints the Changelog page.
-	*/
+	 */
 	public static function Changelogpage() {
 		// Maintenance check
 		self::MaintenanceStuff();
@@ -1770,12 +1739,13 @@ class P {
 		getChangelog();
 	}
 
+
 	/*
 	 * ExceptionMessage
 	 * Display an error alert with a custom message.
 	 *
 	 * @param (string) ($e) The custom message (exception) to display.
-	*/
+	 */
 	public static function ExceptionMessage($e, $ret = false) {
 		$p = '<div class="container alert alert-danger" role="alert" style="width: 100%;"><p align="center"><b>An error occurred:<br></b>'.$e.'</p></div>';
 		if ($ret) {
@@ -1787,12 +1757,13 @@ class P {
 		return P::ExceptionMessage(htmlspecialchars($s), $ret);
 	}
 
+
 	/*
 	 * SuccessMessage
 	 * Display a success alert with a custom message.
 	 *
 	 * @param (string) ($s) The custom message to display.
-	*/
+	 */
 	public static function SuccessMessage($s, $ret = false) {
 		$p = '<div class="container alert alert-success" role="alert" style="width:100%;"><p align="center">'.$s.'</p></div>';
 		if ($ret) {
@@ -1803,6 +1774,7 @@ class P {
 	public static function SuccessMessageStaccah($s, $ret = false) {
 		return P::SuccessMessage(htmlspecialchars($s), $ret);
 	}
+
 
 	/*
 	 * Messages
@@ -1830,19 +1802,21 @@ class P {
 		return $p;
 	}
 
+
 	/*
 	 * LoggedInAlert
 	 * Display a message to the user that he's already logged in.
 	 * Printed when a logged in user tries to view a guest only page.
-	*/
+	 */
 	public static function LoggedInAlert() {
 		echo '<div class="alert alert-warning" role="alert">You are already logged in.</i></div>';
 	}
 
+
 	/*
 	 * RegisterPage
 	 * Prints the register page.
-	*/
+	 */
 	public static function RegisterPage() {
 		// Maintenance check
 		self::MaintenanceStuff();
@@ -1896,10 +1870,11 @@ class P {
 		';
 	}
 
+
 	/*
 	 * ChangePasswordPage
 	 * Prints the change password page.
-	*/
+	 */
 	public static function ChangePasswordPage() {
 		// Maintenance check
 		self::MaintenanceStuff();
@@ -1924,10 +1899,11 @@ class P {
 		</div>';
 	}
 
+
 	/*
 	 * userSettingsPage
 	 * Prints the user settings page.
-	*/
+	 */
 	public static function userSettingsPage() {
 		global $PlayStyleEnum;
 		// Maintenance check
@@ -1985,9 +1961,9 @@ class P {
 		<div class="input-group" style="width:100%">
 			<span class="input-group-addon" id="basic-addon4" style="width:40%">Favourite gamemode</span>
 			<select name="mode" class="selectpicker" data-width="100%">
-				<option '.$cj(0).'>osu! Standard</option>
-				<option '.$cj(1).'>Taiko</option>
-				<option '.$cj(2).'>Catch the Beat</option>
+				<option '.$cj(0).'>osu!</option>
+				<option '.$cj(1).'>osu!taiko</option>
+				<option '.$cj(2).'>osu!catch</option>
 				<option '.$cj(3).'>osu!mania</option>
 			</select>
 		</div>
@@ -2061,10 +2037,11 @@ class P {
 		</div>';
 	}
 
+
 	/*
 	 * ChangeAvatarPage
 	 * Prints the change avatar page.
-	*/
+	 */
 	public static function ChangeAvatarPage() {
 		// Maintenance check
 		self::MaintenanceStuff();
@@ -2102,10 +2079,11 @@ class P {
 		</div>';
 	}
 
+
 	/*
 	 * UserpageEditorPage
 	 * Prints the userpage editor page.
-	*/
+	 */
 	public static function UserpageEditorPage() {
 		// Maintenance check
 		self::MaintenanceStuff();
@@ -2141,9 +2119,10 @@ class P {
 		';
 	}
 
+
 	/*
 	 * PasswordRecovery - print the page to recover your password if you lost it.
-	*/
+	 */
 	public static function PasswordRecovery() {
 		// Maintenance check
 		self::MaintenanceStuff();
@@ -2172,11 +2151,12 @@ class P {
 		}
 	}
 
+
 	/*
 	 * MaintenanceAlert
 	 * Prints the maintenance alert and die if we are normal users
 	 * Prints the maintenance alert and keep printing the page if we are mod/admin
-	*/
+	 */
 	public static function MaintenanceAlert() {
 		try {
 			// Check if we are logged in
@@ -2197,10 +2177,11 @@ class P {
 		}
 	}
 
+
 	/*
 	 * GameMaintenanceAlert
 	 * Prints the game maintenance alert
-	*/
+	 */
 	public static function GameMaintenanceAlert() {
 		try {
 			// Check if we are logged in
@@ -2220,10 +2201,11 @@ class P {
 		}
 	}
 
+
 	/*
 	 * BanchoMaintenance
 	 * Prints the game maintenance alert
-	*/
+	 */
 	public static function BanchoMaintenanceAlert() {
 		try {
 			// Check if we are logged in
@@ -2243,10 +2225,11 @@ class P {
 		}
 	}
 
+
 	/*
 	 * MaintenanceStuff
 	 * Prints website/game maintenance alerts
-	*/
+	 */
 	public static function MaintenanceStuff() {
 		// Check Bancho maintenance
 		if (checkBanchoMaintenance()) {
@@ -2262,10 +2245,11 @@ class P {
 		}
 	}
 
+
 	/*
 	 * GlobalAlert
 	 * Prints the global alert (only if not empty)
-	*/
+	 */
 	public static function GlobalAlert() {
 		$m = current($GLOBALS['db']->fetch("SELECT value_string FROM system_settings WHERE name = 'website_global_alert'"));
 		if ($m != '') {
@@ -2274,10 +2258,11 @@ class P {
 		self::RestrictedAlert();
 	}
 
+
 	/*
 	 * HomeAlert
 	 * Prints the home alert (only if not empty)
-	*/
+	 */
 	public static function HomeAlert() {
 		$m = current($GLOBALS['db']->fetch("SELECT value_string FROM system_settings WHERE name = 'website_home_alert'"));
 		if ($m != '') {
@@ -2285,10 +2270,11 @@ class P {
 		}
 	}
 
+
 	/*
 	 * FriendlistPage
 	 * Prints the friendlist page.
-	*/
+	 */
 	public static function FriendlistPage() {
 		// Maintenance check
 		self::MaintenanceStuff();
@@ -2322,10 +2308,11 @@ class P {
 		}
 	}
 
+
 	/*
 	 * AdminRankRequests
 	 * Prints the admin rank requests
-	*/
+	 */
 	public static function AdminRankRequests() {
 		global $ScoresConfig;
 		// Get data
@@ -2453,6 +2440,7 @@ class P {
 		// Template end
 		echo '</div>';
 	}
+
 
 	public static function AdminPrivilegesGroupsMain() {
 		// Get data
@@ -2657,10 +2645,11 @@ class P {
 		}
 	}
 
+
 	/*
 	 * AdminGiveDonor
 	 * Prints the admin give donor page
-	*/
+	 */
 	public static function AdminGiveDonor() {
 		try {
 			// Check if id is set
@@ -2729,7 +2718,7 @@ class P {
 	/*
 	 * AdminRollback
 	 * Prints the admin rollback page
-	*/
+	 */
 	public static function AdminRollback() {
 		try {
 			// Check if id is set
@@ -2788,7 +2777,7 @@ class P {
 	/*
 	 * AdminRollbackRelax
 	 * Prints the admin rollback page
-	*/
+	 */
 	public static function AdminRollbackRelax() {
 		try {
 			// Check if id is set
@@ -2844,11 +2833,10 @@ class P {
 	}
 
 
-
 	/*
 	 * AdminWipe
 	 * Prints the admin wipe page
-	*/
+	 */
 	public static function AdminWipe() {
 		try {
 			// Check if id is set
@@ -2883,10 +2871,10 @@ class P {
 			<td>
 			<select name="gm" class="selectpicker" data-width="100%">
 				<option value="-1">All</option>
-				<option value="0">Standard</option>
-				<option value="1">Taiko</option>
-				<option value="2">Catch the beat</option>
-				<option value="3">Mania</option>
+				<option value="0">osu!</option>
+				<option value="1">osu!taiko</option>
+				<option value="2">osu!catch</option>
+				<option value="3">osu!mania</option>
 			</select>
 			</td>
 			</tr>';
@@ -2902,10 +2890,11 @@ class P {
 		}
 	}
 
+
 	/*
 	 * AdminWipeRelax
 	 * Prints the admin wipe page
-	*/
+	 */
 	public static function AdminWipeRelax() {
 		try {
 			// Check if id is set
@@ -2940,10 +2929,10 @@ class P {
 			<td>
 			<select name="gm" class="selectpicker" data-width="100%">
 				<option value="-1">All</option>
-				<option value="0">Standard</option>
-				<option value="1">Taiko</option>
-				<option value="2">Catch the beat</option>
-				<option value="3">Mania</option>
+				<option value="0">osu!</option>
+				<option value="1">osu!taiko</option>
+				<option value="2">osu!catch</option>
+				<option value="3">osu!mania</option>
 			</select>
 			</td>
 			</tr>';
@@ -2960,11 +2949,10 @@ class P {
 	}
 
 
-
 	/*
 	 * AdminRankBeatmap
 	 * Prints the admin rank beatmap page
-	*/
+	 */
 	public static function AdminRankBeatmap() {
 		try {
 			// Check if id is set
@@ -2994,10 +2982,11 @@ class P {
 		}
 	}
 
+
 	/*
 	 * AdminRankBeatmap
 	 * Prints the admin rank beatmap page
-	*/
+	 */
 	public static function AdminRankBeatmapManually() {
 		echo '<div id="wrapper">';
 		printAdminSidebar();
@@ -3026,7 +3015,6 @@ class P {
 				<hr>
 				<button type="submit" class="btn btn-primary">Edit ranked status</button>
 			</form>
-
 		</div>';
 
 		echo '</div>';
@@ -3506,10 +3494,10 @@ class P {
 				<td>
 				<select name="gm" class="selectpicker" data-width="100%">
 					<option value="-1">All</option>
-					<option value="0">Standard</option>
-					<option value="1">Taiko</option>
-					<option value="2">Catch the beat</option>
-					<option value="3">Mania</option>
+					<option value="0">osu!</option>
+					<option value="1">osu!taiko</option>
+					<option value="2">osu!catch</option>
+					<option value="3">osu!mania</option>
 				</select>
 				</td>
 				</tr>';
@@ -3663,10 +3651,10 @@ class P {
 				<td>
 				<select name="gm" class="selectpicker" data-width="100%">
 					<option value="-1">All</option>
-					<option value="0">Standard</option>
-					<option value="1">Taiko</option>
-					<option value="2">Catch the beat</option>
-					<option value="3">Mania</option>
+					<option value="0">osu!</option>
+					<option value="1">osu!taiko</option>
+					<option value="2">osu!catch</option>
+					<option value="3">osu!mania</option>
 				</select>
 				</td>
 				</tr>';
