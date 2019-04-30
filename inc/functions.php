@@ -1961,7 +1961,7 @@ function giveDonor($userID, $months, $add=true, $premium=false) {
 	}
 
 	// To finish off, let's give them permissions to edit their custom badge.
-	$GLOBALS["db"]->execute("UPDATE users_stats SET can_custom_badge = 1, show_custom_badge = 1 WHERE id = ?", [$userID])
+	$GLOBALS["db"]->execute("UPDATE users_stats SET can_custom_badge = 1, show_custom_badge = 1 WHERE id = ?", [$userID]);
 
 	// Send email
 	/* Feelin' peppy-y
