@@ -595,7 +595,7 @@ class P {
 			echo '</td>
 			</tr>';
 			if (isBanned($userData["id"]) || isRestricted($userData["id"])) {
-				$canAppeal = time()-$userData["ban_datetime"] >= 86400 * 30;
+				$canAppeal = time() - $userData["ban_datetime"] >= 86400 * (30 * 2); // Seconds in a day * (30 days in a month * 2 months)
 				echo '<tr class="'; echo $canAppeal ? 'success' : 'warning'; echo '">
 				<td>Ban/Restricted Date<br><i>(dd/mm/yyyy)</i></td>
 				<td>' . date('d/m/Y', $userData["ban_datetime"]) . "<br>";
