@@ -756,12 +756,13 @@ class P {
 						}
 						if (hasPrivilege(Privileges::AdminBanUsers)) {
 
+							/*
 							if (isBanned($_GET["id"])) {
 								echo '	<a onclick="sure(\'submit.php?action=banUnbanUser&id='.$_GET['id'].'&csrf=' . csrfToken() . '\')" class="btn btn-danger">Unban user</a>';
 							}
 							if (isRestricted($_GET["id"])) {
 								echo '	<a onclick="sure(\'submit.php?action=restrictUnrestrictUser&id='.$_GET['id'].'&csrf='.csrfToken().'\')" class="btn btn-danger">Unrestrict user</a>';
-							}
+							}*/
 
 							echo '	<a onclick="sure(\'submit.php?action=clearHWID&id='.$_GET['id'].'&csrf='.csrfToken().'\');" class="btn btn-danger">Clear HWID matches</a>';
 						}
