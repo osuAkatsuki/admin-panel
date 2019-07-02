@@ -36,7 +36,6 @@ class P {
 		ORDER BY scores.id DESC
 		LIMIT 10');
 
-		/* Disabled because of how fucking slow this query is.
 		$recentPlaysRelax = $GLOBALS['db']->fetchAll('
 		SELECT
 			beatmaps.song_name, scores_relax.beatmap_md5, users.username,
@@ -48,7 +47,6 @@ class P {
 		WHERE scores_relax.completed = 3 AND beatmaps.ranked = 2
 		ORDER BY scores_relax.id DESC
 		LIMIT 10');
-		*/
 
 		$topPlaysVanilla = [];
 		$topPlaysVanilla = $GLOBALS['db']->fetchAll('SELECT
@@ -65,7 +63,6 @@ class P {
 		ORDER BY scores.pp DESC LIMIT 10');
 
 		$topPlaysRelax = [];
-		/* Disabled because of how fucking slow this query is.
 		$topPlaysRelax = $GLOBALS['db']->fetchAll('SELECT
 			beatmaps.song_name, scores_relax.beatmap_md5, users.username,
 			scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp,
@@ -78,7 +75,6 @@ class P {
 		AND scores_relax.play_mode = 0
 		AND beatmaps.ranked = 2
 		ORDER BY scores_relax.pp DESC LIMIT 10');
-		*/
 
 		$onlineUsers = getJsonCurl("http://127.0.0.1:5001/api/v1/onlineUsers");
 		if ($onlineUsers == false) {
@@ -222,8 +218,8 @@ class P {
 	public static function AdminUsers() {
 		// Get admin dashboard data
 		$totalUsers = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users'));
-		$supporters = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & '.Privileges::UserDonor.' > 0 AND NOT privileges & '.Privileges::Premium.' > 0'));
-		$premiums = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & '.Privileges::Premium.' > 0'));
+		$supporters = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & '.Privileges::UserDonor.' > 0 AND NOT privileges & '.Privileges::Premium.' > 0 AND privileges & '.Privileges::AdminManageUsers.' == 0'));
+		$premiums = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & '.Privileges::Premium.' > 0 AND privileges & '.Privileges::AdminManageUsers.' == 0'));
 		$bannedUsers = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & 1 = 0'));
 		/* Unused, premium used instead 4head
 		$modUsers = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & '.Privileges::AdminAccessRAP.'> 0'));
