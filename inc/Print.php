@@ -596,7 +596,7 @@ class P {
 			echo '</td>
 			</tr>';
 			if (isBanned($userData["id"]) || isRestricted($userData["id"])) {
-				$canAppeal = time() - $userData["ban_datetime"] >= 86400 * (30 * 2); // Seconds in a day * (30 days in a month * 2 months)
+				$canAppeal = time() - $userData["ban_datetime"] >= 86400 * 30; // Seconds in a day * days in a month
 				echo '<tr class="'; echo $canAppeal ? 'success' : 'warning'; echo '">
 				<td>Ban/Restricted Date<br><i>(dd/mm/yyyy)</i></td>
 				<td>' . date('d/m/Y', $userData["ban_datetime"]) . "<br>";
@@ -615,10 +615,11 @@ class P {
 			<td>Username color<br><i class="no-mobile">(HTML or HEX color)</i></td>
 			<td><p class="text-center"><input type="text" name="c" class="form-control" value="'.$userStatsData['user_color'].'" '.$readonly[1].'></td>
 			</tr>';
+			/*
 			echo '<tr>
 			<td>Username CSS<br><i class="no-mobile">(like fancy gifs as background)</i></td>
 			<td><p class="text-center"><input type="text" name="bg" class="form-control" value="'.$userStatsData['user_style'].'" '.$readonly[1].'></td>
-			</tr>';
+			</tr>';*/
 			echo '<tr>
 			<td>A.K.A</td>
 			<td><p class="text-center"><input type="text" name="aka" class="form-control" value="'.htmlspecialchars($userStatsData['username_aka']).'"></td>
@@ -1343,7 +1344,7 @@ class P {
 			}
 		}
 		echo '<p align="center">
-		<object data="images/logos/logo.png" type="image/png" class="animated bounceIn ripple-logo"></object>
+		<object data="images/logos/logo.png" type="image/png" class="animated bounceIn akatsuki-logo"></object>
 		</p>';
 		global $isBday;
 		if ($isBday) {
@@ -3818,7 +3819,7 @@ class P {
 			$userFilter = isset($_GET["uid"]) && !empty($_GET["uid"]);
 			if ($userFilter) {
 				if ($_GET["uid"] != $_SESSION["userid"] && hasPrivilege(Privileges::AdminManageUsers, $_GET["uid"])) {
-					throw new Exception("You don't have enough privileges to do that");
+					throw new Exception("You don't have enough privileges to do that.");
 				}
 				$results = $GLOBALS["db"]->fetchAll("SELECT ip FROM ip_user WHERE userid = ? AND ip != ''", [$_GET["uid"]]);
 				foreach ($results as $row) {
