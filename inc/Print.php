@@ -31,10 +31,9 @@ class P {
 			scores.play_mode, scores.mods
 		FROM scores
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores.beatmap_md5
-		LEFT JOIN users ON users.id = scores.userid
 		WHERE scores.completed = 3 AND beatmaps.ranked = 2
 		ORDER BY scores.id DESC
-		LIMIT 10');
+		LIMIT 20');
 
 		$recentPlaysRelax = $GLOBALS['db']->fetchAll('
 		SELECT
@@ -43,10 +42,9 @@ class P {
 			scores_relax.play_mode, scores_relax.mods
 		FROM scores_relax
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores_relax.beatmap_md5
-		LEFT JOIN users ON users.id = scores_relax.userid
 		WHERE scores_relax.completed = 3 AND beatmaps.ranked = 2
 		ORDER BY scores_relax.id DESC
-		LIMIT 10');
+		LIMIT 20');
 
 		$topPlaysVanilla = [];
 		$topPlaysVanilla = $GLOBALS['db']->fetchAll('SELECT
@@ -55,12 +53,10 @@ class P {
 			scores.play_mode, scores.mods
 		FROM scores
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores.beatmap_md5
-		LEFT JOIN users ON users.id = scores.userid
-		WHERE users.privileges & 1 > 0
 		AND scores.completed = 3
 		AND scores.play_mode = 0
 		AND beatmaps.ranked = 2
-		ORDER BY scores.pp DESC LIMIT 10');
+		ORDER BY scores.pp DESC LIMIT 20');
 
 		$topPlaysRelax = [];
 		$topPlaysRelax = $GLOBALS['db']->fetchAll('SELECT
@@ -69,12 +65,10 @@ class P {
 			scores_relax.play_mode, scores_relax.mods
 		FROM scores_relax
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores_relax.beatmap_md5
-		LEFT JOIN users ON users.id = scores_relax.userid
-		WHERE users.privileges & 1 > 0
 		AND scores_relax.completed = 3
 		AND scores_relax.play_mode = 0
 		AND beatmaps.ranked = 2
-		ORDER BY scores_relax.pp DESC LIMIT 10');
+		ORDER BY scores_relax.pp DESC LIMIT 20');
 
 		$onlineUsers = getJsonCurl("http://127.0.0.1:5001/api/v1/onlineUsers");
 		if ($onlineUsers == false) {
@@ -103,7 +97,7 @@ class P {
 		// Recent plays table (Vanilla)
 		echo '<table class="table table-striped table-hover">
 		<thead>
-		<tr><th class="text-left"><i class="fa fa-clock-o"></i>	Recent plays (Vanilla)</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th>Score</th><th class="text-right">PP</th></tr>
+		<tr><th class="text-left"><i class="fa fa-clock-o"></i>	Recent plays (Vanilla)</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
 		</thead>
 		<tbody>';
 		foreach ($recentPlaysVanilla as $play) {
@@ -121,7 +115,7 @@ class P {
 			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
-			echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
+			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
 			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'pp</b></p></td>';
 			echo '</tr>';
 		}
@@ -130,7 +124,7 @@ class P {
 		// Recent plays table (Relax)
 		echo '<table class="table table-striped table-hover">
 		<thead>
-		<tr><th class="text-left"><i class="fa fa-clock-o"></i>	Recent plays (Relax)</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th>Score</th><th class="text-right">PP</th></tr>
+		<tr><th class="text-left"><i class="fa fa-clock-o"></i>	Recent plays (Relax)</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
 		</thead>
 		<tbody>';
 		foreach ($recentPlaysRelax as $play) {
@@ -148,7 +142,7 @@ class P {
 			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
-			echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
+			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
 			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'pp</b></p></td>';
 			echo '</tr>';
 		}
@@ -176,6 +170,7 @@ class P {
 			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
+			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
 			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'</b></p></td>';
 			echo '</tr>';
 		}
@@ -203,6 +198,7 @@ class P {
 			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
+			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
 			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'</b></p></td>';
 			echo '</tr>';
 		}
@@ -218,8 +214,8 @@ class P {
 	public static function AdminUsers() {
 		// Get admin dashboard data
 		$totalUsers = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users'));
-		$supporters = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & '.Privileges::UserDonor.' > 0 AND NOT privileges & '.Privileges::Premium.' > 0 AND privileges & '.Privileges::AdminManageUsers.' = 0'));
-		$premiums = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & '.Privileges::Premium.' > 0 AND privileges & '.Privileges::AdminManageUsers.' = 0'));
+		$supporters = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & '.Privileges::UserDonor.' > 0 AND NOT privileges & '.Privileges::Premium.' > 0 AND NOT privileges & '.Privileges::AdminManageUsers.' > 0'));
+		$premiums = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & '.Privileges::Premium.' > 0 AND NOT privileges & '.Privileges::AdminManageUsers.' > 0'));
 		$bannedUsers = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & 1 = 0'));
 		/* Unused, premium used instead 4head
 		$modUsers = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & '.Privileges::AdminAccessRAP.'> 0'));
