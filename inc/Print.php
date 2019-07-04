@@ -31,7 +31,7 @@ class P {
 			scores.play_mode, scores.mods
 		FROM scores
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores.beatmap_md5
-		LEFT JOIN users ON users.id = scores_relax.userid
+		LEFT JOIN users ON users.id = scores.userid
 		WHERE scores.completed = 3 AND beatmaps.ranked = 2
 		ORDER BY scores.id DESC
 		LIMIT 20');
@@ -49,20 +49,22 @@ class P {
 		LIMIT 20');
 
 		$topPlaysVanilla = [];
-		$topPlaysVanilla = $GLOBALS['db']->fetchAll('SELECT
+		$topPlaysVanilla = $GLOBALS['db']->fetchAll('
+		SELECT
 			beatmaps.song_name, scores.beatmap_md5, users.username,
 			scores.userid, scores.time, scores.score, scores.pp,
 			scores.play_mode, scores.mods
 		FROM scores
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores.beatmap_md5
-		LEFT JOIN users ON users.id = scores_relax.userid
+		LEFT JOIN users ON users.id = scores.userid
 		WHERE scores.completed = 3
 		AND scores.play_mode = 0
 		AND beatmaps.ranked = 2
 		ORDER BY scores.pp DESC LIMIT 20');
 
 		$topPlaysRelax = [];
-		$topPlaysRelax = $GLOBALS['db']->fetchAll('SELECT
+		$topPlaysRelax = $GLOBALS['db']->fetchAll('
+		SELECT
 			beatmaps.song_name, scores_relax.beatmap_md5, users.username,
 			scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp,
 			scores_relax.play_mode, scores_relax.mods
