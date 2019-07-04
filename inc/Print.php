@@ -53,7 +53,7 @@ class P {
 			scores.play_mode, scores.mods
 		FROM scores
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores.beatmap_md5
-		AND scores.completed = 3
+		WHERE scores.completed = 3
 		AND scores.play_mode = 0
 		AND beatmaps.ranked = 2
 		ORDER BY scores.pp DESC LIMIT 20');
@@ -65,7 +65,7 @@ class P {
 			scores_relax.play_mode, scores_relax.mods
 		FROM scores_relax
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores_relax.beatmap_md5
-		AND scores_relax.completed = 3
+		WHERE scores_relax.completed = 3
 		AND scores_relax.play_mode = 0
 		AND beatmaps.ranked = 2
 		ORDER BY scores_relax.pp DESC LIMIT 20');
