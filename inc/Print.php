@@ -31,6 +31,7 @@ class P {
 			scores.play_mode, scores.mods
 		FROM scores
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores.beatmap_md5
+		LEFT JOIN users ON users.id = scores_relax.userid
 		WHERE scores.completed = 3 AND beatmaps.ranked = 2
 		ORDER BY scores.id DESC
 		LIMIT 20');
@@ -42,6 +43,7 @@ class P {
 			scores_relax.play_mode, scores_relax.mods
 		FROM scores_relax
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores_relax.beatmap_md5
+		LEFT JOIN users ON users.id = scores_relax.userid
 		WHERE scores_relax.completed = 3 AND beatmaps.ranked = 2
 		ORDER BY scores_relax.id DESC
 		LIMIT 20');
@@ -53,6 +55,7 @@ class P {
 			scores.play_mode, scores.mods
 		FROM scores
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores.beatmap_md5
+		LEFT JOIN users ON users.id = scores_relax.userid
 		WHERE scores.completed = 3
 		AND scores.play_mode = 0
 		AND beatmaps.ranked = 2
@@ -65,6 +68,7 @@ class P {
 			scores_relax.play_mode, scores_relax.mods
 		FROM scores_relax
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores_relax.beatmap_md5
+		LEFT JOIN users ON users.id = scores_relax.userid
 		WHERE scores_relax.completed = 3
 		AND scores_relax.play_mode = 0
 		AND beatmaps.ranked = 2
