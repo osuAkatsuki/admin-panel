@@ -23,7 +23,7 @@ class P {
 			$totalPP += $pp;
 		}
 		$totalPP = number_format($totalPP);*/
-		$totalPP = "Too much..";
+
 		$recentPlaysVanilla = $GLOBALS['db']->fetchAll('
 		SELECT
 			beatmaps.song_name, scores.beatmap_md5, users.username,
@@ -34,7 +34,7 @@ class P {
 		LEFT JOIN users ON users.id = scores.userid
 		WHERE scores.completed = 3 AND beatmaps.ranked = 2
 		ORDER BY scores.id DESC
-		LIMIT 20');
+		LIMIT 10');
 
 		$recentPlaysRelax = $GLOBALS['db']->fetchAll('
 		SELECT
@@ -46,7 +46,7 @@ class P {
 		LEFT JOIN users ON users.id = scores_relax.userid
 		WHERE scores_relax.completed = 3 AND beatmaps.ranked = 2
 		ORDER BY scores_relax.id DESC
-		LIMIT 20');
+		LIMIT 10');
 
 		$topPlaysVanilla = [];
 		$topPlaysVanilla = $GLOBALS['db']->fetchAll('
@@ -60,7 +60,7 @@ class P {
 		WHERE scores.completed = 3
 		AND scores.play_mode = 0
 		AND beatmaps.ranked = 2
-		ORDER BY scores.pp DESC LIMIT 20');
+		ORDER BY scores.pp DESC LIMIT 100');
 
 		$topPlaysRelax = [];
 		$topPlaysRelax = $GLOBALS['db']->fetchAll('
@@ -74,14 +74,15 @@ class P {
 		WHERE scores_relax.completed = 3
 		AND scores_relax.play_mode = 0
 		AND beatmaps.ranked = 2
-		ORDER BY scores_relax.pp DESC LIMIT 20');
+		ORDER BY scores_relax.pp DESC LIMIT 100');
 
+		/*
 		$onlineUsers = getJsonCurl("http://127.0.0.1:5001/api/v1/onlineUsers");
 		if ($onlineUsers == false) {
 			$onlineUsers = 0;
 		} else {
 			$onlineUsers = $onlineUsers["result"];
-		}
+		}*/
 
 		// Print admin dashboard
 		echo '<div id="wrapper">';
@@ -96,8 +97,8 @@ class P {
 		//printAdminPanel('primary', 'fa fa-gamepad fa-5x', $submittedScores, 'Submitted scores', number_format($submittedScoresFull));
 		printAdminPanel('red', 'fa fa-wheelchair-alt fa-5x', $totalScoresVanilla, 'Vanilla plays', number_format($totalScoresFullVanilla));
 		printAdminPanel('red', 'fa fa-wheelchair-alt fa-5x', $totalScoresRelax, 'Relax plays', number_format($totalScoresFullRelax));
-		printAdminPanel('green', 'fa fa-street-view fa-5x', $onlineUsers, 'Online users');
-		printAdminPanel('yellow', 'fa fa-dot-circle-o fa-5x', $totalPP, 'Total PP');
+		//printAdminPanel('green', 'fa fa-street-view fa-5x', $onlineUsers, 'Online users');
+		//printAdminPanel('yellow', 'fa fa-dot-circle-o fa-5x', $totalPP, 'Total PP');
 		echo '</div>';
 
 		// Recent plays table (Vanilla)
