@@ -24,6 +24,8 @@ class P {
 		}
 		$totalPP = number_format($totalPP);*/
 
+		/* Recent scores */
+
 		$recentPlaysVanilla = $GLOBALS['db']->fetchAll('
 		SELECT
 			beatmaps.song_name, scores.beatmap_md5, users.username,
@@ -48,6 +50,8 @@ class P {
 		ORDER BY scores_relax.id DESC
 		LIMIT 10');
 
+		/* Top scores */
+
 		$topPlaysVanilla = [];
 		$topPlaysVanilla = $GLOBALS['db']->fetchAll('
 		SELECT
@@ -60,7 +64,7 @@ class P {
 		WHERE scores.completed = 3
 		AND scores.play_mode = 0
 		AND beatmaps.ranked = 2
-		ORDER BY scores.pp DESC LIMIT 100');
+		ORDER BY scores.pp DESC LIMIT 10');
 
 		$topPlaysRelax = [];
 		$topPlaysRelax = $GLOBALS['db']->fetchAll('
@@ -74,7 +78,40 @@ class P {
 		WHERE scores_relax.completed = 3
 		AND scores_relax.play_mode = 0
 		AND beatmaps.ranked = 2
-		ORDER BY scores_relax.pp DESC LIMIT 100');
+		ORDER BY scores_relax.pp DESC LIMIT 10');
+
+		/* Top scores within the last 2 weeks */
+		/*  (Used to find cheaters, usually)  */
+
+		$topRecentPlaysVanilla = [];
+		$topRecentPlaysVanilla = $GLOBALS['db']->fetchAll('
+		SELECT
+			beatmaps.song_name, scores.beatmap_md5, users.username,
+			scores.userid, scores.time, scores.score, scores.pp,
+			scores.play_mode, scores.mods
+		FROM scores
+		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores.beatmap_md5
+		LEFT JOIN users ON users.id = scores.userid
+		WHERE scores.completed = 3
+		AND scores.time > UNIX_TIMESTAMP(NOW()) - 1209600
+		AND scores.play_mode = 0
+		AND beatmaps.ranked = 2
+		ORDER BY scores.pp DESC LIMIT 20');
+
+		$topRecentPlaysRelax = [];
+		$topRecentPlaysRelax = $GLOBALS['db']->fetchAll('
+		SELECT
+			beatmaps.song_name, scores_relax.beatmap_md5, users.username,
+			scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp,
+			scores_relax.play_mode, scores_relax.mods
+		FROM scores_relax
+		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores_relax.beatmap_md5
+		LEFT JOIN users ON users.id = scores_relax.userid
+		WHERE scores_relax.completed = 3
+		AND scores_relax.play_mode = 0
+		AND scores_relax.time > UNIX_TIMESTAMP(NOW()) - 1209600
+		AND beatmaps.ranked = 2
+		ORDER BY scores_relax.pp DESC LIMIT 20');
 
 		/*
 		$onlineUsers = getJsonCurl("http://127.0.0.1:5001/api/v1/onlineUsers");
@@ -191,6 +228,62 @@ class P {
 		<tbody>';
 		//echo '<tr class="danger"><td colspan=5>Disabled</td></tr>';
 		foreach ($topPlaysRelax as $play) {
+			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
+			$bn = $play['song_name'];
+			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
+			if (!$bn) {
+				$bn = $play['beatmap_md5'];
+			}
+			// Get readable play_mode
+			$pm = getPlaymodeText($play['play_mode']);
+			// Print row
+			echo '<tr class="warning">';
+			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
+			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left">'.$pm.'</p></td>';
+			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
+			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
+			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'</b></p></td>';
+			echo '</tr>';
+		}
+		echo '</tbody>';
+		
+		// Recent top plays table (Vanilla)
+		echo '<table class="table table-striped table-hover">
+		<thead>
+		<tr><th class="text-left"><i class="fa fa-trophy"></i>	Top plays (Vanilla)</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
+		</thead>
+		<tbody>';
+		//echo '<tr class="danger"><td colspan=5>Disabled</td></tr>';
+		foreach ($topRecentPlaysVanilla as $play) {
+			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
+			$bn = $play['song_name'];
+			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
+			if (!$bn) {
+				$bn = $play['beatmap_md5'];
+			}
+			// Get readable play_mode
+			$pm = getPlaymodeText($play['play_mode']);
+			// Print row
+			echo '<tr class="warning">';
+			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
+			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left">'.$pm.'</p></td>';
+			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
+			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
+			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'</b></p></td>';
+			echo '</tr>';
+		}
+		echo '</tbody>';
+
+		// Recent top plays table (Relax)
+		echo '<table class="table table-striped table-hover">
+		<thead>
+		<tr><th class="text-left"><i class="fa fa-trophy"></i>	Top plays (Relax)</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
+		</thead>
+		<tbody>';
+		//echo '<tr class="danger"><td colspan=5>Disabled</td></tr>';
+		foreach ($topRecentPlaysRelax as $play) {
 			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
 			$bn = $play['song_name'];
 			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
