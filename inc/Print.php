@@ -251,7 +251,7 @@ class P {
 		// Recent top plays table (Vanilla)
 		echo '<table class="table table-striped table-hover">
 		<thead>
-		<tr><th class="text-left"><i class="fa fa-trophy"></i>	Top plays (Vanilla)</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
+		<tr><th class="text-left"><i class="fa fa-trophy"></i>	Recent top plays (Vanilla)</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
 		</thead>
 		<tbody>';
 		//echo '<tr class="danger"><td colspan=5>Disabled</td></tr>';
@@ -279,7 +279,7 @@ class P {
 		// Recent top plays table (Relax)
 		echo '<table class="table table-striped table-hover">
 		<thead>
-		<tr><th class="text-left"><i class="fa fa-trophy"></i>	Top plays (Relax)</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
+		<tr><th class="text-left"><i class="fa fa-trophy"></i>	Recent top plays (Relax)</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
 		</thead>
 		<tbody>';
 		//echo '<tr class="danger"><td colspan=5>Disabled</td></tr>';
