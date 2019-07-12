@@ -986,7 +986,7 @@ class D {
 			rapLog(sprintf("has wiped %s's account", $username));
 
 			// Done
-			redirect('index.php?p=102&s=User vanillascores and stats have been wiped!');
+			redirect('index.php?p=102&s=User Vanilla scores and stats have been wiped!');
 		}
 		catch(Exception $e) {
 			redirect('index.php?p=102&e='.$e->getMessage());
@@ -1045,7 +1045,7 @@ class D {
 			rapLog(sprintf("has wiped %s's account", $username));
 
 			// Done
-			redirect('index.php?p=102&s=User relax scores and stats have been wiped!');
+			redirect('index.php?p=102&s=User Relax scores and stats have been wiped!');
 		}
 		catch(Exception $e) {
 			redirect('index.php?p=102&e='.$e->getMessage());
