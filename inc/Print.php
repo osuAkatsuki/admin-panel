@@ -2955,6 +2955,7 @@ class P {
 			echo '<div id="page-content-wrapper">';
 			// Maintenance check
 			self::MaintenanceStuff();
+			echo '<div class="container alert alert-danger" role="alert" style="width: 100%;"><p align="center"><b>Reminder:<br></b>Admins should not provide wipes for users who have not purchased supporter, unless it is warranted.</p></div>';
 			echo '<p align="center"><font size=5><i class="fa fa-eraser"></i>	Wipe account</font></p>';
 			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
 			if (!$username) {
@@ -3013,6 +3014,7 @@ class P {
 			echo '<div id="page-content-wrapper">';
 			// Maintenance check
 			self::MaintenanceStuff();
+			echo '<div class="container alert alert-danger" role="alert" style="width: 100%;"><p align="center"><b>Reminder:<br></b>Admins should not provide wipes for users who have not purchased supporter, unless it is warranted.</p></div>';
 			echo '<p align="center"><font size=5><i class="fa fa-eraser"></i>	Wipe account</font></p>';
 			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
 			if (!$username) {
