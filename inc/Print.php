@@ -35,6 +35,7 @@ class P {
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores.beatmap_md5
 		LEFT JOIN users ON users.id = scores.userid
 		WHERE scores.completed = 3 AND beatmaps.ranked = 2
+		AND users.privileges & 1 > 0
 		ORDER BY scores.id DESC
 		LIMIT 10');
 
@@ -47,6 +48,7 @@ class P {
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores_relax.beatmap_md5
 		LEFT JOIN users ON users.id = scores_relax.userid
 		WHERE scores_relax.completed = 3 AND beatmaps.ranked = 2
+		AND users.privileges & 1 > 0
 		ORDER BY scores_relax.id DESC
 		LIMIT 10');
 
@@ -62,6 +64,7 @@ class P {
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores.beatmap_md5
 		LEFT JOIN users ON users.id = scores.userid
 		WHERE scores.completed = 3
+		AND users.privileges & 1 > 0
 		AND scores.play_mode = 0
 		AND beatmaps.ranked = 2
 		ORDER BY scores.pp DESC LIMIT 10');
@@ -76,6 +79,7 @@ class P {
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores_relax.beatmap_md5
 		LEFT JOIN users ON users.id = scores_relax.userid
 		WHERE scores_relax.completed = 3
+		AND users.privileges & 1 > 0
 		AND scores_relax.play_mode = 0
 		AND beatmaps.ranked = 2
 		ORDER BY scores_relax.pp DESC LIMIT 10');
@@ -93,6 +97,7 @@ class P {
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores.beatmap_md5
 		LEFT JOIN users ON users.id = scores.userid
 		WHERE scores.completed = 3
+		AND users.privileges & 1 > 0
 		AND scores.time > UNIX_TIMESTAMP(NOW()) - 1209600
 		AND scores.play_mode = 0
 		AND beatmaps.ranked = 2
@@ -108,6 +113,7 @@ class P {
 		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores_relax.beatmap_md5
 		LEFT JOIN users ON users.id = scores_relax.userid
 		WHERE scores_relax.completed = 3
+		AND users.privileges & 1 > 0
 		AND scores_relax.play_mode = 0
 		AND scores_relax.time > UNIX_TIMESTAMP(NOW()) - 1209600
 		AND beatmaps.ranked = 2
