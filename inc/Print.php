@@ -37,7 +37,7 @@ class P {
 		WHERE scores.completed = 3 AND beatmaps.ranked = 2
 		AND users.privileges & 1 > 0
 		ORDER BY scores.id DESC
-		LIMIT 10');
+		LIMIT 20');
 
 		$recentPlaysRelax = $GLOBALS['db']->fetchAll('
 		SELECT
@@ -50,7 +50,7 @@ class P {
 		WHERE scores_relax.completed = 3 AND beatmaps.ranked = 2
 		AND users.privileges & 1 > 0
 		ORDER BY scores_relax.id DESC
-		LIMIT 10');
+		LIMIT 20');
 
 		/* Top scores */
 
@@ -67,7 +67,7 @@ class P {
 		AND users.privileges & 1 > 0
 		AND scores.play_mode = 0
 		AND beatmaps.ranked = 2
-		ORDER BY scores.pp DESC LIMIT 10');
+		ORDER BY scores.pp DESC LIMIT 20');
 
 		$topPlaysRelax = [];
 		$topPlaysRelax = $GLOBALS['db']->fetchAll('
@@ -82,7 +82,7 @@ class P {
 		AND users.privileges & 1 > 0
 		AND scores_relax.play_mode = 0
 		AND beatmaps.ranked = 2
-		ORDER BY scores_relax.pp DESC LIMIT 10');
+		ORDER BY scores_relax.pp DESC LIMIT 20');
 
 		/* Top scores within the last 2 weeks */
 		/*  (Used to find cheaters, usually)  */
@@ -101,7 +101,7 @@ class P {
 		AND scores.time > UNIX_TIMESTAMP(NOW()) - 1209600
 		AND scores.play_mode = 0
 		AND beatmaps.ranked = 2
-		ORDER BY scores.pp DESC LIMIT 20');
+		ORDER BY scores.pp DESC LIMIT 50');
 
 		$topRecentPlaysRelax = [];
 		$topRecentPlaysRelax = $GLOBALS['db']->fetchAll('
@@ -117,7 +117,7 @@ class P {
 		AND scores_relax.play_mode = 0
 		AND scores_relax.time > UNIX_TIMESTAMP(NOW()) - 1209600
 		AND beatmaps.ranked = 2
-		ORDER BY scores_relax.pp DESC LIMIT 20');
+		ORDER BY scores_relax.pp DESC LIMIT 50');
 
 		$onlineUsers = getJsonCurl("http://127.0.0.1:5001/api/v1/onlineUsers");
 		if ($onlineUsers == false) {
