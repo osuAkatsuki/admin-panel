@@ -586,7 +586,7 @@ class P {
 				throw new Exception("That user doesn't exist");
 			}
 			// Hax check
-			if ($userData["aqn"] == 1) {
+			if ($userData["delay_ban"] == 1) {
 				$haxText = "Yes";
 				$haxCol = "danger";
 			} else {
@@ -798,8 +798,8 @@ class P {
 			<td><span class="label label-'.$cbCol.'">'.$cbText.'</span></td>
 			</tr>';
 			echo '<tr class="single-row">
-			<td>Detected AQN folder
-				<i class="no-mobile">(If \'yes\', AQN (hax) folder has been detected on this user, so he is probably cheating).</i>
+			<td>Account in delayban queue
+				<i class="no-mobile">(If \'yes\', The user has already been added to the delayban queue, and will be restricted automatically.</i>
 			</td>
 			<td><span class="label label-'.$haxCol.'">'.$haxText.'</span></td>
 			</tr>';
