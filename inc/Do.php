@@ -727,7 +727,7 @@ class D {
 				throw new Exception('Invalid request');
 			}
 			// Get user id
-			$avatar = '/http/avatars/'.$_GET['id'].'.png';
+			$avatar = '/home/akatsuki/avatars/'.$_GET['id'].'.png';
 			if (!file_exists($avatar)) {
 				throw new Exception("That user doesn't have an avatar");
 			}
