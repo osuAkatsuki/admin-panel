@@ -119,13 +119,12 @@ class P {
 		AND beatmaps.ranked = 2
 		ORDER BY scores_relax.pp DESC LIMIT 20');
 
-		/*
 		$onlineUsers = getJsonCurl("http://127.0.0.1:5001/api/v1/onlineUsers");
 		if ($onlineUsers == false) {
 			$onlineUsers = 0;
 		} else {
 			$onlineUsers = $onlineUsers["result"];
-		}*/
+		}
 
 		// Print admin dashboard
 		echo '<div id="wrapper">';
@@ -140,7 +139,7 @@ class P {
 		//printAdminPanel('primary', 'fa fa-gamepad fa-5x', $submittedScores, 'Submitted scores', number_format($submittedScoresFull));
 		printAdminPanel('red', 'fa fa-wheelchair-alt fa-5x', $totalScoresVanilla, 'Vanilla plays', number_format($totalScoresFullVanilla));
 		printAdminPanel('red', 'fa fa-wheelchair-alt fa-5x', $totalScoresRelax, 'Relax plays', number_format($totalScoresFullRelax));
-		//printAdminPanel('green', 'fa fa-street-view fa-5x', $onlineUsers, 'Online users');
+		printAdminPanel('green', 'fa fa-street-view fa-5x', $onlineUsers, 'Online users');
 		//printAdminPanel('yellow', 'fa fa-dot-circle-o fa-5x', $totalPP, 'Total PP');
 		echo '</div>';
 
@@ -253,7 +252,7 @@ class P {
 			echo '</tr>';
 		}
 		echo '</tbody>';
-		
+
 		// Recent top plays table (Vanilla)
 		echo '<table class="table table-striped table-hover">
 		<thead>
@@ -810,7 +809,11 @@ class P {
 			<i>(visible only from RAP)</i></td>
 			<td><textarea name="ncm" class="form-control" style="overflow:auto;resize:vertical;height:500px">' . $userData["notes"] . '</textarea></td>
 			</tr>';
-			echo '<tr><td>IPs<br><i><a href="index.php?p=136&uid=' . $_GET["id"] . '">(search users with these IPs)</a></i></td><td><ul>';
+
+			if (hasPrivilege(Privileges::AdminCaker)) {
+				echo '<tr><td>IPs<br><i><a href="index.php?p=136&uid=' . $_GET["id"] . '">(search users with these IPs)</a></i></td><td><ul>';
+			}
+
 			foreach ($ips as $ip) {
 				echo "<li>$ip[ip] <a class='getcountry' data-ip='$ip[ip]' title='Click to retrieve IP country'>(?)</a> ($ip[occurencies])</li>";
 			}
@@ -3542,7 +3545,7 @@ class P {
 					</tr>
 					<tr>
 						<td>Anticheat data</td>";
-						
+
 					if (isJson($report["data"])) {
 						echo "<td>";
 						echo jsonObjectToHtmlTable($report["data"]);
@@ -3550,7 +3553,7 @@ class P {
 					} else {
 						echo "<td class='code'>" . $report["data"] . "</td>";
 					}
-					
+
 					echo "</tr>
 				</table>";
 
@@ -3573,7 +3576,7 @@ class P {
 			}
 
 			$confirm = isset($_GET["id"]) && isset($_POST["gm"]);
-			
+
 			echo '<div id="wrapper">';
 			printAdminSidebar();
 			echo '<div id="page-content-wrapper">';
@@ -3644,7 +3647,7 @@ class P {
 				echo '<hr>';
 				$scoresCount = 0;
 				$scoresPreview = [];
-				foreach (["scores_removed.id, song_name, play_mode, pp", "COUNT(*) AS c"] as $i => $v) {				
+				foreach (["scores_removed.id, song_name, play_mode, pp", "COUNT(*) AS c"] as $i => $v) {
 					$q = "SELECT $v FROM scores_removed JOIN beatmaps USING(beatmap_md5) WHERE userid = ?";
 					$qp = [$_GET["id"]];
 					if ($_POST["gm"] > -1 && $_POST["gm"] <= 3) {
@@ -3730,7 +3733,7 @@ class P {
 			}
 
 			$confirm = isset($_GET["id"]) && isset($_POST["gm"]);
-			
+
 			echo '<div id="wrapper">';
 			printAdminSidebar();
 			echo '<div id="page-content-wrapper">';
@@ -3801,7 +3804,7 @@ class P {
 				echo '<hr>';
 				$scoresCount = 0;
 				$scoresPreview = [];
-				foreach (["scores_removed_relax.id, song_name, play_mode, pp", "COUNT(*) AS c"] as $i => $v) {				
+				foreach (["scores_removed_relax.id, song_name, play_mode, pp", "COUNT(*) AS c"] as $i => $v) {
 					$q = "SELECT $v FROM scores_removed_relax JOIN beatmaps USING(beatmap_md5) WHERE userid = ?";
 					$qp = [$_GET["id"]];
 					if ($_POST["gm"] > -1 && $_POST["gm"] <= 3) {
@@ -3874,7 +3877,7 @@ class P {
 			redirect('index.php?p=108&e='.$e->getMessage());
 		}
 	}
-	
+
 	public static function AdminSearchUserByIP() {
 		echo '<div id="wrapper">';
 		printAdminSidebar();
@@ -3934,7 +3937,7 @@ class P {
 			} else {
 				throw new Exception("No IPs or uid passed.");
 			}
-			
+
 			echo '<p align="center"><h2><i class="fa fa-map-marker"></i>	Search user by IP ' . ($userFilter ? '(user filter mode)' : '') . '</h2></p>';
 			echo '<br>';
 			$conditions = "";
@@ -4028,4 +4031,3 @@ class Egg extends Exception {
 	   parent::__construct($message, $code, $previous);
    }
 }
-

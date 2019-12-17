@@ -1079,7 +1079,7 @@ class D {
 			redirect('index.php?p=99&e='.$e->getMessage());
 		}
 	}
-	
+
 	/*
 	 * ProcessRankRequest
 	 * Rank/unrank a beatmap
@@ -1873,4 +1873,3 @@ class D {
 		}
 	}
 }
-
