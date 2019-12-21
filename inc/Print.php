@@ -810,11 +810,7 @@ class P {
 			<td><textarea name="ncm" class="form-control" style="overflow:auto;resize:vertical;height:500px">' . $userData["notes"] . '</textarea></td>
 			</tr>';
 
-			echo '<tr><td>IPs<br>';
-			if (hasPrivilege(Privileges::AdminCaker)) {
-				echo '<i><a href="index.php?p=136&uid=' . $_GET["id"] . '">(search users with these IPs)</a></i>';
-			}
-			echo '</td><td><ul>';
+			echo '<tr><td>IPs<br><i><a href="index.php?p=136&uid=' . $_GET["id"] . '">(search users with these IPs)</a></i></td><td><ul>';
 
 			foreach ($ips as $ip) {
 				echo "<li>$ip[ip] <a class='getcountry' data-ip='$ip[ip]' title='Click to retrieve IP country'>(?)</a> ($ip[occurencies])</li>";
@@ -863,7 +859,6 @@ class P {
 							echo '	<a onclick="sure(\'submit.php?action=lockUnlockUser&id='.$_GET['id'].'&csrf='.csrfToken().'\', \'Restrictions and bans will be removed from this account if you lock it. Make sure to lock only accounts that are not banned or restricted.\')" class="btn btn-danger">(Un)lock user</a>';
 						}
 						if (hasPrivilege(Privileges::AdminBanUsers)) {
-
 							/*
 							if (isBanned($_GET["id"])) {
 								echo '	<a onclick="sure(\'submit.php?action=banUnbanUser&id='.$_GET['id'].'&csrf=' . csrfToken() . '\')" class="btn btn-danger">Unban user</a>';
@@ -3891,9 +3886,7 @@ class P {
 			self::ExceptionMessageStaccah($_GET['e']);
 		}
 		echo '<p align="center"><h2><i class="fa fa-map-marker"></i>	Search user by IP</h2></p>';
-		echo '<br>';
-		echo '<p align="center"><h2>Remember, this is not 100% evidence! Take it with a grain of salt!</h2></p>';
-		echo '<br>';
+		echo '<br><p align="center"><h2>Remember, this is not 100% evidence! Take it with a grain of salt!</h2></p><br>';
 
 		echo '
 		<div class="narrow-content">
@@ -3941,6 +3934,7 @@ class P {
 			}
 
 			echo '<p align="center"><h2><i class="fa fa-map-marker"></i>	Search user by IP ' . ($userFilter ? '(user filter mode)' : '') . '</h2></p>';
+			echo '<br><p align="center"><h2>Remember, this is not 100% evidence! Take it with a grain of salt!</h2></p><br>';
 			echo '<br>';
 			$conditions = "";
 			foreach ($ips as $i => $ip) {
