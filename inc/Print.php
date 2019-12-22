@@ -810,7 +810,9 @@ class P {
 			<td><textarea name="ncm" class="form-control" style="overflow:auto;resize:vertical;height:500px">' . $userData["notes"] . '</textarea></td>
 			</tr>';
 
-			echo '<tr><td>IPs<br><i><a href="index.php?p=136&uid=' . $_GET["id"] . '">(search users with these IPs)</a></i></td><td><ul>';
+			if (hasPrivilege(Privileges::AdminManagePrivileges)) {
+				echo '<tr><td>IPs<br><i><a href="index.php?p=136&uid=' . $_GET["id"] . '">(search users with these IPs)</a></i></td><td><ul>';
+			}
 
 			foreach ($ips as $ip) {
 				echo "<li>$ip[ip] <a class='getcountry' data-ip='$ip[ip]' title='Click to retrieve IP country'>(?)</a> ($ip[occurencies])</li>";
