@@ -858,14 +858,13 @@ class P {
 						if (hasPrivilege(Privileges::AdminCaker)) { // Only allow superadmin to lock from admin panel.
 							echo '	<a onclick="sure(\'submit.php?action=lockUnlockUser&id='.$_GET['id'].'&csrf='.csrfToken().'\', \'Restrictions and bans will be removed from this account if you lock it. Make sure to lock only accounts that are not banned or restricted.\')" class="btn btn-danger">(Un)lock user</a>';
 						}
-						if (hasPrivilege(Privileges::AdminBanUsers)) {
-							/*
+						if (hasPrivilege(Privileges::AdminManagePrivileges)) {
 							if (isBanned($_GET["id"])) {
 								echo '	<a onclick="sure(\'submit.php?action=banUnbanUser&id='.$_GET['id'].'&csrf=' . csrfToken() . '\')" class="btn btn-danger">Unban user</a>';
 							}
 							if (isRestricted($_GET["id"])) {
 								echo '	<a onclick="sure(\'submit.php?action=restrictUnrestrictUser&id='.$_GET['id'].'&csrf='.csrfToken().'\')" class="btn btn-danger">Unrestrict user</a>';
-							}*/
+							}
 
 							echo '	<a onclick="sure(\'submit.php?action=clearHWID&id='.$_GET['id'].'&csrf='.csrfToken().'\');" class="btn btn-danger">Clear HWID matches</a>';
 						}
