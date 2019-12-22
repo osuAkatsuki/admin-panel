@@ -26,5 +26,4 @@ class Privileges {
 	const UserTournamentStaff		= 2 << 20;
 	const AdminCaker				= 2 << 21;
 	const Premium					= 2 << 22;
-	const AdminQAT					= 2 << 23;
 }
