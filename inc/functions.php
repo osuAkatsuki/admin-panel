@@ -380,7 +380,7 @@ function printPage($p) {
 				sessionCheckAdmin(Privileges::AdminWipeUsers);
 				P::AdminRestoreScores();
 			break;
-			
+
 			// Admin panel - Search users by IP
 			case 135:
 				sessionCheckAdmin(Privileges::AdminManageUsers);
@@ -1970,7 +1970,7 @@ function giveDonor($userID, $months, $add=true, $premium=false) {
 	else if ($months >= 10 && $months < 15) $TheMoreYouKnow = "You know what we could do with the amount you donated? We could probably renew the domain for one more year! Although your money is more likely to end up being spent on paying the main server. Thank you so much!";
 	else if ($months >= 4 && $months < 10) $TheMoreYouKnow = "Your donation will help to keep the beatmap mirror we set up for Akatsuki up for one month! Thanks a lot!";
 	else if ($months >= 1 && $months < 4) $TheMoreYouKnow =  "With your donation, we can afford to keep up the error logging server, which is a little VPS on which we host an error logging service (Sentry). Thanks a lot!";
-	
+
 	global $MailgunConfig;
 	$mailer = new SimpleMailgun($MailgunConfig);
 	$mailer->Send(

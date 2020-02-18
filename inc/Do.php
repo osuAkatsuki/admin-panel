@@ -517,12 +517,12 @@ class D {
 			if ($GLOBALS['db']->fetch('SELECT * FROM users WHERE username_safe = ? AND id != ? LIMIT 1', [$safe, $_POST["id"]])) {
 				throw new Exception('Username already used by another user. No changes have been made.');
 			}
-			/* redis unused
+
 			redisConnect();
 			$GLOBALS["redis"]->publish("peppy:change_username", json_encode([
 				"userID" => intval($_POST["id"]),
 				"newUsername" => $_POST["newu"]
-			]));*/
+			]));
 
 			/* Update the DB
 			 * users       -> username, username_safe
@@ -532,6 +532,9 @@ class D {
 			$GLOBALS["db"]->execute('UPDATE users SET username = ?, username_safe = ? WHERE id = ?', [$_POST["newu"], $safe, $_POST["id"]]);
 			$GLOBALS["db"]->execute('UPDATE users_stats SET username = ? WHERE id = ?', [$_POST["newu"], $_POST["id"]]);
 			$GLOBALS["db"]->execute('UPDATE rx_stats SET username = ? WHERE id = ?', [$_POST["newu"], $_POST["id"]]);
+
+			// log this username change to the users rap notes
+			appendNotes($_POST["id"], sprintf('Changed username: "%s" -> "%s"', $_POST["oldu"], $_POST["newu"]));
 
 			// rap log
 			rapLog(sprintf("has changed %s's username to %s", $_POST["oldu"], $_POST["newu"]));
