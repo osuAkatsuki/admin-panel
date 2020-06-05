@@ -255,8 +255,6 @@ class P {
 		}
 		echo '</tbody>';
 
-		echo 'The following tables have whitelisted players removed (used for anticheating).<br>';
-
 		// Recent top plays table (Vanilla)
 		echo '<table class="table table-striped table-hover">
 		<thead>
