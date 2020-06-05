@@ -98,10 +98,11 @@ class P {
 		LEFT JOIN users ON users.id = scores.userid
 		WHERE scores.completed = 3
 		AND users.privileges & 1 > 0
-		AND scores.time > UNIX_TIMESTAMP(NOW()) - 1209600
+		AND users.whitelist & 1 < 0
 		AND scores.play_mode = 0
 		AND beatmaps.ranked = 2
-		ORDER BY scores.pp DESC LIMIT 50');
+		AND scores.time > UNIX_TIMESTAMP(NOW()) - 1209600
+		ORDER BY scores.pp DESC LIMIT 100');
 
 		$topRecentPlaysRelax = [];
 		$topRecentPlaysRelax = $GLOBALS['db']->fetchAll('
@@ -114,10 +115,11 @@ class P {
 		LEFT JOIN users ON users.id = scores_relax.userid
 		WHERE scores_relax.completed = 3
 		AND users.privileges & 1 > 0
+		AND users.whitelist & 2 < 0
 		AND scores_relax.play_mode = 0
-		AND scores_relax.time > UNIX_TIMESTAMP(NOW()) - 1209600
 		AND beatmaps.ranked = 2
-		ORDER BY scores_relax.pp DESC LIMIT 50');
+		AND scores_relax.time > UNIX_TIMESTAMP(NOW()) - 1209600
+		ORDER BY scores_relax.pp DESC LIMIT 100');
 
 		$onlineUsers = getJsonCurl("http://127.0.0.1:5001/api/v1/onlineUsers");
 		if ($onlineUsers == false) {
@@ -252,6 +254,8 @@ class P {
 			echo '</tr>';
 		}
 		echo '</tbody>';
+
+		echo 'The following tables have whitelisted players removed (used for anticheating).<br>';
 
 		// Recent top plays table (Vanilla)
 		echo '<table class="table table-striped table-hover">
