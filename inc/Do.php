@@ -985,6 +985,9 @@ class D {
 				$GLOBALS['db']->execute('UPDATE users_stats SET ranked_score_'.$k.' = 0, total_score_'.$k.' = 0, replays_watched_'.$k.' = 0, playcount_'.$k.' = 0, avg_accuracy_'.$k.' = 0.0, total_hits_'.$k.' = 0, level_'.$k.' = 0, pp_'.$k.' = 0 WHERE id = ? LIMIT 1', [$_POST['id']]);
 			}
 
+			redisConnect();
+			$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'].',0');
+
 			// RAP log
 			rapLog(sprintf("has wiped %s's account", $username));
 
@@ -1043,6 +1046,9 @@ class D {
 			foreach ($modes as $k) {
 				$GLOBALS['db']->execute('UPDATE rx_stats SET ranked_score_'.$k.' = 0, total_score_'.$k.' = 0, replays_watched_'.$k.' = 0, playcount_'.$k.' = 0, avg_accuracy_'.$k.' = 0.0, total_hits_'.$k.' = 0, level_'.$k.' = 0, pp_'.$k.' = 0 WHERE id = ? LIMIT 1', [$_POST['id']]);
 			}
+
+			redisConnect();
+			$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'].',1');
 
 			// RAP log
 			rapLog(sprintf("has wiped %s's account", $username));
