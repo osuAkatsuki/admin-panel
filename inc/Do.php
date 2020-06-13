@@ -347,7 +347,7 @@ class D {
 			// Edit privileges if we can
 			if (hasPrivilege(Privileges::AdminManagePrivileges) && ($_POST["id"] != $_SESSION["userid"])) {
 				$GLOBALS['db']->execute('UPDATE users SET privileges = ? WHERE id = ? LIMIT 1', [$_POST['priv'], $_POST['id']]);
-				updateBanBancho($_POST["id"]);
+				updateBanBancho($_POST["id"], $_POST['priv'] & Privileges::UserPublic == 0);
 			}
 			// Save new userpage
 			$GLOBALS['db']->execute('UPDATE users_stats SET userpage_content = ? WHERE id = ? LIMIT 1', [$_POST['up'], $_POST['id']]);
@@ -427,7 +427,7 @@ class D {
 			//$newPrivileges = $userData["privileges"] ^ Privileges::UserBasic;
 			// Change privileges
 			$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_GET['id']]);
-			updateBanBancho($_GET["id"]);
+			updateBanBancho($_GET["id"], $newPrivileges & Privileges::UserPublic == 0);
 			// Rap log
 			rapLog(sprintf("has %s user %s", ($newPrivileges & Privileges::UserNormal) > 0 ? "unbanned" : "banned", $userData["username"]));
 			// Done, redirect to success page
@@ -948,7 +948,7 @@ class D {
 			}
 			$userData = $GLOBALS["db"]->fetch("SELECT username, privileges FROM users WHERE id = ? LIMIT 1", [$_POST["id"]]);
 			if (!$userData) {
-				throw new Exception('User doesn\'t exist.');
+				throw new Exception("User doesn't exist.");
 			}
 			$username = $userData["username"];
 			// Check if we can wipe this user
@@ -1010,7 +1010,7 @@ class D {
 			}
 			$userData = $GLOBALS["db"]->fetch("SELECT username, privileges FROM users WHERE id = ? LIMIT 1", [$_POST["id"]]);
 			if (!$userData) {
-				throw new Exception('User doesn\'t exist.');
+				throw new Exception("User doesn't exist.");
 			}
 			$username = $userData["username"];
 			// Check if we can wipe this user
@@ -1246,7 +1246,8 @@ class D {
 			}
 			// Change privileges
 			$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_GET['id']]);
-			updateBanBancho($_GET["id"]);
+			updateBanBancho($_GET["id"], $newPrivileges & Privileges::UserPublic == 0);
+
 			// Rap log
 			rapLog(sprintf("has %s user %s", ($newPrivileges & Privileges::UserPublic) > 0 ? "removed restrictions on" : "restricted", $userData["username"]));
 			// Done, redirect to success page
@@ -1873,7 +1874,7 @@ class D {
 				$result .= "$uid OK! | ";
 				$result = trim($result, " | ");
 				$errors = trim($errors, " | ");
-				updateBanBancho($uid);
+				updateBanBancho($uid, TRUE);
 				rapLog(sprintf("has banned user %s", $user["username"]));
 			}
 			redirect("index.php?p=102&e=" . $errors . "&s=" . $result);

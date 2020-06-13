@@ -1845,9 +1845,9 @@ function safeUsername($name) {
 	return str_replace(" ", "_", strtolower($name));
 }
 
-function updateBanBancho($userID) {
+function updateBanBancho($userID, $ban) { // $ban is true or false, false meaning unban
 	redisConnect();
-	$GLOBALS["redis"]->publish("peppy:ban", $userID);
+	$GLOBALS["redis"]->publish('peppy:'.($ban ? 'ban' : 'unban'), $userID);
 }
 
 function updateSilenceBancho($userID) {
