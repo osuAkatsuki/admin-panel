@@ -1184,13 +1184,13 @@ class D {
 				$newPrivileges = $userData["privileges"] | Privileges::UserNormal;
 				$newPrivileges &= ~Privileges::UserPublic;
 				removeFromLeaderboard($_POST['id']);
-				appendNotes($uid, $_SESSION["username"].' ('.$_SESSION["userid"].') has restricted for: '.$_POST['reason']);
+				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') has restricted for: '.$_POST['reason']);
 			} else {
 				// Remove restrictions, set both UserPublic and UserNormal
 				$banDateTime = 0;
 				$newPrivileges = $userData["privileges"] | Privileges::UserNormal;
 				$newPrivileges |= Privileges::UserPublic;
-				appendNotes($uid, $_SESSION["username"].' ('.$_SESSION["userid"].') has unrestricted for: '.$_POST['reason']);
+				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') has unrestricted for: '.$_POST['reason']);
 			}
 			// Change privileges
 			$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_POST['id']]);
