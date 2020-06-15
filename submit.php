@@ -66,6 +66,10 @@ try {
 			sessionCheckAdmin(Privileges::AdminBanUsers);
 			D::RestrictUnrestrictUser();
 		break;
+		case 'restrictUnrestrictUserReason':
+			sessionCheckAdmin(Privileges::AdminBanUsers);
+			D::RestrictUnrestrictUserReason();
+		break;
 		case 'quickEditUser':
 			sessionCheckAdmin(Privileges::AdminManageUsers);
 			D::QuickEditUser(false);
