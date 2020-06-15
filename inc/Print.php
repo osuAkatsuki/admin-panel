@@ -727,7 +727,7 @@ class P {
 			if (hasPrivilege(Privileges::UserDonor, $userData["id"])) {
 				$donorExpire = timeDifference($userData["donor_expire"], time(), false);
 				echo '<tr>
-				<td>'.(hasPrivilege(Privileges::UserPremium ? 'Premium' : 'Supporter')).'expires in</td>
+				<td>'.(hasPrivilege(Privileges::UserPremium) ? 'Premium' : 'Supporter').'expires in</td>
 				<td>'.$donorExpire.'</td>
 				</tr>';
 			}
@@ -862,9 +862,9 @@ class P {
 								}
 								echo '	<a href="index.php?p=121&id='.$_GET['id'].'" class="btn btn-warning">Give supporter</a>';
 								echo '	<a href="https://akatsuki.pw/u/'.$_GET['id'].'" class="btn btn-primary">View profile</a>';
-								if (hasPrivilege(Privileges::AdminManageUsers)) {
-									echo '	<a href="index.php?p=132&uid=' . $_GET['id'] . '" class="btn btn-danger">View anticheat reports</a>';
-								}
+								//if (hasPrivilege(Privileges::AdminManageUsers)) {
+								//	echo '	<a href="index.php?p=132&uid=' . $_GET['id'] . '" class="btn btn-danger">View anticheat reports</a>';
+								//}
 							echo '</li>
 						</ul>';
 
