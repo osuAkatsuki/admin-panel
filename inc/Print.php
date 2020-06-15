@@ -2798,7 +2798,7 @@ class P {
 			echo '<div id="page-content-wrapper">';
 			// Maintenance check
 			self::MaintenanceStuff();
-			echo '<p align="center"><font size=5><i class="fa fa-eraser"></i>	Restrict account</font></p>';
+			echo '<p align="center"><font size=5><i class="fa fa-eraser"></i>	(Un)restrict account</font></p>';
 			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
 			if (!$username) {
 				throw new Exception("Invalid user");
