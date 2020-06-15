@@ -328,12 +328,12 @@ class P {
 		    SELECT COUNT(*)
 			FROM users
 			WHERE privileges & '.Privileges::UserDonor.' > 0
-			AND NOT privileges & '.Privileges::Premium.' > 0
+			AND NOT privileges & '.Privileges::UserPremium.' > 0
 			AND NOT privileges & '.Privileges::AdminManageUsers.' > 0
 			AND donor_expire != 2147483647'));
 		$premiums = current($GLOBALS['db']->fetch('
 			SELECT COUNT(*) FROM users
-			WHERE privileges & '.Privileges::Premium.' > 0
+			WHERE privileges & '.Privileges::UserPremium.' > 0
 			AND NOT privileges & '.Privileges::AdminManageUsers.' > 0
 			AND donor_expire != 2147483647'));
 		$bannedUsers = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & 1 = 0'));

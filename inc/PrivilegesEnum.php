@@ -25,5 +25,5 @@ class Privileges {
 	const UserPendingVerification	= 2 << 19;
 	const UserTournamentStaff		= 2 << 20;
 	const AdminCaker				= 2 << 21;
-	const Premium					= 2 << 22;
+	const UserPremium				= 2 << 22;
 }
