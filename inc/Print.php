@@ -883,7 +883,7 @@ class P {
 						}
 
 						if (hasPrivilege(Privileges::AdminBanUsers)) {
-							echo '	<a href="index.php?p=137&id='.$user["id"].'" class="btn btn-danger">(Un)restrict user</a>';
+							echo '	<a href="index.php?p=137&id='.$_GET["id"].'" class="btn btn-danger">(Un)restrict user</a>';
 							/*if (isBanned($_GET["id"])) {
 								echo '	<a onclick="sure(\'submit.php?action=banUnbanUser&id='.$_GET['id'].'&csrf=' . csrfToken() . '\')" class="btn btn-danger">Unban user</a>';
 							}
