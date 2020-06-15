@@ -126,7 +126,7 @@ function getIP() {
 function setTitle($p) {
 	if (isset($_COOKIE['st']) && $_COOKIE['st'] == 1) {
 		// Safe title, so Peppy doesn't know we are browsing Ripple
-		return '<title>Solis</title>'; // Very safe -> Solis :^)
+		return '<title>Google Chrome</title>';
 	} else {
 		$namesRipple = [
 			1 =>   'Custom osu! server',
@@ -173,13 +173,13 @@ function setTitle($p) {
 			131 => 'View cake recipe',
 			132 => 'View anticheat reports',
 			133 => 'View anticheat report',
-			134 => 'Restore scores',
+			//134 => 'Restore scores',
 			135 => 'Search users by IP',
- 			136 => 'Search users by IP - Results',
-			// cmyui's Additions
+			136 => 'Search users by IP - Results',
+			137 => '(Un)restrict user',
+
 			222 => 'Rollback user (Relax)',
-			223 => 'Wipe user (Relax)',
-			234 => 'Restore scores (Relax)',
+			//234 => 'Restore scores (Relax)',
 		];
 		if (isset($namesRipple[$p])) {
 			return __maketitle('Akatsuki', $namesRipple[$p]);
@@ -376,10 +376,11 @@ function printPage($p) {
 			break;
 
 			// Admin panel - Restore scores (Regular)
+			/*
 			case 134:
 				sessionCheckAdmin(Privileges::AdminWipeUsers);
 				P::AdminRestoreScores();
-			break;
+			break;*/
 
 			// Admin panel - Search users by IP
 			case 135:
@@ -393,23 +394,23 @@ function printPage($p) {
 				P::AdminSearchUserByIPResults();
 			break;
 
+			// Admin panel - (Un)restrict user
+			case 137:
+				sessionCheckAdmin(Privileges::AdminBanUsers);
+				P::AdminRestrictUnrestrictReason();
+			break;
+
 			// Admin panel - Rollback User (Relax)
 			case 222:
 				sessionCheckAdmin(Privileges::AdminWipeUsers);
 				P::AdminRollbackRelax();
 			break;
 
-			// Admin panel - Wipe User (Relax)
-			case 223:
-				sessionCheckAdmin(Privileges::AdminWipeUsers);
-				P::AdminWipeRelax();
-			break;
-
 			// Admin panel - Restore scores (Relax)
-			case 234:
+			/*case 234:
 				sessionCheckAdmin(Privileges::AdminWipeUsers);
 				P::AdminRestoreScoresRelax();
-			break;
+			break;*/
 
 			// 404 page
 			default:

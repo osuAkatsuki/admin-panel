@@ -43,7 +43,7 @@ try {
 			redirect('index.php');
 		break;
 		break;
-		
+
 		// Admin functions, need sessionCheckAdmin() because can be performed only by admins
 
 		case 'saveSystemSettings':
@@ -109,10 +109,6 @@ try {
 		case 'wipeAccount':
 			sessionCheckAdmin(Privileges::AdminWipeUsers);
 			D::WipeAccount();
-		break;
-		case 'wipeAccountRelax':
-			sessionCheckAdmin(Privileges::AdminWipeUsers);
-			D::WipeAccountRelax();
 		break;
 		/*case 'processRankRequest':
 			sessionCheckAdmin(Privileges::AdminManageBeatmaps);
@@ -186,6 +182,7 @@ try {
 			sessionCheckAdmin(Privileges::AdminCaker);
 			Fringuellina::EditCake();
 		break;
+		/*
 		case 'restoreScoresSearchUser':
 			sessionCheckAdmin(Privileges::AdminWipeUsers);
 			D::RestoreScoresSearchUser();
@@ -201,7 +198,7 @@ try {
 		case 'restoreScoresRelax':
 			sessionCheckAdmin(Privileges::AdminWipeUsers);
 			D::RestoreScoresRelax();
-		break;
+		break;*/
 		case 'setMainMenuIcon':
 			sessionCheckAdmin(Privileges::AdminManageSettings);
 			D::SetMainMenuIcon();

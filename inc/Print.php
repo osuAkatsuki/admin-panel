@@ -11,11 +11,16 @@ class P {
 		$submittedScoresFull = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM scores LIMIT 1'));
 		$submittedScores = number_format($submittedScoresFull / 1000000, 2) . "m";
 		*/
-		$totalScoresFullVanilla = current($GLOBALS['db']->fetch('SELECT SUM(playcount_std) + SUM(playcount_taiko) + SUM(playcount_ctb) + SUM(playcount_mania) FROM users_stats WHERE 1'));
+		$totalScoresFullVanilla = current($GLOBALS['db']->fetch('
+			SELECT SUM(playcount_std) + SUM(playcount_taiko) + SUM(playcount_ctb) + SUM(playcount_mania)
+			FROM users_stats'));
 		$totalScoresVanilla = number_format($totalScoresFullVanilla / 1000000, 2) . "m";
 
-		$totalScoresFullRelax = current($GLOBALS['db']->fetch('SELECT SUM(playcount_std) + SUM(playcount_taiko) + SUM(playcount_ctb) + SUM(playcount_mania) FROM rx_stats WHERE 1'));
+		$totalScoresFullRelax = current($GLOBALS['db']->fetch('
+			SELECT SUM(playcount_std) + SUM(playcount_taiko) + SUM(playcount_ctb) + SUM(playcount_mania)
+			FROM rx_stats'));
 		$totalScoresRelax = number_format($totalScoresFullRelax / 1000000, 2) . "m";
+
 		// $betaKeysLeft = "∞";
 		/*$totalPPQuery = $GLOBALS['db']->fetch("SELECT SUM(pp) FROM scores WHERE completed = 3 LIMIT 1");
 		$totalPP = 0;
@@ -27,102 +32,100 @@ class P {
 		/* Recent scores */
 
 		$recentPlaysVanilla = $GLOBALS['db']->fetchAll('
-		SELECT
-			beatmaps.song_name, scores.beatmap_md5, users.username,
-			scores.userid, scores.time, scores.score, scores.pp,
-			scores.play_mode, scores.mods
-		FROM scores
-		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores.beatmap_md5
-		LEFT JOIN users ON users.id = scores.userid
-		WHERE scores.completed = 3 AND beatmaps.ranked = 2
-		AND users.privileges & 1 > 0
-		ORDER BY scores.id DESC
-		LIMIT 20');
+			SELECT
+				beatmaps.song_name, scores.beatmap_md5, users.username,
+				scores.userid, scores.time, scores.score, scores.pp,
+				scores.play_mode, scores.mods
+			FROM scores
+			LEFT JOIN beatmaps USING(beatmap_md5)
+			LEFT JOIN users ON users.id = scores.userid
+			WHERE scores.completed = 3
+				AND beatmaps.ranked = 2
+				AND users.privileges & 1 > 0
+			ORDER BY scores.id DESC
+			LIMIT 20');
 
 		$recentPlaysRelax = $GLOBALS['db']->fetchAll('
-		SELECT
-			beatmaps.song_name, scores_relax.beatmap_md5, users.username,
-			scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp,
-			scores_relax.play_mode, scores_relax.mods
-		FROM scores_relax
-		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores_relax.beatmap_md5
-		LEFT JOIN users ON users.id = scores_relax.userid
-		WHERE scores_relax.completed = 3 AND beatmaps.ranked = 2
-		AND users.privileges & 1 > 0
-		ORDER BY scores_relax.id DESC
-		LIMIT 20');
+			SELECT
+				beatmaps.song_name, scores_relax.beatmap_md5, users.username,
+				scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp,
+				scores_relax.play_mode, scores_relax.mods
+			FROM scores_relax
+			LEFT JOIN beatmaps USING(beatmap_md5)
+			LEFT JOIN users ON users.id = scores_relax.userid
+			WHERE scores_relax.completed = 3
+				AND beatmaps.ranked = 2
+				AND users.privileges & 1 > 0
+			ORDER BY scores_relax.id DESC
+			LIMIT 20');
 
 		/* Top scores */
 
-		$topPlaysVanilla = [];
 		$topPlaysVanilla = $GLOBALS['db']->fetchAll('
-		SELECT
-			beatmaps.song_name, scores.beatmap_md5, users.username,
-			scores.userid, scores.time, scores.score, scores.pp,
-			scores.play_mode, scores.mods
-		FROM scores
-		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores.beatmap_md5
-		LEFT JOIN users ON users.id = scores.userid
-		WHERE scores.completed = 3
-		AND users.privileges & 1 > 0
-		AND scores.play_mode = 0
-		AND beatmaps.ranked = 2
-		ORDER BY scores.pp DESC LIMIT 20');
+			SELECT
+				beatmaps.song_name, scores.beatmap_md5, users.username,
+				scores.userid, scores.time, scores.score, scores.pp,
+				scores.play_mode, scores.mods
+			FROM scores
+			LEFT JOIN beatmaps USING(beatmap_md5)
+			LEFT JOIN users ON users.id = scores.userid
+			WHERE scores.completed = 3
+				AND users.privileges & 1 > 0
+				AND scores.play_mode = 0
+				AND beatmaps.ranked = 2
+			ORDER BY scores.pp DESC LIMIT 20');
 
-		$topPlaysRelax = [];
 		$topPlaysRelax = $GLOBALS['db']->fetchAll('
-		SELECT
-			beatmaps.song_name, scores_relax.beatmap_md5, users.username,
-			scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp,
-			scores_relax.play_mode, scores_relax.mods
-		FROM scores_relax
-		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores_relax.beatmap_md5
-		LEFT JOIN users ON users.id = scores_relax.userid
-		WHERE scores_relax.completed = 3
-		AND users.privileges & 1 > 0
-		AND scores_relax.play_mode = 0
-		AND beatmaps.ranked = 2
-		ORDER BY scores_relax.pp DESC LIMIT 20');
+			SELECT
+				beatmaps.song_name, scores_relax.beatmap_md5, users.username,
+				scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp,
+				scores_relax.play_mode, scores_relax.mods
+			FROM scores_relax
+			LEFT JOIN beatmaps USING(beatmap_md5)
+			LEFT JOIN users ON users.id = scores_relax.userid
+			WHERE scores_relax.completed = 3
+				AND users.privileges & 1 > 0
+				AND scores_relax.play_mode = 0
+				AND beatmaps.ranked = 2
+			ORDER BY scores_relax.pp DESC LIMIT 20');
 
 		/* Top scores within the last 2 weeks */
 		/*  (Used to find cheaters, usually)  */
 
-		$topRecentPlaysVanilla = [];
 		$topRecentPlaysVanilla = $GLOBALS['db']->fetchAll('
-		SELECT
-			beatmaps.song_name, scores.beatmap_md5, users.username,
-			scores.userid, scores.time, scores.score, scores.pp,
-			scores.play_mode, scores.mods
-		FROM scores
-		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores.beatmap_md5
-		LEFT JOIN users ON users.id = scores.userid
-		WHERE scores.completed = 3
-		AND users.privileges & 1
-		AND NOT users.whitelist & 1
-		AND scores.play_mode = 0
-		AND beatmaps.ranked = 2
-		AND scores.time > UNIX_TIMESTAMP(NOW()) - 1209600
-		ORDER BY scores.pp DESC LIMIT 100');
+			SELECT
+				beatmaps.song_name, scores.beatmap_md5, users.username,
+				scores.userid, scores.time, scores.score, scores.pp,
+				scores.play_mode, scores.mods
+			FROM scores
+			LEFT JOIN beatmaps USING(beatmap_md5)
+			LEFT JOIN users ON users.id = scores.userid
+			WHERE scores.completed = 3
+				AND users.privileges & 1
+				AND NOT users.whitelist & 1
+				AND scores.play_mode = 0
+				AND beatmaps.ranked = 2
+				AND scores.time > UNIX_TIMESTAMP(NOW()) - 1209600
+			ORDER BY scores.pp DESC LIMIT 100');
 
-		$topRecentPlaysRelax = [];
 		$topRecentPlaysRelax = $GLOBALS['db']->fetchAll('
-		SELECT
-			beatmaps.song_name, scores_relax.beatmap_md5, users.username,
-			scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp,
-			scores_relax.play_mode, scores_relax.mods
-		FROM scores_relax
-		LEFT JOIN beatmaps ON beatmaps.beatmap_md5 = scores_relax.beatmap_md5
-		LEFT JOIN users ON users.id = scores_relax.userid
-		WHERE scores_relax.completed = 3
-		AND users.privileges & 1
-		AND NOT users.whitelist & 2
-		AND scores_relax.play_mode = 0
-		AND beatmaps.ranked = 2
-		AND scores_relax.time > UNIX_TIMESTAMP(NOW()) - 1209600
-		ORDER BY scores_relax.pp DESC LIMIT 100');
+			SELECT
+				beatmaps.song_name, scores_relax.beatmap_md5, users.username,
+				scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp,
+				scores_relax.play_mode, scores_relax.mods
+			FROM scores_relax
+			LEFT JOIN beatmaps USING(beatmap_md5)
+			LEFT JOIN users ON users.id = scores_relax.userid
+			WHERE scores_relax.completed = 3
+				AND users.privileges & 1
+				AND NOT users.whitelist & 2
+				AND scores_relax.play_mode = 0
+				AND beatmaps.ranked = 2
+				AND scores_relax.time > UNIX_TIMESTAMP(NOW()) - 1209600
+			ORDER BY scores_relax.pp DESC LIMIT 100');
 
 		$onlineUsers = getJsonCurl("http://127.0.0.1:5001/api/v1/onlineUsers");
-		if ($onlineUsers == false) {
+		if (!$onlineUsers) {
 			$onlineUsers = 0;
 		} else {
 			$onlineUsers = $onlineUsers["result"];
@@ -321,8 +324,18 @@ class P {
 	public static function AdminUsers() {
 		// Get admin dashboard data
 		$totalUsers = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users'));
-		$supporters = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & '.Privileges::UserDonor.' > 0 AND NOT privileges & '.Privileges::Premium.' > 0 AND NOT privileges & '.Privileges::AdminManageUsers.' > 0 AND donor_expire != 2147483647'));
-		$premiums = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & '.Privileges::Premium.' > 0 AND NOT privileges & '.Privileges::AdminManageUsers.' > 0 AND donor_expire != 2147483647'));
+		$supporters = current($GLOBALS['db']->fetch('
+		    SELECT COUNT(*)
+			FROM users
+			WHERE privileges & '.Privileges::UserDonor.' > 0
+			AND NOT privileges & '.Privileges::Premium.' > 0
+			AND NOT privileges & '.Privileges::AdminManageUsers.' > 0
+			AND donor_expire != 2147483647'));
+		$premiums = current($GLOBALS['db']->fetch('
+			SELECT COUNT(*) FROM users
+			WHERE privileges & '.Privileges::Premium.' > 0
+			AND NOT privileges & '.Privileges::AdminManageUsers.' > 0
+			AND donor_expire != 2147483647'));
 		$bannedUsers = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & 1 = 0'));
 		/* Unused, premium used instead 4head
 		$modUsers = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & '.Privileges::AdminAccessRAP.'> 0'));
@@ -407,17 +420,20 @@ class P {
 			<div class="btn-group-justified">
 			<a title="Edit user" class="btn btn-xs btn-primary" href="index.php?p=103&id='.$user['id'].'"><span class="glyphicon glyphicon-pencil"></span></a>';
 			if (hasPrivilege(Privileges::AdminBanUsers)) {
-				if (isBanned($user["id"])) {
-					echo '<a title="Unban user" class="btn btn-xs btn-success" onclick="sure(\'submit.php?action=banUnbanUser&id='.$user['id'].'&csrf=' . csrfToken() . '\')"><span class="glyphicon glyphicon-thumbs-up"></span></a>';
-				}/* else {
-					echo '<a title="Ban user" class="btn btn-xs btn-warning" onclick="sure(\'submit.php?action=banUnbanUser&id='.$user['id'].'&csrf=' . csrfToken() . '\')"><span class="glyphicon glyphicon-thumbs-down"></span></a>';
-				}*/
-				if (isRestricted($user["id"])) {
-					echo '<a title="Remove restrictions" class="btn btn-xs btn-success" onclick="sure(\'submit.php?action=restrictUnrestrictUser&id='.$user['id'].'&csrf='.csrfToken().'\')"><span class="glyphicon glyphicon-ok-circle"></span></a>';
-				}/* else {
-					echo '<a title="Restrict user" class="btn btn-xs btn-warning" onclick="sure(\'submit.php?action=restrictUnrestrictUser&id='.$user['id'].'&csrf='.csrfToken().'\')"><span class="glyphicon glyphicon-remove-circle"></span></a>';
-				}*/
+				echo '<a title="(Un)restrict user" class="btn btn-xs btn-warning" href="index.php?p=137&id='.$user['id'].'"><span class="glyphicon glyphicon-remove-circle"></span></a>';
 			}
+			//if (hasPrivilege(Privileges::AdminBanUsers)) {
+			//	if (isBanned($user["id"])) {
+			//		echo '<a title="Unban user" class="btn btn-xs btn-success" onclick="sure(\'submit.php?action=banUnbanUser&id='.$user['id'].'&csrf=' . csrfToken() . '\')"><span class="glyphicon glyphicon-thumbs-up"></span></a>';
+			//	}/* else {
+			//		echo '<a title="Ban user" class="btn btn-xs btn-warning" onclick="sure(\'submit.php?action=banUnbanUser&id='.$user['id'].'&csrf=' . csrfToken() . '\')"><span class="glyphicon glyphicon-thumbs-down"></span></a>';
+			//	}*/
+			//	if (isRestricted($user["id"])) {
+			//		echo '<a title="Remove restrictions" class="btn btn-xs btn-success" onclick="sure(\'submit.php?action=restrictUnrestrictUser&id='.$user['id'].'&csrf='.csrfToken().'\')"><span class="glyphicon glyphicon-ok-circle"></span></a>';
+			//	}/* else {
+			//		echo '<a title="Restrict user" class="btn btn-xs btn-warning" onclick="sure(\'submit.php?action=restrictUnrestrictUser&id='.$user['id'].'&csrf='.csrfToken().'\')"><span class="glyphicon glyphicon-remove-circle"></span></a>';
+			//	}*/
+			//}
 			echo '	<a title="Change user identity" class="btn btn-xs btn-danger" href="index.php?p=104&id='.$user['id'].'"><span class="glyphicon glyphicon-refresh"></span></a>
 			</div>
 			</p></td>';
@@ -699,7 +715,7 @@ class P {
 			echo '</td>
 			</tr>';
 			if (isBanned($userData["id"]) || isRestricted($userData["id"])) {
-				$canAppeal = time() - $userData["ban_datetime"] >= 86400 * 30; // Seconds in a day * days in a month
+				$canAppeal = time() - $userData["ban_datetime"] >= 86400 * (30 * 2); // Seconds in a day * days in a month
 				echo '<tr class="'; echo $canAppeal ? 'success' : 'warning'; echo '">
 				<td>Ban/Restricted Date<br><i>(dd/mm/yyyy)</i></td>
 				<td>' . date('d/m/Y', $userData["ban_datetime"]) . "<br>";
@@ -707,13 +723,15 @@ class P {
 				echo '</td>
 				</tr>';
 			}
+
 			if (hasPrivilege(Privileges::UserDonor, $userData["id"])) {
 				$donorExpire = timeDifference($userData["donor_expire"], time(), false);
 				echo '<tr>
-				<td>Donor expires in</td>
+				<td>'.(hasPrivilege(Privileges::UserPremium ? 'Premium' : 'Supporter')).'expires in</td>
 				<td>'.$donorExpire.'</td>
 				</tr>';
 			}
+
 			echo '<tr>
 			<td>Username color<br><i class="no-mobile">(HTML or HEX color)</i></td>
 			<td><p class="text-center"><input type="text" name="c" class="form-control" value="'.$userStatsData['user_color'].'" '.$readonly[1].'></td>
@@ -854,23 +872,24 @@ class P {
 						<li class="list-group-item list-group-item-danger">Dangerous Zone</li>
 						<li class="list-group-item mobile-flex">';
 						if (hasPrivilege(Privileges::AdminWipeUsers)) { // Ok this is pretty cursed lol
-							echo '	<a href="index.php?p=123&id='.$_GET["id"].'" class="btn btn-danger">Wipe account (Regular)</a>';
-							echo '	<a href="index.php?p=223&id='.$_GET["id"].'" class="btn btn-danger">Wipe account (Relax)</a>';
+							echo '	<a href="index.php?p=123&id='.$_GET["id"].'" class="btn btn-danger">Wipe account</a>';
 							echo '	<a href="index.php?p=122&id='.$_GET["id"].'" class="btn btn-danger">Rollback account (Regular)</a>';
 							echo '	<a href="index.php?p=222&id='.$_GET["id"].'" class="btn btn-danger">Rollback account (Relax)</a>';
-							echo '	<a href="index.php?p=134&id='.$_GET["id"].'" class="btn btn-danger">Restore scores (Regular)</a>';
-							echo '	<a href="index.php?p=234&id='.$_GET["id"].'" class="btn btn-danger">Restore scores (Relax)</a>';
+							//echo '	<a href="index.php?p=134&id='.$_GET["id"].'" class="btn btn-danger">Restore scores (Regular)</a>';
+							//echo '	<a href="index.php?p=234&id='.$_GET["id"].'" class="btn btn-danger">Restore scores (Relax)</a>';
 						}
 						if (hasPrivilege(Privileges::AdminCaker)) { // Only allow superadmin to lock from admin panel.
 							echo '	<a onclick="sure(\'submit.php?action=lockUnlockUser&id='.$_GET['id'].'&csrf='.csrfToken().'\', \'Restrictions and bans will be removed from this account if you lock it. Make sure to lock only accounts that are not banned or restricted.\')" class="btn btn-danger">(Un)lock user</a>';
 						}
-						if (hasPrivilege(Privileges::AdminManagePrivileges)) {
-							if (isBanned($_GET["id"])) {
+
+						if (hasPrivilege(Privileges::AdminBanUsers)) {
+							echo '	<a href="index.php?p=137&id='.$user["id"].'" class="btn btn-danger">(Un)restrict user</a>';
+							/*if (isBanned($_GET["id"])) {
 								echo '	<a onclick="sure(\'submit.php?action=banUnbanUser&id='.$_GET['id'].'&csrf=' . csrfToken() . '\')" class="btn btn-danger">Unban user</a>';
 							}
 							if (isRestricted($_GET["id"])) {
 								echo '	<a onclick="sure(\'submit.php?action=restrictUnrestrictUser&id='.$_GET['id'].'&csrf='.csrfToken().'\')" class="btn btn-danger">Unrestrict user</a>';
-							}
+							}*/
 
 							echo '	<a onclick="sure(\'submit.php?action=clearHWID&id='.$_GET['id'].'&csrf='.csrfToken().'\');" class="btn btn-danger">Clear HWID matches</a>';
 						}
@@ -2765,6 +2784,56 @@ class P {
 
 
 	/*
+	 * AdminRestrict
+	 * Prints the admin wipe page
+	 */
+	public static function AdminRestrictUnrestrictReason() {
+		try {
+			// Check if id is set
+			if (!isset($_GET['id'])) {
+				throw new Exception('Invalid user id');
+			}
+			echo '<div id="wrapper">';
+			printAdminSidebar();
+			echo '<div id="page-content-wrapper">';
+			// Maintenance check
+			self::MaintenanceStuff();
+			echo '<p align="center"><font size=5><i class="fa fa-eraser"></i>	Restrict account</font></p>';
+			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
+			if (!$username) {
+				throw new Exception("Invalid user");
+			}
+			$username = current($username);
+			echo '<table class="table table-striped table-hover table-50-center"><tbody>';
+			echo '<form id="user-restrict-unrestrict" action="submit.php" method="POST">
+			<input name="csrf" type="hidden" value="'.csrfToken().'">
+			<input name="action" value="RestrictUnrestrictUserReason" hidden>';
+			echo '<tr>
+			<td>User ID</td>
+			<td><p class="text-center"><input type="text" name="id" class="form-control" value="'.$_GET["id"].'" readonly></td>
+			</tr>';
+			echo '<tr>
+			<td>Username</td>
+			<td><p class="text-center"><input type="text" class="form-control" value="'.$username.'" readonly></td>
+			</tr>';
+			echo '<tr>
+			<td>Reason</td>
+			<td><p class="text-center"><input type="text" name="reason" class="form-control"></td>
+			</tr>';
+
+			echo '</tbody></form>';
+			echo '</table>';
+			echo '<div class="text-center"><button type="submit" form="user-restrict-unrestrict" class="btn btn-primary">(Un)restrict user</button></div>';
+			echo '</div>';
+		}
+		catch(Exception $e) {
+			// Redirect to exception page
+			redirect('index.php?p=108&e='.$e->getMessage());
+		}
+	}
+
+
+	/*
 	 * AdminGiveDonor
 	 * Prints the admin give donor page
 	 */
@@ -2994,65 +3063,13 @@ class P {
 				<option value="1">osu!taiko</option>
 				<option value="2">osu!catch</option>
 				<option value="3">osu!mania</option>
-			</select>
-			</td>
-			</tr>';
-
-			echo '</tbody></form>';
-			echo '</table>';
-			echo '<div class="text-center"><button type="submit" form="user-wipe" class="btn btn-primary">Wipe account</button></div>';
-			echo '</div>';
-		}
-		catch(Exception $e) {
-			// Redirect to exception page
-			redirect('index.php?p=108&e='.$e->getMessage());
-		}
-	}
-
-
-	/*
-	 * AdminWipeRelax
-	 * Prints the admin wipe page
-	 */
-	public static function AdminWipeRelax() {
-		try {
-			// Check if id is set
-			if (!isset($_GET['id'])) {
-				throw new Exception('Invalid user id');
-			}
-			echo '<div id="wrapper">';
-			printAdminSidebar();
-			echo '<div id="page-content-wrapper">';
-			// Maintenance check
-			self::MaintenanceStuff();
-			echo '<div class="container alert alert-danger" role="alert" style="width: 100%;"><p align="center"><b>Reminder:<br></b>Admins should not provide wipes for users who have not purchased supporter, unless it is warranted.</p></div>';
-			echo '<p align="center"><font size=5><i class="fa fa-eraser"></i>	Wipe account</font></p>';
-			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
-			if (!$username) {
-				throw new Exception("Invalid user");
-			}
-			$username = current($username);
-			echo '<table class="table table-striped table-hover table-50-center"><tbody>';
-			echo '<form id="user-wipe" action="submit.php" method="POST">
-			<input name="csrf" type="hidden" value="'.csrfToken().'">
-			<input name="action" value="wipeAccountRelax" hidden>';
+			</select>';
 			echo '<tr>
-			<td>User ID</td>
-			<td><p class="text-center"><input type="text" name="id" class="form-control" value="'.$_GET["id"].'" readonly></td>
-			</tr>';
-			echo '<tr>
-			<td>Username</td>
-			<td><p class="text-center"><input type="text" class="form-control" value="'.$username.'" readonly></td>
-			</tr>';
-			echo '<tr>
-			<td>Gamemode</td>
+			<td>Akatsuki Mode</td>
 			<td>
-			<select name="gm" class="selectpicker" data-width="100%">
-				<option value="-1">All</option>
-				<option value="0">osu!</option>
-				<option value="1">osu!taiko</option>
-				<option value="2">osu!catch</option>
-				<option value="3">osu!mania</option>
+			<select name="rx" class="selectpicker" data-width="100%">
+				<option value="0">Vanilla</option>
+				<option value="1">Relax</option>
 			</select>
 			</td>
 			</tr>';
@@ -3566,6 +3583,7 @@ class P {
 		}
 	}
 
+	/*
 	public static function AdminRestoreScores() {
 		try {
 			// Check if id is set
@@ -3878,7 +3896,7 @@ class P {
 			// Redirect to exception page
 			redirect('index.php?p=108&e='.$e->getMessage());
 		}
-	}
+	}*/
 
 	public static function AdminSearchUserByIP() {
 		echo '<div id="wrapper">';

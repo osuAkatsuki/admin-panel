@@ -925,9 +925,9 @@ class D {
 				throw new Exception(4);
 			}
 			/* "Convert" to png
-												if (!move_uploaded_file($_FILES["file"]["tmp_name"], dirname(dirname(dirname(__FILE__)))."/avatarserver/avatars/".getUserID($_SESSION["username"]).".png")) {
-												    throw new Exception(4);
-												}*/
+			if (!move_uploaded_file($_FILES["file"]["tmp_name"], dirname(dirname(dirname(__FILE__)))."/avatarserver/avatars/".getUserID($_SESSION["username"]).".png")) {
+			    throw new Exception(4);
+			}*/
 			// Done, redirect to success page
 			redirect('index.php?p=5&s=ok');
 		}
@@ -956,11 +956,9 @@ class D {
 				throw new Exception("You don't have enough permissions to wipe this account");
 			}
 
-			if ($_POST["gm"] == -1) {
-				// All modes
+			if ($_POST["gm"] == -1) { // All modes
 				$modes = ['std', 'taiko', 'ctb', 'mania'];
-			} else {
-				// 1 mode
+			} else { // Single mode
 				if ($_POST["gm"] == 0) {
 					$modes = ['std'];
 				} else if ($_POST["gm"] == 1) {
@@ -972,94 +970,41 @@ class D {
 				}
 			}
 
+			if ($_POST["rx"]) {
+				$scores_table = "scores_relax";
+				$stats_table = "rx_stats";
+			} else {
+				$scores_table = "scores";
+				$stats_table = "users_stats";
+			}
+
 			// Delete scores
 			if ($_POST["gm"] == -1) {
-				$GLOBALS['db']->execute('INSERT INTO scores_removed SELECT * FROM scores WHERE userid = ?', [$_POST['id']]);
-				$GLOBALS['db']->execute('DELETE FROM scores WHERE userid = ?', [$_POST['id']]);
+				//$GLOBALS['db']->execute('INSERT INTO '.$scores_table.'_removed SELECT * FROM '.$scores_table.' WHERE userid = ?', [$_POST['id']]);
+				$GLOBALS['db']->execute('DELETE FROM '.$scores_table.' WHERE userid = ?', [$_POST['id']]);
 			} else {
-				$GLOBALS['db']->execute('INSERT INTO scores_removed SELECT * FROM scores WHERE userid = ? AND play_mode = ?', [$_POST['id'], $_POST["gm"]]);
-				$GLOBALS['db']->execute('DELETE FROM scores WHERE userid = ? AND play_mode = ?', [$_POST['id'], $_POST["gm"]]);
+				//$GLOBALS['db']->execute('INSERT INTO '.$scores_table.'_removed SELECT * FROM '.$scores_table.' WHERE userid = ? AND play_mode = ?', [$_POST['id'], $_POST["gm"]]);
+				$GLOBALS['db']->execute('DELETE FROM '.$scores_table.' WHERE userid = ? AND play_mode = ?', [$_POST['id'], $_POST["gm"]]);
 			}
 			// Reset mode stats
 			foreach ($modes as $k) {
-				$GLOBALS['db']->execute('UPDATE users_stats SET ranked_score_'.$k.' = 0, total_score_'.$k.' = 0, replays_watched_'.$k.' = 0, playcount_'.$k.' = 0, avg_accuracy_'.$k.' = 0.0, total_hits_'.$k.' = 0, level_'.$k.' = 0, pp_'.$k.' = 0 WHERE id = ? LIMIT 1', [$_POST['id']]);
+				$GLOBALS['db']->execute('UPDATE '.$stats_table.' SET ranked_score_'.$k.' = 0, total_score_'.$k.' = 0, replays_watched_'.$k.' = 0, playcount_'.$k.' = 0, avg_accuracy_'.$k.' = 0.0, total_hits_'.$k.' = 0, level_'.$k.' = 0, pp_'.$k.' = 0 WHERE id = ? LIMIT 1', [$_POST['id']]);
 			}
 
 			redisConnect();
-			$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'].',0');
+			$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'].','.$_POST["rx"]);
 
 			// RAP log
 			rapLog(sprintf("has wiped %s's account", $username));
 
 			// Done
-			redirect('index.php?p=102&s=User Vanilla scores and stats have been wiped!');
+			redirect('index.php?p=102&s=User '.($_POST["rx"] ? 'Relax' : 'Vanilla').' scores and stats have been wiped!');
 		}
 		catch(Exception $e) {
 			redirect('index.php?p=102&e='.$e->getMessage());
 		}
 	}
 
-	/*
-	 * WipeAccount
-	 * Wipes an account
-	 */
-	public static function WipeAccountRelax() {
-		try {
-			if (!isset($_POST['id']) || empty($_POST['id'])) {
-				throw new Exception('Invalid request');
-			}
-			$userData = $GLOBALS["db"]->fetch("SELECT username, privileges FROM users WHERE id = ? LIMIT 1", [$_POST["id"]]);
-			if (!$userData) {
-				throw new Exception("User doesn't exist.");
-			}
-			$username = $userData["username"];
-			// Check if we can wipe this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
-				throw new Exception("You don't have enough permissions to wipe this account");
-			}
-
-			if ($_POST["gm"] == -1) {
-				// All modes
-				$modes = ['std', 'taiko', 'ctb', 'mania'];
-			} else {
-				// 1 mode
-				if ($_POST["gm"] == 0) {
-					$modes = ['std'];
-				} else if ($_POST["gm"] == 1) {
-					$modes = ['taiko'];
-				} else if ($_POST["gm"] == 2) {
-					$modes = ['ctb'];
-				} else if ($_POST["gm"] == 3) {
-					$modes = ['mania'];
-				}
-			}
-
-			// Delete scores
-			if ($_POST["gm"] == -1) {
-				$GLOBALS['db']->execute('INSERT INTO scores_removed_relax SELECT * FROM scores_relax WHERE userid = ?', [$_POST['id']]);
-				$GLOBALS['db']->execute('DELETE FROM scores_relax WHERE userid = ?', [$_POST['id']]);
-			} else {
-				$GLOBALS['db']->execute('INSERT INTO scores_removed_relax SELECT * FROM scores_relax WHERE userid = ? AND play_mode = ?', [$_POST['id'], $_POST["gm"]]);
-				$GLOBALS['db']->execute('DELETE FROM scores_relax WHERE userid = ? AND play_mode = ?', [$_POST['id'], $_POST["gm"]]);
-			}
-			// Reset mode stats
-			foreach ($modes as $k) {
-				$GLOBALS['db']->execute('UPDATE rx_stats SET ranked_score_'.$k.' = 0, total_score_'.$k.' = 0, replays_watched_'.$k.' = 0, playcount_'.$k.' = 0, avg_accuracy_'.$k.' = 0.0, total_hits_'.$k.' = 0, level_'.$k.' = 0, pp_'.$k.' = 0 WHERE id = ? LIMIT 1', [$_POST['id']]);
-			}
-
-			redisConnect();
-			$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'].',1');
-
-			// RAP log
-			rapLog(sprintf("has wiped %s's account", $username));
-
-			// Done
-			redirect('index.php?p=102&s=User Relax scores and stats have been wiped!');
-		}
-		catch(Exception $e) {
-			redirect('index.php?p=102&e='.$e->getMessage());
-		}
-	}
 
 	/*
 	 * AddRemoveFriend
@@ -1209,6 +1154,64 @@ class D {
 		} catch (Exception $e) {
 			// There's a memino divertentino
 			redirect("index.php?p=118&e=".$e->getMessage());
+		}
+	}
+
+
+	/*
+	 * RestrictUnrestrictUserReason
+     * (Un)restrict a user with a reason (ADMIN CP)
+	 */
+	public static function RestrictUnrestrictUserReason() {
+		try {
+			// Check if everything is set
+			if (empty($_POST['id']) || empty($_POST['reason'])) {
+				throw new Exception('Nice troll.');
+			}
+			// Get user's username
+			$userData = $GLOBALS['db']->fetch('SELECT username, privileges FROM users WHERE id = ? LIMIT 1', $_POST['id']);
+			if (!$userData) {
+				throw new Exception("User doesn't exist");
+			}
+			// Check if we can ban this user
+			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+				throw new Exception("You don't have enough permissions to ban this user");
+			}
+			// Get new allowed value
+			if (!isRestricted($_POST["id"])) {
+				// Restrict, set UserNormal and reset UserPublic
+				$banDateTime = time();
+				$newPrivileges = $userData["privileges"] | Privileges::UserNormal;
+				$newPrivileges &= ~Privileges::UserPublic;
+				removeFromLeaderboard($_POST['id']);
+				appendNotes($uid, $_SESSION["username"].' ('.$_SESSION["userid"].') has restricted for: '.$_POST['reason']);
+			} else {
+				// Remove restrictions, set both UserPublic and UserNormal
+				$banDateTime = 0;
+				$newPrivileges = $userData["privileges"] | Privileges::UserNormal;
+				$newPrivileges |= Privileges::UserPublic;
+				appendNotes($uid, $_SESSION["username"].' ('.$_SESSION["userid"].') has unrestricted for: '.$_POST['reason']);
+			}
+			// Change privileges
+			$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_POST['id']]);
+			updateBanBancho($_POST["id"], $newPrivileges & Privileges::UserPublic == 0);
+
+			// Rap log
+			rapLog(sprintf("has %s user %s [%s]", ($newPrivileges & Privileges::UserPublic) > 0 ? "removed restrictions on" : "restricted", $userData["username"], $_POST["reason"]));
+			// Done, redirect to success page
+			if (isset($_POST["resend"])) {
+				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&s=User restricted/unrestricted!');
+			} else {
+				redirect('index.php?p=102&s=User restricted/unrestricted!');
+			}
+		}
+		catch(Exception $e) {
+			// Redirect to Exception page
+			if (isset($_POST["resend"])) {
+				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&e='.$e->getMessage());
+			} else {
+				redirect('index.php?p=102&e='.$e->getMessage());
+			}
 		}
 	}
 
@@ -1631,6 +1634,7 @@ class D {
 		}
 	}
 
+	/*
 	public static function RestoreScoresSearchUser() {
 		try {
 			if (!isset($_POST["username"]) || empty($_POST["username"])) {
@@ -1756,7 +1760,7 @@ class D {
 		} catch (Exception $e) {
 			redirect("index.php?p=134&e=" . $e->getMessage());
 		}
-	}
+	}*/
 
 	public static function UploadMainMenuIcon() {
 		try {
