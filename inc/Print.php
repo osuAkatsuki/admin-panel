@@ -2807,7 +2807,7 @@ class P {
 			echo '<table class="table table-striped table-hover table-50-center"><tbody>';
 			echo '<form id="user-restrict-unrestrict" action="submit.php" method="POST">
 			<input name="csrf" type="hidden" value="'.csrfToken().'">
-			<input name="action" value="RestrictUnrestrictUserReason" hidden>';
+			<input name="action" value="restrictUnrestrictUserReason" hidden>';
 			echo '<tr>
 			<td>User ID</td>
 			<td><p class="text-center"><input type="text" name="id" class="form-control" value="'.$_GET["id"].'" readonly></td>
