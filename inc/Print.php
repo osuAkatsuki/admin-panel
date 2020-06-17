@@ -727,7 +727,7 @@ class P {
 			if (hasPrivilege(Privileges::UserDonor, $userData["id"])) {
 				$donorExpire = timeDifference($userData["donor_expire"], time(), false);
 				echo '<tr>
-				<td>'.(hasPrivilege(Privileges::UserPremium) ? 'Premium' : 'Supporter').'expires in</td>
+				<td>'.(hasPrivilege(Privileges::UserPremium) ? 'Premium' : 'Supporter').' expires in</td>
 				<td>'.$donorExpire.'</td>
 				</tr>';
 			}
