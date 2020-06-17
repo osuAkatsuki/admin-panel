@@ -518,20 +518,12 @@ class D {
 				throw new Exception('Username already used by another user. No changes have been made.');
 			}
 
+			// Send username change work to pep.py
 			redisConnect();
 			$GLOBALS["redis"]->publish("peppy:change_username", json_encode([
 				"userID" => intval($_POST["id"]),
 				"newUsername" => $_POST["newu"]
 			]));
-
-			/* Update the DB
-			 * users       -> username, username_safe
-			 * users_stats -> username
-			 * rx_stats    -> username
-			 */
-			$GLOBALS["db"]->execute('UPDATE users SET username = ?, username_safe = ? WHERE id = ?', [$_POST["newu"], $safe, $_POST["id"]]);
-			$GLOBALS["db"]->execute('UPDATE users_stats SET username = ? WHERE id = ?', [$_POST["newu"], $_POST["id"]]);
-			$GLOBALS["db"]->execute('UPDATE rx_stats SET username = ? WHERE id = ?', [$_POST["newu"], $_POST["id"]]);
 
 			// log this username change to the users rap notes
 			appendNotes($_POST["id"], sprintf("Username change: '%s' -> '%s'", $_POST["oldu"], $_POST["newu"]));
