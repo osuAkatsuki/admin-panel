@@ -619,6 +619,19 @@ class P {
 				$cbText = "No";
 				$cbCol = "danger";
 			}
+			// Whitelist check
+			if ($userData["whitelist"] != 0) {
+				$wlCol = "success";
+				$wl = array();
+				if ($userData["whitelist"] & 1)
+					array_push($wl, "Vanilla");
+				if ($userData["whitelist"] & 2)
+					array_push($wl, "Relax");
+				$wlText = implode(" & ", $wl);
+			} else {
+				$wlText = "No";
+				$wlCol = "danger";
+			}
 			// Set readonly stuff
 			$readonly[0] = ''; // User data stuff
 			$readonly[1] = ''; // Username color/style stuff
@@ -711,7 +724,10 @@ class P {
 			} else {
 				echo "Ok";
 			}
-
+			echo '<tr class="single-row">
+			<td>Whitelisted</td>
+			<td><span class="label label-'.$wlCol.'">'.$wlText.'</span></td>
+			</tr>';
 			echo '</td>
 			</tr>';
 			if (isBanned($userData["id"]) || isRestricted($userData["id"])) {
@@ -819,7 +835,7 @@ class P {
 			</tr>';
 			echo '<tr class="single-row">
 			<td>Account in delayban queue
-				<i class="no-mobile">(If \'yes\', The user has already been added to the delayban queue, and will be restricted automatically.</i>
+				<i class="no-mobile"><br>(If \'yes\', The user has already been added to the delayban queue, and will be restricted automatically.</i>
 			</td>
 			<td><span class="label label-'.$haxCol.'">'.$haxText.'</span></td>
 			</tr>';
