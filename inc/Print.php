@@ -924,7 +924,7 @@ class P {
 			}
 			// Check if we are trying to edit our account or a higher rank account
 			if ($userData['username'] != $_SESSION['username'] && (($userData['privileges'] & Privileges::AdminManageUsers) > 0)) {
-				throw new Exception("You don't have enough permission to edit this user.");
+				throw new Exception("You don't have enough permissions to edit this user.");
 			}
 			// Print edit user stuff
 			echo '<div id="wrapper">';

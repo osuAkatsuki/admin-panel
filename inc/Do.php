@@ -325,7 +325,7 @@ class D {
 				throw new Exception("That user doesn\'t exist");
 			}
 			// Check if we can edit this user
-			if ( (($oldData["privileges"] & Privileges::AdminManageUsers) > 0) && $_POST['u'] != $_SESSION['username']) {
+			if ( (($oldData["privileges"] & Privileges::AdminManageUsers) > 0) && $_POST["u"] != $_SESSION["username"] && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 			// Check if email is valid
@@ -505,7 +505,7 @@ class D {
 				throw new Exception("User doesn't exist");
 			}
 			$privileges = current($privileges);
-			if ( (($privileges & Privileges::AdminManageUsers) > 0) && $_POST['oldu'] != $_SESSION['username']) {
+			if ( (($privileges & Privileges::AdminManageUsers) > 0) && $_POST['oldu'] != $_SESSION['username'] && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 			// No username with mixed spaces
