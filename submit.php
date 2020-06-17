@@ -59,11 +59,11 @@ try {
 			D::SaveEditUser();
 		break;
 		case 'banUnbanUser': // TODO
-			sessionCheckAdmin(Privileges::AdminBanUsers);
+			sessionCheckAdmin(Privileges::AdminCaker);
 			D::BanUnbanUser();
 		break;
 		case 'restrictUnrestrictUser':	// TODO
-			sessionCheckAdmin(Privileges::AdminBanUsers);
+			sessionCheckAdmin(Privileges::AdminCaker);
 			D::RestrictUnrestrictUser();
 		break;
 		case 'restrictUnrestrictUserReason':
@@ -138,16 +138,12 @@ try {
 			sessionCheckAdmin(Privileges::AdminWipeUsers);
 			D::Rollback();
 		break;
-		case 'rollbackRelax':
-			sessionCheckAdmin(Privileges::AdminWipeUsers);
-			D::RollbackRelax();
-		break;
 		case 'toggleCustomBadge':	// TODO
 			sessionCheckAdmin(Privileges::AdminManageUsers);
 			D::ToggleCustomBadge();
 		break;
 		case 'lockUnlockUser':	// TODO
-			sessionCheckAdmin(Privileges::AdminBanUsers);
+			sessionCheckAdmin(Privileges::AdminCaker);
 			D::LockUnlockUser();
 		break;
 		case 'rankBeatmapNew':

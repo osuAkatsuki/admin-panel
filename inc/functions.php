@@ -177,8 +177,6 @@ function setTitle($p) {
 			135 => 'Search users by IP',
 			136 => 'Search users by IP - Results',
 			137 => '(Un)restrict user',
-
-			222 => 'Rollback user (Relax)',
 			//234 => 'Restore scores (Relax)',
 		];
 		if (isset($namesRipple[$p])) {
@@ -398,12 +396,6 @@ function printPage($p) {
 			case 137:
 				sessionCheckAdmin(Privileges::AdminBanUsers);
 				P::AdminRestrictUnrestrictReason();
-			break;
-
-			// Admin panel - Rollback User (Relax)
-			case 222:
-				sessionCheckAdmin(Privileges::AdminWipeUsers);
-				P::AdminRollbackRelax();
 			break;
 
 			// Admin panel - Restore scores (Relax)
