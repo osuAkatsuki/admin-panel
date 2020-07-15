@@ -984,7 +984,7 @@ class D {
 			}
 
 			redisConnect();
-			$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'].','.$_POST["rx"]);
+			$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'].','.$_POST['rx'].','.$_POST['gm']);
 
 			// RAP log
 			rapLog(sprintf("has wiped %s's account", $username));
