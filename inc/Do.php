@@ -970,21 +970,24 @@ class D {
 				$stats_table = "users_stats";
 			}
 
+			redisConnect();
+
 			// Delete scores
 			if ($_POST["gm"] == -1) {
 				//$GLOBALS['db']->execute('INSERT INTO '.$scores_table.'_removed SELECT * FROM '.$scores_table.' WHERE userid = ?', [$_POST['id']]);
 				$GLOBALS['db']->execute('DELETE FROM '.$scores_table.' WHERE userid = ?', [$_POST['id']]);
+				foreach (range(0, 3) as $i) {
+					$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'].','.$_POST['rx'].','.$i);
+				}
 			} else {
 				//$GLOBALS['db']->execute('INSERT INTO '.$scores_table.'_removed SELECT * FROM '.$scores_table.' WHERE userid = ? AND play_mode = ?', [$_POST['id'], $_POST["gm"]]);
 				$GLOBALS['db']->execute('DELETE FROM '.$scores_table.' WHERE userid = ? AND play_mode = ?', [$_POST['id'], $_POST["gm"]]);
+				$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'].','.$_POST['rx'].','.$_POST['gm']);
 			}
 			// Reset mode stats
 			foreach ($modes as $k) {
 				$GLOBALS['db']->execute('UPDATE '.$stats_table.' SET ranked_score_'.$k.' = 0, total_score_'.$k.' = 0, replays_watched_'.$k.' = 0, playcount_'.$k.' = 0, avg_accuracy_'.$k.' = 0.0, total_hits_'.$k.' = 0, level_'.$k.' = 0, pp_'.$k.' = 0 WHERE id = ? LIMIT 1', [$_POST['id']]);
 			}
-
-			redisConnect();
-			$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'].','.$_POST['rx'].','.$_POST['gm']);
 
 			// RAP log
 			rapLog(sprintf("has wiped %s's account", $username));
