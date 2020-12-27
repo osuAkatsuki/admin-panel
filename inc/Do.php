@@ -1172,27 +1172,34 @@ class D {
 			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to ban this user");
 			}
-			// Get new allowed value
+
+			// Toggle restriction status depending on it's current value
 			if (!isRestricted($_POST["id"])) {
 				// Restrict, set UserNormal and reset UserPublic
+				$newPrivileges = ($userData["privileges"] | Privileges::UserNormal) & ~Privileges::UserPublic;
 				$banDateTime = time();
-				$newPrivileges = $userData["privileges"] | Privileges::UserNormal;
-				$newPrivileges &= ~Privileges::UserPublic;
+
+				// Remove from cache & redis leaderboards
+				updateBanBancho($_POST["id"], true);
 				removeFromLeaderboard($_POST['id']);
-				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') has restricted for: '.$_POST['reason']);
+
+				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') restricted for: '.$_POST['reason']);
+				rapLog(sprintf("restricted %s for '%s'.", $userData["username"], $_POST["reason"]));
 			} else {
 				// Remove restrictions, set both UserPublic and UserNormal
+				$newPrivileges = $userData["privileges"] | Privileges::UserNormal | Privileges::UserPublic;
 				$banDateTime = 0;
-				$newPrivileges = $userData["privileges"] | Privileges::UserNormal;
-				$newPrivileges |= Privileges::UserPublic;
-				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') has unrestricted for: '.$_POST['reason']);
+
+				// Re-add to cache leaderboards
+				updateBanBancho($_POST["id"], false);
+
+				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') unrestricted for: '.$_POST['reason']);
+				rapLog(sprintf("unrestricted %s for '%s'.", $userData["username"], $_POST["reason"]));
 			}
+
 			// Change privileges
 			$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_POST['id']]);
-			updateBanBancho($_POST["id"], $newPrivileges & Privileges::UserPublic == 0);
 
-			// Rap log
-			rapLog(sprintf("has %s user %s [%s]", ($newPrivileges & Privileges::UserPublic) > 0 ? "removed restrictions on" : "restricted", $userData["username"], $_POST["reason"]));
 			// Done, redirect to success page
 			if (isset($_POST["resend"])) {
 				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&s=User restricted/unrestricted!');

@@ -371,7 +371,9 @@ class P {
 		// Quick edit/silence/kick user button
 		echo '<br><p align="center" class="mobile-flex"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#quickEditUserModal">Quick edit user (username)</button>';
 		echo '<button type="button" class="btn btn-info" data-toggle="modal" data-target="#quickEditEmailModal">Quick edit user (email)</button>';
-		echo '<a href="index.php?p=135" type="button" class="btn btn-warning">Search user by IP</a>';
+		if (hasPrivilege(Privileges::AdminManagePrivileges)) {
+			echo '<a href="index.php?p=135" type="button" class="btn btn-warning">Search user by IP</a>';
+		}
 		echo '<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#silenceUserModal">Silence user</button>';
 		echo '<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#kickUserModal">Kick user from Bancho</button>';
 		echo '</p>';
@@ -846,14 +848,14 @@ class P {
 			<td><textarea name="ncm" class="form-control" style="overflow:auto;resize:vertical;height:500px">' . $userData["notes"] . '</textarea></td>
 			</tr>';
 
-			echo '<tr><td>IPs<br>';
 			if (hasPrivilege(Privileges::AdminManagePrivileges)) {
+				echo '<tr><td>IPs<br>';
 				echo '<i><a href="index.php?p=136&uid=' . $_GET["id"] . '">(search users with these IPs)</a></i>';
-			}
-			echo '</td><td><ul>';
+				echo '</td><td><ul>';
 
-			foreach ($ips as $ip) {
-				echo "<li>$ip[ip] <a class='getcountry' data-ip='$ip[ip]' title='Click to retrieve IP country'>(?)</a> ($ip[occurencies])</li>";
+				foreach ($ips as $ip) {
+					echo "<li>$ip[ip] <a class='getcountry' data-ip='$ip[ip]' title='Click to retrieve IP country'>(?)</a> ($ip[occurencies])</li>";
+				}
 			}
 			echo '</ul></td></tr>';
 			echo '</tbody></form>';

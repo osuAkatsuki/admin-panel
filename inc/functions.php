@@ -382,13 +382,13 @@ function printPage($p) {
 
 			// Admin panel - Search users by IP
 			case 135:
-				sessionCheckAdmin(Privileges::AdminManageUsers);
+				sessionCheckAdmin(Privileges::AdminManagePrivileges); // pre-2020-12-27: AdminManageUsers
 				P::AdminSearchUserByIP();
 			break;
 
 			// Admin panel - Search users by IP - Results
 			case 136:
-				sessionCheckAdmin(Privileges::AdminManageUsers);
+				sessionCheckAdmin(Privileges::AdminManagePrivileges); // pre-2020-12-27: AdminManageUsers
 				P::AdminSearchUserByIPResults();
 			break;
 
