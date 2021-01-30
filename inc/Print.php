@@ -3948,7 +3948,7 @@ class P {
 			// Get readable play_mode
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
-			echo '<tr class="danger">';
+			echo '<tr class="info">';
 			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
 			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
@@ -3976,7 +3976,7 @@ class P {
 			// Get readable play_mode
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
-			echo '<tr class="danger">';
+			echo '<tr class="info">';
 			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
 			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
