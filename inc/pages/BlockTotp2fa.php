@@ -3,7 +3,7 @@
 class BlockTotpTwoFa {
 	const PageID = 42;
 	const URL = 'blocktotp2fa';
-	const Title = 'Ripple - Nope!';
+	const Title = 'Akatsuki - Nope!';
 	const LoggedIn = true;
 
 	public function P() {

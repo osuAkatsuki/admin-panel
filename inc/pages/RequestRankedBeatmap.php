@@ -3,7 +3,7 @@
 class RequestRankedBeatmap {
 	const PageID = 31;
 	const URL = 'RequestRankedBeatmap';
-	const Title = 'Ripple - Request Beatmap Ranking';
+	const Title = 'Akatsuki - Request Beatmap Ranking';
 	const LoggedIn = true;
 	public $error_messages = [];
 	public $mh_GET = [];

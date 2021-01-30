@@ -2,7 +2,7 @@
 class Discord {
 	const PageID = 40;
 	const URL = 'Discord';
-	const Title = 'Ripple - Discord Donor';
+	const Title = 'Akatsuki - Discord Donor';
 	const LoggedIn = true;
 
 	function __construct() {

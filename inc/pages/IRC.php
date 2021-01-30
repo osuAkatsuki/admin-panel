@@ -3,7 +3,7 @@
 class IRC {
 	const PageID = 36;
 	const URL = 'IRC';
-	const Title = 'Ripple - IRC';
+	const Title = 'Akatsuki - IRC';
 	const LoggedIn = true;
 
 	public function P() {

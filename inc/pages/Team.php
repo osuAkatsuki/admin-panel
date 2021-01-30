@@ -3,7 +3,7 @@
 class Team {
 	const PageID = 35;
 	const URL = 'Team';
-	const Title = 'Ripple - Team';
+	const Title = 'Akatsuki - Team';
 	public $error_messages = [];
 	public $mh_GET = [];
 	public $mh_POST = ["url"];
@@ -35,7 +35,7 @@ class Team {
 				echo '<div style="margin-bottom: 5%;"></div>';
 
 				echo '<hr><h3><i class="fa fa-heart"></i>	Special thanks</h3>
-					<i class="fa fa-circle fa-bullet-list"></i>	
+					<i class="fa fa-circle fa-bullet-list"></i>
 					<b>Franc[e]sco/lolisamurai</b>, for <a href="https://github.com/Francesco149/oppai" target="_blank">oppai</a>, used as standard pp calculator.<br>
 					oppai is licensed under GPL v3.
 					Our implementation can be found <a href="https://git.zxq.co/ripple/lets/src/master/pp/rippoppai.py" target="_blank">here</a>.<br>
@@ -103,7 +103,7 @@ class Team {
 				unset($dudes[$i]);
 			}
 		}
-		
+
 		echo '<div class="row">';
 		foreach ($dudes as $i => $dude) {
 			echo '

@@ -3,7 +3,7 @@
 class ServerStatus {
 	const PageID = 27;
 	const URL = 'status';
-	const Title = 'Ripple - Server Status';
+	const Title = 'Akatsuki - Server Status';
 	const LoggedIn = true;
 	public $error_messages = [];
 	public $mh_GET = [];

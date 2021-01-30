@@ -3,7 +3,7 @@
 class Leaderboard {
 	const PageID = 13;
 	const URL = 'leaderboard';
-	const Title = 'Ripple - Leaderboard';
+	const Title = 'Akatsuki - Leaderboard';
 	const LoggedIn = true;
 
 	public function P() {

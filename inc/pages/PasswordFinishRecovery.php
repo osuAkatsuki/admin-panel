@@ -3,7 +3,7 @@
 class PasswordFinishRecovery {
 	const PageID = 19;
 	const URL = 'recovery/finish';
-	const Title = 'Ripple - Password recovery';
+	const Title = 'Akatsuki - Password recovery';
 	const LoggedIn = false;
 	public $mh_GET = ['k', 'user'];
 	public $mh_POST = ['k', 'user', 'p1', 'p2'];

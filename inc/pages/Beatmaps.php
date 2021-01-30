@@ -3,7 +3,7 @@
 class Beatmaps {
 	const PageID = 37;
 	const URL = 'Beatmaps';
-	const Title = 'Ripple - Carroponte';
+	const Title = 'Akatsuki - Carroponte';
 
 	public function P() {
 		echo('<iframe width="560" height="315" src="https://www.youtube.com/embed/G_QfYsmNIHQ?autoplay=1" frameborder="0" allowfullscreen></iframe><br>');

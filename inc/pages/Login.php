@@ -3,7 +3,7 @@
 class Login {
 	const PageID = 2;
 	const URL = 'login';
-	const Title = 'Ripple - Login';
+	const Title = 'Akatsuki - Login';
 	const LoggedIn = false;
 	public $mh_POST = ['u', 'p'];
 	public $error_messages = ['You are not logged in.', 'Session expired. Please login again.', 'Invalid auto-login cookie.', 'You are already logged in.'];
@@ -76,7 +76,7 @@ class Login {
 			$_SESSION['password'] = $us['password_md5'];
 			$_SESSION['passwordChanged'] = false;
 			$_SESSION['csrf'] = csrfToken();
-			
+
 			// Check if the user requested to be remembered. If they did, initialise cookies.
 			if (isset($_POST['remember']) && (bool) $_POST['remember']) {
 				$m = new RememberCookieHandler();

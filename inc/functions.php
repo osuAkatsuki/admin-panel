@@ -728,7 +728,7 @@ function updateLatestActivity($u) {
 /*
  * updateSafeTitle
  * Updates the st cookie, if 1 title is "Google" instead
- * of Ripple - pagename, so Peppy doesn't know that
+ * of Akatsuki - pagename, so Peppy doesn't know that
  * we are browsing Ripple
  */
 function updateSafeTitle() {

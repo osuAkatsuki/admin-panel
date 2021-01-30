@@ -2,7 +2,7 @@
 class MyAPIApplications {
 	const PageID = 32;
 	const URL = 'myApplications';
-	const Title = 'Ripple - My Applications';
+	const Title = 'Akatsuki - My Applications';
 	const LoggedIn = true;
 
 	public function P() {

@@ -2,7 +2,7 @@
 class Verify {
 	const PageID = 38;
 	const URL = 'verify';
-	const Title = 'Ripple - Verify your account';
+	const Title = 'Akatsuki - Verify your account';
 	const LoggedIn = false;
 	public $mh_GET = ["u"];
 

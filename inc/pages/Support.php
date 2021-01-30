@@ -3,7 +3,7 @@
 class Support {
 	const PageID = 34;
 	const URL = 'support';
-	const Title = 'Ripple - Support us';
+	const Title = 'Akatsuki - Support us';
 	const LoggedIn = true;
 	public $error_messages = [];
 	public $mh_GET = [];
@@ -118,13 +118,13 @@ class Support {
 								<tr><td><input type="hidden" name="on0" value="Period">Period</td></tr><tr><td>';
 
 								echo '<select name="os0" id="paypal-supporter-period">';
-								for ($i=0; $i < $maxDonor; $i++) { 
+								for ($i=0; $i < $maxDonor; $i++) {
 									echo '<option value="'.($i+1).' months">'.($i+1).' months - €'.getDonorPrice($i+1).'</option>';
 								}
 								echo '</select>';
 
 								//echo '<input type="hidden" name="option_index" value="0">';
-								for ($i=0; $i < $maxDonor; $i++) { 
+								for ($i=0; $i < $maxDonor; $i++) {
 									echo '<input type="hidden" name="option_select'.$i.'" value="'.($i+1).' months">';
 									echo '<input type="hidden" name="option_amount'.$i.'" value="'.getDonorPrice($i+1).'">';
 								}
