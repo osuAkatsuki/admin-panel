@@ -2799,7 +2799,6 @@ class P {
 		}
 	}
 
-
 	/*
 	 * AdminRestrict
 	 * Prints the admin wipe page
@@ -3885,6 +3884,107 @@ class P {
 
 		echo '</div>';
 		echo '</div>';
+	}
+
+	public static function AdminRecentTopPlays() {
+		echo '<div id="wrapper">';
+		printAdminSidebar();
+		echo '<div id="page-content-wrapper">';
+		// Maintenance check
+		self::MaintenanceStuff();
+		// Print Exception if set
+		if (isset($_GET['e']) && !empty($_GET['e'])) {
+			self::ExceptionMessageStaccah($_GET['e']);
+		}
+
+		$playsVanilla = $GLOBALS['db']->fetchAll('
+			SELECT
+				beatmaps.song_name, scores.beatmap_md5, users.username,
+				scores.userid, scores.time, scores.score, scores.pp,
+				scores.play_mode, scores.mods
+			FROM scores
+			LEFT JOIN beatmaps USING(beatmap_md5)
+			LEFT JOIN users ON users.id = scores.userid
+			WHERE scores.completed = 3
+				AND users.privileges & 1
+				AND users.whitelist & 1
+				AND scores.play_mode = 0
+				AND beatmaps.ranked = 2
+				AND scores.time > UNIX_TIMESTAMP(NOW()) - 604800
+			ORDER BY scores.pp DESC LIMIT 100'
+		);
+
+		$playsRelax = $GLOBALS['db']->fetchAll('
+			SELECT
+				beatmaps.song_name, scores_relax.beatmap_md5, users.username,
+				scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp,
+				scores_relax.play_mode, scores_relax.mods
+			FROM scores_relax
+			LEFT JOIN beatmaps USING(beatmap_md5)
+			LEFT JOIN users ON users.id = scores_relax.userid
+			WHERE scores_relax.completed = 3
+				AND users.privileges & 1
+				AND users.whitelist & 2
+				AND scores_relax.play_mode = 0
+				AND beatmaps.ranked = 2
+				AND scores_relax.time > UNIX_TIMESTAMP(NOW()) - 604800
+			ORDER BY scores_relax.pp DESC LIMIT 100'
+		);
+
+		// Vanilla
+		echo '<table class="table table-striped table-hover">
+		<thead>
+		<tr><th class="text-left"><i class="fa fa-trophy"></i>	Top Vanilla plays for the week</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
+		</thead>
+		<tbody>';
+		//echo '<tr class="danger"><td colspan=5>Disabled</td></tr>';
+		foreach ($playsVanilla as $play) {
+			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
+			$bn = $play['song_name'];
+			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
+			if (!$bn) {
+				$bn = $play['beatmap_md5'];
+			}
+			// Get readable play_mode
+			$pm = getPlaymodeText($play['play_mode']);
+			// Print row
+			echo '<tr class="danger">';
+			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
+			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left">'.$pm.'</p></td>';
+			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
+			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
+			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'</b></p></td>';
+			echo '</tr>';
+		}
+		echo '</tbody>';
+
+		// Relax
+		echo '<table class="table table-striped table-hover">
+		<thead>
+		<tr><th class="text-left"><i class="fa fa-trophy"></i>	Top Relx plays for the week</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
+		</thead>
+		<tbody>';
+		//echo '<tr class="danger"><td colspan=5>Disabled</td></tr>';
+		foreach ($playsRelax as $play) {
+			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
+			$bn = $play['song_name'];
+			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
+			if (!$bn) {
+				$bn = $play['beatmap_md5'];
+			}
+			// Get readable play_mode
+			$pm = getPlaymodeText($play['play_mode']);
+			// Print row
+			echo '<tr class="danger">';
+			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
+			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left">'.$pm.'</p></td>';
+			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
+			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
+			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'</b></p></td>';
+			echo '</tr>';
+		}
 	}
 
 	public static function AdminSearchUserByIPResults() {

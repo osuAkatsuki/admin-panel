@@ -234,7 +234,6 @@ function printPage($p) {
 			case 1:
 				P::HomePage();
 			break;
-
 				// Admin panel (> 100 pages are admin ones)
 			case 100:
 				sessionCheckAdmin();
@@ -397,6 +396,11 @@ function printPage($p) {
 				sessionCheckAdmin(Privileges::AdminBanUsers);
 				P::AdminRestrictUnrestrictReason();
 			break;
+
+			// Show top plays from last 1w
+			case 138:
+				sessionCheckAdmin(); // TODO: AdminScorewatch?
+				P::AdminRecentTopPlays();
 
 			// Admin panel - Restore scores (Relax)
 			/*case 234:
