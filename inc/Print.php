@@ -3916,9 +3916,9 @@ class P {
 
 		$playsRelax = $GLOBALS['db']->fetchAll('
 			SELECT
-				beatmaps.song_name, beatmaps.beatmap_id, scores.beatmap_md5,
-				users.username, scores.userid, scores.time, scores.score,
-				scores.pp, scores.play_mode, scores.mods
+				beatmaps.song_name, beatmaps.beatmap_id, scores_relax.beatmap_md5,
+				users.username, scores_relax.userid, scores_relax.time, scores_relax.score,
+				scores_relax.pp, scores_relax.play_mode, scores_relax.mods
 			FROM scores_relax
 			LEFT JOIN beatmaps USING(beatmap_md5)
 			LEFT JOIN users ON users.id = scores_relax.userid
@@ -3937,12 +3937,10 @@ class P {
 		<tr><th class="text-left"><i class="fa fa-trophy"></i>	Top Vanilla plays for the week</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
 		</thead>
 		<tbody>';
-		//echo '<tr class="danger"><td colspan=5>Disabled</td></tr>';
 		foreach ($playsVanilla as $play) {
-			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
-			$bn = '<a href="https://akatsuki.pw/b/'.$play['beatmap_id'].'">'.$play['song_name'].'</a>';
-			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
-			if (!$bn) {
+			if ($play['song_name']) {
+				$bn = '<a href="https://akatsuki.pw/b/'.$play['beatmap_id'].'">'.$play['song_name'].'</a>';
+			} else {
 				$bn = $play['beatmap_md5'];
 			}
 			// Get readable play_mode
@@ -3965,12 +3963,10 @@ class P {
 		<tr><th class="text-left"><i class="fa fa-trophy"></i>	Top Relx plays for the week</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
 		</thead>
 		<tbody>';
-		//echo '<tr class="danger"><td colspan=5>Disabled</td></tr>';
 		foreach ($playsRelax as $play) {
-			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
-			$bn = '<a href="https://akatsuki.pw/b/'.$play['beatmap_id'].'">'.$play['song_name'].'</a>';
-			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
-			if (!$bn) {
+			if ($play['song_name']) {
+				$bn = '<a href="https://akatsuki.pw/b/'.$play['beatmap_id'].'">'.$play['song_name'].'</a>';
+			} else {
 				$bn = $play['beatmap_md5'];
 			}
 			// Get readable play_mode
@@ -3985,6 +3981,7 @@ class P {
 			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'</b></p></td>';
 			echo '</tr>';
 		}
+		echo '</tbody>';
 	}
 
 	public static function AdminSearchUserByIPResults() {
