@@ -3899,9 +3899,9 @@ class P {
 
 		$playsVanilla = $GLOBALS['db']->fetchAll('
 			SELECT
-				beatmaps.song_name, scores.beatmap_md5, users.username,
-				scores.userid, scores.time, scores.score, scores.pp,
-				scores.play_mode, scores.mods
+				beatmaps.song_name, beatmaps.beatmap_id, scores.beatmap_md5,
+				users.username, scores.userid, scores.time, scores.score,
+				scores.pp, scores.play_mode, scores.mods
 			FROM scores
 			LEFT JOIN beatmaps USING(beatmap_md5)
 			LEFT JOIN users ON users.id = scores.userid
@@ -3916,9 +3916,9 @@ class P {
 
 		$playsRelax = $GLOBALS['db']->fetchAll('
 			SELECT
-				beatmaps.song_name, scores_relax.beatmap_md5, users.username,
-				scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp,
-				scores_relax.play_mode, scores_relax.mods
+				beatmaps.song_name, beatmaps.beatmap_id, scores.beatmap_md5,
+				users.username, scores.userid, scores.time, scores.score,
+				scores.pp, scores.play_mode, scores.mods
 			FROM scores_relax
 			LEFT JOIN beatmaps USING(beatmap_md5)
 			LEFT JOIN users ON users.id = scores_relax.userid
@@ -3940,7 +3940,7 @@ class P {
 		//echo '<tr class="danger"><td colspan=5>Disabled</td></tr>';
 		foreach ($playsVanilla as $play) {
 			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
-			$bn = $play['song_name'];
+			$bn = '<a href="https://akatsuki.pw/b/'.$play['beatmap_id'].'">'.$play['song_name'].'</a>';
 			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
 			if (!$bn) {
 				$bn = $play['beatmap_md5'];
@@ -3968,7 +3968,7 @@ class P {
 		//echo '<tr class="danger"><td colspan=5>Disabled</td></tr>';
 		foreach ($playsRelax as $play) {
 			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
-			$bn = $play['song_name'];
+			$bn = '<a href="https://akatsuki.pw/b/'.$play['beatmap_id'].'">'.$play['song_name'].'</a>';
 			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
 			if (!$bn) {
 				$bn = $play['beatmap_md5'];
