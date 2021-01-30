@@ -3960,7 +3960,7 @@ class P {
 		// Relax
 		echo '<table class="table table-striped table-hover">
 		<thead>
-		<tr><th class="text-left"><i class="fa fa-trophy"></i>	Top Relx plays for the week</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
+		<tr><th class="text-left"><i class="fa fa-trophy"></i>	Top Relax plays for the week</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
 		</thead>
 		<tbody>';
 		foreach ($playsRelax as $play) {
