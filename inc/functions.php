@@ -401,6 +401,7 @@ function printPage($p) {
 			case 138:
 				sessionCheckAdmin(); // TODO: AdminScorewatch?
 				P::AdminRecentTopPlays();
+			break;
 
 			// Admin panel - Restore scores (Relax)
 			/*case 234:
