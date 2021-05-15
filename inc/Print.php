@@ -2628,9 +2628,11 @@ class P {
 					<td style='text-align: center;'>$group[name]</td>
 					<td style='text-align: center;'>$group[privileges]</td>
 					<td style='text-align: center;'>
-						<div class='btn-group-justified'>
-							<a href='index.php?p=119&id=$group[id]' title='Edit' class='btn btn-xs btn-primary'><span class='glyphicon glyphicon-pencil'></span></a>
-							<a href='index.php?p=119&h=$group[id]' title='Inherit' class='btn btn-xs btn-warning'><span class='glyphicon glyphicon-copy'></span></a>
+						<div class='btn-group-justified'>";
+			if (hasPrivilege(Privileges::AdminCaker)) {//edit needs dev
+				echo		"<a href='index.php?p=119&id=$group[id]' title='Edit' class='btn btn-xs btn-primary'><span class='glyphicon glyphicon-pencil'></span></a>";
+			}
+			echo			"<a href='index.php?p=119&h=$group[id]' title='Inherit' class='btn btn-xs btn-warning'><span class='glyphicon glyphicon-copy'></span></a>
 							<a href='index.php?p=120&id=$group[id]' title='View users in this group' class='btn btn-xs btn-success'><span class='glyphicon glyphicon-search'></span></a>
 						</div>
 					</td>

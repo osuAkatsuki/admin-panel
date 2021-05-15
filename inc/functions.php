@@ -308,7 +308,7 @@ function printPage($p) {
 
 			// Admin panel - Privileges Groups
 			case 119:
-				sessionCheckAdmin(Privileges::AdminManagePrivileges);
+				sessionCheckAdmin(Privileges::AdminCaker); // edit needs dev
 				P::AdminEditPrivilegesGroups();
 			break;
 
