@@ -1276,12 +1276,20 @@ class D {
 		try {
 			if (!isset($_POST["id"]) || empty($_POST["id"]) || !isset($_POST["m"]) || empty($_POST["m"]))
 				throw new Exception("Invalid user");
+
+			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
+			if (!$username) {
+				throw new Exception("That user doesn't exist");
+			}
+			$username = current($username);
+
 			$months = giveDonor($_POST["id"], $_POST["m"], $_POST["type"] == 0, $_POST["stype"] == 1);
+
 			if ($_POST["stype"] == 1) {
-				rapLog(sprintf("has given premium for %s months to user %s", $_POST["m"], $username), $_SESSION["userid"]);
+				rapLog(sprintf("has given %s %s months of premium", $username, $_POST["m"]), $_SESSION["userid"]);
 				redirect("index.php?p=102&s=Premium status changed. Premium for that user now expires in ".$months." months!");
 			} else {
-				rapLog(sprintf("has given supporter for %s months to user %s", $_POST["m"], $username), $_SESSION["userid"]);
+				rapLog(sprintf("has given %s %s months of supporter", $username, $_POST["m"]), $_SESSION["userid"]);
 				redirect("index.php?p=102&s=Supporter status changed. Supporter for that user now expires in ".$months." months!");
 			}
 		}
@@ -1294,18 +1302,19 @@ class D {
 		try {
 			if (!isset($_GET["id"]) || empty($_GET["id"]))
 				throw new Exception("Invalid user");
+
 			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
 			if (!$username) {
 				throw new Exception("That user doesn't exist");
 			}
 			$username = current($username);
-			$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges & ~".Privileges::UserDonor.", donor_expire = 0 WHERE id = ? LIMIT 1", [$_GET["id"]]);
+			$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges & ~8388612, donor_expire = 0 WHERE id = ? LIMIT 1", [$_GET["id"]]);
 
 			// Remove supporter badge
 			// 14 = supporter badge id
 			$GLOBALS["db"]->execute("DELETE FROM user_badges WHERE user = ? AND badge = ?", [$_GET["id"], 14]);
 
-			rapLog(sprintf("has removed supporter from user %s", $username), $_SESSION["userid"]);
+			rapLog(sprintf("has removed %s's supporter/premium", $username), $_SESSION["userid"]);
 			redirect("index.php?p=102&s=Supporter status changed!");
 		}
 		catch(Exception $e) {

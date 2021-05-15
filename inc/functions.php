@@ -1943,7 +1943,7 @@ function giveDonor($userID, $months, $add=true, $premium=false) {
 		$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | 8388612, donor_expire = ? WHERE id = ?", [$unixExpire, $userID]);
 		$donorBadge = $GLOBALS["db"]->fetch("SELECT id FROM badges WHERE name = 'premium' LIMIT 1");
 	} else {
-		$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | ".Privileges::UserDonor.", donor_expire = ? WHERE id = ?", [$unixExpire, $userID]);
+		$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | 4, donor_expire = ? WHERE id = ?", [$unixExpire, $userID]);
 		$donorBadge = $GLOBALS["db"]->fetch("SELECT id FROM badges WHERE name = 'supporter' OR name = 'support' LIMIT 1");
 	}
 
