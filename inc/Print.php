@@ -31,98 +31,84 @@ class P {
 
 		/* Recent scores */
 
+
 		$recentPlaysVanilla = $GLOBALS['db']->fetchAll('
-			SELECT
-				beatmaps.song_name, scores.beatmap_md5, users.username,
-				scores.userid, scores.time, scores.score, scores.pp,
-				scores.play_mode, scores.mods
-			FROM scores
-			LEFT JOIN beatmaps USING(beatmap_md5)
-			LEFT JOIN users ON users.id = scores.userid
-			WHERE scores.completed = 3
-				AND beatmaps.ranked = 2
-				AND users.privileges & 1 > 0
-			ORDER BY scores.id DESC
-			LIMIT 20');
+		SELECT
+		users.username, scores.userid, scores.time, scores.score, scores.pp, scores.play_mode, scores.mods
+		FROM scores
+	INNER JOIN users ON users.id = scores.userid
+	INNER JOIN beatmaps ON scores.beatmap_md5 = beatmaps.beatmap_md5
+	WHERE
+		users.privileges & 1
+	ORDER BY scores.id DESC LIMIT 20');
 
 		$recentPlaysRelax = $GLOBALS['db']->fetchAll('
-			SELECT
-				beatmaps.song_name, scores_relax.beatmap_md5, users.username,
-				scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp,
-				scores_relax.play_mode, scores_relax.mods
-			FROM scores_relax
-			LEFT JOIN beatmaps USING(beatmap_md5)
-			LEFT JOIN users ON users.id = scores_relax.userid
-			WHERE scores_relax.completed = 3
-				AND beatmaps.ranked = 2
-				AND users.privileges & 1 > 0
-			ORDER BY scores_relax.id DESC
-			LIMIT 20');
+		SELECT
+		users.username, scores.userid, scores.time, scores.score, scores.pp, scores.play_mode, scores.mods
+		FROM scores
+	INNER JOIN users ON users.id = scores.userid
+	INNER JOIN beatmaps ON scores.beatmap_md5 = beatmaps.beatmap_md5
+	WHERE
+		users.privileges & 1
+	ORDER BY scores.id DESC LIMIT 20');
 
-		/* Top scores */
+		// Top scores
 
 		$topPlaysVanilla = $GLOBALS['db']->fetchAll('
-			SELECT
-				beatmaps.song_name, scores.beatmap_md5, users.username,
-				scores.userid, scores.time, scores.score, scores.pp,
-				scores.play_mode, scores.mods
-			FROM scores
-			LEFT JOIN beatmaps USING(beatmap_md5)
-			LEFT JOIN users ON users.id = scores.userid
-			WHERE scores.completed = 3
-				AND users.privileges & 1 > 0
-				AND scores.play_mode = 0
-				AND beatmaps.ranked = 2
-			ORDER BY scores.pp DESC LIMIT 20');
+		SELECT
+		users.username, scores.userid, scores.time, scores.score, scores.pp, scores.play_mode, scores.mods
+		FROM scores
+	INNER JOIN users ON users.id = scores.userid
+	INNER JOIN beatmaps ON scores.beatmap_md5 = beatmaps.beatmap_md5
+	WHERE
+    	scores.completed = 3 AND
+		users.privileges & 1 AND
+        beatmaps.ranked = 2 AND
+		scores.play_mode = 0
+	ORDER BY scores.pp DESC LIMIT 20');
 
+		// TODO: Fix relax ranked check acting beyond retarded (beatmap_md5 has to become char)
 		$topPlaysRelax = $GLOBALS['db']->fetchAll('
-			SELECT
-				beatmaps.song_name, scores_relax.beatmap_md5, users.username,
-				scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp,
-				scores_relax.play_mode, scores_relax.mods
-			FROM scores_relax
-			LEFT JOIN beatmaps USING(beatmap_md5)
-			LEFT JOIN users ON users.id = scores_relax.userid
-			WHERE scores_relax.completed = 3
-				AND users.privileges & 1 > 0
-				AND scores_relax.play_mode = 0
-				AND beatmaps.ranked = 2
-			ORDER BY scores_relax.pp DESC LIMIT 20');
+		SELECT
+		users.username, scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp, scores_relax.play_mode, scores_relax.mods
+		FROM scores_relax
+	INNER JOIN users ON users.id = scores_relax.userid
+	INNER JOIN beatmaps ON scores_relax.beatmap_md5 = beatmaps.beatmap_md5
+	WHERE
+		scores_relax.completed = 3 AND
+		users.privileges & 1 #AND
+        #beatmaps.ranked = 2
+	ORDER BY scores_relax.pp DESC LIMIT 20');
 
-		/* Top scores within the last 2 weeks */
-		/*  (Used to find cheaters, usually)  */
+		// Top scores within the last 2 weeks
+		//  (Used to find cheaters, usually)
 
 		$topRecentPlaysVanilla = $GLOBALS['db']->fetchAll('
-			SELECT
-				beatmaps.song_name, scores.beatmap_md5, users.username,
-				scores.userid, scores.time, scores.score, scores.pp,
-				scores.play_mode, scores.mods
-			FROM scores
-			LEFT JOIN beatmaps USING(beatmap_md5)
-			LEFT JOIN users ON users.id = scores.userid
-			WHERE scores.completed = 3
-				AND users.privileges & 1
-				AND NOT users.whitelist & 1
-				AND scores.play_mode = 0
-				AND beatmaps.ranked = 2
-				AND scores.time > UNIX_TIMESTAMP(NOW()) - 1209600
-			ORDER BY scores.pp DESC LIMIT 100');
+		SELECT
+		users.username, scores.userid, scores.time, scores.score, scores.pp, scores.play_mode, scores.mods
+		FROM scores
+	INNER JOIN users ON users.id = scores.userid
+	INNER JOIN beatmaps ON scores.beatmap_md5 = beatmaps.beatmap_md5
+	WHERE
+    	scores.completed = 3 AND
+		users.privileges & 1 AND
+        beatmaps.ranked = 2 AND
+		scores.time > UNIX_TIMESTAMP(NOW()) - 1209600 AND
+		scores.play_mode = 0
+	ORDER BY scores.pp DESC LIMIT 100');
 
 		$topRecentPlaysRelax = $GLOBALS['db']->fetchAll('
-			SELECT
-				beatmaps.song_name, scores_relax.beatmap_md5, users.username,
-				scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp,
-				scores_relax.play_mode, scores_relax.mods
-			FROM scores_relax
-			LEFT JOIN beatmaps USING(beatmap_md5)
-			LEFT JOIN users ON users.id = scores_relax.userid
-			WHERE scores_relax.completed = 3
-				AND users.privileges & 1
-				AND NOT users.whitelist & 2
-				AND scores_relax.play_mode = 0
-				AND beatmaps.ranked = 2
-				AND scores_relax.time > UNIX_TIMESTAMP(NOW()) - 1209600
-			ORDER BY scores_relax.pp DESC LIMIT 100');
+		SELECT
+		users.username, scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp, scores_relax.play_mode, scores_relax.mods
+		FROM scores_relax
+	INNER JOIN users ON users.id = scores_relax.userid
+	INNER JOIN beatmaps ON scores_relax.beatmap_md5 = beatmaps.beatmap_md5
+	WHERE
+	scores_relax.completed = 3 AND
+		users.privileges & 1 AND
+        #beatmaps.ranked = 2 AND
+		scores_relax.time > UNIX_TIMESTAMP(NOW()) - 1209600
+	ORDER BY scores_relax.pp DESC LIMIT 100');
 
 		$onlineUsers = getJsonCurl("http://127.0.0.1:5001/api/v1/onlineUsers");
 		if (!$onlineUsers) {
@@ -202,7 +188,10 @@ class P {
 		}
 		echo '</tbody>';
 
+
+
 		// Top plays table (Vanilla)
+
 		echo '<table class="table table-striped table-hover">
 		<thead>
 		<tr><th class="text-left"><i class="fa fa-trophy"></i>	Top plays (Vanilla)</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
@@ -643,7 +632,7 @@ class P {
 				// Allow to edit only user stats
 				$readonly[0] = 'readonly';
 				$selectDisabled = 'disabled';
-			} elseif (($userData["privileges"] & Privileges::AdminManageUsers) > 0) {
+			} elseif (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1000) {
 				// We are trying to edit a user with same/higher rank than us :akerino:
 				redirect("index.php?p=102&e=You don't have enough permissions to edit this user");
 				die();
@@ -940,7 +929,7 @@ class P {
 				throw new Exception("That user doesn't exist");
 			}
 			// Check if we are trying to edit our account or a higher rank account
-			if ($userData['username'] != $_SESSION['username'] && (($userData['privileges'] & Privileges::AdminManageUsers) > 0)) {
+			if ($userData['username'] != $_SESSION['username'] && $_SESSION["userid"] != 1000 && (($userData['privileges'] & Privileges::AdminManageUsers) > 0)) {
 				throw new Exception("You don't have enough permissions to edit this user.");
 			}
 			// Print edit user stuff
@@ -957,6 +946,7 @@ class P {
 			if (isset($_GET['e']) && !empty($_GET['e'])) {
 				self::ExceptionMessageStaccah($_GET['e']);
 			}
+
 			echo '<p align="center"><font size=5><i class="fa fa-refresh"></i>	Change identity</font></p>';
 			echo '<table class="table table-striped table-hover table-50-center">';
 			echo '<tbody><form id="system-settings-form" action="submit.php" method="POST">

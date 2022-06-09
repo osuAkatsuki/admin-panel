@@ -325,7 +325,7 @@ class D {
 				throw new Exception("That user doesn\'t exist");
 			}
 			// Check if we can edit this user
-			if ( (($oldData["privileges"] & Privileges::AdminManageUsers) > 0) && $_POST["u"] != $_SESSION["username"] && $_SESSION["userid"] != 1001) {
+			if ( (($oldData["privileges"] & Privileges::AdminManageUsers) > 0) && $_POST["u"] != $_SESSION["username"] && $_SESSION["userid"] != 1001 && $_SESSION["userid"] != 1000) {
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 			// Check if email is valid
@@ -376,6 +376,10 @@ class D {
 			if (isset($_POST['country']) && countryCodeToReadable($_POST['country']) != 'unknown country' && $oldData["country"] != $_POST['country']) {
 				$GLOBALS['db']->execute('UPDATE users_stats SET country = ? WHERE id = ? LIMIT 1', [$_POST['country'], $_POST['id']]);
 				$GLOBALS['db']->execute('UPDATE rx_stats SET country = ? WHERE id = ? LIMIT 1', [$_POST['country'], $_POST['id']]);
+
+				redisConnect();
+				$GLOBALS["redis"]->publish('api:change_flag', $userID);
+
 				rapLog(sprintf("has changed %s's flag to %s", $_POST["u"], $_POST['country']));
 			}
 			// Set username style/color/aka
@@ -505,7 +509,7 @@ class D {
 				throw new Exception("User doesn't exist");
 			}
 			$privileges = current($privileges);
-			if ( (($privileges & Privileges::AdminManageUsers) > 0) && $_POST['oldu'] != $_SESSION['username'] && $_SESSION["userid"] != 1001) {
+			if ( (($privileges & Privileges::AdminManageUsers) > 0) && $_POST['oldu'] != $_SESSION['username'] && $_SESSION["userid"] != 1001 && $_SESSION["userid"] != 1000) {
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 			// No username with mixed spaces
@@ -524,6 +528,8 @@ class D {
 				"userID" => intval($_POST["id"]),
 				"newUsername" => $_POST["newu"]
 			]));
+
+			$GLOBALS["redis"]->publish("api:change_username", $_POST["id"]);
 
 			// log this username change to the users rap notes
 			appendNotes($_POST["id"], sprintf("Username change: '%s' -> '%s'", $_POST["oldu"], $_POST["newu"]));
@@ -962,10 +968,10 @@ class D {
 				}
 			}
 
-			if ($_POST["rx"]) {
+			if ($_POST["rx"] == 1) {
 				$scores_table = "scores_relax";
 				$stats_table = "rx_stats";
-			} else {
+			} else if ($_POST["rx"] == 0) {
 				$scores_table = "scores";
 				$stats_table = "users_stats";
 			}
@@ -975,25 +981,60 @@ class D {
 			// Delete scores
 			if ($_POST["gm"] == -1) {
 				//$GLOBALS['db']->execute('INSERT INTO '.$scores_table.'_removed SELECT * FROM '.$scores_table.' WHERE userid = ?', [$_POST['id']]);
-				$GLOBALS['db']->execute('DELETE FROM '.$scores_table.' WHERE userid = ?', [$_POST['id']]);
-				foreach (range(0, 3) as $i) {
-					$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'].','.$_POST['rx'].','.$i);
+
+				if ($_POST["rx"] != 2) {
+					$GLOBALS['db']->execute('DELETE FROM '.$scores_table.' WHERE userid = ?', [$_POST['id']]);
+					foreach (range(0, 3) as $i) {
+						$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'].','.$_POST['rx'].','.$i);
+					}
+				} else {
+					$dt = ['scores', 'scores_relax'];
+					foreach ($dt as $st) {
+						$GLOBALS['db']->execute('DELETE FROM'.$st.' WHERE userid = ?', [$_POST['id']]);
+						foreach (range(0, 3) as $i) {
+							foreach ([0, 1] as $m) {
+								$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'].','.$m.','.$i);
+							}
+						}
+					}
 				}
 			} else {
 				//$GLOBALS['db']->execute('INSERT INTO '.$scores_table.'_removed SELECT * FROM '.$scores_table.' WHERE userid = ? AND play_mode = ?', [$_POST['id'], $_POST["gm"]]);
-				$GLOBALS['db']->execute('DELETE FROM '.$scores_table.' WHERE userid = ? AND play_mode = ?', [$_POST['id'], $_POST["gm"]]);
-				$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'].','.$_POST['rx'].','.$_POST['gm']);
+				if ($_POST["rx"] == 2) {
+					$dt = ['scores', 'scores_relax'];
+					$ms = [0, 1];
+				}
+				else {
+					$dt = [$scores_table];
+					$ms = [$_POST["rx"]];
+				}
+
+				foreach ($dt as $st) {
+					$GLOBALS['db']->execute('DELETE FROM '.$st.' WHERE userid = ? AND play_mode = ?', [$_POST['id'], $_POST["gm"]]);
+				}
+
+				foreach ($ms as $m) {
+					$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'].','.$m.','.$_POST['gm']);
+				}
 			}
-			// Reset mode stats
-			foreach ($modes as $k) {
-				$GLOBALS['db']->execute('UPDATE '.$stats_table.' SET ranked_score_'.$k.' = 0, total_score_'.$k.' = 0, replays_watched_'.$k.' = 0, playcount_'.$k.' = 0, avg_accuracy_'.$k.' = 0.0, total_hits_'.$k.' = 0, level_'.$k.' = 0, pp_'.$k.' = 0 WHERE id = ? LIMIT 1', [$_POST['id']]);
+
+			if ($_POST['rx'] != 2) {
+				foreach ($modes as $k) {
+					$GLOBALS['db']->execute('UPDATE '.$stats_table.' SET ranked_score_'.$k.' = 0, total_score_'.$k.' = 0, replays_watched_'.$k.' = 0, playcount_'.$k.' = 0, avg_accuracy_'.$k.' = 0.0, total_hits_'.$k.' = 0, level_'.$k.' = 0, pp_'.$k.' = 0 WHERE id = ? LIMIT 1', [$_POST['id']]);
+				}
+			} else {
+				foreach (["users_stats", "rx_stats"] as $st) {
+					foreach ($modes as $k) {
+						$GLOBALS['db']->execute('UPDATE '.$st.' SET ranked_score_'.$k.' = 0, total_score_'.$k.' = 0, replays_watched_'.$k.' = 0, playcount_'.$k.' = 0, avg_accuracy_'.$k.' = 0.0, total_hits_'.$k.' = 0, level_'.$k.' = 0, pp_'.$k.' = 0 WHERE id = ? LIMIT 1', [$_POST['id']]);
+					}
+				}
 			}
 
 			// RAP log
 			rapLog(sprintf("has wiped %s's account", $username));
 
 			// Done
-			redirect('index.php?p=102&s=User '.($_POST["rx"] ? 'Relax' : 'Vanilla').' scores and stats have been wiped!');
+			redirect('index.php?p=102&s=User '.($_POST["rx"] ? $_POST["rx"] == 2 ? 'Vanilla and Relax' : 'Relax' : 'Vanilla').' scores and stats have been wiped!');
 		}
 		catch(Exception $e) {
 			redirect('index.php?p=102&e='.$e->getMessage());
