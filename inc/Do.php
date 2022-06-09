@@ -1318,7 +1318,7 @@ class D {
 			if (!isset($_POST["id"]) || empty($_POST["id"]) || !isset($_POST["m"]) || empty($_POST["m"]))
 				throw new Exception("Invalid user");
 
-			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
+			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_POST["id"]]);
 			if (!$username) {
 				throw new Exception("That user doesn't exist");
 			}
@@ -1327,10 +1327,10 @@ class D {
 			$months = giveDonor($_POST["id"], $_POST["m"], $_POST["type"] == 0, $_POST["stype"] == 1);
 
 			if ($_POST["stype"] == 1) {
-				rapLog(sprintf("has given %s %s months of premium", $username, $_POST["m"]), $_SESSION["userid"]);
+				rapLog(sprintf("has given %s %s month(s) of premium", $username, $_POST["m"]), $_SESSION["userid"]);
 				redirect("index.php?p=102&s=Premium status changed. Premium for that user now expires in ".$months." months!");
 			} else {
-				rapLog(sprintf("has given %s %s months of supporter", $username, $_POST["m"]), $_SESSION["userid"]);
+				rapLog(sprintf("has given %s %s month(s) of supporter", $username, $_POST["m"]), $_SESSION["userid"]);
 				redirect("index.php?p=102&s=Supporter status changed. Supporter for that user now expires in ".$months." months!");
 			}
 		}
