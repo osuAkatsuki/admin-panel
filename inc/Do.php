@@ -971,6 +971,9 @@ class D {
 			if ($_POST["rx"] == 1) {
 				$scores_table = "scores_relax";
 				$stats_table = "rx_stats";
+			} else if ($_POST["rx"] == 2) {
+				$scores_table = "scores_ap";
+				$stats_table = "ap_stats";
 			} else if ($_POST["rx"] == 0) {
 				$scores_table = "scores";
 				$stats_table = "users_stats";
@@ -982,17 +985,17 @@ class D {
 			if ($_POST["gm"] == -1) {
 				//$GLOBALS['db']->execute('INSERT INTO '.$scores_table.'_removed SELECT * FROM '.$scores_table.' WHERE userid = ?', [$_POST['id']]);
 
-				if ($_POST["rx"] != 2) {
+				if ($_POST["rx"] != 3) {
 					$GLOBALS['db']->execute('DELETE FROM '.$scores_table.' WHERE userid = ?', [$_POST['id']]);
 					foreach (range(0, 3) as $i) {
 						$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'].','.$_POST['rx'].','.$i);
 					}
 				} else {
-					$dt = ['scores', 'scores_relax'];
+					$dt = ['scores', 'scores_relax', 'scores_ap'];
 					foreach ($dt as $st) {
 						$GLOBALS['db']->execute('DELETE FROM'.$st.' WHERE userid = ?', [$_POST['id']]);
 						foreach (range(0, 3) as $i) {
-							foreach ([0, 1] as $m) {
+							foreach ([0, 1, 2] as $m) {
 								$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'].','.$m.','.$i);
 							}
 						}
@@ -1000,9 +1003,9 @@ class D {
 				}
 			} else {
 				//$GLOBALS['db']->execute('INSERT INTO '.$scores_table.'_removed SELECT * FROM '.$scores_table.' WHERE userid = ? AND play_mode = ?', [$_POST['id'], $_POST["gm"]]);
-				if ($_POST["rx"] == 2) {
-					$dt = ['scores', 'scores_relax'];
-					$ms = [0, 1];
+				if ($_POST["rx"] == 3) {
+					$dt = ['scores', 'scores_relax', 'scores_ap'];
+					$ms = [0, 1, 2];
 				}
 				else {
 					$dt = [$scores_table];
@@ -1018,12 +1021,12 @@ class D {
 				}
 			}
 
-			if ($_POST['rx'] != 2) {
+			if ($_POST['rx'] != 3) {
 				foreach ($modes as $k) {
 					$GLOBALS['db']->execute('UPDATE '.$stats_table.' SET ranked_score_'.$k.' = 0, total_score_'.$k.' = 0, replays_watched_'.$k.' = 0, playcount_'.$k.' = 0, avg_accuracy_'.$k.' = 0.0, total_hits_'.$k.' = 0, level_'.$k.' = 0, pp_'.$k.' = 0 WHERE id = ? LIMIT 1', [$_POST['id']]);
 				}
 			} else {
-				foreach (["users_stats", "rx_stats"] as $st) {
+				foreach (["users_stats", "rx_stats", "ap_stats"] as $st) {
 					foreach ($modes as $k) {
 						$GLOBALS['db']->execute('UPDATE '.$st.' SET ranked_score_'.$k.' = 0, total_score_'.$k.' = 0, replays_watched_'.$k.' = 0, playcount_'.$k.' = 0, avg_accuracy_'.$k.' = 0.0, total_hits_'.$k.' = 0, level_'.$k.' = 0, pp_'.$k.' = 0 WHERE id = ? LIMIT 1', [$_POST['id']]);
 					}
@@ -1034,7 +1037,17 @@ class D {
 			rapLog(sprintf("has wiped %s's account", $username));
 
 			// Done
-			redirect('index.php?p=102&s=User '.($_POST["rx"] ? $_POST["rx"] == 2 ? 'Vanilla and Relax' : 'Relax' : 'Vanilla').' scores and stats have been wiped!');
+			$wipeText = "Vanilla";
+
+			if ($_POST["rx"] == 3) {
+				$wipeText = "Vanilla, Relax and Autopilot";
+			} else if ($_POST["rx"] == 2) {
+				$wipeText = "Autopilot";
+			} else if ($_POST["rx"] == 1) {
+				$wipeText = "Relax";
+			}
+
+			redirect('index.php?p=102&s=User '.$wipeText.' scores and stats have been wiped!');
 		}
 		catch(Exception $e) {
 			redirect('index.php?p=102&e='.$e->getMessage());
@@ -1392,6 +1405,7 @@ class D {
 
 			//$GLOBALS["db"]->execute("INSERT INTO scores_removed SELECT * FROM scores WHERE userid = ? AND time >= ?", [$_POST["id"], $removeAfter]);
 			$GLOBALS["db"]->execute("DELETE FROM scores_relax WHERE userid = ? AND time >= ?", [$_POST["id"], $removeAfter]);
+			$GLOBALS["db"]->execute("DELETE FROM scores_ap WHERE userid = ? AND time >= ?", [$_POST["id"], $removeAfter]);
 			$GLOBALS["db"]->execute("DELETE FROM scores WHERE userid = ? AND time >= ?", [$_POST["id"], $removeAfter]);
 
 			rapLog(sprintf("has rolled back %s %s's account", $rollbackString, $username), $_SESSION["userid"]);
