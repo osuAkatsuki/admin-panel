@@ -1023,12 +1023,12 @@ class D {
 
 			if ($_POST['rx'] != 3) {
 				foreach ($modes as $k) {
-					$GLOBALS['db']->execute('UPDATE '.$stats_table.' SET ranked_score_'.$k.' = 0, total_score_'.$k.' = 0, replays_watched_'.$k.' = 0, playcount_'.$k.' = 0, avg_accuracy_'.$k.' = 0.0, total_hits_'.$k.' = 0, level_'.$k.' = 0, pp_'.$k.' = 0 WHERE id = ? LIMIT 1', [$_POST['id']]);
+					$GLOBALS['db']->execute('UPDATE '.$stats_table.' SET max_combo_'.$k.' = 0, ranked_score_'.$k.' = 0, total_score_'.$k.' = 0, replays_watched_'.$k.' = 0, playcount_'.$k.' = 0, avg_accuracy_'.$k.' = 0.0, total_hits_'.$k.' = 0, level_'.$k.' = 0, pp_'.$k.' = 0 WHERE id = ? LIMIT 1', [$_POST['id']]);
 				}
 			} else {
 				foreach (["users_stats", "rx_stats", "ap_stats"] as $st) {
 					foreach ($modes as $k) {
-						$GLOBALS['db']->execute('UPDATE '.$st.' SET ranked_score_'.$k.' = 0, total_score_'.$k.' = 0, replays_watched_'.$k.' = 0, playcount_'.$k.' = 0, avg_accuracy_'.$k.' = 0.0, total_hits_'.$k.' = 0, level_'.$k.' = 0, pp_'.$k.' = 0 WHERE id = ? LIMIT 1', [$_POST['id']]);
+						$GLOBALS['db']->execute('UPDATE '.$st.' SET max_combo_'.$k.' = 0, ranked_score_'.$k.' = 0, total_score_'.$k.' = 0, replays_watched_'.$k.' = 0, playcount_'.$k.' = 0, avg_accuracy_'.$k.' = 0.0, total_hits_'.$k.' = 0, level_'.$k.' = 0, pp_'.$k.' = 0 WHERE id = ? LIMIT 1', [$_POST['id']]);
 					}
 				}
 			}
