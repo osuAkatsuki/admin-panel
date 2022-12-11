@@ -39,7 +39,7 @@ class P {
 
 		$recentPlaysVanilla = $GLOBALS['db']->fetchAll('
 		SELECT
-		users.username, scores.userid, scores.time, scores.score, scores.pp, scores.play_mode, scores.mods
+		users.username, scores.userid, scores.time, scores.score, scores.pp, scores.play_mode, scores.mods, beatmaps.song_name, beatmaps.beatmap_id
 		FROM scores
 	INNER JOIN users ON users.id = scores.userid
 	INNER JOIN beatmaps ON scores.beatmap_md5 = beatmaps.beatmap_md5
@@ -49,7 +49,7 @@ class P {
 
 		$recentPlaysRelax = $GLOBALS['db']->fetchAll('
 		SELECT
-		users.username, scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp, scores_relax.play_mode, scores_relax.mods
+		users.username, scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp, scores_relax.play_mode, scores_relax.mods, beatmaps.song_name, beatmaps.beatmap_id
 		FROM scores_relax
 	INNER JOIN users ON users.id = scores_relax.userid
 	INNER JOIN beatmaps ON scores_relax.beatmap_md5 = beatmaps.beatmap_md5
@@ -59,7 +59,7 @@ class P {
 
 		$recentPlaysAutopilot = $GLOBALS['db']->fetchAll('
 		SELECT
-		users.username, scores_ap.userid, scores_ap.time, scores_ap.score, scores_ap.pp, scores_ap.play_mode, scores_ap.mods
+		users.username, scores_ap.userid, scores_ap.time, scores_ap.score, scores_ap.pp, scores_ap.play_mode, scores_ap.mods, beatmaps.song_name, beatmaps.beatmap_id
 		FROM scores_ap
 	INNER JOIN users ON users.id = scores_ap.userid
 	INNER JOIN beatmaps ON scores_ap.beatmap_md5 = beatmaps.beatmap_md5
@@ -70,7 +70,7 @@ class P {
 
 		$topPlaysVanilla = $GLOBALS['db']->fetchAll('
 		SELECT
-		users.username, scores.userid, scores.time, scores.score, scores.pp, scores.play_mode, scores.mods
+		users.username, scores.userid, scores.time, scores.score, scores.pp, scores.play_mode, scores.mods, beatmaps.song_name, beatmaps.beatmap_id
 		FROM scores
 	INNER JOIN users ON users.id = scores.userid
 	INNER JOIN beatmaps ON scores.beatmap_md5 = beatmaps.beatmap_md5
@@ -83,27 +83,27 @@ class P {
 
 		$topPlaysRelax = $GLOBALS['db']->fetchAll('
 		SELECT
-		users.username, scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp, scores_relax.play_mode, scores_relax.mods
+		users.username, scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp, scores_relax.play_mode, scores_relax.mods, beatmaps.song_name, beatmaps.beatmap_id
 		FROM scores_relax
 	INNER JOIN users ON users.id = scores_relax.userid
 	INNER JOIN beatmaps ON scores_relax.beatmap_md5 = beatmaps.beatmap_md5
 	WHERE
 		scores_relax.completed = 3 AND
 		users.privileges & 1 AND
-        beatmaps.ranked = 2 AND 
+        beatmaps.ranked = 2 AND
 		scores_relax.play_mode = 0
 	ORDER BY scores_relax.pp DESC LIMIT 20');
 
 		$topPlaysAutopilot = $GLOBALS['db']->fetchAll('
 		SELECT
-		users.username, scores_ap.userid, scores_ap.time, scores_ap.score, scores_ap.pp, scores_ap.play_mode, scores_ap.mods
+		users.username, scores_ap.userid, scores_ap.time, scores_ap.score, scores_ap.pp, scores_ap.play_mode, scores_ap.mods, beatmaps.song_name, beatmaps.beatmap_id
 		FROM scores_ap
 	INNER JOIN users ON users.id = scores_ap.userid
 	INNER JOIN beatmaps ON scores_ap.beatmap_md5 = beatmaps.beatmap_md5
 	WHERE
 		scores_ap.completed = 3 AND
 		users.privileges & 1 AND
-		beatmaps.ranked = 2 AND 
+		beatmaps.ranked = 2 AND
 		scores_ap.play_mode = 0
 	ORDER BY scores_ap.pp DESC LIMIT 20');
 
@@ -112,7 +112,7 @@ class P {
 
 		$topRecentPlaysVanilla = $GLOBALS['db']->fetchAll('
 		SELECT
-		users.username, scores.userid, scores.time, scores.score, scores.pp, scores.play_mode, scores.mods
+		users.username, scores.userid, scores.time, scores.score, scores.pp, scores.play_mode, scores.mods, beatmaps.song_name, beatmaps.beatmap_id
 		FROM scores
 	INNER JOIN users ON users.id = scores.userid
 	INNER JOIN beatmaps ON scores.beatmap_md5 = beatmaps.beatmap_md5
@@ -126,7 +126,7 @@ class P {
 
 		$topRecentPlaysRelax = $GLOBALS['db']->fetchAll('
 		SELECT
-		users.username, scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp, scores_relax.play_mode, scores_relax.mods
+		users.username, scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp, scores_relax.play_mode, scores_relax.mods, beatmaps.song_name, beatmaps.beatmap_id
 		FROM scores_relax
 	INNER JOIN users ON users.id = scores_relax.userid
 	INNER JOIN beatmaps ON scores_relax.beatmap_md5 = beatmaps.beatmap_md5
@@ -140,7 +140,7 @@ class P {
 
 		$topRecentPlaysAutopilot = $GLOBALS['db']->fetchAll('
 		SELECT
-		users.username, scores_ap.userid, scores_ap.time, scores_ap.score, scores_ap.pp, scores_ap.play_mode, scores_ap.mods
+		users.username, scores_ap.userid, scores_ap.time, scores_ap.score, scores_ap.pp, scores_ap.play_mode, scores_ap.mods, beatmaps.song_name, beatmaps.beatmap_id
 		FROM scores_ap
 	INNER JOIN users ON users.id = scores_ap.userid
 	INNER JOIN beatmaps ON scores_ap.beatmap_md5 = beatmaps.beatmap_md5
@@ -194,7 +194,7 @@ class P {
 			// Print row
 			echo '<tr class="success">';
 			echo '<td><p class="text-left"><b><a href="index.php?u='.$play["username"].'">'.$play['username'].'</a></b></p></td>';
-			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
 			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
@@ -221,7 +221,7 @@ class P {
 			// Print row
 			echo '<tr class="success">';
 			echo '<td><p class="text-left"><b><a href="index.php?u='.$play["username"].'">'.$play['username'].'</a></b></p></td>';
-			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
 			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
@@ -248,7 +248,7 @@ class P {
 			// Print row
 			echo '<tr class="success">';
 			echo '<td><p class="text-left"><b><a href="index.php?u='.$play["username"].'">'.$play['username'].'</a></b></p></td>';
-			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
 			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
@@ -279,7 +279,7 @@ class P {
 			// Print row
 			echo '<tr class="warning">';
 			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
-			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
 			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
@@ -307,7 +307,7 @@ class P {
 			// Print row
 			echo '<tr class="warning">';
 			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
-			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
 			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
@@ -336,7 +336,7 @@ class P {
 			// Print row
 			echo '<tr class="warning">';
 			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
-			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
 			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
@@ -364,7 +364,7 @@ class P {
 			// Print row
 			echo '<tr class="danger">';
 			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
-			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
 			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
@@ -392,7 +392,7 @@ class P {
 			// Print row
 			echo '<tr class="danger">';
 			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
-			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
 			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
@@ -420,7 +420,7 @@ class P {
 			// Print row
 			echo '<tr class="danger">';
 			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
-			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
 			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
