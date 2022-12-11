@@ -120,7 +120,7 @@ class P {
     	scores.completed = 3 AND
 		users.privileges & 1 AND
         beatmaps.ranked = 2 AND
-		scores.time > UNIX_TIMESTAMP(NOW()) - 1209600 AND
+		scores.time > UNIX_TIMESTAMP(NOW()) - 604800 AND
 		scores.play_mode = 0
 	ORDER BY scores.pp DESC LIMIT 100');
 
@@ -134,7 +134,7 @@ class P {
 	scores_relax.completed = 3 AND
 		users.privileges & 1 AND
         beatmaps.ranked = 2 AND
-		scores_relax.time > UNIX_TIMESTAMP(NOW()) - 1209600
+		scores_relax.time > UNIX_TIMESTAMP(NOW()) - 604800
 	ORDER BY scores_relax.pp DESC LIMIT 100');
 
 
@@ -148,7 +148,7 @@ class P {
 	scores_ap.completed = 3 AND
 		users.privileges & 1 AND
 		beatmaps.ranked = 2 AND
-		scores_ap.time > UNIX_TIMESTAMP(NOW()) - 1209600
+		scores_ap.time > UNIX_TIMESTAMP(NOW()) - 604800
 	ORDER BY scores_ap.pp DESC LIMIT 100');
 
 		$onlineUsers = getJsonCurl("http://127.0.0.1:5001/api/v1/onlineUsers");
