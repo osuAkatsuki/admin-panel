@@ -1442,6 +1442,33 @@ class D {
 		}
 	}
 
+	public static function ToggleUserpage() {
+		try {
+			if (!isset($_GET["id"]) || empty($_GET["id"]))
+				throw new Exception("Invalid user");
+			$userData = $GLOBALS["db"]->fetch("SELECT username, privileges, userpage_allowed FROM users WHERE id = ? LIMIT 1", [$_GET["id"]]);
+			if (!$userData) {
+				throw new Exception("That user doesn't exist");
+			}
+			$username = $userData["username"];
+			// Check if we can edit this user
+			if ( ($userData["privileges"] & Privileges::AdminSilenceUsers) > 0 && $_SESSION["userid"] != 1001) {
+				throw new Exception("You don't have enough permissions to grant/revoke userpages on this account");
+			}
+
+			// Grant/revoke userpage privilege
+			$can = $userData["userpage_allowed"];
+			$grantRevoke = ($can == 0) ? "enabled" : "disabled";
+			$can = ($can == 1) ? 0 : 1;
+			$GLOBALS["db"]->execute("UPDATE users SET userpage_allowed = ? WHERE id = ? LIMIT 1", [$can, $_GET["id"]]);
+
+			rapLog(sprintf("has %s userpage on %s's account", $grantRevoke, $username), $_SESSION["userid"]);
+			redirect("index.php?p=102&s=Userpage revoked/granted!");
+		} catch(Exception $e) {
+			redirect('index.php?p=102&e='.$e->getMessage());
+		}
+	}
+
 
 	public static function lockUnlockUser() {
 		try {
