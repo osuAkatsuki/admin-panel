@@ -121,7 +121,9 @@ class P {
 		users.privileges & 1 AND
         beatmaps.ranked = 2 AND
 		scores.time > UNIX_TIMESTAMP(NOW()) - 604800 AND
-		scores.play_mode = 0
+		scores.play_mode = 0 AND
+		users.id != 35270 AND
+		users.id != 53426 
 	ORDER BY scores.pp DESC LIMIT 100');
 
 		$topRecentPlaysRelax = $GLOBALS['db']->fetchAll('
