@@ -177,6 +177,8 @@ function setTitle($p) {
 			135 => 'Search users by IP',
 			136 => 'Search users by IP - Results',
 			137 => '(Un)restrict user',
+			//138 is used
+			139 => '(Un)ban user',
 			//234 => 'Restore scores (Relax)',
 		];
 		if (isset($namesRipple[$p])) {
@@ -401,6 +403,12 @@ function printPage($p) {
 			case 138:
 				sessionCheckAdmin(); // TODO: AdminScorewatch?
 				P::AdminRecentTopPlays();
+			break;
+
+			// Admin panel - (Un)ban user
+			case 139:
+				sessionCheckAdmin(Privileges::AdminBanUsers);
+				P::AdminBanUnbanReason();
 			break;
 
 			// Admin panel - Restore scores (Relax)

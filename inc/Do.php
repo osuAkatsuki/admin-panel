@@ -1326,6 +1326,67 @@ class D {
 		}
 	}
 
+	/*
+	 * BanUnbanUserReason
+     * (Un)ban a user with a reason (ADMIN CP)
+	 */
+	public static function BanUnbanUserReason() {
+		try {
+			// Check if everything is set
+			if (empty($_POST['id']) || empty($_POST['reason'])) {
+				throw new Exception('Nice troll.');
+			}
+			// Get user's username
+			$userData = $GLOBALS['db']->fetch('SELECT username, privileges FROM users WHERE id = ? LIMIT 1', $_POST['id']);
+			if (!$userData) {
+				throw new Exception("User doesn't exist");
+			}
+			// Check if we can ban this user
+			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+				throw new Exception("You don't have enough permissions to ban this user");
+			}
+
+			// Toggle ban status depending on it's current value
+			if (!isBanned($_POST["id"])) {
+				// Remove normal & public privileges
+				$newPrivileges = ($userData["privileges"] & ~Privileges::UserNormal) & ~Privileges::UserPublic;
+				$banDateTime = time();
+
+				// Remove from cache & redis leaderboards
+				updateBanBancho($_POST["id"], true);
+				removeFromLeaderboard($_POST['id']);
+
+				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') banned for: '.$_POST['reason']);
+				rapLog(sprintf("banned %s for '%s'.", $userData["username"], $_POST["reason"]));
+			} else {
+				// Remove ban, set UserNormal
+				$newPrivileges = $userData["privileges"] | Privileges::UserNormal;
+				$banDateTime = $userData["ban_datetime"];
+
+				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') unbanned (set to restricted) for: '.$_POST['reason']);
+				rapLog(sprintf("unbanned (set to restricted) %s for '%s'.", $userData["username"], $_POST["reason"]));
+			}
+
+			// Change privileges
+			$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_POST['id']]);
+
+			// Done, redirect to success page
+			if (isset($_POST["resend"])) {
+				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&s=User banned/unbanned!');
+			} else {
+				redirect('index.php?p=102&s=User banned/unbanned!');
+			}
+		}
+		catch(Exception $e) {
+			// Redirect to Exception page
+			if (isset($_POST["resend"])) {
+				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&e='.$e->getMessage());
+			} else {
+				redirect('index.php?p=102&e='.$e->getMessage());
+			}
+		}
+	}
+
 	public static function GiveDonor() {
 		try {
 			if (!isset($_POST["id"]) || empty($_POST["id"]) || !isset($_POST["m"]) || empty($_POST["m"]))

@@ -541,6 +541,7 @@ class P {
 			<a title="Edit user" class="btn btn-xs btn-primary" href="index.php?p=103&id='.$user['id'].'"><span class="glyphicon glyphicon-pencil"></span></a>';
 			if (hasPrivilege(Privileges::AdminBanUsers)) {
 				echo '<a title="(Un)restrict user" class="btn btn-xs btn-warning" href="index.php?p=137&id='.$user['id'].'"><span class="glyphicon glyphicon-remove-circle"></span></a>';
+				echo '<a title="(Un)ban user" class="btn btn-xs btn-warning" href="index.php?p=139&id='.$user['id'].'"><span class="glyphicon glyphicon-remove-circle"></span></a>';
 			}
 			//if (hasPrivilege(Privileges::AdminBanUsers)) {
 			//	if (isBanned($user["id"])) {
@@ -1019,6 +1020,7 @@ class P {
 
 						if (hasPrivilege(Privileges::AdminBanUsers)) {
 							echo '	<a href="index.php?p=137&id='.$_GET["id"].'" class="btn btn-danger">(Un)restrict user</a>';
+							echo '	<a href="index.php?p=139&id='.$_GET["id"].'" class="btn btn-danger">(Un)ban user</a>';
 							/*if (isBanned($_GET["id"])) {
 								echo '	<a onclick="sure(\'submit.php?action=banUnbanUser&id='.$_GET['id'].'&csrf=' . csrfToken() . '\')" class="btn btn-danger">Unban user</a>';
 							}
@@ -2961,6 +2963,55 @@ class P {
 			echo '</tbody></form>';
 			echo '</table>';
 			echo '<div class="text-center"><button type="submit" form="user-restrict-unrestrict" class="btn btn-primary">(Un)restrict user</button></div>';
+			echo '</div>';
+		}
+		catch(Exception $e) {
+			// Redirect to exception page
+			redirect('index.php?p=108&e='.$e->getMessage());
+		}
+	}
+
+	/*
+	 * AdminBan
+	 * Prints the admin ban page
+	 */
+	public static function AdminBanUnbanReason() {
+		try {
+			// Check if id is set
+			if (!isset($_GET['id'])) {
+				throw new Exception('Invalid user id');
+			}
+			echo '<div id="wrapper">';
+			printAdminSidebar();
+			echo '<div id="page-content-wrapper">';
+			// Maintenance check
+			self::MaintenanceStuff();
+			echo '<p align="center"><font size=5><i class="fa fa-eraser"></i>	(Un)ban account</font></p>';
+			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
+			if (!$username) {
+				throw new Exception("Invalid user");
+			}
+			$username = current($username);
+			echo '<table class="table table-striped table-hover table-50-center"><tbody>';
+			echo '<form id="user-ban-unban" action="submit.php" method="POST">
+			<input name="csrf" type="hidden" value="'.csrfToken().'">
+			<input name="action" value="banUnbanUserReason" hidden>';
+			echo '<tr>
+			<td>User ID</td>
+			<td><p class="text-center"><input type="text" name="id" class="form-control" value="'.$_GET["id"].'" readonly></td>
+			</tr>';
+			echo '<tr>
+			<td>Username</td>
+			<td><p class="text-center"><input type="text" class="form-control" value="'.$username.'" readonly></td>
+			</tr>';
+			echo '<tr>
+			<td>Reason</td>
+			<td><p class="text-center"><input type="text" name="reason" class="form-control"></td>
+			</tr>';
+
+			echo '</tbody></form>';
+			echo '</table>';
+			echo '<div class="text-center"><button type="submit" form="user-ban-unban" class="btn btn-primary">(Un)ban user</button></div>';
 			echo '</div>';
 		}
 		catch(Exception $e) {

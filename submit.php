@@ -70,6 +70,10 @@ try {
 			sessionCheckAdmin(Privileges::AdminBanUsers);
 			D::RestrictUnrestrictUserReason();
 		break;
+		case 'banUnbanUserReason':
+			sessionCheckAdmin(Privileges::AdminBanUsers);
+			D::BanUnbanUserReason();
+		break;
 		case 'quickEditUser':
 			sessionCheckAdmin(Privileges::AdminManageUsers);
 			D::QuickEditUser(false);
