@@ -1480,7 +1480,7 @@ class D {
 			}
 			// Check if we can edit this user
 			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
-				throw new Exception("You don't have enough permissions to lock this account");
+				throw new Exception("You don't have enough permissions to grant/revoke userpage editing privilege on this account");
 			}
 
 			// Grant/revoke userpage editing privilege
