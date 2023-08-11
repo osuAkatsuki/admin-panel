@@ -1071,7 +1071,8 @@ class P {
 				throw new Exception("That user doesn't exist");
 			}
 			// Check if we are trying to edit our account or a higher rank account
-			if ($userData['username'] != $_SESSION['username'] && (($oldData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001) {
+			if ($userData['username'] != $_SESSION['username'] && $_SESSION["userid"] != 1001 && (($userData['privileges'] & Privileges::AdminManageUsers) > 0)) {
+
 				throw new Exception("You don't have enough permissions to edit this user.");
 			}
 			// Print edit user stuff
