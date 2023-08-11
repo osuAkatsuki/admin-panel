@@ -322,12 +322,12 @@ class D {
 				throw new Exception('Nice troll');
 			}
 			// Check if this user exists and get old data
-			$userData = $GLOBALS["db"]->fetch("SELECT * FROM users LEFT JOIN users_stats ON users.id = users_stats.id WHERE users.id = ? LIMIT 1", [$_POST["id"]]);
-			if (!$userData) {
+			$oldData = $GLOBALS["db"]->fetch("SELECT * FROM users LEFT JOIN users_stats ON users.id = users_stats.id WHERE users.id = ? LIMIT 1", [$_POST["id"]]);
+			if (!$oldData) {
 				throw new Exception("That user doesn\'t exist");
 			}
 			// Check if we can edit this user
-			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001 && $_POST["u"] != $_SESSION["username"]) {
+			if ( (($oldData["privileges"] & Privileges::AdminManageUsers) > 0) && $_POST["u"] != $_SESSION["username"] && $_SESSION["userid"] != 1001 && $_SESSION["userid"] != 1000) {
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 			// Check if email is valid
@@ -354,13 +354,13 @@ class D {
 			// Save new userpage
 			$GLOBALS['db']->execute('UPDATE users_stats SET userpage_content = ? WHERE id = ? LIMIT 1', [$_POST['up'], $_POST['id']]);
 			/* Save new data if set (rank, allowed, UP and silence)
-			if (isset($_POST['r']) && !empty($_POST['r']) && $userData["rank"] != $_POST["r"]) {
+			if (isset($_POST['r']) && !empty($_POST['r']) && $oldData["rank"] != $_POST["r"]) {
 				$GLOBALS['db']->execute('UPDATE users SET rank = ? WHERE id = ?', [$_POST['r'], $_POST['id']]);
 				rapLog(sprintf("has changed %s's rank to %s", $_POST["u"], readableRank($_POST['r'])));
 			}
 			if (isset($_POST['a'])) {
 				$banDateTime = $_POST['a'] == 0 ? time() : 0;
-				$newPrivileges = $userData["privileges"] ^ Privileges::UserBasic;
+				$newPrivileges = $oldData["privileges"] ^ Privileges::UserBasic;
 				$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ?', [$newPrivileges, $banDateTime, $_POST['id']]);
 			}*/
 			// Get username style/color
@@ -375,7 +375,7 @@ class D {
 				$bg = '';
 			}
 			// Update country flag if set
-			if (isset($_POST['country']) && countryCodeToReadable($_POST['country']) != 'unknown country' && $userData["country"] != $_POST['country']) {
+			if (isset($_POST['country']) && countryCodeToReadable($_POST['country']) != 'unknown country' && $oldData["country"] != $_POST['country']) {
 				$GLOBALS['db']->execute('UPDATE users_stats SET country = ? WHERE id = ? LIMIT 1', [$_POST['country'], $_POST['id']]);
 				$GLOBALS['db']->execute('UPDATE rx_stats SET country = ? WHERE id = ? LIMIT 1', [$_POST['country'], $_POST['id']]);
 
@@ -416,7 +416,7 @@ class D {
 				throw new Exception("User doesn't exist");
 			}
 			// Check if we can ban this user
-			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001) {
+			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to ban this user");
 			}
 			// Get new allowed value
@@ -514,7 +514,7 @@ class D {
 				throw new Exception("User doesn't exist");
 			}
 			$privileges = current($privileges);
-			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001 && $_POST['oldu'] != $_SESSION['username']) {
+			if ( (($privileges & Privileges::AdminManageUsers) > 0) && $_POST['oldu'] != $_SESSION['username'] && $_SESSION["userid"] != 1001 && $_SESSION["userid"] != 1000) {
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 			// No username with mixed spaces
@@ -963,7 +963,7 @@ class D {
 			}
 			$username = $userData["username"];
 			// Check if we can wipe this user
-			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001) {
+			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to wipe this account");
 			}
 
@@ -1241,7 +1241,7 @@ class D {
 				throw new Exception("User doesn't exist");
 			}
 			// Check if we can ban this user
-			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001) {
+			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to ban this user");
 			}
 
@@ -1309,7 +1309,7 @@ class D {
 				throw new Exception("User doesn't exist");
 			}
 			// Check if we can ban this user
-			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001) {
+			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to ban this user");
 			}
 			// Get new allowed value
@@ -1367,7 +1367,7 @@ class D {
 				throw new Exception("User doesn't exist");
 			}
 			// Check if we can ban this user
-			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001) {
+			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to ban this user");
 			}
 
@@ -1479,7 +1479,7 @@ class D {
 			}
 			$username = $userData["username"];
 			// Check if we can rollback this user
-			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001) {
+			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to rollback this account");
 			}
 			switch ($_POST["period"]) {
@@ -1519,7 +1519,7 @@ class D {
 			}
 			$username = $userData["username"];
 			// Check if we can edit this user
-			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001) {
+			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to grant/revoke custom badge privilege on this account");
 			}
 
@@ -1574,7 +1574,7 @@ class D {
 				throw new Exception("That user doesn't exist");
 			}
 			// Check if we can edit this user
-			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001) {
+			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to lock this account");
 			}
 			// Make sure the user is not banned/restricted
