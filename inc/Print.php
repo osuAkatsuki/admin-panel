@@ -1011,6 +1011,9 @@ class P {
 							//echo '	<a href="index.php?p=134&id='.$_GET["id"].'" class="btn btn-danger">Restore scores (Regular)</a>';
 							//echo '	<a href="index.php?p=234&id='.$_GET["id"].'" class="btn btn-danger">Restore scores (Relax)</a>';
 						}
+						if (hasPrivilege(Privileges::AdminSilenceUsers)) {
+							echo '	<a onclick="sure(\'submit.php?action=toggleUserpageAllowed&id='.$_GET['id'].'&csrf='.csrfToken().'\');" class="btn btn-danger">'.(($userData["userpage_allowed"] == 1) ? "Revoke" : "Grant").' userpage editing</a>';
+						}
 						if (hasPrivilege(Privileges::AdminCaker)) { // Only allow superadmin to lock from admin panel.
 							echo '	<a onclick="sure(\'submit.php?action=lockUnlockUser&id='.$_GET['id'].'&csrf='.csrfToken().'\', \'Restrictions and bans will be removed from this account if you lock it. Make sure to lock only accounts that are not banned or restricted.\')" class="btn btn-danger">(Un)lock user</a>';
 						}

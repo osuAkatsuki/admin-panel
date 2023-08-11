@@ -146,6 +146,10 @@ try {
 			sessionCheckAdmin(Privileges::AdminCaker);
 			D::LockUnlockUser();
 		break;
+		case 'toggleUserpageAllowed':
+			sessionCheckAdmin(Privileges::AdminSilenceUsers);
+			D::ToggleUserpageAllowed();
+		break;
 		case 'rankBeatmapNew':
 			sessionCheckAdmin(Privileges::AdminManageBeatmaps);
 			D::RankBeatmapNew();
