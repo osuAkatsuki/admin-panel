@@ -143,7 +143,6 @@ try {
 			D::ToggleCustomBadge();
                 break;
 		case 'toggleUserpage':
-
 			sessionCheckAdmin(Privileges::AdminSilenceUsers);
 			D::ToggleUserpage();
 		break;
