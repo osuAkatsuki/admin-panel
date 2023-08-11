@@ -221,6 +221,7 @@ class D {
 			$GLOBALS['db']->execute("UPDATE system_settings SET value_string = ? WHERE name = 'website_global_alert' LIMIT 1", [$ga]);
 			$GLOBALS['db']->execute("UPDATE system_settings SET value_string = ? WHERE name = 'website_home_alert' LIMIT 1", [$ha]);
 			// RAP log
+			postWebhookMessage("has updated system settings");
 			rapLog("has updated system settings");
 			// Done, redirect to success page
 			redirect('index.php?p=101&s=Settings saved!');
@@ -285,6 +286,7 @@ class D {
 			redisConnect();
 			$GLOBALS["redis"]->publish("peppy:reload_settings", "reload");
 			// Rap log
+			postWebhookMessage("has updated bancho settings");
 			rapLog("has updated bancho settings");
 			// Done, redirect to success page
 			redirect('index.php?p=111&s=Settings saved!');
@@ -320,12 +322,12 @@ class D {
 				throw new Exception('Nice troll');
 			}
 			// Check if this user exists and get old data
-			$oldData = $GLOBALS["db"]->fetch("SELECT * FROM users LEFT JOIN users_stats ON users.id = users_stats.id WHERE users.id = ? LIMIT 1", [$_POST["id"]]);
-			if (!$oldData) {
+			$userData = $GLOBALS["db"]->fetch("SELECT * FROM users LEFT JOIN users_stats ON users.id = users_stats.id WHERE users.id = ? LIMIT 1", [$_POST["id"]]);
+			if (!$userData) {
 				throw new Exception("That user doesn\'t exist");
 			}
 			// Check if we can edit this user
-			if ( (($oldData["privileges"] & Privileges::AdminManageUsers) > 0) && $_POST["u"] != $_SESSION["username"] && $_SESSION["userid"] != 1001 && $_SESSION["userid"] != 1000) {
+			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001 && $_POST["u"] != $_SESSION["username"]) {
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 			// Check if email is valid
@@ -352,13 +354,13 @@ class D {
 			// Save new userpage
 			$GLOBALS['db']->execute('UPDATE users_stats SET userpage_content = ? WHERE id = ? LIMIT 1', [$_POST['up'], $_POST['id']]);
 			/* Save new data if set (rank, allowed, UP and silence)
-			if (isset($_POST['r']) && !empty($_POST['r']) && $oldData["rank"] != $_POST["r"]) {
+			if (isset($_POST['r']) && !empty($_POST['r']) && $userData["rank"] != $_POST["r"]) {
 				$GLOBALS['db']->execute('UPDATE users SET rank = ? WHERE id = ?', [$_POST['r'], $_POST['id']]);
 				rapLog(sprintf("has changed %s's rank to %s", $_POST["u"], readableRank($_POST['r'])));
 			}
 			if (isset($_POST['a'])) {
 				$banDateTime = $_POST['a'] == 0 ? time() : 0;
-				$newPrivileges = $oldData["privileges"] ^ Privileges::UserBasic;
+				$newPrivileges = $userData["privileges"] ^ Privileges::UserBasic;
 				$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ?', [$newPrivileges, $banDateTime, $_POST['id']]);
 			}*/
 			// Get username style/color
@@ -373,19 +375,21 @@ class D {
 				$bg = '';
 			}
 			// Update country flag if set
-			if (isset($_POST['country']) && countryCodeToReadable($_POST['country']) != 'unknown country' && $oldData["country"] != $_POST['country']) {
+			if (isset($_POST['country']) && countryCodeToReadable($_POST['country']) != 'unknown country' && $userData["country"] != $_POST['country']) {
 				$GLOBALS['db']->execute('UPDATE users_stats SET country = ? WHERE id = ? LIMIT 1', [$_POST['country'], $_POST['id']]);
 				$GLOBALS['db']->execute('UPDATE rx_stats SET country = ? WHERE id = ? LIMIT 1', [$_POST['country'], $_POST['id']]);
 
 				redisConnect();
 				$GLOBALS["redis"]->publish('api:change_flag', $userID);
 
+				postWebhookMessage(sprintf("has changed [%s](https://akatsuki.pw/u/%s)'s flag to %s", $_POST["u"], $_POST['id'], $_POST['country']));
 				rapLog(sprintf("has changed %s's flag to %s", $_POST["u"], $_POST['country']));
 			}
 			// Set username style/color/aka
 			$GLOBALS['db']->execute('UPDATE users_stats SET user_color = ?, user_style = ?, username_aka = ? WHERE id = ? LIMIT 1', [$c, $bg, $_POST['aka'], $_POST['id']]);
 			$GLOBALS['db']->execute('UPDATE rx_stats SET user_color = ?, user_style = ?, username_aka = ? WHERE id = ? LIMIT 1', [$c, $bg, $_POST['aka'], $_POST['id']]);
 			// RAP log
+			postWebhookMessage(sprintf("has edited [%s](https://akatsuki.pw/u/%s)", $_POST["u"], $_POST['id']));
 			rapLog(sprintf("has edited user %s", $_POST["u"]));
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=User edited!');
@@ -412,7 +416,7 @@ class D {
 				throw new Exception("User doesn't exist");
 			}
 			// Check if we can ban this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001) {
 				throw new Exception("You don't have enough permissions to ban this user");
 			}
 			// Get new allowed value
@@ -433,6 +437,7 @@ class D {
 			$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_GET['id']]);
 			updateBanBancho($_GET["id"], $newPrivileges & Privileges::UserPublic == 0);
 			// Rap log
+			postWebhookMessage(sprintf("has %s user [%s](https://akatsuki.pw/u/%s)", ($newPrivileges & Privileges::UserNormal) > 0 ? "unbanned" : "banned", $userData["username"], $_GET['id']));
 			rapLog(sprintf("has %s user %s", ($newPrivileges & Privileges::UserNormal) > 0 ? "unbanned" : "banned", $userData["username"]));
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=User banned/unbanned/activated!');
@@ -509,7 +514,7 @@ class D {
 				throw new Exception("User doesn't exist");
 			}
 			$privileges = current($privileges);
-			if ( (($privileges & Privileges::AdminManageUsers) > 0) && $_POST['oldu'] != $_SESSION['username'] && $_SESSION["userid"] != 1001 && $_SESSION["userid"] != 1000) {
+			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001 && $_POST['oldu'] != $_SESSION['username']) {
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 			// No username with mixed spaces
@@ -518,6 +523,7 @@ class D {
 			}
 			// Check if username is already in db
 			$safe = safeUsername($_POST["newu"]);
+			$trimmedName = trim($_POST["newu"]);
 			if ($GLOBALS['db']->fetch('SELECT * FROM users WHERE username_safe = ? AND id != ? LIMIT 1', [$safe, $_POST["id"]])) {
 				throw new Exception('Username already used by another user. No changes have been made.');
 			}
@@ -526,15 +532,16 @@ class D {
 			redisConnect();
 			$GLOBALS["redis"]->publish("peppy:change_username", json_encode([
 				"userID" => intval($_POST["id"]),
-				"newUsername" => $_POST["newu"]
+				"newUsername" => $trimmedName
 			]));
 
 			$GLOBALS["redis"]->publish("api:change_username", $_POST["id"]);
 
 			// log this username change to the users rap notes
-			appendNotes($_POST["id"], sprintf("Username change: '%s' -> '%s'", $_POST["oldu"], $_POST["newu"]));
+			appendNotes($_POST["id"], sprintf("Username change: '%s' -> '%s'", $_POST["oldu"], $trimmedName));
 
 			// rap log
+			postWebhookMessage(sprintf("has changed %s's username to [%s](https://akatsuki.pw/u/%s)", $_POST["oldu"], $trimmedName, $_POST["id"]));
 			rapLog(sprintf("has changed %s's username to %s", $_POST["oldu"], $_POST["newu"]));
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=User identity changed! It might take a while to change the username if the user is online on Bancho.');
@@ -562,6 +569,7 @@ class D {
 				$GLOBALS['db']->execute('UPDATE badges SET name = ?, icon = ? WHERE id = ? LIMIT 1', [$_POST['n'], $_POST['i'], $_POST['id']]);
 			}
 			// RAP log
+			postWebhookMessage(sprintf("has %s badge %s", $_POST['id'] == 0 ? "created" : "edited", $_POST["n"]));
 			rapLog(sprintf("has %s badge %s", $_POST['id'] == 0 ? "created" : "edited", $_POST["n"]));
 			// Done, redirect to success page
 			redirect('index.php?p=108&s=Badge edited!');
@@ -596,6 +604,7 @@ class D {
 				$GLOBALS["db"]->execute("INSERT INTO user_badges(user, badge) VALUES (?, ?);", [$user["id"], $x]);
 			}
 			// RAP log
+			postWebhookMessage(sprintf("has edited [%s](https://akatsuki.pw/u/%s)'s badges", $_POST["u"], $user["id"]));
 			rapLog(sprintf("has edited %s's badges", $_POST["u"]));
 			// Done, redirect to success page
 			redirect('index.php?p=108&s=Badge edited!');
@@ -627,6 +636,7 @@ class D {
 			// delete badge from relationships table
 			$GLOBALS['db']->execute('DELETE FROM user_badges WHERE badge = ?', $_GET['id']);
 			// RAP log
+			postWebhookMessage(sprintf("has deleted badge %s", current($name)));
 			rapLog(sprintf("has deleted badge %s", current($name)));
 			// Done, redirect to success page
 			redirect('index.php?p=108&s=Badge deleted!');
@@ -664,9 +674,11 @@ class D {
 			updateSilenceBancho($id);
 			// RAP log and redirect
 			if ($sl > 0) {
+				postWebhookMessage(sprintf("has silenced user [%s](https://akatsuki.pw/u/%s) for %s for the following reason: \"%s\"", $_POST['u'], $id, timeDifference(time() + $sl, time(), false), $_POST["r"]));
 				rapLog(sprintf("has silenced user %s for %s for the following reason: \"%s\"", $_POST['u'], timeDifference(time() + $sl, time(), false), $_POST["r"]));
 				$msg = 'index.php?p=102&s=User silenced!';
 			} else {
+				postWebhookMessage(sprintf("has removed [%s](https://akatsuki.pw/u/%s)'s silence", $_POST['u'], $id));
 				rapLog(sprintf("has removed %s's silence", $_POST['u']));
 				$msg = 'index.php?p=102&s=User silence removed!';
 			}
@@ -735,6 +747,7 @@ class D {
 			// Delete user avatar
 			unlink($avatar);
 			// Rap log
+			postWebhookMessage(sprintf("has reset [%s](https://akatsuki.pw/u/%s)'s avatar", getUserUsername($_GET['id']), $_GET['id']));
 			rapLog(sprintf("has reset %s's avatar", getUserUsername($_GET['id'])));
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=Avatar reset!');
@@ -950,7 +963,7 @@ class D {
 			}
 			$username = $userData["username"];
 			// Check if we can wipe this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001) {
 				throw new Exception("You don't have enough permissions to wipe this account");
 			}
 
@@ -1034,6 +1047,7 @@ class D {
 			}
 
 			// RAP log
+			postWebhookMessage(sprintf("has wiped [%s](https://akatsuki.pw/u/%s)'s account", $username, $_POST["id"]));
 			rapLog(sprintf("has wiped %s's account", $username));
 
 			// Done
@@ -1128,11 +1142,13 @@ class D {
 				$resp = getJsonCurl($requesturl);
 
 				if ($resp["message"] != "ok") {
-					rapLog("failed to send FokaBot message :( err: " . print_r($resp["message"], true));
+					postWebhookMessage("failed to send FokaBot message :( Error: " . print_r($resp["message"], true));
+					rapLog("failed to send FokaBot message :( Error: " . print_r($resp["message"], true));
 				}
 			}
 
 			// RAP log
+			postWebhookMessage(sprintf("has %s beatmap set %s", $_GET["r"] == 0 ? "unranked" : "ranked", $bsid));
 			rapLog(sprintf("has %s beatmap set %s", $_GET["r"] == 0 ? "unranked" : "ranked", $bsid), $_SESSION["userid"]);
 
 			// Done
@@ -1154,6 +1170,8 @@ class D {
 				throw new Exception("no");
 			$GLOBALS["db"]->execute("UPDATE rank_requests SET blacklisted = IF(blacklisted=1, 0, 1) WHERE id = ? LIMIT 1", [$_GET["id"]]);
 			$reqData = $GLOBALS["db"]->fetch("SELECT type, bid FROM rank_requests WHERE id = ? LIMIT 1", [$_GET["id"]]);
+
+			postWebhookMessage(sprintf("has toggled blacklist flag on beatmap %s %s", $reqData["type"] == "s" ? "set" : "", $reqData["bid"]));
 			rapLog(sprintf("has toggled blacklist flag on beatmap %s %s", $reqData["type"] == "s" ? "set" : "", $reqData["bid"]), $_SESSION["userid"]);
 			redirect("index.php?p=117&s=Blacklisted flag changed");
 		}
@@ -1223,7 +1241,7 @@ class D {
 				throw new Exception("User doesn't exist");
 			}
 			// Check if we can ban this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001) {
 				throw new Exception("You don't have enough permissions to ban this user");
 			}
 
@@ -1238,6 +1256,8 @@ class D {
 				removeFromLeaderboard($_POST['id']);
 
 				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') restricted for: '.$_POST['reason']);
+
+				postWebhookMessage(sprintf("has restricted [%s](https://akatsuki.pw/u/%s) for: %s", $userData["username"], $_POST['id'], $_POST["reason"]));
 				rapLog(sprintf("restricted %s for '%s'.", $userData["username"], $_POST["reason"]));
 			} else {
 				// Remove restrictions, set both UserPublic and UserNormal
@@ -1248,6 +1268,8 @@ class D {
 				updateBanBancho($_POST["id"], false);
 
 				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') unrestricted for: '.$_POST['reason']);
+
+				postWebhookMessage(sprintf("has unrestricted [%s](https://akatsuki.pw/u/%s) for: %s", $userData["username"], $_POST['id'], $_POST["reason"]));
 				rapLog(sprintf("unrestricted %s for '%s'.", $userData["username"], $_POST["reason"]));
 			}
 
@@ -1287,7 +1309,7 @@ class D {
 				throw new Exception("User doesn't exist");
 			}
 			// Check if we can ban this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001) {
 				throw new Exception("You don't have enough permissions to ban this user");
 			}
 			// Get new allowed value
@@ -1307,18 +1329,86 @@ class D {
 			$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_GET['id']]);
 			updateBanBancho($_GET["id"], $newPrivileges & Privileges::UserPublic == 0);
 
+			$msg = ($newPrivileges & Privileges::UserPublic) > 0 ? "unrestricted" : "restricted";
+
 			// Rap log
-			rapLog(sprintf("has %s user %s", ($newPrivileges & Privileges::UserPublic) > 0 ? "removed restrictions on" : "restricted", $userData["username"]));
+			postWebhookMessage(sprintf("has %s user [%s](https://akatsuki.pw/u/%s)", $msg, $userData["username"], $_GET['id']));
+			rapLog(sprintf("has %s user %s", $msg, $userData["username"]));
 			// Done, redirect to success page
 			if (isset($_GET["resend"])) {
-				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&s=User restricted/unrestricted!');
+				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&s=User '.$msg.'!');
 			} else {
-				redirect('index.php?p=102&s=User restricted/unrestricted!');
+				redirect('index.php?p=102&s=User '.$msg.'!');
 			}
 		}
 		catch(Exception $e) {
 			// Redirect to Exception page
 			if (isset($_GET["resend"])) {
+				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&e='.$e->getMessage());
+			} else {
+				redirect('index.php?p=102&e='.$e->getMessage());
+			}
+		}
+	}
+
+	/*
+	 * BanUnbanUserReason
+     * (Un)ban a user with a reason (ADMIN CP)
+	 */
+	public static function BanUnbanUserReason() {
+		try {
+			// Check if everything is set
+			if (empty($_POST['id']) || empty($_POST['reason'])) {
+				throw new Exception('Nice troll.');
+			}
+			// Get user's username
+			$userData = $GLOBALS['db']->fetch('SELECT username, privileges FROM users WHERE id = ? LIMIT 1', $_POST['id']);
+			if (!$userData) {
+				throw new Exception("User doesn't exist");
+			}
+			// Check if we can ban this user
+			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001) {
+				throw new Exception("You don't have enough permissions to ban this user");
+			}
+
+			// Toggle ban status depending on it's current value
+			if (!isBanned($_POST["id"])) {
+				// Remove normal & public privileges
+				$newPrivileges = ($userData["privileges"] & ~Privileges::UserNormal) & ~Privileges::UserPublic;
+				$banDateTime = time();
+
+				// Remove from cache & redis leaderboards
+				updateBanBancho($_POST["id"], true);
+				removeFromLeaderboard($_POST['id']);
+
+				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') banned for: '.$_POST['reason']);
+
+				postWebhookMessage(sprintf("has banned user [%s](https://akatsuki.pw/u/%s) for: %s", $userData["username"], $_POST['id'], $_POST['reason']));
+				rapLog(sprintf("banned %s for '%s'.", $userData["username"], $_POST["reason"]));
+			} else {
+				// Remove ban, set UserNormal
+				$newPrivileges = $userData["privileges"] | Privileges::UserNormal;
+				$banDateTime = $userData["ban_datetime"];
+
+				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') unbanned (set to restricted) for: '.$_POST['reason']);
+
+				postWebhookMessage(sprintf("has unbanned (set to restricted) user [%s](https://akatsuki.pw/u/%s) for: %s", $userData["username"], $_POST['id'], $_POST['reason']));
+				rapLog(sprintf("unbanned (set to restricted) %s for '%s'.", $userData["username"], $_POST["reason"]));
+			}
+
+			// Change privileges
+			$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_POST['id']]);
+
+			// Done, redirect to success page
+			if (isset($_POST["resend"])) {
+				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&s=User banned/unbanned!');
+			} else {
+				redirect('index.php?p=102&s=User banned/unbanned!');
+			}
+		}
+		catch(Exception $e) {
+			// Redirect to Exception page
+			if (isset($_POST["resend"])) {
 				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&e='.$e->getMessage());
 			} else {
 				redirect('index.php?p=102&e='.$e->getMessage());
@@ -1340,9 +1430,11 @@ class D {
 			$months = giveDonor($_POST["id"], $_POST["m"], $_POST["type"] == 0, $_POST["stype"] == 1);
 
 			if ($_POST["stype"] == 1) {
+				postWebhookMessage(sprintf("has given [%s](https://akatsuki.pw/u/%s) %s month(s) of premium", $username, $_POST["id"], $_POST["m"]));
 				rapLog(sprintf("has given %s %s month(s) of premium", $username, $_POST["m"]), $_SESSION["userid"]);
 				redirect("index.php?p=102&s=Premium status changed. Premium for that user now expires in ".$months." months!");
 			} else {
+				postWebhookMessage(sprintf("has given [%s](https://akatsuki.pw/u/%s) %s month(s) of supporter", $username, $_POST["id"], $_POST["m"]));
 				rapLog(sprintf("has given %s %s month(s) of supporter", $username, $_POST["m"]), $_SESSION["userid"]);
 				redirect("index.php?p=102&s=Supporter status changed. Supporter for that user now expires in ".$months." months!");
 			}
@@ -1368,6 +1460,7 @@ class D {
 			// 14 = supporter badge id
 			$GLOBALS["db"]->execute("DELETE FROM user_badges WHERE user = ? AND badge = ?", [$_GET["id"], 14]);
 
+			postWebhookMessage(sprintf("has removed [%s](https://akatsuki.pw/u/%s)'s supporter/premium", $username, $_GET["id"]));
 			rapLog(sprintf("has removed %s's supporter/premium", $username), $_SESSION["userid"]);
 			redirect("index.php?p=102&s=Supporter status changed!");
 		}
@@ -1386,7 +1479,7 @@ class D {
 			}
 			$username = $userData["username"];
 			// Check if we can rollback this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001) {
 				throw new Exception("You don't have enough permissions to rollback this account");
 			}
 			switch ($_POST["period"]) {
@@ -1408,6 +1501,7 @@ class D {
 			$GLOBALS["db"]->execute("DELETE FROM scores_ap WHERE userid = ? AND time >= ?", [$_POST["id"], $removeAfter]);
 			$GLOBALS["db"]->execute("DELETE FROM scores WHERE userid = ? AND time >= ?", [$_POST["id"], $removeAfter]);
 
+			postWebhookMessage(sprintf("has rolled back %s [%s](https://akatsuki.pw/u/%s)'s account", $rollbackString, $username, $_POST["id"]));
 			rapLog(sprintf("has rolled back %s %s's account", $rollbackString, $username), $_SESSION["userid"]);
 			redirect("index.php?p=102&s=User account has been rolled back!");
 		} catch(Exception $e) {
@@ -1425,7 +1519,7 @@ class D {
 			}
 			$username = $userData["username"];
 			// Check if we can edit this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001) {
 				throw new Exception("You don't have enough permissions to grant/revoke custom badge privilege on this account");
 			}
 
@@ -1435,8 +1529,9 @@ class D {
 			$can = !$can;
 			$GLOBALS["db"]->execute("UPDATE users_stats SET can_custom_badge = ? WHERE id = ? LIMIT 1", [$can, $_GET["id"]]);
 
+			postWebhookMessage(sprintf("has %s custom badge privilege on [%s](https://akatsuki.pw/u/%s)'s account", $grantRevoke, $username, $_GET["id"]));
 			rapLog(sprintf("has %s custom badge privilege on %s's account", $grantRevoke, $username), $_SESSION["userid"]);
-			redirect("index.php?p=102&s=Custom badge privilege revoked/granted!");
+			redirect("index.php?p=102&s=Custom badge privilege ".$grantRevoke."!");
 		} catch(Exception $e) {
 			redirect('index.php?p=102&e='.$e->getMessage());
 		}
@@ -1479,7 +1574,7 @@ class D {
 				throw new Exception("That user doesn't exist");
 			}
 			// Check if we can edit this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $_SESSION['userid'] != 1001) {
 				throw new Exception("You don't have enough permissions to lock this account");
 			}
 			// Make sure the user is not banned/restricted
@@ -1490,8 +1585,10 @@ class D {
 			// Grant/revoke custom badge privilege
 			$lockUnlock = (hasPrivilege(Privileges::UserNormal, $_GET["id"])) ? "locked" : "unlocked";
 			$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges ^ 2 WHERE id = ? LIMIT 1", [$_GET["id"]]);
+
+			postWebhookMessage(sprintf("has %s [%s](https://akatsuki.pw/u/%s)'s account", $lockUnlock, $userData["username"], $_GET["id"]));
 			rapLog(sprintf("has %s %s's account", $grantRevoke, $userData["username"]), $_SESSION["userid"]);
-			redirect("index.php?p=102&s=User locked/unlocked!");
+			redirect("index.php?p=102&s=User ".$lockUnlock."!");
 		} catch(Exception $e) {
 			redirect('index.php?p=102&e='.$e->getMessage());
 		}
@@ -1553,8 +1650,10 @@ class D {
 				}
 
 				// RAP Log
-				if ($logToRap)
+				if ($logToRap) {
+					postWebhookMessage(sprintf("has %s beatmap set %s", $status == "rank" ? "ranked" : "unranked", $bsid));
 					rapLog(sprintf("has %s beatmap set %s", $status == "rank" ? "ranked" : "unranked", $bsid), $_SESSION["userid"]);
+				}
 			}
 
 			// Update beatmap set from osu!api if
@@ -1574,7 +1673,8 @@ class D {
 			$requesturl = $URL["bancho"] . "/api/v1/fokabotMessage?k=" . urlencode($ScoresConfig["api_key"]) . "&to=" . urlencode($to) . "&msg=" . urlencode($msg);
 			$resp = getJsonCurl($requesturl);
 			if ($resp["message"] != "ok") {
-				rapLog("failed to send FokaBot message :( err: " . print_r($resp["message"], true));
+				postWebhookMessage(sprintf("failed to send FokaBot message :( Error: %s", print_r($resp["message"], true)));
+				rapLog("failed to send FokaBot message :( Error: " . print_r($resp["message"], true));
 			}
 
 			// Done
@@ -1610,6 +1710,7 @@ class D {
 				throw new Exception("Invalid user ID");
 			}
 			$GLOBALS["db"]->execute("DELETE FROM hw_user WHERE userid = ?", [$_GET["id"]]);
+			postWebhookMessage(sprintf("has cleared [%s](https://akatsuki.pw/u/%s)'s HWID matches.", getUserUsername($_GET["id"]), $_GET["id"]));
 			rapLog(sprintf("has cleared %s's HWID matches.", getUserUsername($_GET["id"])));
 			redirect('index.php?p=102&s=HWID matches cleared! Make sure to clear multiaccounts\' HWID too, or the user might get restricted for multiaccounting!');
 		} catch (Exception $e) {
@@ -1936,6 +2037,7 @@ class D {
 				$result = trim($result, " | ");
 				$errors = trim($errors, " | ");
 				updateBanBancho($uid, TRUE);
+				postWebhookMessage(sprintf("has banned user [%s](https://akatsuki.pw/u/%s)", $user["username"], $uid));
 				rapLog(sprintf("has banned user %s", $user["username"]));
 			}
 			redirect("index.php?p=102&e=" . $errors . "&s=" . $result);

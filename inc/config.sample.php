@@ -6,6 +6,8 @@ define('DATABASE_PASS', 'changeme');		// MySQL password
 define('DATABASE_NAME', 'akatsuki');		// Database name
 define('DATABASE_WHAT', 'host');		// "host" or unix socket path
 
+define('DISCORD_WEBHOOK_URL', 'https://canary.discord.com/api/webhooks/xxxxxxxxx/xxxxxxxxxxxx');
+
 // Server urls, no slash
 $URL = [
 	'avatar' => 'https://a.akatsuki.pw',
