@@ -1616,6 +1616,7 @@ function postJsonCurl($url, $data, $timeout = 1) {
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
 		curl_setopt($ch, CURLOPT_POST, true);
@@ -1626,6 +1627,40 @@ function postJsonCurl($url, $data, $timeout = 1) {
 	} catch (Exception $e) {
 		return false;
 	}
+}
+
+function postWebhookMessage($message, $userID = -1) {
+	$timestamp = date("c", strtotime("now"));
+
+	if ($userID == -1) {
+		$userID = $_SESSION["userid"];
+	}
+
+	$username = $_SESSION['username'];
+
+	$data = json_encode([
+		"embeds" => [
+			[
+				"timestamp" => $timestamp,
+				"color" => hexdec("542CB8"),
+				"footer" => [
+					"text" => "Akatsuki Admin Panel",
+				],
+				"thumbnail" => [
+					"url" => "https://akatsuki.pw/static/logos/logo.png"
+				],
+				"fields" => [
+					[
+						"name" => "** **",
+						"value" => sprintf("[%s](https://akatsuki.pw/u/%d) %s", $username, $userID, $message),
+						"inline" => true
+					]
+				]
+			]
+		]
+	]);
+
+	postJsonCurl(DISCORD_WEBHOOK_URL, $data, 5);
 }
 
 /*
@@ -1841,7 +1876,7 @@ function unsetCookie($name) {
 }
 
 function safeUsername($name) {
-	return str_replace(" ", "_", strtolower($name));
+	return str_replace(" ", "_", strtolower(trim($name)));
 }
 
 function updateBanBancho($userID, $ban) { // $ban is true or false, false meaning unban

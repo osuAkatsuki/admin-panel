@@ -750,6 +750,14 @@ class P {
 				$wlText = "No";
 				$wlCol = "danger";
 			}
+			// Userpage check
+			if ($userData["userpage_allowed"] == 1) {
+				$upText = "Yes";
+				$upCol = "success";
+			} else {
+				$upText = "No";
+				$upCol = "danger";
+			}
 			// Set readonly stuff
 			$readonly[0] = ''; // User data stuff
 			$readonly[1] = ''; // Username color/style stuff
@@ -759,7 +767,7 @@ class P {
 				// Allow to edit only user stats
 				$readonly[0] = 'readonly';
 				$selectDisabled = 'disabled';
-			} elseif (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1000) {
+			} elseif (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				// We are trying to edit a user with same/higher rank than us :akerino:
 				redirect("index.php?p=102&e=You don't have enough permissions to edit this user");
 				die();
@@ -845,6 +853,10 @@ class P {
 			echo '<tr class="single-row">
 			<td>Whitelisted</td>
 			<td><span class="label label-'.$wlCol.'">'.$wlText.'</span></td>
+			</tr>';
+			echo '<tr class="single-row">
+			<td>Userpage allowed</td>
+			<td><span class="label label-'.$upCol.'">'.$upText.'</span></td>
 			</tr>';
 			echo '</td>
 			</tr>';
@@ -1027,6 +1039,9 @@ class P {
 							echo '	<a onclick="sure(\'submit.php?action=clearHWID&id='.$_GET['id'].'&csrf='.csrfToken().'\');" class="btn btn-danger">Clear HWID matches</a>';
 						}
 						echo '		<a onclick="sure(\'submit.php?action=toggleCustomBadge&id='.$_GET['id'].'&csrf='.csrfToken().'\');" class="btn btn-danger">'.(($userStatsData["can_custom_badge"] == 1) ? "Revoke" : "Grant").' custom badge</a>';
+						if (hasPrivilege(Privileges::AdminSilenceUsers)) {
+							echo '		<a onclick="sure(\'submit.php?action=toggleUserpage&id='.$_GET['id'].'&csrf='.csrfToken().'\');" class="btn btn-danger">'.(($userData["userpage_allowed"] == 1) ? "Disallow" : "Allow").' userpage</a>';
+						}
 						echo '<br>
 							</li>
 						</ul>
@@ -1056,7 +1071,8 @@ class P {
 				throw new Exception("That user doesn't exist");
 			}
 			// Check if we are trying to edit our account or a higher rank account
-			if ($userData['username'] != $_SESSION['username'] && $_SESSION["userid"] != 1000 && (($userData['privileges'] & Privileges::AdminManageUsers) > 0)) {
+			if ($userData['username'] != $_SESSION['username'] && $_SESSION["userid"] != 1001 && (($userData['privileges'] & Privileges::AdminManageUsers) > 0)) {
+
 				throw new Exception("You don't have enough permissions to edit this user.");
 			}
 			// Print edit user stuff
