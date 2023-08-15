@@ -665,9 +665,9 @@ class D {
 			}
 			// Calculate silence period length
 			$sl = $_POST['c'] * $_POST['un'];
-			// Make sure silence time is less than 7 days
-			if ($sl > 604800) {
-				throw new Exception('Invalid silence length. Maximum silence length is 7 days.');
+			// Make sure silence time is less than 30 days
+			if ($sl > 2592000) {
+				throw new Exception('Invalid silence length. Maximum silence length is 30 days.');
 			}
 			// Silence and reconnect that user
 			$GLOBALS["db"]->execute("UPDATE users SET silence_end = ?, silence_reason = ? WHERE id = ? LIMIT 1", [time() + $sl, $_POST["r"], $id]);

@@ -655,7 +655,7 @@ class P {
 
 		<p style="line-height: 15px"></p>
 
-		During the silence period, user\'s client will be locked. <b>Max silence time is 7 days.</b> Set length to 0 to remove the silence.
+		During the silence period, user\'s client will be locked. <b>Max silence time is 30 days.</b> Set length to 0 to remove the silence.
 
 		</form>
 		</p>
@@ -3464,7 +3464,7 @@ class P {
 
 			<p style="line-height: 15px"></p>
 
-			During the silence period, user\'s client will be locked. <b>Max silence time is 7 days.</b> Set length to 0 to remove the silence.
+			During the silence period, user\'s client will be locked. <b>Max silence time is 30 days.</b> Set length to 0 to remove the silence.
 
 			</form>
 			</p>
