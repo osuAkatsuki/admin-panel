@@ -838,7 +838,7 @@ class P {
 			</td>
 			</tr>';
 			echo '<tr>
-			<td>Allowed</td>
+			<td>Account Standing</td>
 			<td>';
 
 			if (isBanned($userData["id"])) {
