@@ -193,7 +193,7 @@ class P {
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="success">';
-			echo '<td><p class="text-left"><b><a href="index.php?u='.$play["username"].'">'.$play['username'].'</a></b></p></td>';
+			echo '<td><p class="text-left"><b><a href="index.php?p=103&id='.$play["userid"].'">'.$play['username'].'</a></b></p></td>';
 			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
@@ -220,7 +220,7 @@ class P {
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="success">';
-			echo '<td><p class="text-left"><b><a href="index.php?u='.$play["username"].'">'.$play['username'].'</a></b></p></td>';
+			echo '<td><p class="text-left"><b><a href="index.php?p=103&id='.$play["userid"].'">'.$play['username'].'</a></b></p></td>';
 			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
@@ -247,7 +247,7 @@ class P {
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="success">';
-			echo '<td><p class="text-left"><b><a href="index.php?u='.$play["username"].'">'.$play['username'].'</a></b></p></td>';
+			echo '<td><p class="text-left"><b><a href="index.php?p=103&id='.$play["userid"].'">'.$play['username'].'</a></b></p></td>';
 			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
@@ -278,7 +278,7 @@ class P {
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="warning">';
-			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id='.$play["userid"].'"><b>'.$play['username'].'</b></a></p></td>';
 			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
@@ -306,7 +306,7 @@ class P {
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="warning">';
-			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id='.$play["userid"].'"><b>'.$play['username'].'</b></a></p></td>';
 			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
@@ -335,7 +335,7 @@ class P {
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="warning">';
-			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id='.$play["userid"].'"><b>'.$play['username'].'</b></a></p></td>';
 			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
@@ -363,7 +363,7 @@ class P {
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="danger">';
-			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id='.$play["userid"].'"><b>'.$play['username'].'</b></a></p></td>';
 			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
@@ -391,7 +391,7 @@ class P {
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="danger">';
-			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id='.$play["userid"].'"><b>'.$play['username'].'</b></a></p></td>';
 			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
@@ -419,7 +419,7 @@ class P {
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="danger">';
-			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id='.$play["userid"].'"><b>'.$play['username'].'</b></a></p></td>';
 			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
@@ -2600,7 +2600,7 @@ class P {
 			foreach ($friends as $friend) {
 				$uname = $friend['username'];
 				$mutualIcon = ($friend['user2'] == 999 || getFriendship($friend['user2'], $ourID, true) == 2) ? '<i class="fa fa-heart"></i>' : '';
-				echo '<tr><td><div align="center"><a href="index.php?u='.$friend['user2'].'">'.$uname.'</a></div></td><td><div align="center">'.$mutualIcon.'</div></td></tr>';
+				echo '<tr><td><div align="center"><a href="index.php?p=103&id='.$friend['user2'].'">'.$uname.'</a></div></td><td><div align="center">'.$mutualIcon.'</div></td></tr>';
 			}
 			echo '</tbody></table>';
 		}
@@ -2918,7 +2918,7 @@ class P {
 			foreach ($users as $user) {
 				echo "<tr>
 						<td style='text-align: center;'>$user[id]</td>
-						<td style='text-align: center;'><a href='index.php?u=$user[id]'>$user[username]</a></td>
+						<td style='text-align: center;'><a href='index.php?p=103&id=$user[id]'>$user[username]</a></td>
 					</tr>";
 			}
 			echo '</tbody>
@@ -3300,8 +3300,8 @@ class P {
 			}
 			echo '<tr class="' . $rowClass . '">
 			<td><p class="text-center">'.$report['id'].'</p></td>
-			<td><p class="text-center"><a href="index.php?u=' . $report["from_uid"] . '" target="_blank">'.getUserUsername($report['from_uid']).'</a></p></td>
-			<td><p class="text-center"><b><a href="index.php?u=' . $report["to_uid"] . '" target="_blank">'.getUserUsername($report['to_uid']).'</a></b></p></td>
+			<td><p class="text-center"><a href="index.php?p=103&id=' . $report["from_uid"] . '" target="_blank">'.getUserUsername($report['from_uid']).'</a></p></td>
+			<td><p class="text-center"><b><a href="index.php?p=103&id=' . $report["to_uid"] . '" target="_blank">'.getUserUsername($report['to_uid']).'</a></b></p></td>
 			<td><p>'.htmlspecialchars(substr($report['reason'], 0, 40)).'</p></td>
 			<td><p>'.timeDifference(time(), $report['time']).'</p></td>
 			<td><p class="text-center">' . $assignee . '</p></td>
@@ -3380,7 +3380,7 @@ class P {
 					</tr>
 					<tr>
 						<td><b>Reported user</b></td>
-						<td><a href="index.php?u=' . $report["to_uid"] . '" target="_blank" class="badguy">' . getUserUsername($report["to_uid"]) . '</a></td>
+						<td><a href="index.php?p=103&id=' . $report["to_uid"] . '" target="_blank" class="badguy">' . getUserUsername($report["to_uid"]) . '</a></td>
 					</tr>
 					<tr>
 						<td><b>Reason</b></td>
@@ -3562,7 +3562,7 @@ class P {
 				$severityColor = $report["severity"] >= 0.75 ? 'danger' : ($report["severity"] <= 0.25 ? 'primary' : 'warning');
 				echo "<tr class='$severityColor'>
 					<td><p class='text-center'>$report[id]</p></td>";
-					if ($all) echo "<td><p class='text-center'><a href='index.php?u=" . $report["userid"] . "'>$report[username]</a></p></td>";
+					if ($all) echo "<td><p class='text-center'><a href='index.php?p=103&id=" . $report["userid"] . "'>$report[username]</a></p></td>";
 					echo "<td><p class='text-center'>" . timeDifference(time(), $report["time"]) . "</p></td>
 					<td><p class='text-center'><a href='" . URL::Server() . "/web/replays/$report[score_id]'>$report[score_id]	<i class='fa fa-star'></i></a></p></td>
 					<td><p class='text-center'>" . getPlaymodeText($report["play_mode"], true) . "</p></td>
@@ -3636,7 +3636,7 @@ class P {
 				<table class='table table-striped table-hover table-75-center'><tbody>
 					<tr>
 						<td>User</td>
-						<td><a href='index.php?u=$report[userid]'>$report[username]</a></td>
+						<td><a href='index.php?p=103&id=$report[userid]'>$report[username]</a></td>
 					</tr>
 					<tr>
 						<td>When</td>
@@ -4094,7 +4094,7 @@ class P {
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="info">';
-			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id='.$play["userid"].'"><b>'.$play['username'].'</b></a></p></td>';
 			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
@@ -4120,7 +4120,7 @@ class P {
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="info">';
-			echo '<td><p class="text-left"><a href="index.php?u='.$play["username"].'"><b>'.$play['username'].'</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id='.$play["userid"].'"><b>'.$play['username'].'</b></a></p></td>';
 			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">'.$pm.'</p></td>';
 			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
