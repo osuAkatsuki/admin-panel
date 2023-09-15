@@ -891,7 +891,7 @@ class D {
 			// Save data in db
 			$GLOBALS['db']->execute('UPDATE users_stats SET userpage_content = ? WHERE username = ?', [$_POST['c'], $_SESSION['username']]);
 			if (isset($_POST['view']) && $_POST['view'] == 1) {
-				redirect('index.php?u=' . $_SESSION['userid']);
+				redirect('index.php?p=103&id=' . $_SESSION['userid']);
 			}
 			// Done, redirect to success page
 			redirect('index.php?p=8&s=ok');
@@ -1090,7 +1090,7 @@ class D {
 				removeFriend($uid, $_GET['u'], true);
 			}
 			// Done, redirect
-			redirect('index.php?u='.$_GET['u']);
+			redirect('index.php?p=103&id='.$_GET['u']);
 		}
 		catch(Exception $e) {
 			redirect('index.php?p=99&e='.$e->getMessage());
