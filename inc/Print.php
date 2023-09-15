@@ -879,6 +879,16 @@ class P {
 			}
 
 			echo '<tr>
+			<td>Registered</td>
+			<td>'.date('d/m/Y', $userData['register_datetime']).'</td>
+			</tr>';
+
+			echo '<tr>
+			<td>Latest activity</td>
+			<td>'.date('d/m/Y', $userData['latest_activity']).'</td>
+			</tr>';
+
+			echo '<tr>
 			<td>Username color<br><i class="no-mobile">(HTML or HEX color)</i></td>
 			<td><p class="text-center"><input type="text" name="c" class="form-control" value="'.$userStatsData['user_color'].'" '.$readonly[1].'></td>
 			</tr>';
