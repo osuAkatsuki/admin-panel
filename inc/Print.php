@@ -880,12 +880,12 @@ class P {
 
 			echo '<tr>
 			<td>Registered</td>
-			<td><p class="text-center">'.date('d/m/Y', $userData['register_datetime']).'</p></td>
+			<td>'.date('d/m/Y', $userData['register_datetime']).'</td>
 			</tr>';
 
 			echo '<tr>
 			<td>Latest activity</td>
-			<td><p class="text-center">'.date('d/m/Y', $userData['latest_activity']).'</p></td>
+			<td>'.date('d/m/Y', $userData['latest_activity']).'</td>
 			</tr>';
 
 			echo '<tr>
