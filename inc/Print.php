@@ -888,11 +888,11 @@ class P {
 			<td>'.date('d/m/Y', $userData['latest_activity']).'</td>
 			</tr>';
 
+			/*
 			echo '<tr>
 			<td>Username color<br><i class="no-mobile">(HTML or HEX color)</i></td>
 			<td><p class="text-center"><input type="text" name="c" class="form-control" value="'.$userStatsData['user_color'].'" '.$readonly[1].'></td>
 			</tr>';
-			/*
 			echo '<tr>
 			<td>Username CSS<br><i class="no-mobile">(like fancy gifs as background)</i></td>
 			<td><p class="text-center"><input type="text" name="bg" class="form-control" value="'.$userStatsData['user_style'].'" '.$readonly[1].'></td>
