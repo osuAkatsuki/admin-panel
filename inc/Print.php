@@ -989,7 +989,7 @@ class P {
 			</tr>';
 
 			if (hasPrivilege(Privileges::AdminManagePrivileges)) {
-				echo '<tr><td>IPs<br>';
+				echo '<tr><td>Top 50 IPs (descending by occurrence count)<br>';
 				echo '<i><a href="index.php?p=136&uid=' . $_GET["id"] . '">(search users with these IPs)</a></i>';
 				echo '</td><td><ul>';
 
