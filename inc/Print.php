@@ -850,6 +850,10 @@ class P {
 			} else {
 				echo "Ok";
 			}
+
+			echo '</td>
+			</tr>';
+
 			echo '<tr class="single-row">
 			<td>Whitelisted</td>
 			<td><span class="label label-'.$wlCol.'">'.$wlText.'</span></td>
@@ -858,8 +862,7 @@ class P {
 			<td>Userpage allowed</td>
 			<td><span class="label label-'.$upCol.'">'.$upText.'</span></td>
 			</tr>';
-			echo '</td>
-			</tr>';
+
 			if (isBanned($userData["id"]) || isRestricted($userData["id"])) {
 				$canAppeal = time() - $userData["ban_datetime"] >= 86400 * (30 * 2); // Seconds in a day * days in a month
 				echo '<tr class="'; echo $canAppeal ? 'success' : 'warning'; echo '">
