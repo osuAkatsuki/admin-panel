@@ -837,6 +837,8 @@ class P {
 			</select>
 			</td>
 			</tr>';
+
+			// Relevant account times
 			echo '<tr>
 			<td>Registered (dd/mm/yyyy) </td>
 			<td>'.date('d/m/Y', $userData['register_datetime']).'</td>
@@ -845,6 +847,8 @@ class P {
 			<td>Latest activity (dd/mm/yyyy)</td>
 			<td>'.date('d/m/Y', $userData['latest_activity']).'</td>
 			</tr>';
+
+			// Account standing
 			echo '<tr>
 			<td>Account Standing</td>
 			<td>';
@@ -862,19 +866,13 @@ class P {
 			echo '</td>
 			</tr>';
 
+			// Whitelisted
 			echo '<tr class="single-row">
 			<td>Whitelisted</td>
 			<td><span class="label label-'.$wlCol.'">'.$wlText.'</span></td>
 			</tr>';
-			echo '<tr class="single-row">
-			<td>Userpage allowed</td>
-			<td><span class="label label-'.$upCol.'">'.$upText.'</span></td>
-			</tr>';
-			echo '<tr class="single-row">
-			<td>Can edit custom badge</td>
-			<td><span class="label label-'.$cbCol.'">'.$cbText.'</span></td>
-			</tr>';
 
+			// Avatar
 			echo '<tr>
 			<td>Avatar<br><a onclick="sure(\'submit.php?action=resetAvatar&id='.$_GET['id'].'&csrf='.csrfToken().'\')">(reset avatar)</a></td>
 			<td>
@@ -884,6 +882,35 @@ class P {
 			</td>
 			</tr>';
 
+			// Userpage
+			echo '<tr class="single-row">
+			<td>Userpage allowed</td>
+			<td><span class="label label-'.$upCol.'">'.$upText.'</span></td>
+			</tr>';
+			echo '<tr>
+			<td>Userpage<br><a onclick="censorUserpage();">(reset userpage)</a></td>
+			<td><p class="text-center"><textarea name="up" class="form-control" style="overflow:auto;resize:vertical;height:200px">'.$userStatsData['userpage_content'].'</textarea></td>
+			</tr>';
+
+			// Custom badge
+			echo '<tr class="single-row">
+			<td>Can edit custom badge</td>
+			<td><span class="label label-'.$cbCol.'">'.$cbText.'</span></td>
+			</tr>';
+			if (hasPrivilege(Privileges::UserDonor, $_GET["id"])) {
+				echo '<tr>
+				<td>Custom badge</td>
+				<td>
+					<p align="center">
+						<i class="fa '.htmlspecialchars($userStatsData["custom_badge_icon"]).' fa-2x"></i>
+						<br>
+						<b>'.htmlspecialchars($userStatsData["custom_badge_name"]).'</b>
+					</p>
+				</td>
+				</tr>';
+			}
+
+			// ban/restriction date
 			if (isBanned($userData["id"]) || isRestricted($userData["id"])) {
 				$canAppeal = time() - $userData["ban_datetime"] >= 86400 * (30 * 2); // Seconds in a day * days in a month
 				echo '<tr class="'; echo $canAppeal ? 'success' : 'warning'; echo '">
@@ -894,6 +921,7 @@ class P {
 				</tr>';
 			}
 
+			// supporter expiry
 			if (hasPrivilege(Privileges::UserDonor, $userData["id"])) {
 				$donorExpire = timeDifference($userData["donor_expire"], time(), false);
 				echo '<tr>
@@ -902,23 +930,11 @@ class P {
 				</tr>';
 			}
 
-			/*
-			echo '<tr>
-			<td>Username color<br><i class="no-mobile">(HTML or HEX color)</i></td>
-			<td><p class="text-center"><input type="text" name="c" class="form-control" value="'.$userStatsData['user_color'].'" '.$readonly[1].'></td>
-			</tr>';
-			echo '<tr>
-			<td>Username CSS<br><i class="no-mobile">(like fancy gifs as background)</i></td>
-			<td><p class="text-center"><input type="text" name="bg" class="form-control" value="'.$userStatsData['user_style'].'" '.$readonly[1].'></td>
-			</tr>';*/
 			echo '<tr>
 			<td>A.K.A</td>
 			<td><p class="text-center"><input type="text" name="aka" class="form-control" value="'.htmlspecialchars($userStatsData['username_aka']).'"></td>
 			</tr>';
-			echo '<tr>
-			<td>Userpage<br><a onclick="censorUserpage();">(reset userpage)</a></td>
-			<td><p class="text-center"><textarea name="up" class="form-control" style="overflow:auto;resize:vertical;height:200px">'.$userStatsData['userpage_content'].'</textarea></td>
-			</tr>';
+
 			if (hasPrivilege(Privileges::AdminSilenceUsers)) {
 				echo '<tr>
 				<td>Silence end time<br><a onclick="removeSilence();">(remove silence)</a></td>
@@ -929,6 +945,20 @@ class P {
 				<td><p class="text-center"><input type="text" name="sr" class="form-control" value="'.$userData['silence_reason'].'"></td>
 				</tr>';
 			}
+			/*
+			echo '<tr class="single-row">
+			<td>Account in delayban queue
+				<i class="no-mobile"><br>(If \'yes\', The user has already been added to the delayban queue, and will be restricted automatically.</i>
+			</td>
+			<td><span class="label label-'.$haxCol.'">'.$haxText.'</span></td>
+			</tr>';*/
+			echo '<tr>
+			<td>Notes for CMs
+			<br>
+			<i>(visible only from RAP)</i></td>
+			<td><textarea name="ncm" class="form-control" style="overflow:auto;resize:vertical;height:500px">' . $userData["notes"] . '</textarea></td>
+			</tr>';
+
 			if (hasPrivilege(Privileges::AdminManagePrivileges)) {
 				$gd = $userData["id"] == $_SESSION["userid"] ? "disabled" : "";
 				echo '<tr>
@@ -963,31 +993,6 @@ class P {
 				</td>
 				</tr>';
 			}
-			if (hasPrivilege(Privileges::UserDonor, $_GET["id"])) {
-				echo '<tr>
-				<td>Custom badge</td>
-				<td>
-					<p align="center">
-						<i class="fa '.htmlspecialchars($userStatsData["custom_badge_icon"]).' fa-2x"></i>
-						<br>
-						<b>'.htmlspecialchars($userStatsData["custom_badge_name"]).'</b>
-					</p>
-				</td>
-				</tr>';
-			}
-			/*
-			echo '<tr class="single-row">
-			<td>Account in delayban queue
-				<i class="no-mobile"><br>(If \'yes\', The user has already been added to the delayban queue, and will be restricted automatically.</i>
-			</td>
-			<td><span class="label label-'.$haxCol.'">'.$haxText.'</span></td>
-			</tr>';*/
-			echo '<tr>
-			<td>Notes for CMs
-			<br>
-			<i>(visible only from RAP)</i></td>
-			<td><textarea name="ncm" class="form-control" style="overflow:auto;resize:vertical;height:500px">' . $userData["notes"] . '</textarea></td>
-			</tr>';
 
 			if (hasPrivilege(Privileges::AdminManagePrivileges)) {
 				echo '<tr><td>Top 50 IPs (descending by occurrence count)<br>';
