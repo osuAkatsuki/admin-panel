@@ -870,6 +870,10 @@ class P {
 			<td>Userpage allowed</td>
 			<td><span class="label label-'.$upCol.'">'.$upText.'</span></td>
 			</tr>';
+			echo '<tr class="single-row">
+			<td>Can edit custom badge</td>
+			<td><span class="label label-'.$cbCol.'">'.$cbText.'</span></td>
+			</tr>';
 
 			if (isBanned($userData["id"]) || isRestricted($userData["id"])) {
 				$canAppeal = time() - $userData["ban_datetime"] >= 86400 * (30 * 2); // Seconds in a day * days in a month
@@ -970,10 +974,6 @@ class P {
 				</td>
 				</tr>';
 			}
-			echo '<tr class="single-row">
-			<td>Can edit custom badge</td>
-			<td><span class="label label-'.$cbCol.'">'.$cbText.'</span></td>
-			</tr>';
 			/*
 			echo '<tr class="single-row">
 			<td>Account in delayban queue
