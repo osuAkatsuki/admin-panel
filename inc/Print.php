@@ -813,14 +813,6 @@ class P {
 			<td><p class="text-center"><input type="text" name="e" class="form-control" value="'.$userData['email'].'" '.$readonly[0].'></td>
 			</tr>';
 			echo '<tr>
-			<td>Registered</td>
-			<td>'.date('d/m/Y', $userData['register_datetime']).'</td>
-			</tr>';
-			echo '<tr>
-			<td>Latest activity</td>
-			<td>'.date('d/m/Y', $userData['latest_activity']).'</td>
-			</tr>';
-			echo '<tr>
 			<td>Country</td>
 			<td>
 			<select name="country" class="selectpicker" data-width="100%">
@@ -844,6 +836,14 @@ class P {
 			echo '
 			</select>
 			</td>
+			</tr>';
+			echo '<tr>
+			<td>Registered</td>
+			<td>'.date('d/m/Y', $userData['register_datetime']).'</td>
+			</tr>';
+			echo '<tr>
+			<td>Latest activity</td>
+			<td>'.date('d/m/Y', $userData['latest_activity']).'</td>
 			</tr>';
 			echo '<tr>
 			<td>Account Standing</td>
