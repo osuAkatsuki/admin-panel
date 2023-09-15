@@ -875,6 +875,15 @@ class P {
 			<td><span class="label label-'.$cbCol.'">'.$cbText.'</span></td>
 			</tr>';
 
+			echo '<tr>
+			<td>Avatar<br><a onclick="sure(\'submit.php?action=resetAvatar&id='.$_GET['id'].'&csrf='.csrfToken().'\')">(reset avatar)</a></td>
+			<td>
+				<p align="center">
+					<img src="'.URL::Avatar().'/'.$_GET['id'].'" height="50" width="50"></img>
+				</p>
+			</td>
+			</tr>';
+
 			if (isBanned($userData["id"]) || isRestricted($userData["id"])) {
 				$canAppeal = time() - $userData["ban_datetime"] >= 86400 * (30 * 2); // Seconds in a day * days in a month
 				echo '<tr class="'; echo $canAppeal ? 'success' : 'warning'; echo '">
@@ -954,14 +963,6 @@ class P {
 				</td>
 				</tr>';
 			}
-			echo '<tr>
-			<td>Avatar<br><a onclick="sure(\'submit.php?action=resetAvatar&id='.$_GET['id'].'&csrf='.csrfToken().'\')">(reset avatar)</a></td>
-			<td>
-				<p align="center">
-					<img src="'.URL::Avatar().'/'.$_GET['id'].'" height="50" width="50"></img>
-				</p>
-			</td>
-			</tr>';
 			if (hasPrivilege(Privileges::UserDonor, $_GET["id"])) {
 				echo '<tr>
 				<td>Custom badge</td>
