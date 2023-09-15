@@ -974,12 +974,13 @@ class P {
 			<td>Can edit custom badge</td>
 			<td><span class="label label-'.$cbCol.'">'.$cbText.'</span></td>
 			</tr>';
+			/*
 			echo '<tr class="single-row">
 			<td>Account in delayban queue
 				<i class="no-mobile"><br>(If \'yes\', The user has already been added to the delayban queue, and will be restricted automatically.</i>
 			</td>
 			<td><span class="label label-'.$haxCol.'">'.$haxText.'</span></td>
-			</tr>';
+			</tr>';*/
 			echo '<tr>
 			<td>Notes for CMs
 			<br>
