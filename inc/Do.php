@@ -430,7 +430,6 @@ class D {
 				// Unban, set UserNormal and UserPublic bits
 				$banDateTime = 0;
 				$newPrivileges = $userData["privileges"] | Privileges::UserNormal;
-				$newPrivileges |= Privileges::UserPublic;
 			}
 			//$newPrivileges = $userData["privileges"] ^ Privileges::UserBasic;
 			// Change privileges
@@ -1362,7 +1361,7 @@ class D {
 				throw new Exception('Nice troll.');
 			}
 			// Get user's username
-			$userData = $GLOBALS['db']->fetch('SELECT username, privileges FROM users WHERE id = ? LIMIT 1', $_POST['id']);
+			$userData = $GLOBALS['db']->fetch('SELECT username, privileges, ban_datetime FROM users WHERE id = ? LIMIT 1', $_POST['id']);
 			if (!$userData) {
 				throw new Exception("User doesn't exist");
 			}
@@ -1387,7 +1386,7 @@ class D {
 				rapLog(sprintf("banned %s for '%s'.", $userData["username"], $_POST["reason"]));
 			} else {
 				// Remove ban, set UserNormal
-				$newPrivileges = $userData["privileges"] | Privileges::UserNormal;
+				$newPrivileges = ($userData["privileges"] | Privileges::UserNormal);
 				$banDateTime = $userData["ban_datetime"];
 
 				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') unbanned (set to restricted) for: '.$_POST['reason']);
@@ -1396,8 +1395,8 @@ class D {
 				rapLog(sprintf("unbanned (set to restricted) %s for '%s'.", $userData["username"], $_POST["reason"]));
 			}
 
-			// Change privileges
-			$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_POST['id']]);
+			// Change privilege
+			$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ?', [$newPrivileges, $banDateTime, $_POST['id']]);
 
 			// Done, redirect to success page
 			if (isset($_POST["resend"])) {
