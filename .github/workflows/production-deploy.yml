@@ -2,7 +2,7 @@ name: production-deploy
 on:
   push:
     branches:
-      - AKAT-375-quick-and-dirty-prod-ci-deploy
+      - master
 
 jobs:
   build:
@@ -19,4 +19,4 @@ jobs:
           script_stop: true
           script: |
             cd /home/akatsuki/admin-panel
-            git pull origin AKAT-375-quick-and-dirty-prod-ci-deploy
+            git pull origin master
