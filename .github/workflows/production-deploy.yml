@@ -2,7 +2,7 @@ name: production-deploy
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
@@ -19,4 +19,4 @@ jobs:
           script_stop: true
           script: |
             cd /home/akatsuki/admin-panel
-            git pull origin main
+            git pull origin master
