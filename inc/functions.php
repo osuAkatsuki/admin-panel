@@ -1209,17 +1209,14 @@ function postWebhookMessage($message, $userID = -1) {
 		"embeds" => [
 			[
 				"timestamp" => $timestamp,
-				"color" => hexdec("542CB8"),
+				"color" => hexdec("7352C4"),
 				"footer" => [
-					"text" => "Akatsuki Admin Panel",
-				],
-				"thumbnail" => [
-					"url" => "https://akatsuki.pw/static/logos/logo.png"
+					"text" => "admin-panel 🗃️",
 				],
 				"fields" => [
 					[
-						"name" => "** **",
-						"value" => sprintf("[%s](https://akatsuki.pw/u/%d) %s", $username, $userID, $message),
+						"name" => "New moderation action logged! :tools:",
+						"value" => sprintf("[%s](https://akatsuki.gg/u/%d) %s", $username, $userID, $message),
 						"inline" => true
 					]
 				]
