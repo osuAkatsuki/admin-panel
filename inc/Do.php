@@ -166,7 +166,7 @@ class D {
 			// Set username style/color/aka
 			$GLOBALS['db']->execute('UPDATE users SET username_aka = ? WHERE id = ?', [$_POST['aka'], $_POST['id']]);
 			// RAP log
-			postWebhookMessage(sprintf("has edited [%s](https://akatsuki.gg/u/%s)\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $_POST["u"], $_POST['id']));
+			postWebhookMessage(sprintf("has edited [%s](https://akatsuki.gg/u/%s)\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $_POST["u"], $_POST['id'], $_POST['id']));
 			rapLog(sprintf("has edited user %s", $_POST["u"]));
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=User edited!');
@@ -213,7 +213,7 @@ class D {
 			$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_GET['id']]);
 			updateBanBancho($_GET["id"], $newPrivileges & Privileges::UserPublic == 0);
 			// Rap log
-			postWebhookMessage(sprintf("has %s user [%s](https://akatsuki.gg/u/%s).\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", ($newPrivileges & Privileges::UserNormal) > 0 ? "unbanned" : "banned", $userData["username"], $_GET['id']));
+			postWebhookMessage(sprintf("has %s user [%s](https://akatsuki.gg/u/%s).\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", ($newPrivileges & Privileges::UserNormal) > 0 ? "unbanned" : "banned", $userData["username"], $_GET['id'], $_POST['id']));
 			rapLog(sprintf("has %s user %s", ($newPrivileges & Privileges::UserNormal) > 0 ? "unbanned" : "banned", $userData["username"]));
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=User banned/unbanned/activated!');
@@ -354,7 +354,7 @@ class D {
 				}
 			}
 			// RAP log
-			postWebhookMessage(sprintf("has %s badge %s.\n\n> :gear: [View all badges](https://old.akatsuki.gg/index.php?p=109) on **Admin Panel**", $_POST['id'] == 0 ? "created" : "edited", $_POST["n"]));
+			postWebhookMessage(sprintf("has %s badge %s.\n\n> :gear: [View all badges](https://old.akatsuki.gg/index.php?p=109) on **Admin Panel**", $_POST['id'] == 0 ? "created" : "edited", $_POST["n"], $_POST['id']));
 			rapLog(sprintf("has %s badge %s", $_POST['id'] == 0 ? "created" : "edited", $_POST["n"]));
 			// Done, redirect to success page
 			redirect('index.php?p=108&s=Badge edited!');
@@ -389,7 +389,7 @@ class D {
 				$GLOBALS["db"]->execute("INSERT INTO user_badges(user, badge) VALUES (?, ?);", [$user["id"], $x]);
 			}
 			// RAP log
-			postWebhookMessage(sprintf("has edited [%s](https://akatsuki.gg/u/%s)'s badges.\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $_POST["u"], $user["id"]));
+			postWebhookMessage(sprintf("has edited [%s](https://akatsuki.gg/u/%s)'s badges.\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $_POST["u"], $user["id"], $_POST['id']));
 			rapLog(sprintf("has edited %s's badges", $_POST["u"]));
 			// Done, redirect to success page
 			redirect('index.php?p=108&s=Badge edited!');
@@ -459,7 +459,7 @@ class D {
 			updateSilenceBancho($id);
 			// RAP log and redirect
 			if ($sl > 0) {
-				postWebhookMessage(sprintf("has silenced user [%s](https://akatsuki.gg/u/%s) for %s.\n**Reason**: \"%s\"\n\n\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $_POST['u'], $id, timeDifference(time() + $sl, time(), false), $_POST["r"]));
+				postWebhookMessage(sprintf("has silenced user [%s](https://akatsuki.gg/u/%s) for %s.\n**Reason**: \"%s\"\n\n\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $_POST['u'], $id, timeDifference(time() + $sl, time(), false), $_POST["r"], $_POST['id']));
 				rapLog(sprintf("has silenced user %s for %s for the following reason: \"%s\"", $_POST['u'], timeDifference(time() + $sl, time(), false), $_POST["r"]));
 				$msg = 'index.php?p=102&s=User silenced!';
 			} else {
@@ -506,7 +506,7 @@ class D {
 				"reason" => $_POST["r"]
 			]));
 			// Rap log
-			postWebhookMessage(sprintf("has kicked [%s](https://akatsuki.gg/u/%s) from the server.\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", getUserUsername($_GET['id']), $_GET['id']));
+			postWebhookMessage(sprintf("has kicked [%s](https://akatsuki.gg/u/%s) from the server.\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", getUserUsername($_GET['id']), $_GET['id'], $_POST['id']));
 			rapLog(sprintf("has kicked %s from the server", getUserUsername($_GET['id'])));
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=User kicked!');
@@ -534,7 +534,7 @@ class D {
 				"Key" => "avatars/" . $_GET["id"] . ".png"
 			]);
 			// Rap log
-			postWebhookMessage(sprintf("has reset [%s](https://akatsuki.gg/u/%s)'s Avatar\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", getUserUsername($_GET['id']), $_GET['id']));
+			postWebhookMessage(sprintf("has reset [%s](https://akatsuki.gg/u/%s)'s Avatar\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", getUserUsername($_GET['id']), $_GET['id'], $_POST['id']));
 			rapLog(sprintf("has reset %s's Avatar", getUserUsername($_GET['id'])));
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=Avatar reset!');
@@ -856,7 +856,7 @@ class D {
 
 				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') restricted for: '.$_POST['reason']);
 
-				postWebhookMessage(sprintf("has restricted [%s](https://akatsuki.gg/u/%s)\n**Reason**: %s\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData["username"], $_POST['id'], $_POST["reason"]));
+				postWebhookMessage(sprintf("has restricted [%s](https://akatsuki.gg/u/%s)\n**Reason**: %s\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData["username"], $_POST['id'], $_POST["reason"], $_POST['id']));
 				rapLog(sprintf("restricted %s for '%s'.", $userData["username"], $_POST["reason"]));
 			} else {
 				// Remove restrictions, set both UserPublic and UserNormal
@@ -868,7 +868,7 @@ class D {
 
 				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') unrestricted for: '.$_POST['reason']);
 
-				postWebhookMessage(sprintf("has unrestricted [%s](https://akatsuki.gg/u/%s)\n**Reason**: %s\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData["username"], $_POST['id'], $_POST["reason"]));
+				postWebhookMessage(sprintf("has unrestricted [%s](https://akatsuki.gg/u/%s)\n**Reason**: %s\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData["username"], $_POST['id'], $_POST["reason"], $_POST['id']));
 				rapLog(sprintf("unrestricted %s for '%s'.", $userData["username"], $_POST["reason"]));
 			}
 
@@ -931,7 +931,7 @@ class D {
 			$msg = ($newPrivileges & Privileges::UserPublic) > 0 ? "unrestricted" : "restricted";
 
 			// Rap log
-			postWebhookMessage(sprintf("has %s user [%s](https://akatsuki.gg/u/%s).\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $msg, $userData["username"], $_GET['id']));
+			postWebhookMessage(sprintf("has %s user [%s](https://akatsuki.gg/u/%s).\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $msg, $userData["username"], $_GET['id'], $_POST['id']));
 			rapLog(sprintf("has %s user %s", $msg, $userData["username"]));
 			// Done, redirect to success page
 			if (isset($_GET["resend"])) {
@@ -982,7 +982,7 @@ class D {
 
 				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') banned for: '.$_POST['reason']);
 
-				postWebhookMessage(sprintf("has banned user [%s](https://akatsuki.gg/u/%s).\n**Reason**: %s\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData["username"], $_POST['id'], $_POST['reason']));
+				postWebhookMessage(sprintf("has banned user [%s](https://akatsuki.gg/u/%s).\n**Reason**: %s\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData["username"], $_POST['id'], $_POST['reason'], $_POST['id'], $_POST['id']));
 				rapLog(sprintf("banned %s for '%s'.", $userData["username"], $_POST["reason"]));
 			} else {
 				// Remove ban, set UserNormal
@@ -991,7 +991,7 @@ class D {
 
 				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') unbanned (set to restricted) for: '.$_POST['reason']);
 
-				postWebhookMessage(sprintf("has unbanned (set to restricted) user [%s](https://akatsuki.gg/u/%s).\n**Reason**: %s\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData["username"], $_POST['id'], $_POST['reason']));
+				postWebhookMessage(sprintf("has unbanned (set to restricted) user [%s](https://akatsuki.gg/u/%s).\n**Reason**: %s\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData["username"], $_POST['id'], $_POST['reason'], $_POST['id'], $_POST['id']));
 				rapLog(sprintf("unbanned (set to restricted) %s for '%s'.", $userData["username"], $_POST["reason"]));
 			}
 
@@ -1061,7 +1061,7 @@ class D {
 			$GLOBALS["db"]->execute("DELETE FROM user_badges WHERE user = ? AND (badge = ? OR badge = ?)", [$_GET["id"], 36, 59]);
 
 			postWebhookMessage(sprintf("has removed [%s](https://akatsuki.gg/u/%s)'s Supporter/Premium", $username, $_GET["id"]));
-			rapLog(sprintf("has removed %s's supporter/premium", $username), $_SESSION["userid"]);
+			rapLog(sprintf("has removed %s's donation status", $username), $_SESSION["userid"]);
 			redirect("index.php?p=102&s=Supporter status changed!");
 		}
 		catch(Exception $e) {
@@ -1100,7 +1100,7 @@ class D {
 			$GLOBALS["db"]->execute("DELETE FROM scores_ap WHERE userid = ? AND time >= ?", [$_POST["id"], $removeAfter]);
 			$GLOBALS["db"]->execute("DELETE FROM scores WHERE userid = ? AND time >= ?", [$_POST["id"], $removeAfter]);
 
-			postWebhookMessage(sprintf("has rolled back %s [%s](https://akatsuki.gg/u/%s)'s account.\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $rollbackString, $username, $_POST["id"]));
+			postWebhookMessage(sprintf("has rolled back %s [%s](https://akatsuki.gg/u/%s)'s account.\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $rollbackString, $username, $_POST["id"], $_POST['id']));
 			rapLog(sprintf("has rolled back %s %s's account", $rollbackString, $username), $_SESSION["userid"]);
 			redirect("index.php?p=102&s=User account has been rolled back!");
 		} catch(Exception $e) {
@@ -1128,7 +1128,7 @@ class D {
 			$can = !$can;
 			$GLOBALS["db"]->execute("UPDATE users SET can_custom_badge = ? WHERE id = ?", [$can, $_GET["id"]]);
 
-			postWebhookMessage(sprintf("has %s custom badge privilege on [%s](https://akatsuki.gg/u/%s)'s account.\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $grantRevoke, $username, $_GET["id"]));
+			postWebhookMessage(sprintf("has %s custom badge privilege on [%s](https://akatsuki.gg/u/%s)'s account.\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $grantRevoke, $username, $_GET["id"], $_POST['id']));
 			rapLog(sprintf("has %s custom badge privilege on %s's account", $grantRevoke, $username), $_SESSION["userid"]);
 			redirect("index.php?p=102&s=Custom badge privilege ".$grantRevoke."!");
 		} catch(Exception $e) {
@@ -1185,7 +1185,7 @@ class D {
 			$lockUnlock = (hasPrivilege(Privileges::UserNormal, $_GET["id"])) ? "locked" : "unlocked";
 			$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges ^ 2 WHERE id = ? LIMIT 1", [$_GET["id"]]);
 
-			postWebhookMessage(sprintf("has %s [%s](https://akatsuki.gg/u/%s)'s account.\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $lockUnlock, $userData["username"], $_GET["id"]));
+			postWebhookMessage(sprintf("has %s [%s](https://akatsuki.gg/u/%s)'s account.\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $lockUnlock, $userData["username"], $_GET["id"], $_POST['id']));
 			rapLog(sprintf("has %s %s's account", $lockUnlock, $userData["username"]), $_SESSION["userid"]);
 			redirect("index.php?p=102&s=User ".$lockUnlock."!");
 		} catch(Exception $e) {
@@ -1299,7 +1299,7 @@ class D {
 				throw new Exception("Invalid user ID");
 			}
 			$GLOBALS["db"]->execute("DELETE FROM hw_user WHERE userid = ?", [$_GET["id"]]);
-			postWebhookMessage(sprintf("has cleared [%s](https://akatsuki.gg/u/%s)'s **HWID matches**.\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", getUserUsername($_GET["id"]), $_GET["id"]));
+			postWebhookMessage(sprintf("has cleared [%s](https://akatsuki.gg/u/%s)'s **HWID matches**.\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", getUserUsername($_GET["id"]), $_GET["id"], $_POST['id']));
 			rapLog(sprintf("has cleared %s's HWID matches.", getUserUsername($_GET["id"])));
 			redirect('index.php?p=102&s=HWID matches cleared! Make sure to clear multiaccounts\' HWID too, or the user might get restricted for multiaccounting!');
 		} catch (Exception $e) {
