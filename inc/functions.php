@@ -1649,17 +1649,14 @@ function postWebhookMessage($message, $userID = -1) {
 		"embeds" => [
 			[
 				"timestamp" => $timestamp,
-				"color" => hexdec("542CB8"),
+				"color" => hexdec("7352C4"),
 				"footer" => [
-					"text" => "Akatsuki Admin Panel",
-				],
-				"thumbnail" => [
-					"url" => "https://akatsuki.pw/static/logos/logo.png"
+					"text" => "admin-panel 🗃️",
 				],
 				"fields" => [
 					[
-						"name" => "** **",
-						"value" => sprintf("[%s](https://akatsuki.pw/u/%d) %s", $username, $userID, $message),
+						"name" => "New moderation action logged! :tools:",
+						"value" => sprintf("[%s](https://akatsuki.gg/u/%d) %s", $username, $userID, $message),
 						"inline" => true
 					]
 				]
@@ -1805,7 +1802,7 @@ function multiaccCheckIP($ip) {
 	/*$multiUsername = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$multiUserID]);
 
 	if ($multiUsername) {
-		@Schiavo::CM("User **" . current($multiUsername) . "** (https://akatsuki.pw/?u=$multiUserID) tried to create a multiaccount (**" . $_POST['u'] . "**) from IP **" . $ip . "**");
+		@Schiavo::CM("User **" . current($multiUsername) . "** (https://akatsuki.gg/?u=$multiUserID) tried to create a multiaccount (**" . $_POST['u'] . "**) from IP **" . $ip . "**");
 	}
 	$GLOBALS["db"]->execute("UPDATE users SET notes=CONCAT(COALESCE(notes, ''),'\n-- Multiacc attempt (".$_POST["u"].") from IP ".$ip."') WHERE id = ?", [$multiUserID]); */
 }
