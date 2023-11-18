@@ -1430,11 +1430,11 @@ class D {
 
 			if ($_POST["stype"] == 1) {
 				postWebhookMessage(sprintf("has given [%s](https://akatsuki.pw/u/%s) %s month(s) of premium", $username, $_POST["id"], $_POST["m"]));
-				rapLog(sprintf("has given %s %s month(s) of premium", $username, $_POST["m"]), $_SESSION["userid"]);
+				rapLog(sprintf("has given %s (%s) %s month(s) of premium", $username, $_POST["id"], $_POST["m"]), $_SESSION["userid"]);
 				redirect("index.php?p=102&s=Premium status changed. Premium for that user now expires in ".$months." months!");
 			} else {
 				postWebhookMessage(sprintf("has given [%s](https://akatsuki.pw/u/%s) %s month(s) of supporter", $username, $_POST["id"], $_POST["m"]));
-				rapLog(sprintf("has given %s %s month(s) of supporter", $username, $_POST["m"]), $_SESSION["userid"]);
+				rapLog(sprintf("has given %s (%s) %s month(s) of supporter", $username, $_POST["id"], $_POST["m"]), $_SESSION["userid"]);
 				redirect("index.php?p=102&s=Supporter status changed. Supporter for that user now expires in ".$months." months!");
 			}
 		}
