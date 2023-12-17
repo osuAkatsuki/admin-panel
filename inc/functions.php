@@ -51,7 +51,6 @@ date_default_timezone_set('America/Toronto');
 // Connect to MySQL Database
 $GLOBALS['db'] = new DBPDO();
 $GLOBALS["s3"] = new Aws\S3\S3Client([
-	'profile' => 'default',
 	'region' => $S3Config['region'],
 	'endpoint' => $S3Config['endpoint_url'],
 ]);
