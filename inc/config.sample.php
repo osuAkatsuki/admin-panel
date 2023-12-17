@@ -16,6 +16,13 @@ $URL = [
 	'scores' => 'http://127.0.0.1:5002'
 ];
 
+// S3 config
+$S3Config = [
+	'region' => '',
+	'bucket' => '',
+	'endpoint_url' => '',
+]
+
 // Changelog config
 $ChangelogConfig = [
 	// If in the commit message any of these words appear, don't show the commit in the changelog.

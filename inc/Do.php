@@ -738,13 +738,12 @@ class D {
 			if (!isset($_GET['id']) || empty($_GET['id'])) {
 				throw new Exception('Invalid request');
 			}
-			// Get user id
-			$avatar = '/home/akatsuki/avatars/'.$_GET['id'].'.png';
-			if (!file_exists($avatar)) {
-				throw new Exception("That user doesn't have an avatar");
-			}
-			// Delete user avatar
-			unlink($avatar);
+			global $S3Config
+			// Remove the avatar file from S3
+			$GLOBALS["s3"]->deleteObject([
+				'Bucket' => $S3Config['bucket'],
+				'Key': $_GET["id"] . ".png"
+			]);
 			// Rap log
 			postWebhookMessage(sprintf("has reset [%s](https://akatsuki.pw/u/%s)'s avatar", getUserUsername($_GET['id']), $_GET['id']));
 			rapLog(sprintf("has reset %s's avatar", getUserUsername($_GET['id'])));
