@@ -738,11 +738,11 @@ class D {
 			if (!isset($_GET['id']) || empty($_GET['id'])) {
 				throw new Exception('Invalid request');
 			}
-			global $S3Config
+			global $S3Config;
 			// Remove the avatar file from S3
 			$GLOBALS["s3"]->deleteObject([
-				'Bucket' => $S3Config['bucket'],
-				'Key': $_GET["id"] . ".png"
+				"Bucket" => $S3Config["bucket"],
+				"Key" => "avatars/" . $_GET["id"] . ".png"
 			]);
 			// Rap log
 			postWebhookMessage(sprintf("has reset [%s](https://akatsuki.pw/u/%s)'s avatar", getUserUsername($_GET['id']), $_GET['id']));

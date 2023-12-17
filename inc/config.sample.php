@@ -18,10 +18,12 @@ $URL = [
 
 // S3 config
 $S3Config = [
-	'region' => '',
-	'bucket' => '',
-	'endpoint_url' => '',
-]
+	'region' => 'ca-central-1',
+	'bucket' => 'akatsuki.pw',
+	'endpoint_url' => 'https://s3.ca-central-1.wasabisys.com',
+	'access_key_id' => '',
+	'secret_access_key' => ''
+];
 
 // Changelog config
 $ChangelogConfig = [
