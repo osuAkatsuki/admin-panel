@@ -16,6 +16,15 @@ $URL = [
 	'scores' => 'http://127.0.0.1:5002'
 ];
 
+// S3 config
+$S3Config = [
+	'region' => 'ca-central-1',
+	'bucket' => 'akatsuki.pw',
+	'endpoint_url' => 'https://s3.ca-central-1.wasabisys.com',
+	'access_key_id' => '',
+	'secret_access_key' => ''
+];
+
 // Changelog config
 $ChangelogConfig = [
 	// If in the commit message any of these words appear, don't show the commit in the changelog.

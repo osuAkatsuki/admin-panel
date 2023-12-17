@@ -50,6 +50,14 @@ $pages = [
 date_default_timezone_set('America/Toronto');
 // Connect to MySQL Database
 $GLOBALS['db'] = new DBPDO();
+$GLOBALS["s3"] = new Aws\S3\S3Client([
+	'region' => $S3Config['region'],
+	'endpoint' => $S3Config['endpoint_url'],
+	'credentials' => [
+		'key' => $S3Config['access_key_id'],
+		'secret' => $S3Config['secret_access_key'],
+	],
+]);
 // Birthday
 global $isBday;
 $isBday = date("dm") == "0510";
