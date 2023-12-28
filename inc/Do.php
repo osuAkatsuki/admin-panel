@@ -558,14 +558,23 @@ class D {
 	public static function SaveBadge() {
 		try {
 			// Check if everything is set
-			if (!isset($_POST['id']) || !isset($_POST['n']) || !isset($_POST['i']) || empty($_POST['n']) || empty($_POST['i'])) {
+			if (!isset($_POST['id']) || !isset($_POST['n']) || !isset($_POST['i']) || !isset($_POST['c']) || empty($_POST['n']) || empty($_POST['i'])) {
 				throw new Exception('Nice troll.');
 			}
+
 			// Check if we are creating or editing a doc page
 			if ($_POST['id'] == 0) {
-				$GLOBALS['db']->execute('INSERT INTO badges (id, name, icon) VALUES (NULL, ?, ?)', [$_POST['n'], $_POST['i']]);
+				if (empty($_POST['c'])) {
+					$GLOBALS['db']->execute('INSERT INTO badges (id, name, icon, colour) VALUES (NULL, ?, ?, NULL)', [$_POST['n'], $_POST['i']]);
+				} else {
+					$GLOBALS['db']->execute('INSERT INTO badges (id, name, icon, colour) VALUES (NULL, ?, ?, ?)', [$_POST['n'], $_POST['i'], $_POST['c']]);
+				}
 			} else {
-				$GLOBALS['db']->execute('UPDATE badges SET name = ?, icon = ? WHERE id = ? LIMIT 1', [$_POST['n'], $_POST['i'], $_POST['id']]);
+				if (empty($_POST['c'])) {
+					$GLOBALS['db']->execute('UPDATE badges SET name = ?, icon = ?, colour = NULL WHERE id = ? LIMIT 1', [$_POST['n'], $_POST['i'], $_POST['id']]);
+				} else {
+					$GLOBALS['db']->execute('UPDATE badges SET name = ?, icon = ?, colour = ? WHERE id = ? LIMIT 1', [$_POST['n'], $_POST['i'], $_POST['c'], $_POST['id']]);
+				}
 			}
 			// RAP log
 			postWebhookMessage(sprintf("has %s badge %s", $_POST['id'] == 0 ? "created" : "edited", $_POST["n"]));
