@@ -1336,7 +1336,8 @@ class P {
 			echo '<table class="table table-striped table-hover table-50-center">';
 			echo '<tbody><form id="edit-badge-form" action="submit.php" method="POST">
 			<input name="csrf" type="hidden" value="'.csrfToken().'">
-			<input name="action" value="saveBadge" hidden>';
+			<input name="action" value="saveBadge" hidden>
+			<input name="c" id="badge-colour-value" hidden value="'.$badgeData['colour'].'" >';
 			echo '<tr>
 			<td>ID</td>
 			<td><p class="text-center"><input type="number" name="id" class="form-control" value="'.$badgeData['id'].'" readonly></td>
@@ -1348,6 +1349,10 @@ class P {
 			echo '<tr>
 			<td>Icon</td>
 			<td><p class="text-center"><input type="text" name="i" class="form-control icp icp-auto" value="'.$badgeData['icon'].'" ></td>
+			</tr>';
+			echo '<tr>
+			<td>Colour</td>
+			<td style="display: flex; align-items: center; gap: 10px;"><input type="text" id="badge-colour" class="form-control" value="'.$badgeData['colour'].'" > <button type="button" onclick="resetColour()" class="btn btn-danger">Reset colour</button></td>
 			</tr>';
 			echo '</tbody></form>';
 			echo '</table>';

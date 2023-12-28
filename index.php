@@ -126,6 +126,9 @@ if ($p == 27) {
     <!-- Custom CSS -->
     <link href="./css/style-desktop.css" rel="stylesheet">
 
+	<!-- Style -->
+	<link rel="stylesheet" href="https://unpkg.com/alwan/dist/css/alwan.min.css" />
+
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=xQQWRwyGed">
     <link rel="icon" type="image/png" href="/favicon-32x32.png?v=xQQWRwyGed" sizes="32x32">
@@ -210,10 +213,7 @@ if ($p < 100) {
     <!-- Slider JavaScript -->
     <script src="./js/bootstrap-slider.js"></script>
 
-    <!-- Bootstrap Font Awesome Picker JavaScript -->
-    <script src="./js/fontawesome-iconpicker.min.js"></script>
-
-    <!-- Bootstrap Color Picker JavaScript -->
+    <!-- <!-- Bootstrap Color Picker JavaScript  -->
     <script src="./js/bootstrap-colorpicker.min.js"></script>
 
     <!-- SCEditor JavaScript -->
@@ -221,6 +221,8 @@ if ($p < 100) {
 	
 	<!-- Datepicker -->
 	<script src="./js/bootstrap-datepicker.min.js"></script>
+
+	<script src="https://unpkg.com/alwan/dist/js/alwan.min.js"></script>
 
     <!-- Custom JavaScript for every page -->
 	<script type="text/javascript">
@@ -271,9 +273,20 @@ if ($p < 100) {
 			document.isMobile = window.matchMedia('(max-width: 768px)').matches
 		}
 
+		function resetColour() {
+			var badgeColour = document.getElementById('badge-colour-value');
+			var badgeColourPicker = document.getElementById('badge-colour');
+
+			badgeColour.value = '';
+			badgeColour.defaultValue = '';
+
+			badgeColourPicker.value = '';
+			badgeColourPicker.defaultValue = '';
+			badgeColourPicker.style = 'style="--color: rgba(0, 0, 0, 0);"'
+		}
+
 		$(document).ready(function () {
 			// Initialize stuff
-			$('.icp-auto').iconpicker();
 			$('.colorpicker').colorpicker({format:"hex"});
 			$('.sceditor').sceditor({plugins: "bbcode", resizeEnabled: false, toolbarExclude: "font,table,code,quote,ltr,rtl" , style: "css/jquery.sceditor.default.css"});
 			$(".spoiler-trigger").click(function() {$(this).parent().next().collapse('toggle');});
@@ -282,6 +295,19 @@ if ($p < 100) {
 				updateResolution()
 			})
 			updateResolution()
+
+			<?php
+			if ($p == 109) {
+				echo "
+					var badgeColour = document.getElementById('badge-colour-value');
+					const alwan = new Alwan('#badge-colour', {color: badgeColour.value, format: 'hex'})
+					alwan.on('color', (colour) => {
+						badgeColour.value = colour.hex;
+						badgeColour.defaultValue = colour.hex;
+					});
+				";
+			}
+			?>
 		})
 
 		$(".getcountry").click(function() {
