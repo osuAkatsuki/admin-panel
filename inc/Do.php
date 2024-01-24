@@ -1464,8 +1464,9 @@ class D {
 			$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges & ~8388612, donor_expire = 0 WHERE id = ? LIMIT 1", [$_GET["id"]]);
 
 			// Remove supporter badge
-			// 14 = supporter badge id
-			$GLOBALS["db"]->execute("DELETE FROM user_badges WHERE user = ? AND badge = ?", [$_GET["id"], 14]);
+			// 36 = supporter badge id
+			// 59 = premium badge id
+			$GLOBALS["db"]->execute("DELETE FROM user_badges WHERE user = ? AND (badge = ? OR badge = ?)", [$_GET["id"], 36, 59]);
 
 			postWebhookMessage(sprintf("has removed [%s](https://akatsuki.pw/u/%s)'s supporter/premium", $username, $_GET["id"]));
 			rapLog(sprintf("has removed %s's supporter/premium", $username), $_SESSION["userid"]);
