@@ -809,10 +809,6 @@ class P {
 			<td><p class="text-center"><input type="text" name="u" class="form-control" value="'.$userData['username'].'" readonly></td>
 			</tr>';
 			echo '<tr>
-			<td>Email</td>
-			<td><p class="text-center"><input type="text" name="e" class="form-control" value="'.$userData['email'].'" '.$readonly[0].'></td>
-			</tr>';
-			echo '<tr>
 			<td>Country</td>
 			<td>
 			<select name="country" class="selectpicker" data-width="100%">
