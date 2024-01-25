@@ -318,7 +318,7 @@ class D {
 	public static function SaveEditUser() {
 		try {
 			// Check if everything is set (username color, username style, rank, allowed and notes can be empty)
-			if (!isset($_POST['id']) || !isset($_POST['u']) || !isset($_POST['e']) || !isset($_POST['up']) || !isset($_POST['aka']) || empty($_POST['id']) || empty($_POST['u']) || empty($_POST['e'])) {
+			if (!isset($_POST['id']) || !isset($_POST['u']) || !isset($_POST['up']) || !isset($_POST['aka']) || empty($_POST['id']) || empty($_POST['u'])) {
 				throw new Exception('Nice troll');
 			}
 			// Check if this user exists and get old data
@@ -330,18 +330,13 @@ class D {
 			if ( (($oldData["privileges"] & Privileges::AdminManageUsers) > 0) && $_POST["u"] != $_SESSION["username"] && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
-			// Check if email is valid
-			if (!filter_var($_POST['e'], FILTER_VALIDATE_EMAIL)) {
-				throw new Exception("The email isn't valid");
-			}
-
 
 			// Check if silence end has changed. if so, we have to kick the client
 			// in order to silence him
 			//$oldse = current($GLOBALS["db"]->fetch("SELECT silence_end FROM users WHERE username = ?", array($_POST["u"])));
 
 			// Save new data (email, and cm notes)
-			$GLOBALS['db']->execute('UPDATE users SET email = ?, notes = ? WHERE id = ? LIMIT 1', [$_POST['e'], $_POST['ncm'], $_POST['id'] ]);
+			$GLOBALS['db']->execute('UPDATE users SET notes = ? WHERE id = ? LIMIT 1', [$_POST['ncm'], $_POST['id'] ]);
 			// Edit silence time if we can silence users
 			if (hasPrivilege(Privileges::AdminSilenceUsers)) {
 				$GLOBALS['db']->execute('UPDATE users SET silence_end = ?, silence_reason = ? WHERE id = ? LIMIT 1', [$_POST['se'], $_POST['sr'], $_POST['id'] ]);
