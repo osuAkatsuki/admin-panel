@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - beatmaps-schema-cleanup
 
 jobs:
   build:
