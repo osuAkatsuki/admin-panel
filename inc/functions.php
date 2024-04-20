@@ -132,69 +132,64 @@ function getIP() {
  * @param (int) ($p) page ID.
  */
 function setTitle($p) {
-	if (isset($_COOKIE['st']) && $_COOKIE['st'] == 1) {
-		// Safe title, so Peppy doesn't know we are browsing Ripple
-		return '<title>Google Chrome</title>';
+	$namesRipple = [
+		1 =>   'Custom osu! server',
+		3 =>   'Register',
+		4 =>   'User CP',
+		5 =>   'Change avatar',
+		6 =>   'Edit user settings',
+		7 =>   'Change password',
+		8 =>   'Edit userpage',
+		17 =>  'Changelog',
+		18 =>  'Recover your password',
+		21 =>  'About',
+		23 =>  'Rules',
+		26 =>  'Friends',
+		41 =>  'Elmo! Stop!',
+		'u' => 'Userpage',
+	];
+	$namesRAP = [
+		99 =>  'You\'ve been tracked',
+		100 => 'Dashboard',
+		101 => 'System settings',
+		102 => 'Users',
+		103 => 'Edit user',
+		104 => 'Change identity',
+		108 => 'Badges',
+		109 => 'Edit Badge',
+		110 => 'Edit user badges',
+		111 => 'Bancho settings',
+		116 => 'Admin Logs',
+		117 => 'Rank requests',
+		118 => 'Privilege Groups',
+		119 => 'Edit privilege group',
+		120 => 'View users in privilege group',
+		121 => 'Give Supporter',
+		122 => 'Rollback user',
+		123 => 'Wipe user',
+		124 => 'Rank beatmap',
+		125 => 'Rank beatmap manually',
+		126 => 'Reports',
+		127 => 'View report',
+		128 => 'Cakes',
+		129 => 'View cake',
+		130 => 'Cake recipes',
+		131 => 'View cake recipe',
+		132 => 'View anticheat reports',
+		133 => 'View anticheat report',
+		//134 => 'Restore scores',
+		135 => 'Search users by IP',
+		136 => 'Search users by IP - Results',
+		137 => '(Un)restrict user',
+		139 => '(Un)ban user',
+		//234 => 'Restore scores (Relax)',
+	];
+	if (isset($namesRipple[$p])) {
+		return __maketitle('Akatsuki', $namesRipple[$p]);
+	} else if (isset($namesRAP[$p])) {
+		return __maketitle('Akatsuki Admin', $namesRAP[$p]);
 	} else {
-		$namesRipple = [
-			1 =>   'Custom osu! server',
-			3 =>   'Register',
-			4 =>   'User CP',
-			5 =>   'Change avatar',
-			6 =>   'Edit user settings',
-			7 =>   'Change password',
-			8 =>   'Edit userpage',
-			17 =>  'Changelog',
-			18 =>  'Recover your password',
-			21 =>  'About',
-			23 =>  'Rules',
-			26 =>  'Friends',
-			41 =>  'Elmo! Stop!',
-			'u' => 'Userpage',
-		];
-		$namesRAP = [
-			99 =>  'You\'ve been tracked',
-			100 => 'Dashboard',
-			101 => 'System settings',
-			102 => 'Users',
-			103 => 'Edit user',
-			104 => 'Change identity',
-			108 => 'Badges',
-			109 => 'Edit Badge',
-			110 => 'Edit user badges',
-			111 => 'Bancho settings',
-			116 => 'Admin Logs',
-			117 => 'Rank requests',
-			118 => 'Privilege Groups',
-			119 => 'Edit privilege group',
-			120 => 'View users in privilege group',
-			121 => 'Give Supporter',
-			122 => 'Rollback user',
-			123 => 'Wipe user',
-			124 => 'Rank beatmap',
-			125 => 'Rank beatmap manually',
-			126 => 'Reports',
-			127 => 'View report',
-			128 => 'Cakes',
-			129 => 'View cake',
-			130 => 'Cake recipes',
-			131 => 'View cake recipe',
-			132 => 'View anticheat reports',
-			133 => 'View anticheat report',
-			//134 => 'Restore scores',
-			135 => 'Search users by IP',
-			136 => 'Search users by IP - Results',
-			137 => '(Un)restrict user',
-			139 => '(Un)ban user',
-			//234 => 'Restore scores (Relax)',
-		];
-		if (isset($namesRipple[$p])) {
-			return __maketitle('Akatsuki', $namesRipple[$p]);
-		} else if (isset($namesRAP[$p])) {
-			return __maketitle('Akatsuki Admin', $namesRAP[$p]);
-		} else {
-			return __maketitle('Akatsuki', '404');
-		}
+		return __maketitle('Akatsuki', '404');
 	}
 }
 function __maketitle($b1, $b2) {
@@ -739,18 +734,6 @@ function sessionCheckAdmin($privilege = -1, $e = 0) {
  */
 function updateLatestActivity($u) {
 	$GLOBALS['db']->execute('UPDATE users SET latest_activity = ? WHERE id = ?', [time(), $u]);
-}
-
-
-/*
- * updateSafeTitle
- * Updates the st cookie, if 1 title is "Google" instead
- * of Akatsuki - pagename, so Peppy doesn't know that
- * we are browsing Ripple
- */
-function updateSafeTitle() {
-	$safeTitle = $GLOBALS['db']->fetch('SELECT safe_title FROM users_stats WHERE username = ?', $_SESSION['username']);
-	setcookie('st', current($safeTitle));
 }
 
 

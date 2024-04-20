@@ -36,7 +36,7 @@ class RememberCookieHandler {
 			[$parts[0]]);
 		if (!$r) {
 			$this->UnsetCookies();
-			return ValidateValue::Failure;			
+			return ValidateValue::Failure;
 		}
 		if ($r["token_sha"] == hash("sha256", $parts[1])) {
 			// all checks successful, login
@@ -71,7 +71,7 @@ class RememberCookieHandler {
 	public function Destroy() {
 		if (!isset($_SESSION["userid"]))
 			return;
-		$GLOBALS["db"]->execute("DELETE FROM remember WHERE userid = ? AND series_identifier = ? LIMIT 1;", 
+		$GLOBALS["db"]->execute("DELETE FROM remember WHERE userid = ? AND series_identifier = ? LIMIT 1;",
 			[$_SESSION["userid"], explode("|", $_COOKIE["sli"])[0]]);
 		$this->UnsetCookies();
 	}
@@ -82,7 +82,7 @@ class RememberCookieHandler {
 	 *
 	 * @param int $u UserID
 	 */
-	public function DestroyAll($u) { 
+	public function DestroyAll($u) {
 		$GLOBALS["db"]->execute("DELETE FROM rememeber WHERE userid = ?;", [$u]);
 	}
 
@@ -93,7 +93,7 @@ class RememberCookieHandler {
 	 * @return int ValidateValue
 	 */
 	private function Login($userID) {
-		$u = $GLOBALS['db']->fetch("SELECT id, username, privileges, password_md5 
+		$u = $GLOBALS['db']->fetch("SELECT id, username, privileges, password_md5
 			FROM users WHERE id = ? LIMIT 1", [$userID]);
 		if (!$u || (($u["privileges"] & Privileges::UserNormal) === 0)) {
 			$this->UnsetCookies();
@@ -107,8 +107,6 @@ class RememberCookieHandler {
 		$_SESSION['password'] = $u['password_md5'];
 		$_SESSION['passwordChanged'] = false;
 		logIP($u['id']);
-		// Get safe title
-		updateSafeTitle();
 		// Save latest activity
 		updateLatestActivity($u['id']);
 		return ValidateValue::NowLoggedIn;
@@ -119,7 +117,7 @@ class RememberCookieHandler {
 	 * Unset the sli cookie in the user's browser.
 	 */
 	public function UnsetCookies() {
-		unsetCookie("sli");		
+		unsetCookie("sli");
 	}
 }
 
