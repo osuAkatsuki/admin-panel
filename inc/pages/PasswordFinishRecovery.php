@@ -49,7 +49,7 @@ class PasswordFinishRecovery {
 			// Calculate new password
 			$newPassword = password_hash(md5($_POST['p1']), PASSWORD_DEFAULT);
 			// Change both passwords and salt
-			$GLOBALS['db']->execute("UPDATE users SET password_md5 = ?, salt = '', password_version = '2' WHERE username = ?", [$newPassword, $_POST['user']]);
+			$GLOBALS['db']->execute("UPDATE users SET password_md5 = ? WHERE username = ?", [$newPassword, $_POST['user']]);
 			// Delete password reset key
 			$GLOBALS['db']->fetch('DELETE FROM password_recovery WHERE id = ?;', [$d['id']]);
 			// Redirect to success page

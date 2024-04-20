@@ -45,36 +45,19 @@ class PasswordHelper {
 		if (!$is_already_md5) {
 			$pass = md5($pass);
 		}
-		$uPass = $GLOBALS['db']->fetch('SELECT password_md5, salt, password_version FROM users WHERE username_safe = ?', [safeUsername($u)]);
+		$uPass = $GLOBALS['db']->fetch('SELECT password_md5 FROM users WHERE username_safe = ?', [safeUsername($u)]);
 		// Check it exists
 		if ($uPass === false) {
 			return false;
 		}
-		// password version 2: password_hash() + password_verify() + md5()
-		if ($uPass['password_version'] == 2) {
-			$res = password_verify($pass, $uPass['password_md5']);
-			$additional_schiavo_text = "(fail)";
-			if ($res) {
-				$additional_schiavo_text = "(success)";
-			}
-			@Schiavo::Bunk("Login request from **" . getIP() . "** for user **" . $u . "** " . $additional_schiavo_text);
-			return $res;
-			exit;
+		$res = password_verify($pass, $uPass['password_md5']);
+		$additional_schiavo_text = "(fail)";
+		if ($res) {
+			$additional_schiavo_text = "(success)";
 		}
-		// password_version 1: crypt() + md5()
-		if ($uPass['password_version'] == 1) {
-			if ($uPass['password_md5'] != (crypt($pass, '$2y$'.base64_decode($uPass['salt'])))) {
-				@Schiavo::Bunk("Login request from **" . getIP() . "** for user **" . $u . "** (fail)");
-				return false;
-			}
-			// password is good. convert it to new password
-			$newPass = password_hash($pass, PASSWORD_DEFAULT);
-			$GLOBALS['db']->execute("UPDATE users SET password_md5=?, salt='', password_version='2' WHERE username_safe = ?", [$newPass, safeUsername($u)]);
-			@Schiavo::Bunk("Login request from **" . getIP() . "** for user **" . $u . "** (success)");				
-
-			return true;
-		}
-		// whatever
+		@Schiavo::Bunk("Login request from **" . getIP() . "** for user **" . $u . "** " . $additional_schiavo_text);
+		return $res;
+		exit;
 		return true;
 	}
 }

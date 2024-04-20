@@ -88,9 +88,9 @@ class D {
 			// Create password
 			$md5Password = password_hash(md5($_POST['p1']), PASSWORD_DEFAULT);
 			// Put some data into the db
-			$GLOBALS['db']->execute("INSERT INTO `users`(username, username_safe, password_md5, salt, email, register_datetime, privileges, password_version)
-			                                     VALUES (?,        ?,             ?,            '',   ?,     ?,                 ?, 2);",
-												 		[$_POST['u'], $safe,      $md5Password,       $_POST['e'], time(true), Privileges::UserPendingVerification]);
+			$GLOBALS['db']->execute("INSERT INTO `users`(username, username_safe, password_md5, email, register_datetime, privileges)
+			                                     VALUES (?,        ?,             ?,            ?,     ?,                 ?);",
+												 		[$_POST['u'], $safe,      $md5Password, $_POST['e'], time(true),  Privileges::UserPendingVerification]);
 			// Get user ID
 			$uid = $GLOBALS['db']->lastInsertId();
 			// Put some data into users_stats
@@ -137,8 +137,8 @@ class D {
 			}
 			// Calculate new password
 			$newPassword = password_hash(md5($_POST['p1']), PASSWORD_DEFAULT);
-			// Change both passwords and salt
-			$GLOBALS['db']->execute("UPDATE users SET password_md5 = ?, password_version = 2, salt = '' WHERE username = ?", [$newPassword, $_SESSION['username']]);
+			// Change password
+			$GLOBALS['db']->execute("UPDATE users SET password_md5 = ? WHERE username = ?", [$newPassword, $_SESSION['username']]);
 			// Set in session that we've changed our password otherwise sessionCheck() will kick us
 			$_SESSION['passwordChanged'] = true;
 			// Redirect to success page
