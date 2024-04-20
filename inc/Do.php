@@ -95,8 +95,8 @@ class D {
 			$uid = $GLOBALS['db']->lastInsertId();
 			// Put some data into users_stats
 			// TODO: Move this query above to avoid mysql thread conflict memes
-			$GLOBALS['db']->execute("INSERT INTO `users_stats`(id, username, user_color, user_style, ranked_score_std, playcount_std, total_score_std, ranked_score_taiko, playcount_taiko, total_score_taiko, ranked_score_ctb, playcount_ctb, total_score_ctb, ranked_score_mania, playcount_mania, total_score_mania) VALUES (?, ?, 'black', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);", [$uid, $_POST['u']]);
-			$GLOBALS['db']->execute("INSERT INTO `rx_stats`(id, username, user_color, user_style, ranked_score_std, playcount_std, total_score_std, ranked_score_taiko, playcount_taiko, total_score_taiko, ranked_score_ctb, playcount_ctb, total_score_ctb, ranked_score_mania, playcount_mania, total_score_mania) VALUES (?, ?, 'black', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);", [$uid, $_POST['u']]);
+			$GLOBALS['db']->execute("INSERT INTO `users_stats`(id, username, ranked_score_std, playcount_std, total_score_std, ranked_score_taiko, playcount_taiko, total_score_taiko, ranked_score_ctb, playcount_ctb, total_score_ctb, ranked_score_mania, playcount_mania, total_score_mania) VALUES (?, ?, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);", [$uid, $_POST['u']]);
+			$GLOBALS['db']->execute("INSERT INTO `rx_stats`(id, username, ranked_score_std, playcount_std, total_score_std, ranked_score_taiko, playcount_taiko, total_score_taiko, ranked_score_ctb, playcount_ctb, total_score_ctb, ranked_score_mania, playcount_mania, total_score_mania) VALUES (?, ?, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);", [$uid, $_POST['u']]);
 			// Update leaderboard (insert new user) for each mode.
 			foreach (['std', 'taiko', 'ctb', 'mania'] as $m) {
 				Leaderboard::Update($uid, 0, $m);
@@ -358,17 +358,6 @@ class D {
 				$newPrivileges = $oldData["privileges"] ^ Privileges::UserBasic;
 				$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ?', [$newPrivileges, $banDateTime, $_POST['id']]);
 			}*/
-			// Get username style/color
-			if (isset($_POST['c']) && !empty($_POST['c'])) {
-				$c = $_POST['c'];
-			} else {
-				$c = 'black';
-			}
-			if (isset($_POST['bg']) && !empty($_POST['bg'])) {
-				$bg = $_POST['bg'];
-			} else {
-				$bg = '';
-			}
 			// Update country flag if set
 			if (isset($_POST['country']) && countryCodeToReadable($_POST['country']) != 'unknown country' && $oldData["country"] != $_POST['country']) {
 				$GLOBALS['db']->execute('UPDATE users_stats SET country = ? WHERE id = ? LIMIT 1', [$_POST['country'], $_POST['id']]);
@@ -381,8 +370,8 @@ class D {
 				rapLog(sprintf("has changed %s's flag to %s", $_POST["u"], $_POST['country']));
 			}
 			// Set username style/color/aka
-			$GLOBALS['db']->execute('UPDATE users_stats SET user_color = ?, user_style = ?, username_aka = ? WHERE id = ? LIMIT 1', [$c, $bg, $_POST['aka'], $_POST['id']]);
-			$GLOBALS['db']->execute('UPDATE rx_stats SET user_color = ?, user_style = ?, username_aka = ? WHERE id = ? LIMIT 1', [$c, $bg, $_POST['aka'], $_POST['id']]);
+			$GLOBALS['db']->execute('UPDATE users_stats SET username_aka = ? WHERE id = ? LIMIT 1', [$_POST['aka'], $_POST['id']]);
+			$GLOBALS['db']->execute('UPDATE rx_stats SET username_aka = ? WHERE id = ? LIMIT 1', [$_POST['aka'], $_POST['id']]);
 			// RAP log
 			postWebhookMessage(sprintf("has edited [%s](https://akatsuki.pw/u/%s)", $_POST["u"], $_POST['id']));
 			rapLog(sprintf("has edited user %s", $_POST["u"]));
@@ -817,12 +806,6 @@ class D {
 			if (!valid($_POST['mode'], 0, 3) || (isset($_POST["showCustomBadge"]) && !valid($_POST["showCustomBadge"]))) {
 				throw new Exception(0);
 			}
-			// Check if username color is not empty and if so, set to black (default)
-			if (empty($_POST['c']) || !preg_match('/^#[a-f0-9]{6}$/i', $_POST['c'])) {
-				$c = 'black';
-			} else {
-				$c = $_POST['c'];
-			}
 			// Playmode stuff
 			$pm = 0;
 			foreach ($_POST as $key => $value) {
@@ -858,7 +841,7 @@ class D {
 				$GLOBALS["db"]->execute("UPDATE users_stats SET show_custom_badge = ?, custom_badge_name = ?, custom_badge_icon = ? WHERE id = ? LIMIT 1", [$_POST["showCustomBadge"], $_POST["badgeName"], $icon, $_SESSION["userid"]]);
 			}
 			// Save data in db
-			$GLOBALS['db']->execute('UPDATE users_stats SET user_color = ?, username_aka = ?, play_style = ?, favourite_mode = ? WHERE id = ? LIMIT 1', [$c, $_POST['aka'], $pm, $_POST['mode'], $_SESSION['userid']]);
+			$GLOBALS['db']->execute('UPDATE users_stats SET username_aka = ?, play_style = ?, favourite_mode = ? WHERE id = ? LIMIT 1', [$_POST['aka'], $pm, $_POST['mode'], $_SESSION['userid']]);
 			// Done, redirect to success page
 			redirect('index.php?p=6&s=ok');
 		}

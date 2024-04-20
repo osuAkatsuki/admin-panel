@@ -898,15 +898,6 @@ class P {
 				</tr>';
 			}
 
-			/*
-			echo '<tr>
-			<td>Username color<br><i class="no-mobile">(HTML or HEX color)</i></td>
-			<td><p class="text-center"><input type="text" name="c" class="form-control" value="'.$userStatsData['user_color'].'" '.$readonly[1].'></td>
-			</tr>';
-			echo '<tr>
-			<td>Username CSS<br><i class="no-mobile">(like fancy gifs as background)</i></td>
-			<td><p class="text-center"><input type="text" name="bg" class="form-control" value="'.$userStatsData['user_style'].'" '.$readonly[1].'></td>
-			</tr>';*/
 			echo '<tr>
 			<td>A.K.A</td>
 			<td><p class="text-center"><input type="text" name="aka" class="form-control" value="'.htmlspecialchars($userStatsData['username_aka']).'"></td>
@@ -1777,7 +1768,7 @@ class P {
 			if ($silenceEndTime - time() > 0) {
 				$userStyle = 'text-decoration: line-through;';
 			} else {
-				$userStyle = $userData["user_style"];
+				$userStyle = 'black';
 			}
 
 			// Print API token data for scores retrieval
@@ -1855,7 +1846,7 @@ class P {
 			echo '<div id="userpage-header">
 			<!-- Avatar, username and rank -->
 			<p><img id="user-avatar" src="'.URL::Avatar().'/'.$userData["id"].'" height="100" width="100" /></p>
-			<p id="username"><div style="display: inline; ' . (!empty($userData["user_color"]) ? "color: $userData[user_color];" : "") . ' font-size: 140%; '.$userStyle.'"><b>';
+			<p id="username"><div style="display: inline; font-size: 140%; '.$userStyle.'"><b>';
 			if ($country != 'XX') {
 				echo '<img src="./images/flags/'.strtolower($country).'.png">	';
 			}
@@ -2259,11 +2250,6 @@ class P {
 				<option '.$cj(2).'>osu!catch</option>
 				<option '.$cj(3).'>osu!mania</option>
 			</select>
-		</div>
-		<p style="line-height: 15px"></p>
-		<div class="input-group" style="width:100%">
-			<span class="input-group-addon" id="basic-addon2" style="width:40%">Username colour</span>
-			<input type="text" name="c" class="form-control colorpicker" value="'.$data['user_color'].'" placeholder="HEX/Html color" aria-describedby="basic-addon2" spellcheck="false">
 		</div>
 		<p style="line-height: 15px"></p>
 		<div class="input-group" style="width:100%">
