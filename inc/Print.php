@@ -913,7 +913,7 @@ class P {
 			</tr>';
 			echo '<tr>
 			<td>Userpage<br><a onclick="censorUserpage();">(reset userpage)</a></td>
-			<td><p class="text-center"><textarea name="up" class="form-control" style="overflow:auto;resize:vertical;height:200px">'.$userStatsData['userpage_content'].'</textarea></td>
+			<td><p class="text-center"><textarea name="up" class="form-control" style="overflow:auto;resize:vertical;height:200px">'.$userData['userpage_content'].'</textarea></td>
 			</tr>';
 			if (hasPrivilege(Privileges::AdminSilenceUsers)) {
 				echo '<tr>
@@ -2383,7 +2383,7 @@ class P {
 		// Global alert
 		self::GlobalAlert();
 		// Get userpage content from db
-		$content = $GLOBALS['db']->fetch('SELECT userpage_content FROM users_stats WHERE username = ?', $_SESSION['username']);
+		$content = $GLOBALS['db']->fetch('SELECT userpage_content FROM users WHERE username = ?', $_SESSION['username']);
 		$userpageContent = htmlspecialchars(current(($content === false ? ['t' => ''] : $content)));
 		// Title
 		echo '<h1><i class="fa fa-pencil"></i>	Userpage</h1>';

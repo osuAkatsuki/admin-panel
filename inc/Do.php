@@ -347,7 +347,7 @@ class D {
 				updateBanBancho($_POST["id"], $_POST['priv'] & Privileges::UserPublic == 0);
 			}
 			// Save new userpage
-			$GLOBALS['db']->execute('UPDATE users_stats SET userpage_content = ? WHERE id = ? LIMIT 1', [$_POST['up'], $_POST['id']]);
+			$GLOBALS['db']->execute('UPDATE users SET userpage_content = ? WHERE id = ? LIMIT 1', [$_POST['up'], $_POST['id']]);
 			/* Save new data if set (rank, allowed, UP and silence)
 			if (isset($_POST['r']) && !empty($_POST['r']) && $oldData["rank"] != $_POST["r"]) {
 				$GLOBALS['db']->execute('UPDATE users SET rank = ? WHERE id = ?', [$_POST['r'], $_POST['id']]);
@@ -889,7 +889,7 @@ class D {
 				throw new Exception(1);
 			}
 			// Save data in db
-			$GLOBALS['db']->execute('UPDATE users_stats SET userpage_content = ? WHERE username = ?', [$_POST['c'], $_SESSION['username']]);
+			$GLOBALS['db']->execute('UPDATE users SET userpage_content = ? WHERE username = ?', [$_POST['c'], $_SESSION['username']]);
 			if (isset($_POST['view']) && $_POST['view'] == 1) {
 				redirect('index.php?p=103&id=' . $_SESSION['userid']);
 			}
