@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - remove-safe-title
 
 jobs:
   build:
