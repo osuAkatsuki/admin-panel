@@ -2668,40 +2668,14 @@ class P {
 				$bsid = $b ? $b["beatmapset_id"] : 0;
 
 			$today = !($req["time"] < time()-86400);
-			$beatmaps = $GLOBALS["db"]->fetchAll("SELECT song_name, beatmap_id, ranked, difficulty_std, difficulty_taiko, difficulty_ctb, difficulty_mania FROM beatmaps WHERE beatmapset_id = ? LIMIT 15", [$bsid]);
-			$diffs = "";
+			$beatmaps = $GLOBALS["db"]->fetchAll("SELECT song_name, beatmap_id, ranked FROM beatmaps WHERE beatmapset_id = ? LIMIT 15", [$bsid]);
 			$allUnranked = true;
 			$forceParam = "1";
-			$modes = [];
 			foreach ($beatmaps as $beatmap) {
-				$icon = ($beatmap["ranked"] >= 2) ? "check" : "times";
-				$name = htmlspecialchars("$beatmap[song_name] ($beatmap[beatmap_id])");
-				$diffs .= "<a href='#' data-toggle='popover' data-placement='bottom' data-content=\"$name\" data-trigger='hover'>";
-				$diffs .= "<i class='fa fa-$icon'></i>";
-				$diffs .= "</a>";
-				if ($beatmap["difficulty_std"] > 0 && !in_array("std", $modes)) {
-					$modes[] = "std";
-				} else if ($beatmap["difficulty_std"] == 0) {
-					if ($beatmap["difficulty_taiko"] > 0 && !in_array("taiko", $modes)) {
-						$modes[] = "taiko";
-					} else if ($beatmap["difficulty_ctb"] > 0 && !in_array("ctb", $modes)) {
-						$modes[] = "ctb";
-					} else if ($beatmap["difficulty_mania"] > 0 && !in_array("mania", $modes)) {
-						$modes[] = "mania";
-					}
-				}
-
 				if ($beatmap["ranked"] >= 2) {
 					$allUnranked = false;
 					$forceParam = "0";
 				}
-			}
-
-			$modes = implode(", ", $modes);
-
-			if (count($beatmaps) >= 15) {
-				$diffs .= "...";
-				$modes .= "...";
 			}
 
 			if ($req["blacklisted"] == 1) {
@@ -2723,10 +2697,6 @@ class P {
 			echo "<tr class='$rowClass'>
 				<td><a href='https://osu.ppy.sh/s/$bsid' target='_blank'>$req[type]/$req[bid]</a></td>
 				<td>$song</td>
-				<td>
-					$diffs
-				</td>
-				<td>$modes</td>
 				<td>$req[username]</td>
 				<td>".timeDifference(time(), $req["time"])."</td>
 				<td>
