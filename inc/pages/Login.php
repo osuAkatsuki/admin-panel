@@ -86,8 +86,6 @@ class Login {
 			// if 2FA is enabled, logIP will be run when this IP has been allowed
 			if (get2FAType($us['id']) != 2)
 				logIP($us['id']);
-			// Get safe title
-			updateSafeTitle();
 			// Save latest activity
 			updateLatestActivity($us['id']);
 			// Update country if XX

@@ -810,11 +810,11 @@ class D {
 				throw new Exception(1);
 			}
 			// Check everything is set
-			if (!isset($_POST['c']) || !isset($_POST['aka']) || !isset($_POST['st']) || !isset($_POST['mode'])) {
+			if (!isset($_POST['c']) || !isset($_POST['aka']) || !isset($_POST['mode'])) {
 				throw new Exception(0);
 			}
 			// Make sure values are valid
-			if (!valid($_POST['mode'], 0, 3) || !valid($_POST['st']) || (isset($_POST["showCustomBadge"]) && !valid($_POST["showCustomBadge"]))) {
+			if (!valid($_POST['mode'], 0, 3) || (isset($_POST["showCustomBadge"]) && !valid($_POST["showCustomBadge"]))) {
 				throw new Exception(0);
 			}
 			// Check if username color is not empty and if so, set to black (default)
@@ -858,9 +858,7 @@ class D {
 				$GLOBALS["db"]->execute("UPDATE users_stats SET show_custom_badge = ?, custom_badge_name = ?, custom_badge_icon = ? WHERE id = ? LIMIT 1", [$_POST["showCustomBadge"], $_POST["badgeName"], $icon, $_SESSION["userid"]]);
 			}
 			// Save data in db
-			$GLOBALS['db']->execute('UPDATE users_stats SET user_color = ?, username_aka = ?, safe_title = ?, play_style = ?, favourite_mode = ? WHERE id = ? LIMIT 1', [$c, $_POST['aka'], $_POST['st'], $pm, $_POST['mode'], $_SESSION['userid']]);
-			// Update safe title cookie
-			updateSafeTitle();
+			$GLOBALS['db']->execute('UPDATE users_stats SET user_color = ?, username_aka = ?, play_style = ?, favourite_mode = ? WHERE id = ? LIMIT 1', [$c, $_POST['aka'], $pm, $_POST['mode'], $_SESSION['userid']]);
 			// Done, redirect to success page
 			redirect('index.php?p=6&s=ok');
 		}

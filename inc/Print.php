@@ -2232,10 +2232,8 @@ class P {
 
 		// Default select stuff
 		$selected[1] = [0 => '', 1 => ''];
-		$selected[2] = [0 => '', 1 => ''];
 
-		$selected[1][isset($_COOKIE['st']) && $_COOKIE['st'] == 1] = 'selected';
-		$selected[2][$data['show_custom_badge']] = 'selected';
+		$selected[1][$data['show_custom_badge']] = 'selected';
 
 		// Howl is cool so he does it in his own way
 		$mode = $data['favourite_mode'];
@@ -2252,13 +2250,6 @@ class P {
 		echo '<form action="submit.php" method="POST">
 		<input name="csrf" type="hidden" value="'.csrfToken().'">
 		<input name="action" value="saveUserSettings" hidden>
-		<div class="input-group" style="width:100%">
-			<span class="input-group-addon" id="basic-addon1" style="width:40%">Safe page title</span>
-			<select name="st" class="selectpicker" data-width="100%">
-				<option value="1" '.$selected[1][1].'>Yes</option>
-				<option value="0" '.$selected[1][0].'>No</option>
-			</select>
-		</div>
 		<p style="line-height: 15px"></p>
 		<div class="input-group" style="width:100%">
 			<span class="input-group-addon" id="basic-addon4" style="width:40%">Favourite gamemode</span>
@@ -2285,8 +2276,8 @@ class P {
 			<div class="input-group" style="width:100%">
 				<span class="input-group-addon" id="basic-addon0" style="width:40%">Show custom badge</span>
 				<select name="showCustomBadge" class="selectpicker" data-width="100%">
-					<option value="1" '.$selected[2][1].'>Yes</option>
-					<option value="0" '.$selected[2][0].'>No</option>
+					<option value="1" '.$selected[1][1].'>Yes</option>
+					<option value="0" '.$selected[1][0].'>No</option>
 				</select>
 			</div>';
 		}
