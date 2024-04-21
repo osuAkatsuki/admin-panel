@@ -81,19 +81,6 @@ if (isset($_GET['p'])) {
     <!-- Dynamic title -->
     <?php echo $title; ?>
 
-	<?php
-if ($p == 27) {
-	global $ServerStatusConfig;
-	if ($ServerStatusConfig['netdata']['enable']) {
-		echo '
-						<!-- Netdata script -->
-						<script type="text/javascript">var netdataServer = "'.$ServerStatusConfig['netdata']['server_url'].'";</script>
-						<script type="text/javascript" src="'.$ServerStatusConfig['netdata']['server_url'].'/dashboard.js"></script>
-				';
-	}
-}
-?>
-
     <!-- Bootstrap Core CSS -->
     <link href="./css/bootstrap.min.css" rel="stylesheet">
 
