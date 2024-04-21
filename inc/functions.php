@@ -19,7 +19,6 @@ require_once $df.'/PrivilegesEnum.php';
 require_once $df.'/../vendor/autoload.php';
 // Helpers
 require_once $df.'/helpers/PasswordHelper.php';
-require_once $df.'/helpers/UsernameHelper.php';
 require_once $df.'/helpers/URL.php';
 require_once $df.'/helpers/Schiavo.php';
 require_once $df.'/helpers/APITokens.php';
