@@ -173,18 +173,6 @@ try {
 			sessionCheckAdmin(Privileges::AdminManageReports);
 			D::UselessUsefulReport();
 		break;
-		case 'toggleCake':	// TODO
-			sessionCheckAdmin(Privileges::AdminCaker);
-			Fringuellina::ToggleCake();
-		break;
-		case 'removeCake':	// TODO
-			sessionCheckAdmin(Privileges::AdminCaker);
-			Fringuellina::RemoveCake();
-		break;
-		case 'saveCake':
-			sessionCheckAdmin(Privileges::AdminCaker);
-			Fringuellina::EditCake();
-		break;
 		/*
 		case 'restoreScoresSearchUser':
 			sessionCheckAdmin(Privileges::AdminWipeUsers);
