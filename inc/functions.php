@@ -559,8 +559,6 @@ function updateUserCountry($userID) {
 	$c = getUserCountry();
 	if ($c == 'XX')
 		return;
-	$GLOBALS['db']->execute("UPDATE users_stats SET country = ? WHERE id = ?", [$c, $userID]);
-	$GLOBALS['db']->execute("UPDATE rx_stats SET country = ? WHERE id = ?", [$c, $userID]);
 	$GLOBALS['db']->execute("UPDATE users SET country = ? WHERE id = ?", [$c, $userID]);
 }
 function countryCodeToReadable($cc) {
@@ -1521,7 +1519,6 @@ function giveDonor($userID, $months, $add=true, $premium=false) {
 	}
 
 	// To finish off, let's give them permissions to edit their custom badge.
-	$GLOBALS["db"]->execute("UPDATE users_stats SET can_custom_badge = 1, show_custom_badge = 1 WHERE id = ?", [$userID]);
 	$GLOBALS["db"]->execute("UPDATE users SET can_custom_badge = 1, show_custom_badge = 1 WHERE id = ?", [$userID]);
 
 	return $monthsExpire;

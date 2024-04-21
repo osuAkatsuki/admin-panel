@@ -52,9 +52,11 @@ class Login {
 				throw new Exception('Wrong username or password.');
 			}
 			$us = $GLOBALS['db']->fetch('
-			SELECT id, password_md5, username, country
-			FROM users
-			WHERE username_safe = ?', [safeUsername($_POST['u'])]);
+				SELECT id, password_md5, username, country
+				FROM users
+				WHERE username_safe = ?',
+				[safeUsername($_POST['u'])]
+			);
 			// Set multiacc identity token
 			setYCookie($us["id"]);
 			// Old frontend shall be seen by no human on earth. Except for

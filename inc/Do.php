@@ -154,20 +154,8 @@ class D {
 			}
 			// Save new userpage
 			$GLOBALS['db']->execute('UPDATE users SET userpage_content = ? WHERE id = ? LIMIT 1', [$_POST['up'], $_POST['id']]);
-			/* Save new data if set (rank, allowed, UP and silence)
-			if (isset($_POST['r']) && !empty($_POST['r']) && $oldData["rank"] != $_POST["r"]) {
-				$GLOBALS['db']->execute('UPDATE users SET rank = ? WHERE id = ?', [$_POST['r'], $_POST['id']]);
-				rapLog(sprintf("has changed %s's rank to %s", $_POST["u"], readableRank($_POST['r'])));
-			}
-			if (isset($_POST['a'])) {
-				$banDateTime = $_POST['a'] == 0 ? time() : 0;
-				$newPrivileges = $oldData["privileges"] ^ Privileges::UserBasic;
-				$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ?', [$newPrivileges, $banDateTime, $_POST['id']]);
-			}*/
 			// Update country flag if set
 			if (isset($_POST['country']) && countryCodeToReadable($_POST['country']) != 'unknown country' && $oldData["country"] != $_POST['country']) {
-				$GLOBALS['db']->execute('UPDATE users_stats SET country = ? WHERE id = ? LIMIT 1', [$_POST['country'], $_POST['id']]);
-				$GLOBALS['db']->execute('UPDATE rx_stats SET country = ? WHERE id = ? LIMIT 1', [$_POST['country'], $_POST['id']]);
 				$GLOBALS['db']->execute('UPDATE users SET country = ? WHERE id = ?', [$_POST['country'], $_POST['id']]);
 				redisConnect();
 				$GLOBALS["redis"]->publish('api:change_flag', $_POST['id']);
@@ -176,8 +164,6 @@ class D {
 				rapLog(sprintf("has changed %s's flag to %s", $_POST["u"], $_POST['country']));
 			}
 			// Set username style/color/aka
-			$GLOBALS['db']->execute('UPDATE users_stats SET username_aka = ? WHERE id = ? LIMIT 1', [$_POST['aka'], $_POST['id']]);
-			$GLOBALS['db']->execute('UPDATE rx_stats SET username_aka = ? WHERE id = ? LIMIT 1', [$_POST['aka'], $_POST['id']]);
 			$GLOBALS['db']->execute('UPDATE users SET username_aka = ? WHERE id = ?', [$_POST['aka'], $_POST['id']]);
 			// RAP log
 			postWebhookMessage(sprintf("has edited [%s](https://akatsuki.pw/u/%s)", $_POST["u"], $_POST['id']));
@@ -613,13 +599,10 @@ class D {
 
 			if ($_POST["rx"] == 1) {
 				$scores_table = "scores_relax";
-				$stats_table = "rx_stats";
 			} else if ($_POST["rx"] == 2) {
 				$scores_table = "scores_ap";
-				$stats_table = "ap_stats";
 			} else if ($_POST["rx"] == 0) {
 				$scores_table = "scores";
-				$stats_table = "users_stats";
 			}
 
 			redisConnect();
@@ -664,19 +647,6 @@ class D {
 				}
 			}
 
-			// Reset user stats
-			// First, on the old tables
-			if ($_POST['rx'] != 3) {
-				foreach ($modes as $k) {
-					$GLOBALS['db']->execute('UPDATE '.$stats_table.' SET max_combo_'.$k.' = 0, ranked_score_'.$k.' = 0, total_score_'.$k.' = 0, replays_watched_'.$k.' = 0, playcount_'.$k.' = 0, avg_accuracy_'.$k.' = 0.0, total_hits_'.$k.' = 0, level_'.$k.' = 0, pp_'.$k.' = 0 WHERE id = ? LIMIT 1', [$_POST['id']]);
-				}
-			} else {
-				foreach (["users_stats", "rx_stats", "ap_stats"] as $st) {
-					foreach ($modes as $k) {
-						$GLOBALS['db']->execute('UPDATE '.$st.' SET max_combo_'.$k.' = 0, ranked_score_'.$k.' = 0, total_score_'.$k.' = 0, replays_watched_'.$k.' = 0, playcount_'.$k.' = 0, avg_accuracy_'.$k.' = 0.0, total_hits_'.$k.' = 0, level_'.$k.' = 0, pp_'.$k.' = 0 WHERE id = ? LIMIT 1', [$_POST['id']]);
-					}
-				}
-			}
 			// Next, on the new tables
 			if ($_POST["gm"] == -1) { // All modes
 				if ($_POST["rx"] == 0) {
@@ -1154,7 +1124,6 @@ class D {
 			$can = current($GLOBALS["db"]->fetch("SELECT can_custom_badge FROM users WHERE id = ?", [$_GET["id"]]));
 			$grantRevoke = ($can == 0) ? "granted" : "revoked";
 			$can = !$can;
-			$GLOBALS["db"]->execute("UPDATE users_stats SET can_custom_badge = ? WHERE id = ? LIMIT 1", [$can, $_GET["id"]]);
 			$GLOBALS["db"]->execute("UPDATE users SET can_custom_badge = ? WHERE id = ?", [$can, $_GET["id"]]);
 
 			postWebhookMessage(sprintf("has %s custom badge privilege on [%s](https://akatsuki.pw/u/%s)'s account", $grantRevoke, $username, $_GET["id"]));
