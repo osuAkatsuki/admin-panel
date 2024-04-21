@@ -475,11 +475,6 @@ switch ($p) {
 		</script>";
 	break;
 }
-
-// Userpage JS
-if (isset($_GET["u"]) && !isset($_GET["p"])) {
-	echo '<script src="/js/user.js"></script>';
-}
 ?>
 
 </body>
