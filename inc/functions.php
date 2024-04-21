@@ -19,10 +19,8 @@ require_once $df.'/helpers/PasswordHelper.php';
 require_once $df.'/helpers/URL.php';
 // Controller system v2
 require_once $df.'/pages/Login.php';
-require_once $df.'/pages/Meme.php';
 $pages = [
 	new Login(),
-	new Meme(),
 ];
 // Set timezone to UTC
 date_default_timezone_set('America/Toronto');
