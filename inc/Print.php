@@ -11,17 +11,13 @@ class P {
 		$submittedScoresFull = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM scores LIMIT 1'));
 		$submittedScores = number_format($submittedScoresFull / 1000000, 2) . "m";
 		*/
-		$totalScoresFullVanilla = current($GLOBALS['db']->fetch('
-			SELECT SUM(playcount_std) + SUM(playcount_taiko) + SUM(playcount_ctb) + SUM(playcount_mania)
-			FROM users_stats'));
+		$totalScoresFullVanilla = current($GLOBALS['db']->fetch('SELECT SUM(playcount) FROM user_stats WHERE mode IN (0, 1, 2, 3)'));
 		$totalScoresVanilla = number_format($totalScoresFullVanilla / 1000000, 2) . "m";
 
-		$totalScoresFullRelax = current($GLOBALS['db']->fetch('
-			SELECT SUM(playcount_std) + SUM(playcount_taiko) + SUM(playcount_ctb) + SUM(playcount_mania)
-			FROM rx_stats'));
+		$totalScoresFullRelax = current($GLOBALS['db']->fetch('SELECT SUM(playcount) FROM user_stats WHERE mode IN (4, 5, 6)'));
 		$totalScoresRelax = number_format($totalScoresFullRelax / 1000000, 2) . "m";
 
-		$totalScoresFullAutopilot = current($GLOBALS['db']->fetch('SELECT SUM(playcount_std) FROM ap_stats'));
+		$totalScoresFullAutopilot = current($GLOBALS['db']->fetch('SELECT SUM(playcount) FROM user_stats WHERE mode = 8'));
 		$totalScoresAutopilot = number_format($totalScoresFullAutopilot / 1000000, 2) . "m";
 
 		/*$totalPPQuery = $GLOBALS['db']->fetch("SELECT SUM(pp) FROM scores WHERE completed = 3 LIMIT 1");
@@ -712,14 +708,13 @@ class P {
 			}
 			// Get user data
 			$userData = $GLOBALS['db']->fetch('SELECT * FROM users WHERE id = ? LIMIT 1', $_GET['id']);
-			$userStatsData = $GLOBALS['db']->fetch('SELECT * FROM users_stats WHERE id = ? LIMIT 1', $_GET['id']);
 			$ips = $GLOBALS['db']->fetchAll('SELECT ip, occurencies FROM ip_user WHERE userid = ? ORDER BY occurencies DESC LIMIT 50', $_GET['id']);
 			// Check if this user exists
-			if (!$userData || !$userStatsData) {
+			if (!$userData) {
 				throw new Exception("That user doesn't exist");
 			}
 			// Cb check
-			if ($userStatsData["can_custom_badge"] == 1) {
+			if ($userData["can_custom_badge"] == 1) {
 				$cbText = "Yes";
 				$cbCol = "success";
 			} else {
@@ -801,7 +796,7 @@ class P {
 			reset($c);
 			foreach ($c as $k => $v) {
 				$sd = "";
-				if ($userStatsData['country'] == $k)
+				if ($userData['country'] == $k)
 					$sd = "selected";
 				$ks = strtolower($k);
 				if (!file_exists(dirname(__FILE__) . "/../images/flags/$ks.png"))
@@ -881,7 +876,7 @@ class P {
 
 			echo '<tr>
 			<td>A.K.A</td>
-			<td><p class="text-center"><input type="text" name="aka" class="form-control" value="'.htmlspecialchars($userStatsData['username_aka']).'"></td>
+			<td><p class="text-center"><input type="text" name="aka" class="form-control" value="'.htmlspecialchars($userData['username_aka']).'"></td>
 			</tr>';
 			echo '<tr>
 			<td>Userpage<br><a onclick="censorUserpage();">(reset userpage)</a></td>
@@ -936,9 +931,9 @@ class P {
 				<td>Custom badge</td>
 				<td>
 					<p align="center">
-						<i class="fa '.htmlspecialchars($userStatsData["custom_badge_icon"]).' fa-2x"></i>
+						<i class="fa '.htmlspecialchars($userData["custom_badge_icon"]).' fa-2x"></i>
 						<br>
-						<b>'.htmlspecialchars($userStatsData["custom_badge_name"]).'</b>
+						<b>'.htmlspecialchars($userData["custom_badge_name"]).'</b>
 					</p>
 				</td>
 				</tr>';
@@ -1013,7 +1008,7 @@ class P {
 
 							echo '	<a onclick="sure(\'submit.php?action=clearHWID&id='.$_GET['id'].'&csrf='.csrfToken().'\');" class="btn btn-danger">Clear HWID matches</a>';
 						}
-						echo '		<a onclick="sure(\'submit.php?action=toggleCustomBadge&id='.$_GET['id'].'&csrf='.csrfToken().'\');" class="btn btn-danger">'.(($userStatsData["can_custom_badge"] == 1) ? "Revoke" : "Grant").' custom badge</a>';
+						echo '		<a onclick="sure(\'submit.php?action=toggleCustomBadge&id='.$_GET['id'].'&csrf='.csrfToken().'\');" class="btn btn-danger">'.(($userData["can_custom_badge"] == 1) ? "Revoke" : "Grant").' custom badge</a>';
 						if (hasPrivilege(Privileges::AdminSilenceUsers)) {
 							echo '		<a onclick="sure(\'submit.php?action=toggleUserpage&id='.$_GET['id'].'&csrf='.csrfToken().'\');" class="btn btn-danger">'.(($userData["userpage_allowed"] == 1) ? "Disallow" : "Allow").' userpage</a>';
 						}
@@ -1040,9 +1035,8 @@ class P {
 		try {
 			// Get user data
 			$userData = $GLOBALS['db']->fetch('SELECT * FROM users WHERE id = ?', $_GET['id']);
-			$userStatsData = $GLOBALS['db']->fetch('SELECT * FROM users_stats WHERE id = ?', $_GET['id']);
 			// Check if this user exists
-			if (!$userData || !$userStatsData) {
+			if (!$userData) {
 				throw new Exception("That user doesn't exist");
 			}
 			// Check if we are trying to edit our account or a higher rank account

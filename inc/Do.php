@@ -128,7 +128,7 @@ class D {
 				throw new Exception('Nice troll');
 			}
 			// Check if this user exists and get old data
-			$oldData = $GLOBALS["db"]->fetch("SELECT * FROM users LEFT JOIN users_stats ON users.id = users_stats.id WHERE users.id = ? LIMIT 1", [$_POST["id"]]);
+			$oldData = $GLOBALS["db"]->fetch("SELECT privileges, country FROM users WHERE id = ?", [$_POST["id"]]);
 			if (!$oldData) {
 				throw new Exception("That user doesn\'t exist");
 			}
@@ -1151,7 +1151,7 @@ class D {
 			}
 
 			// Grant/revoke custom badge privilege
-			$can = current($GLOBALS["db"]->fetch("SELECT can_custom_badge FROM users_stats WHERE id = ? LIMIT 1", [$_GET["id"]]));
+			$can = current($GLOBALS["db"]->fetch("SELECT can_custom_badge FROM users WHERE id = ?", [$_GET["id"]]));
 			$grantRevoke = ($can == 0) ? "granted" : "revoked";
 			$can = !$can;
 			$GLOBALS["db"]->execute("UPDATE users_stats SET can_custom_badge = ? WHERE id = ? LIMIT 1", [$can, $_GET["id"]]);
