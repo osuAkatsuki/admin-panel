@@ -86,7 +86,7 @@ class Login {
 			updateLatestActivity($us['id']);
 			// Update country if XX
 			if ($us['country'] == 'XX')
-				updateUserCountry($us['id'], 'id');
+				updateUserCountry($us['id']);
 			$ret['success'] = true;
 		}
 		catch(Exception $e) {

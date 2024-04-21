@@ -168,7 +168,7 @@ class D {
 			if (isset($_POST['country']) && countryCodeToReadable($_POST['country']) != 'unknown country' && $oldData["country"] != $_POST['country']) {
 				$GLOBALS['db']->execute('UPDATE users_stats SET country = ? WHERE id = ? LIMIT 1', [$_POST['country'], $_POST['id']]);
 				$GLOBALS['db']->execute('UPDATE rx_stats SET country = ? WHERE id = ? LIMIT 1', [$_POST['country'], $_POST['id']]);
-
+				$GLOBALS['db']->execute('UPDATE users SET country = ? WHERE id = ?', [$_POST['country'], $_POST['id']]);
 				redisConnect();
 				$GLOBALS["redis"]->publish('api:change_flag', $_POST['id']);
 
@@ -178,6 +178,7 @@ class D {
 			// Set username style/color/aka
 			$GLOBALS['db']->execute('UPDATE users_stats SET username_aka = ? WHERE id = ? LIMIT 1', [$_POST['aka'], $_POST['id']]);
 			$GLOBALS['db']->execute('UPDATE rx_stats SET username_aka = ? WHERE id = ? LIMIT 1', [$_POST['aka'], $_POST['id']]);
+			$GLOBALS['db']->execute('UPDATE users SET username_aka = ? WHERE id = ?', [$_POST['aka'], $_POST['id']]);
 			// RAP log
 			postWebhookMessage(sprintf("has edited [%s](https://akatsuki.pw/u/%s)", $_POST["u"], $_POST['id']));
 			rapLog(sprintf("has edited user %s", $_POST["u"]));
@@ -625,7 +626,6 @@ class D {
 
 			// Delete scores
 			if ($_POST["gm"] == -1) {
-				//$GLOBALS['db']->execute('INSERT INTO '.$scores_table.'_removed SELECT * FROM '.$scores_table.' WHERE userid = ?', [$_POST['id']]);
 
 				if ($_POST["rx"] != 3) {
 					$GLOBALS['db']->execute('DELETE FROM '.$scores_table.' WHERE userid = ?', [$_POST['id']]);
@@ -644,7 +644,6 @@ class D {
 					}
 				}
 			} else {
-				//$GLOBALS['db']->execute('INSERT INTO '.$scores_table.'_removed SELECT * FROM '.$scores_table.' WHERE userid = ? AND play_mode = ?', [$_POST['id'], $_POST["gm"]]);
 				if ($_POST["rx"] == 3) {
 					$dt = ['scores', 'scores_relax', 'scores_ap'];
 					$ms = [0, 1, 2];
@@ -655,6 +654,8 @@ class D {
 				}
 
 				foreach ($dt as $st) {
+					// TODO: we should not be hard deleting scores, but either marking them as "inactive"
+					// or moving them to another table (e.g. insert into select * from ...)
 					$GLOBALS['db']->execute('DELETE FROM '.$st.' WHERE userid = ? AND play_mode = ?', [$_POST['id'], $_POST["gm"]]);
 				}
 
@@ -663,6 +664,8 @@ class D {
 				}
 			}
 
+			// Reset user stats
+			// First, on the old tables
 			if ($_POST['rx'] != 3) {
 				foreach ($modes as $k) {
 					$GLOBALS['db']->execute('UPDATE '.$stats_table.' SET max_combo_'.$k.' = 0, ranked_score_'.$k.' = 0, total_score_'.$k.' = 0, replays_watched_'.$k.' = 0, playcount_'.$k.' = 0, avg_accuracy_'.$k.' = 0.0, total_hits_'.$k.' = 0, level_'.$k.' = 0, pp_'.$k.' = 0 WHERE id = ? LIMIT 1', [$_POST['id']]);
@@ -673,6 +676,48 @@ class D {
 						$GLOBALS['db']->execute('UPDATE '.$st.' SET max_combo_'.$k.' = 0, ranked_score_'.$k.' = 0, total_score_'.$k.' = 0, replays_watched_'.$k.' = 0, playcount_'.$k.' = 0, avg_accuracy_'.$k.' = 0.0, total_hits_'.$k.' = 0, level_'.$k.' = 0, pp_'.$k.' = 0 WHERE id = ? LIMIT 1', [$_POST['id']]);
 					}
 				}
+			}
+			// Next, on the new tables
+			if ($_POST["gm"] == -1) { // All modes
+				if ($_POST["rx"] == 0) {
+					$modeInts = [0, 1, 2, 3];
+				} else if ($_POST["rx"] == 1) {
+					$modeInts = [4, 5, 6];
+				} else if ($_POST["rx"] == 2) {
+					$modeInts = [8];
+				}
+				$modeInts = [0, 1, 2, 3];
+			} else if ((0 <= $_POST["gm"]) && ($_POST["gm"] <= 3)) { // Single mode
+				if ($_POST["rx"] == 0) {
+					$modeInts = [$_POST["gm"]];
+				} else if ($_POST["rx"] == 1) {
+					if ($_POST["gm"] == 3) {
+						throw new Exception("Relax does not support mania");
+					}
+					$modeInts = [$_POST["gm"] + 4];
+				} else if ($_POST["rx"] == 2) {
+					if ($_POST["gm"] != 0) {
+						throw new Exception("Autopilot only supports standard");
+					}
+					$modeInts = [$_POST["gm"] + 8];
+				}
+			}
+			foreach ($modeInts as $modeInt) {
+				$GLOBALS['db']->execute('
+					UPDATE user_stats
+					   SET max_combo = 0,
+					       ranked_score = 0,
+					       total_score = 0,
+					       replays_watched = 0,
+					       playcount = 0,
+					       avg_accuracy = 0.0,
+					       total_hits = 0,
+						   level = 0,
+						   pp = 0
+					 WHERE user_id = ?
+					   AND mode = ?',
+					[$_POST['id'], $modeInt]
+				);
 			}
 
 			// RAP log
@@ -1110,6 +1155,7 @@ class D {
 			$grantRevoke = ($can == 0) ? "granted" : "revoked";
 			$can = !$can;
 			$GLOBALS["db"]->execute("UPDATE users_stats SET can_custom_badge = ? WHERE id = ? LIMIT 1", [$can, $_GET["id"]]);
+			$GLOBALS["db"]->execute("UPDATE users SET can_custom_badge = ? WHERE id = ?", [$can, $_GET["id"]]);
 
 			postWebhookMessage(sprintf("has %s custom badge privilege on [%s](https://akatsuki.pw/u/%s)'s account", $grantRevoke, $username, $_GET["id"]));
 			rapLog(sprintf("has %s custom badge privilege on %s's account", $grantRevoke, $username), $_SESSION["userid"]);
