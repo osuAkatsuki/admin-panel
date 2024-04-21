@@ -440,22 +440,6 @@ switch ($p) {
 	</script>';
 	break;
 
-	case 6:
-		echo '<script>
-			$(".icp").on("iconpickerSelected", function(e) {
-				var faClass = $("#badge-icon-input").val();
-				if (!faClass.startsWith("fa-")) {
-					return;
-				}
-				$("#badge-icon").attr("class", "fa "+faClass+" fa-2x").html();
-			});
-
-			$("#badge-name-input").keyup(function() {
-				$("#badge-name").text($("#badge-name-input").val()).html();
-			});
-		</script>';
-	break;
-
 	case 124:
 		$force = (isset($_GET["force"]) && !empty($_GET["force"])) ? '1' : '0';
 		echo '<script type="text/javascript">
