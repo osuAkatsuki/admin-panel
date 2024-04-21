@@ -3,186 +3,6 @@
 // We aren't calling the class Do because otherwise it would conflict with do { } while ();
 class D {
 	/*
-	 * Register
-	 * Register function
-	 */
-	public static function Register() {
-		global $reCaptchaConfig;
-		try {
-			// Check if everything is set
-			if (empty($_POST['u']) || empty($_POST['p1']) || empty($_POST['p2']) || empty($_POST['e']) /*|| empty($_POST['k'])*/) {
-				throw new Exception('Nope.');
-			}
-			// Get user IP
-			$ip = getIp();
-			// Make sure registrations are enabled
-			if (!checkRegistrationsEnabled()) {
-				throw new Exception('Registrations are currently disabled.');
-			}
-			// Validate password through our helper
-			$pres = PasswordHelper::ValidatePassword($_POST['p1'], $_POST['p2']);
-			if ($pres !== -1) {
-				throw new Exception($pres);
-			}
-			// trim spaces or other memes from username (hi kirito)
-			$_POST['u'] = trim($_POST['u']);
-			// Check if email is valid
-			if (!filter_var($_POST['e'], FILTER_VALIDATE_EMAIL)) {
-				throw new Exception("Email isn't valid.");
-			}
-			// Check if username is valid
-			if (!preg_match('/^[A-Za-z0-9 _\\-\\[\\]]{2,15}$/i', $_POST['u'])) {
-				throw new Exception("Username is not valid! It must be from 2 to 15 characters long, " .
-									"and can only contain alphanumeric chararacters, spaces, and these " .
-									"characters: <code>_-[]</code>");
-			}
-			// Make sure username is not forbidden
-			if (UsernameHelper::isUsernameForbidden($_POST['u'])) {
-				throw new Exception('Username now allowed. Please choose another one.');
-			}
-			// Username with mixed spaces
-			if (strpos($_POST["u"], " ") !== false && strpos($_POST["u"], "_") !== false) {
-				throw new Exception('Usernames with both spaces and underscores are not supported.');
-			}
-			// Check if username is already in db
-			$safe = safeUsername($_POST["u"]);
-			if ($GLOBALS['db']->fetch('SELECT * FROM users WHERE username_safe = ?', [$safe])) {
-				throw new Exception('That username was already found in the database! Perhaps someone stole it from you? Those bastards!');
-			}
-			// Check if email is already in db
-			if ($GLOBALS['db']->fetch('SELECT * FROM users WHERE email = ?', $_POST['e'])) {
-				throw new Exception('An user with that email already exists!');
-			}
-			// Check captcha
-			if (!isset($_POST["g-recaptcha-response"])) {
-				throw new Exception("Invalid captcha");
-			}
-			$data = [
-				"secret" => $reCaptchaConfig["secret_key"],
-				"response" => $_POST["g-recaptcha-response"]
- 			];
-			if ($reCaptchaConfig["ip"]) {
-				$data[] = [
-					"ip" => $ip
-				];
-			}
-			$reCaptchaResponse = postJsonCurl("https://www.google.com/recaptcha/api/siteverify", $data, $timeout = 10);
-			if (!$reCaptchaResponse["success"]) {
-				throw new Exception("Invalid captcha");
-			}
-			// Multiacc notice if needed
-			$multiIP = multiaccCheckIP($ip);
-			$multiToken = multiaccCheckToken();
-			if ($multiIP !== FALSE || $multiToken !== FALSE) {
-				if ($multiIP !== FALSE) {
-					$multiUserInfo = $multiIP;
-					$criteria = "IP **($ip)**";
-				} else {
-					$multiUserInfo = $multiToken;
-					$criteria = "Multiaccount token (IP is **$ip**)";
-				}
-				$multiUsername = $multiUserInfo["username"];
-				$multiUserID = $multiUserInfo["userid"];
-				@Schiavo::CM("User **$_POST[u]** registered from same $criteria as **$multiUsername** (https://akatsuki.pw/u/$multiUserID). **POSSIBLE MULTIACCOUNT!!!**. Waiting for ingame verification...");
-			}
-			// Create password
-			$md5Password = password_hash(md5($_POST['p1']), PASSWORD_DEFAULT);
-			// Put some data into the db
-			$GLOBALS['db']->execute("INSERT INTO `users`(username, username_safe, password_md5, email, register_datetime, privileges)
-			                                     VALUES (?,        ?,             ?,            ?,     ?,                 ?);",
-												 		[$_POST['u'], $safe,      $md5Password, $_POST['e'], time(true),  Privileges::UserPendingVerification]);
-			// Get user ID
-			$uid = $GLOBALS['db']->lastInsertId();
-			// Put some data into users_stats
-			// TODO: Move this query above to avoid mysql thread conflict memes
-			$GLOBALS['db']->execute("INSERT INTO `users_stats`(id, username, ranked_score_std, playcount_std, total_score_std, ranked_score_taiko, playcount_taiko, total_score_taiko, ranked_score_ctb, playcount_ctb, total_score_ctb, ranked_score_mania, playcount_mania, total_score_mania) VALUES (?, ?, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);", [$uid, $_POST['u']]);
-			$GLOBALS['db']->execute("INSERT INTO `rx_stats`(id, username, ranked_score_std, playcount_std, total_score_std, ranked_score_taiko, playcount_taiko, total_score_taiko, ranked_score_ctb, playcount_ctb, total_score_ctb, ranked_score_mania, playcount_mania, total_score_mania) VALUES (?, ?, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);", [$uid, $_POST['u']]);
-			// Update leaderboard (insert new user) for each mode.
-			foreach (['std', 'taiko', 'ctb', 'mania'] as $m) {
-				Leaderboard::Update($uid, 0, $m);
-			}
-			@Schiavo::CM("User (**$_POST[u]** | $_POST[e]) registered (successfully) from **" . $ip . "**");
-			// Generate and set identity token ("y" cookie)
-			setYCookie($uid);
-			// log user ip
-			logIP($uid);
-			//addSuccess("You should now be signed up! Try to <a href='index.php?p=2'>login</a>.");
-			// All fine, done
-			redirect('index.php?p=38&u='.$uid);
-		} catch(Exception $e) {
-			// Redirect to Exception page
-			addError($e->getMessage());
-			redirect('index.php?p=3&iseethestopsign=1');
-		}
-	}
-
-	/*
-	 * ChangePassword
-	 * Change password function
-	 */
-	public static function ChangePassword() {
-		try {
-			// Check if we are logged in
-			sessionCheck();
-			// Check if everything is set
-			if (empty($_POST['pold']) || empty($_POST['p1']) || empty($_POST['p2'])) {
-				throw new Exception('Nope.');
-			}
-			$pres = PasswordHelper::ValidatePassword($_POST['p1'], $_POST['p2']);
-			if ($pres !== -1) {
-				throw new Exception($pres);
-			}
-			if (!PasswordHelper::CheckPass($_SESSION['username'], $_POST['pold'], false)) {
-				throw new Exception('Your old password is incorrect.');
-			}
-			// Calculate new password
-			$newPassword = password_hash(md5($_POST['p1']), PASSWORD_DEFAULT);
-			// Change password
-			$GLOBALS['db']->execute("UPDATE users SET password_md5 = ? WHERE username = ?", [$newPassword, $_SESSION['username']]);
-			// Set in session that we've changed our password otherwise sessionCheck() will kick us
-			$_SESSION['passwordChanged'] = true;
-			// Redirect to success page
-			addSuccess('Password changed!');
-			redirect('index.php?p=7');
-		}
-		catch(Exception $e) {
-			addError($e->getMessage());
-			// Redirect to Exception page
-			redirect('index.php?p=7');
-		}
-	}
-
-	/*
-	 * RecoverPassword()
-	 * Form submission for printPasswordRecovery.
-	 */
-	public static function RecoverPassword() {
-		global $MailgunConfig;
-		try {
-			if (!isset($_POST['username']) || empty($_POST['username'])) {
-				throw new Exception(0);
-			}
-			$username = $_POST['username'];
-			$user = $GLOBALS['db']->fetch('SELECT id, username, email FROM users WHERE username = ?', [$username]);
-			// Check the user actually exists.
-			if (!$user) {
-				throw new Exception(1);
-			}
-			if (!hasPrivilege(Privileges::UserNormal, $user["id"]) && !hasPrivilege(Privileges::UserPendingVerification, $user["id"])) {
-				throw new Exception(2);
-			}
-			$key = randomString(80);
-			$GLOBALS['db']->execute('INSERT INTO password_recovery (k, u) VALUES (?, ?);', [$key, $username]);
-			$mailer = new SimpleMailgun($MailgunConfig);
-			$mailer->Send('Akatsuki <noreply@'.$MailgunConfig['domain'].'>', $user['email'], 'Akatsuki password recovery instructions', sprintf("Hey %s! Someone, which we really hope was you, requested a password reset for your account. In case it was you, please <a href='%s'>click here</a> to reset your password on Akatsuki. Otherwise, silently ignore this email.", $username, 'http://'.$_SERVER['HTTP_HOST'].'/index.php?p=19&k='.$key.'&user='.$username));
-			redirect('index.php?p=18&s=sent');
-		}
-		catch(Exception $e) {
-			redirect('index.php?p=18&e='.$e->getMessage());
-		}
-	}
-
-	/*
 	 * SaveSystemSettings
 	 * Save system settings function (ADMIN CP)
 	 */
@@ -298,20 +118,6 @@ class D {
 	}
 
 	/*
-	 * RunCron
-	 * Runs cron.php from admin cp with exec/redirect
-	 */
-	public static function RunCron() {
-		if ($CRON['adminExec']) {
-			// howl master linux shell pr0
-			exec(PHP_BIN_DIR.'/php '.dirname(__FILE__).'/../cron.php 2>&1 > /dev/null &');
-		} else {
-			// Run from browser
-			redirect('./cron.php');
-		}
-	}
-
-	/*
 	 * SaveEditUser
 	 * Save edit user function (ADMIN CP)
 	 */
@@ -364,7 +170,7 @@ class D {
 				$GLOBALS['db']->execute('UPDATE rx_stats SET country = ? WHERE id = ? LIMIT 1', [$_POST['country'], $_POST['id']]);
 
 				redisConnect();
-				$GLOBALS["redis"]->publish('api:change_flag', $userID);
+				$GLOBALS["redis"]->publish('api:change_flag', $_POST['id']);
 
 				postWebhookMessage(sprintf("has changed [%s](https://akatsuki.pw/u/%s)'s flag to %s", $_POST["u"], $_POST['id'], $_POST['country']));
 				rapLog(sprintf("has changed %s's flag to %s", $_POST["u"], $_POST['country']));
@@ -770,166 +576,6 @@ class D {
 		}
 	}
 
-	/*
-	 * ForgetEveryCookie
-	 * Allows the user to delete every field in the remember database table with their username, so that it is logged out of every computer they were logged in.
-	 */
-	public static function ForgetEveryCookie() {
-		startSessionIfNotStarted();
-		$rch = new RememberCookieHandler();
-		$rch->DestroyAll($_SESSION['userid']);
-		redirect('index.php?p=1&s=forgetDone');
-	}
-
-	/*
-	 * saveUserSettings
-	 * Save user settings functions
-	 */
-	public static function saveUserSettings() {
-		global $PlayStyleEnum;
-		try {
-			function valid($value, $min=0, $max=1) {
-				return ($value >= $min && $value <= $max);
-			}
-
-			// Check if we are logged in
-			sessionCheck();
-			// Restricted check
-			if (isRestricted()) {
-				throw new Exception(1);
-			}
-			// Check everything is set
-			if (!isset($_POST['c']) || !isset($_POST['aka']) || !isset($_POST['mode'])) {
-				throw new Exception(0);
-			}
-			// Make sure values are valid
-			if (!valid($_POST['mode'], 0, 3) || (isset($_POST["showCustomBadge"]) && !valid($_POST["showCustomBadge"]))) {
-				throw new Exception(0);
-			}
-			// Playmode stuff
-			$pm = 0;
-			foreach ($_POST as $key => $value) {
-				$i = str_replace('_', ' ', substr($key, 3));
-				if ($value == 1 && substr($key, 0, 3) == 'ps_' && isset($PlayStyleEnum[$i])) {
-					$pm += $PlayStyleEnum[$i];
-				}
-			}
-			// Save custom badge
-			$canCustomBadge = current($GLOBALS["db"]->fetch("SELECT can_custom_badge FROM users_stats WHERE id = ? LIMIT 1", [$_SESSION["userid"]])) == 1;
-			if (hasPrivilege(Privileges::UserDonor) && $canCustomBadge && isset($_POST["showCustomBadge"]) && isset($_POST["badgeName"]) && isset($_POST["badgeIcon"])) {
-				// Script kiddie check 1
-				$forbiddenNames = ["BAT", "Developer", "Community Manager"];
-				if (in_array($_POST["badgeName"], $forbiddenNames)) {
-					throw new Fava(0);
-				}
-
-				$oldCustomBadge = $GLOBALS["db"]->fetch("SELECT custom_badge_name AS name, custom_badge_icon AS icon FROM users_stats WHERE id = ? LIMIT 1", [$_SESSION["userid"]]);
-				if ($oldCustomBadge["name"] != $_POST["badgeName"] || $oldCustomBadge["icon"] != $_POST["badgeIcon"]) {
-					@Schiavo::CM("User **$_SESSION[username]** has changed his custom badge to **$_POST[badgeName]** *($_POST[badgeIcon])*");
-				}
-
-				// Script kiddie check 2
-				// (is this even needed...?)
-				$forbiddenClasses = ["fa-lg", "fa-2x", "fa-3x", "fa-4x", "fa-5x", "fa-ul", "fa-li", "fa-border", "fa-pull-right", "fa-pull-left", "fa-stack", "fa-stack-2x", "fa-stack-1x"];
-				$icon = explode(" ", $_POST["badgeIcon"]);
-				for ($i=0; $i < count($icon); $i++) {
-					if (substr($icon[$i], 0, 3) != "fa-" || in_array($icon[$i], $forbiddenClasses)) {
-						$icon[$i] = "";
-					}
-				}
-				$icon = implode(" ", $icon);
-				$GLOBALS["db"]->execute("UPDATE users_stats SET show_custom_badge = ?, custom_badge_name = ?, custom_badge_icon = ? WHERE id = ? LIMIT 1", [$_POST["showCustomBadge"], $_POST["badgeName"], $icon, $_SESSION["userid"]]);
-			}
-			// Save data in db
-			$GLOBALS['db']->execute('UPDATE users_stats SET username_aka = ?, play_style = ?, favourite_mode = ? WHERE id = ? LIMIT 1', [$_POST['aka'], $pm, $_POST['mode'], $_SESSION['userid']]);
-			// Done, redirect to success page
-			redirect('index.php?p=6&s=ok');
-		}
-		catch(Exception $e) {
-			// Redirect to Exception page
-			redirect('index.php?p=6&e='.$e->getMessage());
-		}
-	}
-
-	/*
-	 * SaveUserpage
-	 * Save userpage functions
-	 */
-	public static function SaveUserpage() {
-		try {
-			// Check if we are logged in
-			sessionCheck();
-			// Restricted check
-			if (isRestricted()) {
-				throw new Exception(2);
-			}
-			// Check if everything is set
-			if (!isset($_POST['c'])) {
-				throw new Exception(0);
-			}
-			// Check userpage length
-			if (strlen($_POST['c']) > 1500) {
-				throw new Exception(1);
-			}
-			// Save data in db
-			$GLOBALS['db']->execute('UPDATE users SET userpage_content = ? WHERE username = ?', [$_POST['c'], $_SESSION['username']]);
-			if (isset($_POST['view']) && $_POST['view'] == 1) {
-				redirect('index.php?p=103&id=' . $_SESSION['userid']);
-			}
-			// Done, redirect to success page
-			redirect('index.php?p=8&s=ok');
-		}
-		catch(Exception $e) {
-			// Redirect to Exception page
-			redirect('index.php?p=8&e='.$e->getMessage().$r);
-		}
-	}
-
-	/*
-	 * ChangeAvatar
-	 * Chhange avatar functions
-	 */
-	public static function ChangeAvatar() {
-		try {
-			// Check if we are logged in
-			sessionCheck();
-			// Restricted check
-			if (isRestricted()) {
-				throw new Exception(5);
-			}
-			// Check if everything is set
-			if (!isset($_FILES['file'])) {
-				throw new Exception(0);
-			}
-			// Check if image file is a actual image or fake image
-			if (!getimagesize($_FILES['file']['tmp_name'])) {
-				throw new Exception(1);
-			}
-			// Allow certain file formats
-			$allowedFormats = ['jpg', 'jpeg', 'png'];
-			if (!in_array(pathinfo($_FILES['file']['name']) ['extension'], $allowedFormats)) {
-				throw new Exception(2);
-			}
-			// Check file size
-			if ($_FILES['file']['size'] > 1000000) {
-				throw new Exception(3);
-			}
-			// Resize
-			if (!smart_resize_image($_FILES['file']['tmp_name'], null, 100, 100, false, dirname(dirname(dirname(__FILE__))).'/avatarserver/avatars/'.getUserID($_SESSION['username']).'.png', false, false, 100)) {
-				throw new Exception(4);
-			}
-			/* "Convert" to png
-			if (!move_uploaded_file($_FILES["file"]["tmp_name"], dirname(dirname(dirname(__FILE__)))."/avatarserver/avatars/".getUserID($_SESSION["username"]).".png")) {
-			    throw new Exception(4);
-			}*/
-			// Done, redirect to success page
-			redirect('index.php?p=5&s=ok');
-		}
-		catch(Exception $e) {
-			// Redirect to Exception page
-			redirect('index.php?p=5&e='.$e->getMessage());
-		}
-	}
 
 	/*
 	 * WipeAccount
@@ -1053,34 +699,6 @@ class D {
 
 
 	/*
-	 * AddRemoveFriend
-	 * Add remove friends
-	 */
-	public static function AddRemoveFriend() {
-		try {
-			// Check if we are logged in
-			sessionCheck();
-			// Check if everything is set
-			if (!isset($_GET['u']) || empty($_GET['u'])) {
-				throw new Exception(0);
-			}
-			// Get our user id
-			$uid = getUserID($_SESSION['username']);
-			// Add/remove friend
-			if (getFriendship($uid, $_GET['u'], true) == 0) {
-				addFriend($uid, $_GET['u'], true);
-			} else {
-				removeFriend($uid, $_GET['u'], true);
-			}
-			// Done, redirect
-			redirect('index.php?p=103&id='.$_GET['u']);
-		}
-		catch(Exception $e) {
-			redirect('index.php?p=99&e='.$e->getMessage());
-		}
-	}
-
-	/*
 	 * ProcessRankRequest
 	 * Rank/unrank a beatmap
 	 */
@@ -1142,26 +760,6 @@ class D {
 		}
 	}
 
-
-	/*
-	 * BlacklistRankRequest
-	 * Toggle blacklist for a rank request
-	 */
-	public static function BlacklistRankRequest() {
-		try {
-			if (!isset($_GET["id"]) || empty($_GET["id"]))
-				throw new Exception("no");
-			$GLOBALS["db"]->execute("UPDATE rank_requests SET blacklisted = IF(blacklisted=1, 0, 1) WHERE id = ? LIMIT 1", [$_GET["id"]]);
-			$reqData = $GLOBALS["db"]->fetch("SELECT type, bid FROM rank_requests WHERE id = ? LIMIT 1", [$_GET["id"]]);
-
-			postWebhookMessage(sprintf("has toggled blacklist flag on beatmap %s %s", $reqData["type"] == "s" ? "set" : "", $reqData["bid"]));
-			rapLog(sprintf("has toggled blacklist flag on beatmap %s %s", $reqData["type"] == "s" ? "set" : "", $reqData["bid"]), $_SESSION["userid"]);
-			redirect("index.php?p=117&s=Blacklisted flag changed");
-		}
-		catch(Exception $e) {
-			redirect('index.php?p=117&e='.$e->getMessage());
-		}
-	}
 
 	public static function savePrivilegeGroup() {
 		try {
@@ -1571,7 +1169,7 @@ class D {
 			$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges ^ 2 WHERE id = ? LIMIT 1", [$_GET["id"]]);
 
 			postWebhookMessage(sprintf("has %s [%s](https://akatsuki.pw/u/%s)'s account", $lockUnlock, $userData["username"], $_GET["id"]));
-			rapLog(sprintf("has %s %s's account", $grantRevoke, $userData["username"]), $_SESSION["userid"]);
+			rapLog(sprintf("has %s %s's account", $lockUnlock, $userData["username"]), $_SESSION["userid"]);
 			redirect("index.php?p=102&s=User ".$lockUnlock."!");
 		} catch(Exception $e) {
 			redirect('index.php?p=102&e='.$e->getMessage());

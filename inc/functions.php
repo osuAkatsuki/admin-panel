@@ -26,8 +26,6 @@ require_once $df.'/helpers/APITokens.php';
 // Controller system v2
 require_once $df.'/pages/Login.php';
 require_once $df.'/pages/Leaderboard.php';
-require_once $df.'/pages/PasswordFinishRecovery.php';
-require_once $df.'/pages/ServerStatus.php';
 require_once $df.'/pages/UserLookup.php';
 require_once $df.'/pages/RequestRankedBeatmap.php';
 require_once $df.'/pages/MyAPIApplications.php';
@@ -134,18 +132,10 @@ function getIP() {
 function setTitle($p) {
 	$namesRipple = [
 		1 =>   'Custom osu! server',
-		3 =>   'Register',
 		4 =>   'User CP',
 		5 =>   'Change avatar',
-		6 =>   'Edit user settings',
-		7 =>   'Change password',
-		8 =>   'Edit userpage',
-		17 =>  'Changelog',
-		18 =>  'Recover your password',
 		21 =>  'About',
 		23 =>  'Rules',
-		26 =>  'Friends',
-		41 =>  'Elmo! Stop!',
 		'u' => 'Userpage',
 	];
 	$namesRAP = [
@@ -862,13 +852,6 @@ function checkBanchoMaintenance() {
 		return true;
 	}
 }
-function checkRegistrationsEnabled() {
-	if (current($GLOBALS['db']->fetch("SELECT value_int FROM system_settings WHERE name = 'registrations_enabled'")) == 0) {
-		return false;
-	} else {
-		return true;
-	}
-}
 // ******** GET USER ID/USERNAME FUNCTIONS *********
 $cachedID = false;
 /*
@@ -1091,182 +1074,6 @@ function calculateAccuracy($n300, $n100, $n50, $ngeki, $nkatu, $nmiss, $mode) {
 }
 
 
-/*
- * getRequiredScoreForLevel
- * Gets the required score for $l level
- *
- * @param (int) ($l) level
- * @return (int) required score
- */
-function getRequiredScoreForLevel($l) {
-	// Calcolate required score
-	if ($l <= 100) {
-		if ($l >= 2) {
-			return 5000 / 3 * (4 * bcpow($l, 3, 0) - 3 * bcpow($l, 2, 0) - $l) + 1.25 * bcpow(1.8, $l - 60, 0);
-		} elseif ($l <= 0 || $l = 1) {
-			return 1;
-		} // Should be 0, but we get division by 0 below so set to 1
-
-	} elseif ($l >= 101) {
-		return 26931190829 + 100000000000 * ($l - 100);
-	}
-}
-
-
-/*
- * getLevel
- * Gets the level for $s score
- *
- * @param (int) ($s) ranked score number
- */
-function getLevel($s) {
-	$level = 1;
-	while (true) {
-		// if the level is > 8000, it's probably an endless loop. terminate it.
-		if ($level > 8000) {
-			return $level;
-			break;
-		}
-		// Calculate required score
-		$reqScore = getRequiredScoreForLevel($level);
-		// Check if this is our level
-		if ($s <= $reqScore) {
-			// Our level, return it and break
-			return $level;
-			break;
-		} else {
-			// Not our level, calculate score for next level
-			$level++;
-		}
-	}
-}
-
-
-/**************************
- ** CHANGELOG FUNCTIONS  **
- **************************/
-function getChangelog() {
-	sessionCheck();
-	echo '<p align="center"><h1><i class="fa fa-code"></i>	Changelog</h1>';
-	echo 'Welcome to the changelog page.<br>As soon as a change is made, it will be posted here.<br>Hover a change to know when it was done.<br><br>';
-	if (!file_exists(dirname(__FILE__).'/../../ci-system/ci-system/changelog.txt')) {
-		echo '<b>Unfortunately, no changelog for this Akatsuki instance is available. Slap the sysadmin and tell him to configure it.</b>';
-	} else {
-		$_GET['page'] = (isset($_GET['page']) && $_GET['page'] > 0 ? intval($_GET['page']) : 1);
-		$data = getChangelogPage($_GET['page']);
-		if ($data == false || count($data) == 0) {
-			echo "<b>You've reached the end of the universe.</b>";
-			echo "<br><br><a href='index.php?p=17&page=".($_GET['page'] - 1)."'>&lt; Previous page</a>";
-
-			return;
-		}
-		echo "<table class='table table-striped table-hover'><thead><th style='width:10%'></th><th style='width:5%'></th><th style='width:75%'></th></thead><tbody>";
-		foreach ($data as $commit) {
-			echo sprintf("<tr class='%s'><td>%s</td><td><b>%s:</b></td><td><div title='%s'>%s</div></td></tr>", $commit['row'], $commit['labels'], $commit['username'], $commit['time'], $commit['content']);
-		}
-		echo '</tbody></table><br><br>';
-		if ($_GET['page'] != 1) {
-			echo "<a href='index.php?p=17&page=".($_GET['page'] - 1)."'>&lt; Previous page</a>";
-			echo ' | ';
-		}
-		echo "<a href='index.php?p=17&page=".($_GET['page'] + 1)."'>Next page &gt;</a>";
-	}
-}
-
-
-/*
- * getChangelogPage()
- * Gets a page from the changelog.json with some commits.
- *
- * @param (int) ($p) Page. Optional. Default is 1.
- */
-function getChangelogPage($p = 1) {
-	global $ChangelogConfig;
-	// Retrieve data from changelog.json
-	$data = explode("\n", file_get_contents(dirname(__FILE__).'/../../ci-system/ci-system/changelog.txt'));
-	$ret = [];
-	// Check there are enough commits for the current page.
-	$initoffset = ($p - 1) * 50;
-	if (count($data) < ($initoffset)) {
-		return false;
-	}
-	// Get only the commits we're interested in.
-	$data = array_slice($data, $initoffset, 50);
-	// check whether user is admin
-	$useradmin = hasPrivilege(Privileges::AdminAccessRAP);
-	// Get each commit
-	foreach ($data as $commit) {
-		// Separate the various components of the commit
-		$commit = explode('|', $commit);
-		// Silently ignore commits that don't have enough data
-		if (count($commit) < 4) {
-			continue;
-		}
-		$valid = true;
-		$labels = '';
-		// Fix author name
-		$commit[2] = trim($commit[2]);
-		// Check forbidden commits
-		if (isset($ChangelogConfig['forbidden_commits'])) {
-			foreach ($ChangelogConfig['forbidden_commits'] as $hash) {
-				if (strpos($commit[0], strtolower($hash)) !== false) {
-					$valid = false;
-					break;
-				}
-			}
-		}
-		// Only get first line of commit
-		$message = implode('|', array_slice($commit, 3));
-		// Check forbidden words
-		if (isset($ChangelogConfig['forbidden_keywords']) && !empty($ChangelogConfig['forbidden_keywords'])) {
-			foreach ($ChangelogConfig['forbidden_keywords'] as $word) {
-				if (strpos(strtolower($message), strtolower($word)) !== false) {
-					$valid = false;
-					break;
-				}
-			}
-		}
-		// Add labels
-		if (isset($ChangelogConfig['labels'])) {
-			// Hidden label if user is an admin and commit is hidden
-			if ($useradmin && !$valid) {
-				$row = 'warning';
-				$labels .= "<span class='label label-default'>Hidden</span>	";
-			} else {
-				$row = 'default';
-			}
-			// Other labels
-			foreach ($ChangelogConfig['labels'] as $label) {
-				// Add label if needed
-				$label = explode(',', $label);
-				$keyword = $label[0];
-				$text = $label[1];
-				$color = $label[2];
-				if (strpos(strtolower($message), strtolower($keyword)) !== false) {
-					$labels .= "<span class='label label-".$color."'>".$text.'</span>	';
-				}
-				// Remove label keyword from commit
-				$message = str_ireplace($keyword, ' ', $message);
-			}
-		} else {
-			$row = 'default';
-		}
-		// If we should not output this commit, let's skip it.
-		if (!$valid && !$useradmin) {
-			continue;
-		}
-		// Change names if needed
-		if (isset($ChangelogConfig['change_name'][$commit[2]])) {
-			$commit[2] = $ChangelogConfig['change_name'][2];
-		}
-		// Build return array
-		$ret[] = ['username' => htmlspecialchars($commit[2]), 'content' => htmlspecialchars($message), 'time' => gmdate("Y-m-d\TH:i:s\Z", intval($commit[1])), 'labels' => $labels, 'row' => $row];
-	}
-
-	return $ret;
-}
-
-
 /**************************
  **   OTHER   FUNCTIONS  **
  **************************/
@@ -1326,48 +1133,6 @@ function post_content_http($url, $content, $timeout=10) {
 
 
 /*
- * printBadgeSelect()
- * Prints a select with every badge available as options
- *
- * @param (string) ($sn) Name of the select, for php form stuff
- * @param (string) ($sid) Name of the selected item (badge ID)
- * @param (array) ($bd) Badge data array (SELECT * FROM badges)
- */
-function printBadgeSelect($sn, $sid, $bd) {
-	echo '<select name="'.$sn.'" class="selectpicker" data-width="100%">';
-	foreach ($bd as $b) {
-		if ($sid == $b['id']) {
-			$sel = 'selected';
-		} else {
-			$sel = '';
-		}
-		echo '<option value="'.$b['id'].'" '.$sel.'>'.$b['name'].'</option>';
-	}
-	echo '</select>';
-}
-
-
-/**
- * BwToString()
- * Bitwise enum number to string.
- *
- * @param (int) ($num) Number to convert to string
- * @param (array) ($bwenum) Bitwise enum in the form of array, $EnumName => $int
- * @param (string) ($sep) Separator
- */
-function BwToString($num, $bwenum, $sep = '<br>') {
-	$ret = [];
-	foreach ($bwenum as $key => $value) {
-		if ($num & $value) {
-			$ret[] = $key;
-		}
-	}
-
-	return implode($sep, $ret);
-}
-
-
-/*
  * checkUserExists
  * Check if given user exists
  *
@@ -1415,75 +1180,7 @@ function getFriendship($u0, $u1, $id = false) {
 }
 
 
-/*
- * addFriend
- * Add $newFriend to $dude's friendlist
- *
- * @param (int/string) ($dude) user who sent the request
- * @param (int/string) ($newFriend) dude's new friend
- * @param (bool) ($id) If true, $dude and $newFriend are ids, if false they are usernames
- * @return (bool) true if added, false if not (already in friendlist, invalid user...)
- */
-function addFriend($dude, $newFriend, $id = false) {
-	try {
-		// Get id if needed
-		if (!$id) {
-			$dude = getUserID($dude);
-			$newFriend = getUserID($newFriend);
-		}
-		// Make sure we aren't adding us to our friends
-		if ($dude == $newFriend) {
-			throw new Exception();
-		}
-		// Make sure users exist
-		if (!checkUserExists($dude, true) || !checkUserExists($newFriend, true)) {
-			throw new Exception();
-		}
-		// Check whether frienship already exists
-		if ($GLOBALS['db']->fetch('SELECT id FROM users_relationships WHERE user1 = ? AND user2 = ?') !== false) {
-			throw new Exception();
-		}
-		// Add newFriend to friends
-		$GLOBALS['db']->execute('INSERT INTO users_relationships (user1, user2) VALUES (?, ?)', [$dude, $newFriend]);
 
-		return true;
-	}
-	catch(Exception $e) {
-		return false;
-	}
-}
-
-
-/*
- * removeFriend
- * Remove $oldFriend from $dude's friendlist
- *
- * @param (int/string) ($dude) user who sent the request
- * @param (int/string) ($oldFriend) dude's old friend
- * @param (bool) ($id) If true, $dude and $oldFriend are ids, if false they are usernames
- * @return (bool) true if removed, false if not (not in friendlist, invalid user...)
- */
-function removeFriend($dude, $oldFriend, $id = false) {
-	try {
-		// Get id if needed
-		if (!$id) {
-			$dude = getUserID($dude);
-			$oldFriend = getUserID($oldFriend);
-		}
-		// Make sure users exist
-		if (!checkUserExists($dude, true) || !checkUserExists($oldFriend, true)) {
-			throw new Exception();
-		}
-		// Delete user relationship. We don't need to check if the relationship was there, because who gives a shit,
-		// if they were not friends and they don't want to be anymore, be it. ¯\_(ツ)_/¯
-		$GLOBALS['db']->execute('DELETE FROM users_relationships WHERE user1 = ? AND user2 = ?', [$dude, $oldFriend]);
-
-		return true;
-	}
-	catch(Exception $e) {
-		return false;
-	}
-}
 // I don't know what this function is for anymore
 function clir($must = false, $redirTo = 'index.php?p=2&e=3') {
 	if (checkLoggedIn() === $must) {
@@ -1531,48 +1228,6 @@ function checkMustHave($page) {
  */
 function accuracy($acc) {
 	return number_format(round($acc, 2), 2);
-}
-function checkServiceStatus($url) {
-	// allow very little timeout for each service
-	//ini_set('default_socket_timeout', 5);
-	// 0: offline, 1: online, -1: restarting
-	try {
-		// Bancho status
-		//$result = @json_decode(@file_get_contents($url), true);
-		$result = getJsonCurl($url);
-		if (!isset($result)) {
-			throw new Exception();
-		}
-		if (!array_key_exists('status', $result)) {
-			throw new Exception();
-		}
-
-		if (array_key_exists('result', $result)) {
-			return $result['result'];
-		} else {
-			return $result['status'];
-		}
-	}
-	catch(Exception $e) {
-		return 0;
-	}
-}
-function serverStatusBadge($status) {
-	switch ($status) {
-		case 1:
-		case 200:
-			return '<span class="label label-success"><i class="fa fa-check"></i>	Online</span>';
-		break;
-		case -1:
-			return '<span class="label label-warning"><i class="fa fa-exclamation"></i>	Restarting</span>';
-		break;
-		case 0:
-			return '<span class="label label-danger"><i class="fa fa-close"></i>	Offline</span>';
-		break;
-		default:
-			return '<span class="label label-default"><i class="fa fa-question"></i>	Unknown</span>';
-		break;
-	}
 }
 function addError($e) {
 	startSessionIfNotStarted();
@@ -1786,40 +1441,6 @@ function isRestricted($userID = -1) {
 
 function isBanned($userID = -1) {
 	return (!hasPrivilege(Privileges::UserPublic, $userID) && !hasPrivilege(Privileges::UserNormal, $userID));
-}
-
-function multiaccCheckIP($ip) {
-	$multiUserID = $GLOBALS['db']->fetch("SELECT userid, users.username FROM ip_user LEFT JOIN users ON users.id = ip_user.userid WHERE ip = ?", [$ip]);
-	if (!$multiUserID)
-		return false;
-	return $multiUserID;
-	/*$multiUsername = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$multiUserID]);
-
-	if ($multiUsername) {
-		@Schiavo::CM("User **" . current($multiUsername) . "** (https://akatsuki.pw/?u=$multiUserID) tried to create a multiaccount (**" . $_POST['u'] . "**) from IP **" . $ip . "**");
-	}
-	$GLOBALS["db"]->execute("UPDATE users SET notes=CONCAT(COALESCE(notes, ''),'\n-- Multiacc attempt (".$_POST["u"].") from IP ".$ip."') WHERE id = ?", [$multiUserID]); */
-}
-
-function getUserFromMultiaccToken($token) {
-	$multiToken = $GLOBALS["db"]->fetch("SELECT userid, users.username FROM identity_tokens LEFT JOIN users ON users.id = identity_tokens.userid WHERE token = ? LIMIT 1", [$token]);
-	if (!$multiToken)
-		return false;
-	return $multiToken;
-}
-
-function multiaccCheckToken() {
-	if (!isset($_COOKIE["y"]))
-		return false;
-
-	// y cookie is set, we expect to found a token in db
-	$multiToken = getUserFromMultiaccToken($_COOKIE["y"]);
-	if ($multiToken === FALSE) {
-		// Token not found in db, user has edited cookie manually.
-		// Akerino, keep showing multiacc warning
-		$multiToken = false;
-	}
-	return $multiToken;
 }
 
 function getIdentityToken($userID, $generate = True) {
