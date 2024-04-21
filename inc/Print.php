@@ -21,12 +21,9 @@ class P {
 			FROM rx_stats'));
 		$totalScoresRelax = number_format($totalScoresFullRelax / 1000000, 2) . "m";
 
-		$totalScoresFullAutopilot = current($GLOBALS['db']->fetch('
-			SELECT SUM(playcount_std) + SUM(playcount_taiko) + SUM(playcount_ctb) + SUM(playcount_mania)
-			FROM ap_stats'));
+		$totalScoresFullAutopilot = current($GLOBALS['db']->fetch('SELECT SUM(playcount_std) FROM ap_stats'));
 		$totalScoresAutopilot = number_format($totalScoresFullAutopilot / 1000000, 2) . "m";
 
-		// $betaKeysLeft = "∞";
 		/*$totalPPQuery = $GLOBALS['db']->fetch("SELECT SUM(pp) FROM scores WHERE completed = 3 LIMIT 1");
 		$totalPP = 0;
 		foreach ($totalPPQuery as $pp) {
