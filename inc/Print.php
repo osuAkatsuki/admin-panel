@@ -721,14 +721,6 @@ class P {
 			if (!$userData || !$userStatsData) {
 				throw new Exception("That user doesn't exist");
 			}
-			// Hax check
-			if ($userData["delay_ban"] == 1) {
-				$haxText = "Yes";
-				$haxCol = "danger";
-			} else {
-				$haxText = "No";
-				$haxCol = "success";
-			}
 			// Cb check
 			if ($userStatsData["can_custom_badge"] == 1) {
 				$cbText = "Yes";
@@ -786,14 +778,6 @@ class P {
 			if (isset($_GET['e']) && !empty($_GET['e'])) {
 				self::ExceptionMessageStaccah($_GET['e']);
 			}
-			// Selected values stuff 1
-			//$selected[0] = [1 => '', 2 => '', 3 => '', 4 => ''];
-			// Selected values stuff 2
-			//$selected[1] = [0 => '', 1 => '', 2 => ''];
-
-			// Get selected stuff
-			//$selected[0][current($GLOBALS['db']->fetch('SELECT rank FROM users WHERE id = ?', $_GET['id']))] = 'selected';
-			//$selected[1][($userData["privileges"] & Privileges::UserBasic) > 0 ? 1 : 0] = 'selected';
 
 			echo '<p align="center"><font size=5><i class="fa fa-user"></i>	Edit user</font></p>';
 			echo '<table class="table table-striped table-hover table-75-center edit-user">';
@@ -962,13 +946,6 @@ class P {
 				</td>
 				</tr>';
 			}
-			/*
-			echo '<tr class="single-row">
-			<td>Account in delayban queue
-				<i class="no-mobile"><br>(If \'yes\', The user has already been added to the delayban queue, and will be restricted automatically.</i>
-			</td>
-			<td><span class="label label-'.$haxCol.'">'.$haxText.'</span></td>
-			</tr>';*/
 			echo '<tr>
 			<td>Notes for CMs
 			<br>
@@ -2542,9 +2519,6 @@ class P {
 	}
 
 
-
-
-
 	public static function AdminViewReports() {
 		echo '<div id="wrapper">';
 		printAdminSidebar();
@@ -3516,18 +3490,4 @@ class P {
 			redirect('index.php?p=135&e='.$e->getMessage());
 		}
 	}
-
-}
-
-// LISCIAMI LE MELE SUDICIO
-class Fava extends Exception {
-	 public function __construct($message, $code = 0, Exception $previous = null) {
-        parent::__construct($message, $code, $previous);
-    }
-}
-
-class Egg extends Exception {
-	public function __construct($message, $code = 0, Exception $previous = null) {
-	   parent::__construct($message, $code, $previous);
-   }
 }
