@@ -14,11 +14,6 @@ class PasswordHelper {
 			return false;
 		}
 		$res = password_verify($pass, $uPass['password_md5']);
-		$additional_schiavo_text = "(fail)";
-		if ($res) {
-			$additional_schiavo_text = "(success)";
-		}
-		@Schiavo::Bunk("Login request from **" . getIP() . "** for user **" . $u . "** " . $additional_schiavo_text);
 		return $res;
 		exit;
 		return true;

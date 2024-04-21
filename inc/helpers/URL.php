@@ -12,7 +12,7 @@ class URL {
 
 		return isset($URL['server']) ? $URL['server'] : 'https://akatsuki.pw';
 	}
-	
+
 	public static function Bancho() {
 		global $URL;
 

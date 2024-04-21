@@ -128,9 +128,6 @@ if ($p == 27) {
 	<link rel="stylesheet" href="https://unpkg.com/alwan/dist/css/alwan.min.css" />
 
     <!-- Favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=xQQWRwyGed">
-    <link rel="icon" type="image/png" href="/favicon-32x32.png?v=xQQWRwyGed" sizes="32x32">
-    <link rel="icon" type="image/png" href="/favicon-16x16.png?v=xQQWRwyGed" sizes="16x16">
     <link rel="manifest" href="/manifest.json?v=xQQWRwyGed">
     <link rel="mask-icon" href="/safari-pinned-tab.svg?v=xQQWRwyGed" color="#5bbad5">
     <link rel="shortcut icon" href="/favicon.ico?v=xQQWRwyGed">

@@ -18,15 +18,12 @@ require_once $df.'/../vendor/autoload.php';
 // Helpers
 require_once $df.'/helpers/PasswordHelper.php';
 require_once $df.'/helpers/URL.php';
-require_once $df.'/helpers/Schiavo.php';
 // Controller system v2
 require_once $df.'/pages/Login.php';
-require_once $df.'/pages/UserLookup.php';
-require_once $df.'/pages/Beatmaps.php';
-require_once $df.'/pages/BlockTotp2fa.php';
+require_once $df.'/pages/Meme.php';
 $pages = [
 	new Login(),
-	new Beatmaps(),
+	new Meme(),
 ];
 // Set timezone to UTC
 date_default_timezone_set('America/Toronto');
@@ -42,7 +39,7 @@ $GLOBALS["s3"] = new Aws\S3\S3Client([
 ]);
 // Birthday
 global $isBday;
-$isBday = date("dm") == "0510";
+$isBday = date("dm") == "1003";
 /****************************************
  **			GENERAL FUNCTIONS 		   **
  ****************************************/
@@ -431,7 +428,6 @@ function printPage($p) {
  *	echo('stuff');
  */
 function printNavbar() {
-	global $discordConfig;
 	echo '<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 				<div class="container">
 					<div class="navbar-header">
