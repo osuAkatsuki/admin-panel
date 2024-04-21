@@ -16,8 +16,6 @@ if ($c->Check()) {
 		// /shrugs
 	}
 }
-// Redirect to 2FA block page if needed
-redirect2FA();
 
 // CONTROLLER SYSTEM v2
 $model = 'old';
@@ -116,7 +114,7 @@ if ($p == 27) {
 
     <!-- SCEditor CSS -->
 	<link rel="stylesheet" href="./css/themes/default.css" type="text/css" media="all" />
-	
+
     <!-- Datepicker CSS -->
     <link href="./css/bootstrap-datepicker3.min.css" rel="stylesheet">
 
@@ -140,7 +138,7 @@ if ($p == 27) {
 
     <meta name=viewport content="width=device-width, initial-scale=1">
 	<script src='https://www.google.com/recaptcha/api.js'></script>
-	<?php 
+	<?php
 		if ($isBday && $p == 1) {
 			echo '
 				<script src="palloncini/palloncini.js"></script>
@@ -167,7 +165,7 @@ if ($p < 100) {
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">';
-                	
+
                     echo '<div id="content">';
 	if ($model === 'old') {
 		printPage($p);
@@ -199,7 +197,6 @@ if ($p < 100) {
 
 	<!-- User lookup -->
 	<?php
-		APITokens::PrintScript();
 		echo '<script src="/js/typeahead.min.js"></script>
 			<script src="/js/userlookup.js"></script>';
 	?>
@@ -218,7 +215,7 @@ if ($p < 100) {
 
     <!-- SCEditor JavaScript -->
 	<script src="./js/jquery.sceditor.bbcode.js"></script>
-	
+
 	<!-- Datepicker -->
 	<script src="./js/bootstrap-datepicker.min.js"></script>
 
@@ -268,7 +265,7 @@ if ($p < 100) {
 				$('#icon_'+id)[0].className = "fa fa-play";
 			}
 		}
-		
+
 		function updateResolution () {
 			document.isMobile = window.matchMedia('(max-width: 768px)').matches
 		}
@@ -494,27 +491,6 @@ switch ($p) {
 			},5500);
 		});
 	</script>';
-	break;
-
-	case 38:
-	echo '
-		<script type="text/javascript">';
-
-			if (isset($_GET["u"]) && !empty($_GET["u"])) {
-				echo 'setInterval(function() {
-					var ajaxResponse = $.ajax({
-						url: "'.URL::Bancho().'/api/v1/verifiedStatus?u='.$_GET["u"].'",
-						dataType: "jsonp",
-					}).done(function(data) {
-						console.log(data["result"]);
-						if (data["result"] == 1 || data["result"] == 0) {
-							window.location.replace("index.php?p=39&u='.$_GET["u"].'");
-						}
-					});
-				}, 5000);';
-			}
-
-			echo '</script>';
 	break;
 
 	case 6:

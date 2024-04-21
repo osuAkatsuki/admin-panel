@@ -11,9 +11,7 @@ require_once $df.'/password_compat.php';
 require_once $df.'/Do.php';
 require_once $df.'/Print.php';
 require_once $df.'/RememberCookieHandler.php';
-require_once $df.'/PlayStyleEnum.php';
 require_once $df.'/resize.php';
-require_once $df.'/SimpleMailgun.php';
 require_once $df.'/PrivilegesEnum.php';
 // Composer
 require_once $df.'/../vendor/autoload.php';
@@ -21,27 +19,14 @@ require_once $df.'/../vendor/autoload.php';
 require_once $df.'/helpers/PasswordHelper.php';
 require_once $df.'/helpers/URL.php';
 require_once $df.'/helpers/Schiavo.php';
-require_once $df.'/helpers/APITokens.php';
 // Controller system v2
 require_once $df.'/pages/Login.php';
-require_once $df.'/pages/Leaderboard.php';
 require_once $df.'/pages/UserLookup.php';
-require_once $df.'/pages/RequestRankedBeatmap.php';
-require_once $df.'/pages/MyAPIApplications.php';
-require_once $df.'/pages/EditApplication.php';
-require_once $df.'/pages/DeleteApplication.php';
-require_once $df.'/pages/Support.php';
-require_once $df.'/pages/Team.php';
-require_once $df.'/pages/IRC.php';
 require_once $df.'/pages/Beatmaps.php';
-require_once $df.'/pages/Verify.php';
-require_once $df.'/pages/Welcome.php';
-require_once $df.'/pages/Discord.php';
 require_once $df.'/pages/BlockTotp2fa.php';
 $pages = [
 	new Login(),
 	new Beatmaps(),
-	new BlockTotpTwoFa()
 ];
 // Set timezone to UTC
 date_default_timezone_set('America/Toronto');
@@ -131,11 +116,6 @@ function getIP() {
 function setTitle($p) {
 	$namesRipple = [
 		1 =>   'Custom osu! server',
-		4 =>   'User CP',
-		5 =>   'Change avatar',
-		21 =>  'About',
-		23 =>  'Rules',
-		'u' => 'Userpage',
 	];
 	$namesRAP = [
 		99 =>  'You\'ve been tracked',
@@ -819,17 +799,6 @@ function checkLoggedIn() {
 
 	return true;
 }
-
-
-/*
- * getUserRank
- * Gets the rank of the $u user
- *
- * @return (int) rank
-
-function getUserRank($u) {
-	return current($GLOBALS['db']->fetch('SELECT rank FROM users WHERE username = ?', $u));
-}*/
 function checkWebsiteMaintenance() {
 	if (current($GLOBALS['db']->fetch("SELECT value_int FROM system_settings WHERE name = 'website_maintenance'")) == 0) {
 		return false;
@@ -1364,51 +1333,6 @@ function readableRank($rank) {
 	}
 }
 
-function redirect2FA() {
-	// Check 2FA only if we are logged in
-	if (!checkLoggedIn())
-		return;
-
-	// Get 2FA type
-	$type = get2FAType($_SESSION["userid"]);
-	if ($type == 0) {
-		// No 2FA, don't redirect
-		return;
-	}
-	// TOTP
-	$ip = getIp();
-	if ($GLOBALS["db"]->fetch("SELECT * FROM ip_user WHERE userid = ? AND ip = ?", [$_SESSION["userid"], $ip])) {
-		// trusted ip
-		return;
-	} else {
-		// new ip
-		// force 2fa alert page
-		// Don't redirect to 2FA page if we are on submit.php with resend2FA, 2fa or logout action
-		if ($_SERVER['PHP_SELF'] == "/submit.php" && @$_GET["action"] == "logout")
-			return;
-		if (!isset($_GET["p"]) || $_GET["p"] != 42)
-			redirect("index.php?p=42");
-	}
-}
-
-/*
-   RIP Documentation and comments from now on.
-   Those functions are the last ones that we've added to old-frontend
-   Because new frontend is coming soonTM, so I don't want to waste time writing comments and docs.
-   You'll also find 20% more memes in these functions.
-
-   ...and fuck php
-   -- Nyo
-
-   I'd just like to interject for a moment. You do not just 'fuck' PHP, you 'fuck' PHP with a CACTUS!
-   -- Howl
- */
-
-function get2FAType($userID) {
-	$result = $GLOBALS["db"]->fetch("SELECT IFNULL((SELECT 2 FROM 2fa_totp WHERE userid = ? AND enabled = 1 LIMIT 1), 0) AS x", [$userID]);
-	return $result["x"];
-}
-
 function getUserPrivileges($userID) {
 	global $cachedPrivileges;
 	if (isset($cachedPrivileges[$userID])) {
@@ -1615,27 +1539,6 @@ function giveDonor($userID, $months, $add=true, $premium=false) {
 	// To finish off, let's give them permissions to edit their custom badge.
 	$GLOBALS["db"]->execute("UPDATE users_stats SET can_custom_badge = 1, show_custom_badge = 1 WHERE id = ?", [$userID]);
 
-	// Send email
-	/* Feelin' peppy-y
-	if ($months >= 20) $TheMoreYouKnow = "Did you know that your donation accounts for roughly one month of keeping the main server up? That's crazy! Thank you so much!";
-	else if ($months >= 15 && $months < 20) $TheMoreYouKnow = "Normally we would say how much of our expenses a certain donation pays for, but your donation is halfway through paying the domain for 1 year and paying the main server for 1 month. So we don't really know what to say here: your donation pays for about 75% of keeping the server up one month. Thank you so much!";
-	else if ($months >= 10 && $months < 15) $TheMoreYouKnow = "You know what we could do with the amount you donated? We could probably renew the domain for one more year! Although your money is more likely to end up being spent on paying the main server. Thank you so much!";
-	else if ($months >= 4 && $months < 10) $TheMoreYouKnow = "Your donation will help to keep the beatmap mirror we set up for Akatsuki up for one month! Thanks a lot!";
-	else if ($months >= 1 && $months < 4) $TheMoreYouKnow =  "With your donation, we can afford to keep up the error logging server, which is a little VPS on which we host an error logging service (Sentry). Thanks a lot!";
-
-	global $MailgunConfig;
-	$mailer = new SimpleMailgun($MailgunConfig);
-	$mailer->Send(
-		'Akatsuki <noreply@'.$MailgunConfig['domain'].'>', $userData['email'],
-		'Thank you for donating!',
-		sprintf(
-			"Hey %s! Thanks for donating to Akatsuki. It's thanks to the support of people like you that we can afford keeping the service up. Your donation has been processed, and you should now be able to get the donator role on discord, and have access to all the other perks listed on the \"Support us\" page.<br><br>%s<br><br>Your donor expires in %s months. Until then, have fun!<br>The Akatsuki Team",
-			$username,
-			$TheMoreYouKnow,
-			$monthsExpire
-		)
-	);
-	*/
 	return $monthsExpire;
 }
 

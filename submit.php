@@ -6,9 +6,6 @@ require_once './inc/functions.php';
 try {
 	startSessionIfNotStarted();
 
-	// Make sure we are not locked due to 2FA
-	redirect2FA();
-
 	// Find what the user wants to do (compatible with both GET/POST forms)
 	if (isset($_POST['action']) && !empty($_POST['action'])) {
 		$action = $_POST['action'];
