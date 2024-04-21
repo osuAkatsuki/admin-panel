@@ -121,10 +121,6 @@ try {
 			sessionCheckAdmin(Privileges::AdminManageBeatmaps);
 			D::ProcessRankRequest();
 		break;*/
-		case 'blacklistRankRequest':	// TODO
-			sessionCheckAdmin(Privileges::AdminManageBeatmaps);
-			D::BlacklistRankRequest();
-		break;
 		case 'savePrivilegeGroup':
 			sessionCheckAdmin(Privileges::AdminManagePrivileges);
 			D::savePrivilegeGroup();
@@ -176,18 +172,6 @@ try {
 		case 'uselessUsefulReport':	// TODO?
 			sessionCheckAdmin(Privileges::AdminManageReports);
 			D::UselessUsefulReport();
-		break;
-		case 'toggleCake':	// TODO
-			sessionCheckAdmin(Privileges::AdminCaker);
-			Fringuellina::ToggleCake();
-		break;
-		case 'removeCake':	// TODO
-			sessionCheckAdmin(Privileges::AdminCaker);
-			Fringuellina::RemoveCake();
-		break;
-		case 'saveCake':
-			sessionCheckAdmin(Privileges::AdminCaker);
-			Fringuellina::EditCake();
 		break;
 		/*
 		case 'restoreScoresSearchUser':
