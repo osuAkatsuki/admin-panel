@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - remove-unused-code
 
 jobs:
   build:
