@@ -275,25 +275,6 @@ hr {
   height: 42px;
   width: 42px;
 }
-.tt-menu {
-  width: 100%;
-  text-align: left;
-  margin-top: 12px;
-  border: 1px solid #aaa;
-  border-radius: 4px;
-  box-shadow: 0 0px 8px 0 #999;
-  background-color: #ffffff;
-}
-.tt-suggestion {
-  padding-left: 6px;
-  padding-right: 6px;
-  padding-top: 3px;
-  padding-bottom: 3px;
-}
-.tt-cursor {
-  background-color: #eee;
-  border-radius: 4px;
-}
 
 .bubbles-container {
   margin-left: 25%;
