@@ -54,7 +54,7 @@ class Login {
 			$us = $GLOBALS['db']->fetch('
 			SELECT id, password_md5, username, country
 			FROM users
-			WHERE users.username_safe = ?', [safeUsername($_POST['u'])]);
+			WHERE username_safe = ?', [safeUsername($_POST['u'])]);
 			// Set multiacc identity token
 			setYCookie($us["id"]);
 			// Old frontend shall be seen by no human on earth. Except for
