@@ -1424,18 +1424,18 @@ function stripSuccessError($url) {
 }
 
 function appendNotes($userID, $notes, $addNl=true, $addTimestamp=true) {
-	$wowo = "";
+	$fullNote = "";
 	if ($addNl)
-		$wowo .= "\n";
+		$fullNote .= "\n";
 	if ($addTimestamp)
-		$wowo .= date("[Y-m-d H:i:s] ");
-	$wowo .= $notes;
-	$GLOBALS["db"]->execute("UPDATE users SET notes=CONCAT(COALESCE(notes, ''),?) WHERE id = ? LIMIT 1", [$wowo, $userID]);
+		$fullNote .= date("[Y-m-d H:i:s] ");
+	$fullNote .= $notes;
+	$GLOBALS["db"]->execute("UPDATE users SET notes=CONCAT(COALESCE(notes, ''), ?) WHERE id = ?", [$fullNote, $userID]);
 }
 
 function removeFromLeaderboard($userID) {
 	redisConnect();
-	$country = strtolower($GLOBALS["db"]->fetch("SELECT country FROM users_stats WHERE id = ? LIMIT 1", [$userID])["country"]);
+	$country = strtolower($GLOBALS["db"]->fetch("SELECT country FROM users WHERE id = ?", [$userID])["country"]);
 	foreach (["std", "taiko", "ctb", "mania"] as $key => $value) {
 		$GLOBALS["redis"]->zrem("ripple:leaderboard:".$value, $userID);
 		if (strlen($country) > 0 && $country != "xx") {
