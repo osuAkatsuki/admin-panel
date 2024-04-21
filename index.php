@@ -176,12 +176,6 @@ if ($p < 100) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-migrate-3.0.0.js"></script>
 
-	<!-- User lookup -->
-	<?php
-		echo '<script src="/js/typeahead.min.js"></script>
-			<script src="/js/userlookup.js"></script>';
-	?>
-
     <!-- Bootstrap Core JavaScript -->
     <script src="./js/bootstrap.min.js"></script>
 

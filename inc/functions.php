@@ -450,7 +450,6 @@ function printNavbar() {
 	}
 	// Right elements
 	echo '</ul><ul class="nav navbar-nav navbar-right">';
-	echo '<li><input type="text" class="form-control" name="query" id="query" placeholder="Search users..."></li>';
 	// Logged in right elements
 	if (checkLoggedIn()) {
 		global $URL;
