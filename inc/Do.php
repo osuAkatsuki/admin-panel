@@ -708,7 +708,7 @@ class D {
 					       total_hits = 0,
 						   level = 0,
 						   pp = 0
-					 WHERE id = ?
+					 WHERE user_id = ?
 					   AND mode = ?',
 					[$_POST['id'], $modeInt]
 				);
