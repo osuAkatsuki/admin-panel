@@ -11,7 +11,6 @@ require_once $df.'/password_compat.php';
 require_once $df.'/Do.php';
 require_once $df.'/Print.php';
 require_once $df.'/RememberCookieHandler.php';
-require_once $df.'/resize.php';
 require_once $df.'/PrivilegesEnum.php';
 // Composer
 require_once $df.'/../vendor/autoload.php';
