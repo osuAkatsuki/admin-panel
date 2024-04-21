@@ -682,7 +682,7 @@ class D {
 				if ($_POST["rx"] == 0) {
 					$modeInts = [0, 1, 2, 3];
 				} else if ($_POST["rx"] == 1) {
-					$modeInts = [4, 5, 6, 7];
+					$modeInts = [4, 5, 6];
 				} else if ($_POST["rx"] == 2) {
 					$modeInts = [8];
 				}
@@ -691,8 +691,14 @@ class D {
 				if ($_POST["rx"] == 0) {
 					$modeInts = [$_POST["gm"]];
 				} else if ($_POST["rx"] == 1) {
+					if ($_POST["gm"] == 3) {
+						throw new Exception("Relax does not support mania");
+					}
 					$modeInts = [$_POST["gm"] + 4];
 				} else if ($_POST["rx"] == 2) {
+					if ($_POST["gm"] != 0) {
+						throw new Exception("Autopilot only supports standard");
+					}
 					$modeInts = [$_POST["gm"] + 8];
 				}
 			}
