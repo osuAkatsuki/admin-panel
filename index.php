@@ -45,9 +45,6 @@ if (isset($_GET['p'])) {
 		}
 		$title = setTitle($p);
 	}
-} elseif (isset($_GET['u']) && !empty($_GET['u'])) {
-	$title = setTitle('u');
-	$p = 'u';
 } elseif (isset($_GET['__PAGE__'])) {
 	$pages_split = explode('/', $_GET['__PAGE__']);
 	if (count($_GET['__PAGE__']) < 2) {
@@ -84,42 +81,17 @@ if (isset($_GET['p'])) {
     <!-- Dynamic title -->
     <?php echo $title; ?>
 
-	<?php
-if ($p == 27) {
-	global $ServerStatusConfig;
-	if ($ServerStatusConfig['netdata']['enable']) {
-		echo '
-						<!-- Netdata script -->
-						<script type="text/javascript">var netdataServer = "'.$ServerStatusConfig['netdata']['server_url'].'";</script>
-						<script type="text/javascript" src="'.$ServerStatusConfig['netdata']['server_url'].'/dashboard.js"></script>
-				';
-	}
-}
-?>
-
     <!-- Bootstrap Core CSS -->
     <link href="./css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Bootstrap select CSS -->
     <link href="./css/bootstrap-select.min.css" rel="stylesheet">
 
-    <!-- Slider CSS -->
-    <link href="./css/slider.css" rel="stylesheet">
-
-    <!-- Bootstrap Font Awesome Picker CSS -->
-    <link href="./css/fontawesome-iconpicker.min.css" rel="stylesheet">
-
     <!-- Bootstrap Color Picker CSS -->
     <link href="./css/bootstrap-colorpicker.min.css" rel="stylesheet">
 
-    <!-- SCEditor CSS -->
-	<link rel="stylesheet" href="./css/themes/default.css" type="text/css" media="all" />
-
     <!-- Datepicker CSS -->
     <link href="./css/bootstrap-datepicker3.min.css" rel="stylesheet">
-
-    <!-- Animate CSS -->
-    <link rel="stylesheet" href="./css/animate.css">
 
     <!-- Custom CSS -->
     <link href="./css/style-desktop.css" rel="stylesheet">
@@ -134,7 +106,6 @@ if ($p == 27) {
     <meta name="theme-color" content="#ffffff">
 
     <meta name=viewport content="width=device-width, initial-scale=1">
-	<script src='https://www.google.com/recaptcha/api.js'></script>
 	<?php
 		if ($isBday && $p == 1) {
 			echo '
@@ -192,26 +163,14 @@ if ($p < 100) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-migrate-3.0.0.js"></script>
 
-	<!-- User lookup -->
-	<?php
-		echo '<script src="/js/typeahead.min.js"></script>
-			<script src="/js/userlookup.js"></script>';
-	?>
-
     <!-- Bootstrap Core JavaScript -->
     <script src="./js/bootstrap.min.js"></script>
 
     <!-- Bootstrap Select JavaScript -->
     <script src="./js/bootstrap-select.min.js"></script>
 
-    <!-- Slider JavaScript -->
-    <script src="./js/bootstrap-slider.js"></script>
-
     <!-- <!-- Bootstrap Color Picker JavaScript  -->
     <script src="./js/bootstrap-colorpicker.min.js"></script>
-
-    <!-- SCEditor JavaScript -->
-	<script src="./js/jquery.sceditor.bbcode.js"></script>
 
 	<!-- Datepicker -->
 	<script src="./js/bootstrap-datepicker.min.js"></script>
@@ -282,8 +241,6 @@ if ($p < 100) {
 		$(document).ready(function () {
 			// Initialize stuff
 			$('.colorpicker').colorpicker({format:"hex"});
-			$('.sceditor').sceditor({plugins: "bbcode", resizeEnabled: false, toolbarExclude: "font,table,code,quote,ltr,rtl" , style: "css/jquery.sceditor.default.css"});
-			$(".spoiler-trigger").click(function() {$(this).parent().next().collapse('toggle');});
 			$("[data-toggle=popover]").popover();
 			$(window).resize(function () {
 				updateResolution()
@@ -398,56 +355,6 @@ switch ($p) {
                 ';
 	break;
 
-	// Supporter page
-	case 34:
-		echo '
-			<!-- <script src="./js/money.min.js"></script> -->
-			<script src="./js/bitcoinprices.js"></script>
-			<script type="text/javascript">
-				// Called when slider changes
-				function onSlide() {
-					updatePrice(slider.getValue());
-				};
-
-				// Updates price in EUR/USD/GBP, months number and paypal.me link
-				var updatePrice = function (months) {
-					try {
-						var priceEUR = Math.pow(months * 30 * 0.2, 0.70).toFixed(2);
-						var str = "<b>"+months+"</b> months = <b>"+priceEUR+"€</b>"+"<br>";
-						var priceUSD = bitcoinprices.convert(priceEUR, "EUR", "USD").toFixed(2);
-						var priceMBTC = (bitcoinprices.convert(priceEUR, "EUR", "BTC")*1000).toFixed(4);
-						str += "<i>("+priceUSD+"$ USD/"+priceMBTC+" mBTC)</i>"
-						$("#supporter-btc").show();
-					} catch(err) {
-						var str = "<b>Move the slider above to show the price</b>";
-						$("#supporter-btc").hide();
-					}
-
-					$("#supporter-prices").html(str);
-					$("#supporter-btc-price").html(priceMBTC);
-					$("#paypal-supporter-period").val(months+" months");
-					$("#pay").attr("href", "https://paypal.me/ripplemoe/"+priceEUR);
-					$("#paypal-price").html(priceEUR);
-				};
-
-
-				// Slider
-				var slider = $(".slider").slider().on("slide", onSlide).data("slider");
-
-				// Load currencies
-				bitcoinprices.init({
-					url: "https://api.bitcoinaverage.com/ticker/all",
-					marketRateVariable: "24h_avg",
-					currencies: ["BTC", "USD", "EUR"],
-					defaultCurrency: "BTC",
-				});
-
-				// Initialize price for 1 month
-				updatePrice(1);
-			</script>
-		';
-	break;
-
 	case 119:
 	echo '
 		<script type="text/javascript">
@@ -460,50 +367,6 @@ switch ($p) {
 			}
 		</script>
 	';
-	break;
-
-	case 37:
-	echo '<script type="text/javascript">
-		$(document).ready (function() {
-			setInterval(function() {
-				$("*").not(".container").not("head").not("body").not("#content").each(function() {
-					var animations = [
-						"bounce",
-						"flash",
-						"pulse",
-						"rubberBand",
-						"shake",
-						"swing",
-						"tada",
-						"wobble",
-						"jello",
-						"hinge",
-					];
-					var meme = animations[Math.floor(Math.random() * animations.length)];
-					$(this).addClass("animated infinite "+meme);
-					$(".carroponte").each(function() {
-						$(this).show();
-					});
-				});
-			},5500);
-		});
-	</script>';
-	break;
-
-	case 6:
-		echo '<script>
-			$(".icp").on("iconpickerSelected", function(e) {
-				var faClass = $("#badge-icon-input").val();
-				if (!faClass.startsWith("fa-")) {
-					return;
-				}
-				$("#badge-icon").attr("class", "fa "+faClass+" fa-2x").html();
-			});
-
-			$("#badge-name-input").keyup(function() {
-				$("#badge-name").text($("#badge-name-input").val()).html();
-			});
-		</script>';
 	break;
 
 	case 124:
@@ -540,11 +403,6 @@ switch ($p) {
 		})
 		</script>";
 	break;
-}
-
-// Userpage JS
-if (isset($_GET["u"]) && !isset($_GET["p"])) {
-	echo '<script src="/js/user.js"></script>';
 }
 ?>
 

@@ -175,241 +175,232 @@ function printPage($p) {
 			<p>We detected an attempt to violate an user account. If you didn't do this on purpose, you can ignore this message and login into your account normally. However if you changed your cookies on purpose and you were trying to access another user's account, don't do that.</p>
 			<p>By the way, the attacked user is aware that you tried to get access to their account, and we removed all permanent login hashes. We wish you good luck in even finding the new 's' cookie for that user.</p>
 			<p>Don't even try.</p>", 9001 => "don't even try"];
-	if (!isset($_GET['u']) || empty($_GET['u'])) {
-		// Standard page
-		switch ($p) {
-				// Error page
+	// Standard page
+	switch ($p) {
+			// Error page
 
-			case 99:
-				if (isset($_GET['e']) && isset($exceptions[$_GET['e']])) {
-					$e = $_GET['e'];
-				} elseif (isset($_GET['e']) && strlen($_GET['e']) > 12 && substr($_GET['e'], 0, 12) == 'do_missing__') {
-					$s = substr($_GET['e'], 12);
-					if (preg_match('/^[a-z0-9-]*$/i', $s) === 1) {
-						P::ExceptionMessage('Missing parameter while trying to do action: '.$s);
-						$e = -1;
-					} else {
-						$e = '9001';
-					}
+		case 99:
+			if (isset($_GET['e']) && isset($exceptions[$_GET['e']])) {
+				$e = $_GET['e'];
+			} elseif (isset($_GET['e']) && strlen($_GET['e']) > 12 && substr($_GET['e'], 0, 12) == 'do_missing__') {
+				$s = substr($_GET['e'], 12);
+				if (preg_match('/^[a-z0-9-]*$/i', $s) === 1) {
+					P::ExceptionMessage('Missing parameter while trying to do action: '.$s);
+					$e = -1;
 				} else {
 					$e = '9001';
 				}
-				if ($e != -1) {
-					P::ExceptionMessage($exceptions[$e]);
-				}
-			break;
-				// Home
+			} else {
+				$e = '9001';
+			}
+			if ($e != -1) {
+				P::ExceptionMessage($exceptions[$e]);
+			}
+		break;
+			// Home
 
-			case 1:
-				P::HomePage();
-			break;
-				// Admin panel (> 100 pages are admin ones)
-			case 100:
-				sessionCheckAdmin();
-				P::AdminDashboard();
-			break;
-				// Admin panel - System settings
+		case 1:
+			P::HomePage();
+		break;
+			// Admin panel (> 100 pages are admin ones)
+		case 100:
+			sessionCheckAdmin();
+			P::AdminDashboard();
+		break;
+			// Admin panel - System settings
 
-			case 101:
-				sessionCheckAdmin(Privileges::AdminManageSettings);
-				P::AdminSystemSettings();
-			break;
-				// Admin panel - Users
+		case 101:
+			sessionCheckAdmin(Privileges::AdminManageSettings);
+			P::AdminSystemSettings();
+		break;
+			// Admin panel - Users
 
-			case 102:
-				sessionCheckAdmin(Privileges::AdminManageUsers);
-				P::AdminUsers();
-			break;
-				// Admin panel - Edit user
+		case 102:
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			P::AdminUsers();
+		break;
+			// Admin panel - Edit user
 
-			case 103:
-				sessionCheckAdmin(Privileges::AdminManageUsers);
-				P::AdminEditUser();
-			break;
-				// Admin panel - Change identity
+		case 103:
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			P::AdminEditUser();
+		break;
+			// Admin panel - Change identity
 
-			case 104:
-				sessionCheckAdmin(Privileges::AdminManageUsers);
-				P::AdminChangeIdentity();
-			break;
-				// Admin panel - Badges
+		case 104:
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			P::AdminChangeIdentity();
+		break;
+			// Admin panel - Badges
 
-			case 108:
-				sessionCheckAdmin(Privileges::AdminManageBadges);
-				P::AdminBadges();
-			break;
-				// Admin panel - Edit badge
+		case 108:
+			sessionCheckAdmin(Privileges::AdminManageBadges);
+			P::AdminBadges();
+		break;
+			// Admin panel - Edit badge
 
-			case 109:
-				sessionCheckAdmin(Privileges::AdminManageBadges);
-				P::AdminEditBadge();
-			break;
-				// Admin panel - Edit uesr badges
+		case 109:
+			sessionCheckAdmin(Privileges::AdminManageBadges);
+			P::AdminEditBadge();
+		break;
+			// Admin panel - Edit uesr badges
 
-			case 110:
-				sessionCheckAdmin(Privileges::AdminManageUsers);
-				P::AdminEditUserBadges();
-			break;
-				// Admin panel - System settings
+		case 110:
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			P::AdminEditUserBadges();
+		break;
+			// Admin panel - System settings
 
-			case 111:
-				sessionCheckAdmin(Privileges::AdminManageSettings);
-				P::AdminBanchoSettings();
-			break;
+		case 111:
+			sessionCheckAdmin(Privileges::AdminManageSettings);
+			P::AdminBanchoSettings();
+		break;
 
-			// Admin panel - Admin logs
-			case 116:
-				sessionCheckAdmin(Privileges::AdminViewRAPLogs);
-				P::AdminLog();
-			break;
+		// Admin panel - Admin logs
+		case 116:
+			sessionCheckAdmin(Privileges::AdminViewRAPLogs);
+			P::AdminLog();
+		break;
 
-			// Admin panel - Beatmap rank requests
-			case 117:
-				sessionCheckAdmin(Privileges::AdminManageBeatmaps);
-				P::AdminRankRequests();
-			break;
+		// Admin panel - Beatmap rank requests
+		case 117:
+			sessionCheckAdmin(Privileges::AdminManageBeatmaps);
+			P::AdminRankRequests();
+		break;
 
-			// Admin panel - Privileges Groups
-			case 118:
-				sessionCheckAdmin(Privileges::AdminManagePrivileges);
-				P::AdminPrivilegesGroupsMain();
-			break;
+		// Admin panel - Privileges Groups
+		case 118:
+			sessionCheckAdmin(Privileges::AdminManagePrivileges);
+			P::AdminPrivilegesGroupsMain();
+		break;
 
-			// Admin panel - Privileges Groups
-			case 119:
-				sessionCheckAdmin(Privileges::AdminCaker); // edit needs dev
-				P::AdminEditPrivilegesGroups();
-			break;
+		// Admin panel - Privileges Groups
+		case 119:
+			sessionCheckAdmin(Privileges::AdminCaker); // edit needs dev
+			P::AdminEditPrivilegesGroups();
+		break;
 
-			// Admin panel - Show users in group
-			case 120:
-				sessionCheckAdmin(Privileges::AdminManagePrivileges);
-				P::AdminShowUsersInPrivilegeGroup();
-			break;
+		// Admin panel - Show users in group
+		case 120:
+			sessionCheckAdmin(Privileges::AdminManagePrivileges);
+			P::AdminShowUsersInPrivilegeGroup();
+		break;
 
-			// Admin panel - Give donor to user
-			case 121:
-				sessionCheckAdmin(Privileges::AdminCaker);
-				P::AdminGiveDonor();
-			break;
+		// Admin panel - Give donor to user
+		case 121:
+			sessionCheckAdmin(Privileges::AdminCaker);
+			P::AdminGiveDonor();
+		break;
 
-			// Admin panel - Rollback User (Regular)
-			case 122:
-				sessionCheckAdmin(Privileges::AdminWipeUsers);
-				P::AdminRollback();
-			break;
+		// Admin panel - Rollback User (Regular)
+		case 122:
+			sessionCheckAdmin(Privileges::AdminWipeUsers);
+			P::AdminRollback();
+		break;
 
-			// Admin panel - Wipe User (Regular)
-			case 123:
-				sessionCheckAdmin(Privileges::AdminWipeUsers);
-				P::AdminWipe();
-			break;
+		// Admin panel - Wipe User (Regular)
+		case 123:
+			sessionCheckAdmin(Privileges::AdminWipeUsers);
+			P::AdminWipe();
+		break;
 
-			// Admin panel - Rank beatmap
-			case 124:
-				sessionCheckAdmin(Privileges::AdminManageBeatmaps);
-				P::AdminRankBeatmap();
-			break;
+		// Admin panel - Rank beatmap
+		case 124:
+			sessionCheckAdmin(Privileges::AdminManageBeatmaps);
+			P::AdminRankBeatmap();
+		break;
 
-			// Admin panel - Rank beatmap manually
-			case 125:
-				sessionCheckAdmin(Privileges::AdminManageBeatmaps);
-				P::AdminRankBeatmapManually();
-			break;
+		// Admin panel - Rank beatmap manually
+		case 125:
+			sessionCheckAdmin(Privileges::AdminManageBeatmaps);
+			P::AdminRankBeatmapManually();
+		break;
 
-			// Admin panel - Reports
-			case 126:
-				sessionCheckAdmin(Privileges::AdminManageReports);
-				P::AdminViewReports();
-			break;
+		// Admin panel - Reports
+		case 126:
+			sessionCheckAdmin(Privileges::AdminManageReports);
+			P::AdminViewReports();
+		break;
 
-			// Admin panel - View report
-			case 127:
-				sessionCheckAdmin(Privileges::AdminManageReports);
-				P::AdminViewReport();
-			break;
+		// Admin panel - View report
+		case 127:
+			sessionCheckAdmin(Privileges::AdminManageReports);
+			P::AdminViewReport();
+		break;
 
-			// Admin panel - View anticheat reports
-			case 132:
-				sessionCheckAdmin(Privileges::AdminManageUsers);
-				P::AdminViewAnticheatReports();
-			break;
+		// Admin panel - View anticheat reports
+		case 132:
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			P::AdminViewAnticheatReports();
+		break;
 
-			// Admin panel - View anticheat report
-			case 133:
-				sessionCheckAdmin(Privileges::AdminManageUsers);
-				P::AdminViewAnticheatReport();
-			break;
+		// Admin panel - View anticheat report
+		case 133:
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			P::AdminViewAnticheatReport();
+		break;
 
-			// Admin panel - Restore scores (Regular)
-			/*
-			case 134:
-				sessionCheckAdmin(Privileges::AdminWipeUsers);
-				P::AdminRestoreScores();
-			break;*/
+		// Admin panel - Restore scores (Regular)
+		/*
+		case 134:
+			sessionCheckAdmin(Privileges::AdminWipeUsers);
+			P::AdminRestoreScores();
+		break;*/
 
-			// Admin panel - Search users by IP
-			case 135:
-				sessionCheckAdmin(Privileges::AdminManagePrivileges); // pre-2020-12-27: AdminManageUsers
-				P::AdminSearchUserByIP();
-			break;
+		// Admin panel - Search users by IP
+		case 135:
+			sessionCheckAdmin(Privileges::AdminManagePrivileges); // pre-2020-12-27: AdminManageUsers
+			P::AdminSearchUserByIP();
+		break;
 
-			// Admin panel - Search users by IP - Results
-			case 136:
-				sessionCheckAdmin(Privileges::AdminManagePrivileges); // pre-2020-12-27: AdminManageUsers
-				P::AdminSearchUserByIPResults();
-			break;
+		// Admin panel - Search users by IP - Results
+		case 136:
+			sessionCheckAdmin(Privileges::AdminManagePrivileges); // pre-2020-12-27: AdminManageUsers
+			P::AdminSearchUserByIPResults();
+		break;
 
-			// Admin panel - (Un)restrict user
-			case 137:
-				sessionCheckAdmin(Privileges::AdminBanUsers);
-				P::AdminRestrictUnrestrictReason();
-			break;
+		// Admin panel - (Un)restrict user
+		case 137:
+			sessionCheckAdmin(Privileges::AdminBanUsers);
+			P::AdminRestrictUnrestrictReason();
+		break;
 
-			// Show top plays from last 1w
-			case 138:
-				sessionCheckAdmin(); // TODO: AdminScorewatch?
-				P::AdminRecentTopPlays();
-			break;
+		// Show top plays from last 1w
+		case 138:
+			sessionCheckAdmin(); // TODO: AdminScorewatch?
+			P::AdminRecentTopPlays();
+		break;
 
-			// Admin panel - (Un)ban user
-			case 139:
-				sessionCheckAdmin(Privileges::AdminBanUsers);
-				P::AdminBanUnbanReason();
-			break;
+		// Admin panel - (Un)ban user
+		case 139:
+			sessionCheckAdmin(Privileges::AdminBanUsers);
+			P::AdminBanUnbanReason();
+		break;
 
-			// Admin panel - Restore scores (Relax)
-			/*case 234:
-				sessionCheckAdmin(Privileges::AdminWipeUsers);
-				P::AdminRestoreScoresRelax();
-			break;*/
+		// Admin panel - Restore scores (Relax)
+		/*case 234:
+			sessionCheckAdmin(Privileges::AdminWipeUsers);
+			P::AdminRestoreScoresRelax();
+		break;*/
 
-			// 404 page
-			default:
-				define('NotFound', '<br><h1>404</h1><p>Page not found. Meh.</p>');
-				if ($p < 100)
-					echo NotFound;
-				else {
-						echo '
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <div id="content">
-					' . NotFound . '
-                    </div>
-                </div>
-            </div>
-        </div>';
-				}
-			break;
-		}
-	} else {
-		if (hasPrivilege(Privileges::AdminAccessRAP)) {
-			// Userpage
-			P::UserPage($_GET["u"], isset($_GET['m']) ? $_GET['m'] : -1);
-		} else {
-			echo "how did i get here?";
-		}
+		// 404 page
+		default:
+			define('NotFound', '<br><h1>404</h1><p>Page not found. Meh.</p>');
+			if ($p < 100)
+				echo NotFound;
+			else {
+					echo '
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12 text-center">
+				<div id="content">
+				' . NotFound . '
+				</div>
+			</div>
+		</div>
+	</div>';
+			}
+		break;
 	}
 }
 
@@ -459,7 +450,6 @@ function printNavbar() {
 	}
 	// Right elements
 	echo '</ul><ul class="nav navbar-nav navbar-right">';
-	echo '<li><input type="text" class="form-control" name="query" id="query" placeholder="Search users..."></li>';
 	// Logged in right elements
 	if (checkLoggedIn()) {
 		global $URL;
@@ -518,7 +508,7 @@ function printAdminSidebar() {
 						}*/
 
 						if (hasPrivilege(Privileges::AdminViewRAPLogs))
-							echo '<li class="animated infinite pulse"><a href="index.php?p=116"><i class="fa fa-calendar"></i>	Admin log&nbsp;&nbsp;&nbsp;<div class="label label-primary">Free botnets</div></a></li>';
+							echo '<li><a href="index.php?p=116"><i class="fa fa-calendar"></i>	Admin log&nbsp;&nbsp;&nbsp;<div class="label label-primary">Free botnets</div></a></li>';
 
 						// echo '<li><a href="https://app.datadoghq.com/apm/home?env=production"><i class="fa fa-bar-chart"></i>	Service monitoring</a></li>';
 						echo "</ul>
