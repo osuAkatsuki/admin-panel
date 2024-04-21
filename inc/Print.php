@@ -1603,7 +1603,7 @@ class P {
 			}
 		}
 		echo '<p align="center">
-		<object data="https://akatsuki.pw/static/images/logos/logo.png" type="image/png" class="animated bounceIn akatsuki-logo"></object>
+		<object data="https://akatsuki.pw/static/images/logos/logo.png" type="image/png" class="akatsuki-logo"></object>
 		</p>';
 		global $isBday;
 		if ($isBday) {
