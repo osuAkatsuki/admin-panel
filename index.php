@@ -398,56 +398,6 @@ switch ($p) {
                 ';
 	break;
 
-	// Supporter page
-	case 34:
-		echo '
-			<!-- <script src="./js/money.min.js"></script> -->
-			<script src="./js/bitcoinprices.js"></script>
-			<script type="text/javascript">
-				// Called when slider changes
-				function onSlide() {
-					updatePrice(slider.getValue());
-				};
-
-				// Updates price in EUR/USD/GBP, months number and paypal.me link
-				var updatePrice = function (months) {
-					try {
-						var priceEUR = Math.pow(months * 30 * 0.2, 0.70).toFixed(2);
-						var str = "<b>"+months+"</b> months = <b>"+priceEUR+"€</b>"+"<br>";
-						var priceUSD = bitcoinprices.convert(priceEUR, "EUR", "USD").toFixed(2);
-						var priceMBTC = (bitcoinprices.convert(priceEUR, "EUR", "BTC")*1000).toFixed(4);
-						str += "<i>("+priceUSD+"$ USD/"+priceMBTC+" mBTC)</i>"
-						$("#supporter-btc").show();
-					} catch(err) {
-						var str = "<b>Move the slider above to show the price</b>";
-						$("#supporter-btc").hide();
-					}
-
-					$("#supporter-prices").html(str);
-					$("#supporter-btc-price").html(priceMBTC);
-					$("#paypal-supporter-period").val(months+" months");
-					$("#pay").attr("href", "https://paypal.me/ripplemoe/"+priceEUR);
-					$("#paypal-price").html(priceEUR);
-				};
-
-
-				// Slider
-				var slider = $(".slider").slider().on("slide", onSlide).data("slider");
-
-				// Load currencies
-				bitcoinprices.init({
-					url: "https://api.bitcoinaverage.com/ticker/all",
-					marketRateVariable: "24h_avg",
-					currencies: ["BTC", "USD", "EUR"],
-					defaultCurrency: "BTC",
-				});
-
-				// Initialize price for 1 month
-				updatePrice(1);
-			</script>
-		';
-	break;
-
 	case 119:
 	echo '
 		<script type="text/javascript">
