@@ -59,6 +59,9 @@ function redirect($url) {
 	exit();
 }
 
+function redirect_err($e) {
+	redirect('index.php?p=102&e='.$e);
+}
 
 /*
  * outputVariable
@@ -145,6 +148,7 @@ function setTitle($p) {
 		136 => 'Search users by IP - Results',
 		137 => '(Un)restrict user',
 		139 => '(Un)ban user',
+		140 => 'Manage Clan',
 		//234 => 'Restore scores (Relax)',
 	];
 	if (isset($namesRipple[$p])) {
@@ -373,6 +377,10 @@ function printPage($p) {
 		case 139:
 			sessionCheckAdmin(Privileges::AdminBanUsers);
 			P::AdminBanUnbanReason();
+		break;
+		case 140:
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			P::AdminManageClan();
 		break;
 
 		// Admin panel - Restore scores (Relax)

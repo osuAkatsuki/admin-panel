@@ -3482,4 +3482,56 @@ class P {
 			redirect('index.php?p=135&e='.$e->getMessage());
 		}
 	}
+
+	public static function AdminManageClan() {
+		if (!isset($_GET['id']) || empty($_GET['id'])) {
+			redirect_err('Invalid clan ID!');
+		}
+
+		$clan = $GLOBALS['db']->fetch('SELECT * FROM clans WHERE id = ? LIMIT 1', $_GET['id']);
+		if (!$userData) {
+			redirect_err("That clan doesn't exist");
+		}
+
+		echo '<div id="wrapper">';
+		printAdminSidebar();
+		echo '<div id="page-content-wrapper">';
+		// Maintenance check
+		self::MaintenanceStuff();
+		// Print Success if set
+		if (isset($_GET['s']) && !empty($_GET['s'])) {
+			self::SuccessMessageStaccah($_GET['s']);
+		}
+		// Print Exception if set
+		if (isset($_GET['e']) && !empty($_GET['e'])) {
+			self::ExceptionMessageStaccah($_GET['e']);
+		}
+
+		echo '<p align="center"><font size=5><i class="fa fa-user"></i>	Manage Clan</font></p>';
+		echo '<table class="table table-striped table-hover table-75-center edit-user">';
+		echo '<tbody><form id="system-settings-form" action="submit.php" method="POST">
+		<input name="csrf" type="hidden" value="'.csrfToken().'">
+		<input name="action" value="saveManageClan" hidden>';
+
+		echo '<tr>
+		<td>ID</td>
+		<td><p class="text-center"><input type="number" name="id" class="form-control" value="'.$clan['id'].'" readonly></td>
+		</tr>';
+
+		echo '<tr>
+		<td>Name</td>
+		<td><p class="text-center"><input type="text" name="name" class="form-control" value="'.$clan['name'].'"></td>
+		</tr>';
+
+		echo '<tr>
+		<td>Tag</td>
+		<td><p class="text-center"><input type="text" name="tag" class="form-control" value="'.$clan['tag'].'"></td>
+		</tr>';
+
+		echo '</form></tbody>';
+		echo '</table>';
+
+		echo '</div>
+				</div>';
+	}
 }
