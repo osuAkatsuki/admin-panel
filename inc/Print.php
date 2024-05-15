@@ -953,9 +953,10 @@ class P {
 				foreach ($ips as $ip) {
 					echo "<li>$ip[ip] <a class='getcountry' data-ip='$ip[ip]' title='Click to retrieve IP country'>(?)</a> ($ip[occurencies])</li>";
 				}
+				echo '</ul></td></tr>';
 			}
-			echo '</ul></td></tr>';
-			echo '</tbody></form>';
+			
+			echo '</form></tbody>';
 			echo '</table>';
 			echo '<div class="text-center table-50-center bottom-padded">
 					<button type="submit" form="system-settings-form" class="btn btn-primary">Save changes</button><br><br>
