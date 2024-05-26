@@ -4,8 +4,9 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY sites-enabled/ /etc/nginx/sites-enabled/
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
+COPY nginx/fastcgi.conf /etc/nginx/fastcgi.conf
+COPY nginx/sites-enabled/ /etc/nginx/sites-enabled/
 
 EXPOSE 80
 
