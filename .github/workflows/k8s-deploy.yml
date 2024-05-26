@@ -28,7 +28,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: osuAkatsuki/score-service
+          images: osuAkatsuki/admin-panel
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -37,8 +37,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/score-service:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/score-service:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/admin-panel:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/admin-panel:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Get kubeconfig from github secrets
@@ -67,7 +67,7 @@ jobs:
 
       - name: Clear pending deployments
         run: |
-          kubectl delete secret -l 'status in (pending-install, pending-upgrade, pending-rollback),name=score-service-production'
+          kubectl delete secret -l 'status in (pending-install, pending-upgrade, pending-rollback),name=admin-panel-production'
 
       - name: Show manifest diff since previous release
         run: |
@@ -75,7 +75,7 @@ jobs:
           --allow-unreleased \
           --color=true \
           --values chart/values.yaml \
-          score-service-production \
+          admin-panel-production \
           common-helm-charts/microservice-base/
 
       - name: Deploy service to production cluster
@@ -86,5 +86,5 @@ jobs:
             --wait --timeout 10m \
             --cleanup-on-fail \
             --values chart/values.yaml \
-            score-service-production \
+            admin-panel-production \
             common-helm-charts/microservice-base/
