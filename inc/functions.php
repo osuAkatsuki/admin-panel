@@ -134,12 +134,6 @@ function setTitle($p) {
 		125 => 'Rank beatmap manually',
 		126 => 'Reports',
 		127 => 'View report',
-		128 => 'Cakes',
-		129 => 'View cake',
-		130 => 'Cake recipes',
-		131 => 'View cake recipe',
-		132 => 'View anticheat reports',
-		133 => 'View anticheat report',
 		135 => 'Search users by IP',
 		136 => 'Search users by IP - Results',
 		137 => '(Un)restrict user',
@@ -324,18 +318,6 @@ function printPage($p) {
 			P::AdminViewReport();
 		break;
 
-		// Admin panel - View anticheat reports
-		case 132:
-			sessionCheckAdmin(Privileges::AdminManageUsers);
-			P::AdminViewAnticheatReports();
-		break;
-
-		// Admin panel - View anticheat report
-		case 133:
-			sessionCheckAdmin(Privileges::AdminManageUsers);
-			P::AdminViewAnticheatReport();
-		break;
-
 		// Admin panel - Search users by IP
 		case 135:
 			sessionCheckAdmin(Privileges::AdminManagePrivileges); // pre-2020-12-27: AdminManageUsers
@@ -467,7 +449,6 @@ function printAdminSidebar() {
 
 						if (hasPrivilege(Privileges::AdminManageUsers)) {
 							echo '<li><a href="index.php?p=102"><i class="fa fa-user"></i>	Users</a></li>';
-							//echo '<li><a href="index.php?p=132"><i class="fa fa-fire"></i>	Anticheat reports</a></li>';
 						}
 
 						if (hasPrivilege(Privileges::AdminManageReports))
@@ -1502,52 +1483,6 @@ function giveDonor($userID, $months, $add=true, $premium=false) {
 	$GLOBALS["db"]->execute("UPDATE users SET can_custom_badge = 1, show_custom_badge = 1 WHERE id = ?", [$userID]);
 
 	return $monthsExpire;
-}
-
-function isJson($string) {
-	json_decode($string);
-	return (json_last_error() == JSON_ERROR_NONE);
-}
-
-function prettyPrintJsonString($s) {
-	return json_encode(json_decode($s), JSON_PRETTY_PRINT);
-}
-
-function getTimestampFromStr($str, $fmt="Y-m-d H:i") {
-	$dateTime = DateTime::createFromFormat($fmt, $str);
-	if ($dateTime === FALSE) {
-		throw new Exception("Invalid timestamp string");
-	}
-	return $dateTime->getTimestamp();
-}
-
-function jsonArrayToHtmlTable($arr) {
-	$str = "<table class='anticheattable'><tbody>";
-	foreach ($arr as $key => $val) {
-			$str .= "<tr>";
-			$str .= "<td>$key</td>";
-			$str .= "<td>";
-			if (is_array($val)) {
-					if (!empty($val)) {
-							$str .= jsonArrayToHtmlTable($val);
-					}
-			} else {
-					$str .= "<strong>".(is_bool($val) ? ($val ? "true" : "false") : $val)."</strong>";
-			}
-			$str .= "</td></tr>";
-	}
-	$str .= "</tbody></table>";
-
-	return $str;
-}
-
-function jsonObjectToHtmlTable($jsonString="") {
-		$arr = json_decode($jsonString, true);
-		$html = "";
-		if ($arr && is_array($arr)) {
-				$html .= jsonArrayToHtmlTable($arr);
-		}
-		return $html;
 }
 
 function randomFileName($path, $suffix) {
