@@ -140,12 +140,10 @@ function setTitle($p) {
 		131 => 'View cake recipe',
 		132 => 'View anticheat reports',
 		133 => 'View anticheat report',
-		//134 => 'Restore scores',
 		135 => 'Search users by IP',
 		136 => 'Search users by IP - Results',
 		137 => '(Un)restrict user',
 		139 => '(Un)ban user',
-		//234 => 'Restore scores (Relax)',
 	];
 	if (isset($namesRipple[$p])) {
 		return __maketitle('Akatsuki', $namesRipple[$p]);
@@ -338,13 +336,6 @@ function printPage($p) {
 			P::AdminViewAnticheatReport();
 		break;
 
-		// Admin panel - Restore scores (Regular)
-		/*
-		case 134:
-			sessionCheckAdmin(Privileges::AdminWipeUsers);
-			P::AdminRestoreScores();
-		break;*/
-
 		// Admin panel - Search users by IP
 		case 135:
 			sessionCheckAdmin(Privileges::AdminManagePrivileges); // pre-2020-12-27: AdminManageUsers
@@ -374,12 +365,6 @@ function printPage($p) {
 			sessionCheckAdmin(Privileges::AdminBanUsers);
 			P::AdminBanUnbanReason();
 		break;
-
-		// Admin panel - Restore scores (Relax)
-		/*case 234:
-			sessionCheckAdmin(Privileges::AdminWipeUsers);
-			P::AdminRestoreScoresRelax();
-		break;*/
 
 		// 404 page
 		default:
@@ -484,11 +469,6 @@ function printAdminSidebar() {
 							echo '<li><a href="index.php?p=102"><i class="fa fa-user"></i>	Users</a></li>';
 							//echo '<li><a href="index.php?p=132"><i class="fa fa-fire"></i>	Anticheat reports</a></li>';
 						}
-
-						/*
-						if (hasPrivilege(Privileges::AdminWipeUsers)) {
-							echo '<li><a href="index.php?p=134"><i class="fa fa-undo"></i>	Restore scores</a></li>';
-						}*/
 
 						if (hasPrivilege(Privileges::AdminManageReports))
 							echo '<li><a href="index.php?p=126"><i class="fa fa-flag"></i>	Reports</a></li>';

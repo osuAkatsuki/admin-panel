@@ -170,23 +170,6 @@ try {
 			sessionCheckAdmin(Privileges::AdminManageReports);
 			D::UselessUsefulReport();
 		break;
-		/*
-		case 'restoreScoresSearchUser':
-			sessionCheckAdmin(Privileges::AdminWipeUsers);
-			D::RestoreScoresSearchUser();
-		break;
-		case 'restoreScoresSearchUserRelax':
-			sessionCheckAdmin(Privileges::AdminWipeUsers);
-			D::RestoreScoresSearchUserRelax();
-		break;
-		case 'restoreScores':
-			sessionCheckAdmin(Privileges::AdminWipeUsers);
-			D::RestoreScores();
-		break;
-		case 'restoreScoresRelax':
-			sessionCheckAdmin(Privileges::AdminWipeUsers);
-			D::RestoreScoresRelax();
-		break;*/
 		case 'setMainMenuIcon':
 			sessionCheckAdmin(Privileges::AdminManageSettings);
 			D::SetMainMenuIcon();
