@@ -48,7 +48,6 @@ COPY nginx/sites-enabled/ /etc/nginx/sites-enabled/
 
 RUN wget https://bootstrap.pypa.io/get-pip.py \
     && python3.10 get-pip.py \
-    && pip install install git+https://github.com/osuAkatsuki/akatsuki-cli \
     && pip install git+https://github.com/osuAkatsuki/akatsuki-cli \
     && rm get-pip.py
 
