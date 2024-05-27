@@ -30,7 +30,8 @@ RUN apt install -y \
     php7.2-xmlrpc \
     php7.2-zip \
     php7.2-redis \
-    nginx
+    nginx \
+    git
 
 RUN update-alternatives --set php /usr/bin/php7.2
 
