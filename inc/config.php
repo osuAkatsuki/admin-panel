@@ -23,8 +23,8 @@ $URL = [
 
 // S3 config
 $S3Config = [
-	'access_key' => $_ENV['AWS_ACCESS_KEY_ID'],
-	'secret_key' => $_ENV['AWS_SECRET_ACCESS_KEY'],
+	'access_key_id' => $_ENV['AWS_ACCESS_KEY_ID'],
+	'secret_access_key' => $_ENV['AWS_SECRET_ACCESS_KEY'],
 	'region' => $_ENV['AWS_DEFAULT_REGION'],
 	'bucket' => $_ENV['AWS_BUCKET_NAME'],
 	'endpoint_url' => $_ENV['AWS_ENDPOINT_URL'],
