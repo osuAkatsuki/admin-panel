@@ -19,4 +19,6 @@ fi
 
 # TODO: await deps
 
+service php7.2-fpm start
+
 exec nginx -g "daemon off;"

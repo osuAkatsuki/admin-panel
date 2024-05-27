@@ -1,4 +1,8 @@
 <?php
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 // Database config
 define('DATABASE_HOST', getenv('DATABASE_HOST'));	// MySQL host. usually localhost
 define('DATABASE_USER', getenv('DATABASE_USER'));		// MySQL username
