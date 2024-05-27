@@ -12,6 +12,9 @@ define('DATABASE_PASS', $_ENV['DATABASE_PASS']);		// MySQL password
 define('DATABASE_NAME', $_ENV['DATABASE_NAME']);		// Database name
 define('DATABASE_WHAT', $_ENV['DATABASE_WHAT']);		// "host" or unix socket path
 
+define('REDIS_HOST', $_ENV['REDIS_HOST']);
+define('REDIS_PORT', $_ENV['REDIS_PORT']);
+
 define('DISCORD_WEBHOOK_URL', $_ENV["DISCORD_WEBHOOK_URL"]);
 
 // Server urls, no slash
