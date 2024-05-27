@@ -1252,16 +1252,6 @@ class D {
 				}
 			}
 
-			// Update beatmap set from osu!api if
-			// at least one diff has been unfrozen
-			global $URL;
-			if ($updateCache) {
-				post_content_http($URL["scores"]."/api/v1/cacheBeatmap", [
-					"sid" => $bsid,
-					"refresh" => 1
-				], 30);
-			}
-
 			// Send a message to #announce
 			$bm = $GLOBALS["db"]->fetch("SELECT beatmapset_id, song_name FROM beatmaps WHERE beatmapset_id = ? LIMIT 1", [$bsid]);
 			$msg = "[https://osu.ppy.sh/s/" . $bsid . " " . $bm["song_name"] . "] is now ranked!";
