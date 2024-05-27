@@ -5,8 +5,12 @@ require_once $df.'/../vendor/vlucas/phpdotenv/src/Dotenv.php';
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();
 
+//print db host
+echo 'before ' . getenv('DATABASE_HOST');
+
 // Database config
 define('DATABASE_HOST', getenv('DATABASE_HOST'));	// MySQL host. usually localhost
+echo 'after ' . DATABASE_HOST;
 define('DATABASE_USER', getenv('DATABASE_USER'));		// MySQL username
 define('DATABASE_PASS', getenv('DATABASE_PASS'));		// MySQL password
 define('DATABASE_NAME', getenv('DATABASE_NAME'));		// Database name
