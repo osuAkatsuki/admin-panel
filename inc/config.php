@@ -1,4 +1,6 @@
 <?php
+$df = dirname(__FILE__);
+require_once $df.'/../vendor/vlucas/phpdotenv/src/Dotenv.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
