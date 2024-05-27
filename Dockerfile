@@ -1,5 +1,8 @@
 FROM ubuntu:22.04
 
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+
 WORKDIR /usr/src/app
 
 COPY . .
