@@ -3,6 +3,7 @@ FROM debian:buster
 WORKDIR /usr/src/app
 
 COPY . .
+COPY scripts /scripts
 
 RUN \
     # Install build dependencies
@@ -51,4 +52,7 @@ COPY nginx/nginx.conf /etc/nginx/nginx.conf
 COPY nginx/fastcgi.conf /etc/nginx/fastcgi.conf
 COPY nginx/sites-enabled/ /etc/nginx/sites-enabled/
 
-ENTRYPOINT [ "nginx", "-g", "daemon off;" ]
+RUN apt install -y openssl python3-pip git
+RUN pip install --break-system-packages git+https://github.com/osuAkatsuki/akatsuki-cli
+
+ENTRYPOINT [ "/scripts/entrypoint.sh" ]
