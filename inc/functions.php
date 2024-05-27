@@ -42,7 +42,11 @@ $isBday = date("dm") == "1003";
  ****************************************/
 function redisConnect() {
 	if (!isset($_GLOBALS["redis"])) {
-		$GLOBALS["redis"] = new Predis\Client();
+		$GLOBALS["redis"] = new Predis\Client([
+			'scheme' => 'tcp',
+			'host' => REDIS_HOST,
+			'port' => REDIS_PORT,
+		]);
 	}
 }
 
