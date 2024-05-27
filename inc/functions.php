@@ -5,6 +5,8 @@
  */
 // Include config file and db class
 $df = dirname(__FILE__);
+// Composer
+require_once $df.'/../vendor/autoload.php';
 require_once $df.'/config.php';
 require_once $df.'/db.php';
 require_once $df.'/password_compat.php';
@@ -12,8 +14,6 @@ require_once $df.'/Do.php';
 require_once $df.'/Print.php';
 require_once $df.'/RememberCookieHandler.php';
 require_once $df.'/PrivilegesEnum.php';
-// Composer
-require_once $df.'/../vendor/autoload.php';
 // Helpers
 require_once $df.'/helpers/PasswordHelper.php';
 require_once $df.'/helpers/URL.php';
