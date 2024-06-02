@@ -144,7 +144,8 @@ class P {
 		scores_ap.time > UNIX_TIMESTAMP(NOW()) - 604800
 	ORDER BY scores_ap.pp DESC LIMIT 100');
 
-		$onlineUsers = getJsonCurl("http://127.0.0.1:5001/api/v1/onlineUsers");
+		global $URL;
+		$onlineUsers = getJsonCurl($URL['bancho'] . "/api/v1/onlineUsers");
 		if (!$onlineUsers) {
 			$onlineUsers = 0;
 		} else {
