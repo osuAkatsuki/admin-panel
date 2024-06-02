@@ -27,38 +27,6 @@ class P {
 		}
 		$totalPP = number_format($totalPP);*/
 
-		/* Recent scores */
-
-
-		$recentPlaysVanilla = $GLOBALS['db']->fetchAll('
-		SELECT
-		users.username, scores.userid, scores.time, scores.score, scores.pp, scores.play_mode, scores.mods, beatmaps.song_name, beatmaps.beatmap_id
-		FROM scores
-	INNER JOIN users ON users.id = scores.userid
-	INNER JOIN beatmaps ON scores.beatmap_md5 = beatmaps.beatmap_md5
-	WHERE
-		users.privileges & 1
-	ORDER BY scores.id DESC LIMIT 20');
-
-		$recentPlaysRelax = $GLOBALS['db']->fetchAll('
-		SELECT
-		users.username, scores_relax.userid, scores_relax.time, scores_relax.score, scores_relax.pp, scores_relax.play_mode, scores_relax.mods, beatmaps.song_name, beatmaps.beatmap_id
-		FROM scores_relax
-	INNER JOIN users ON users.id = scores_relax.userid
-	INNER JOIN beatmaps ON scores_relax.beatmap_md5 = beatmaps.beatmap_md5
-	WHERE
-		users.privileges & 1
-	ORDER BY scores_relax.id DESC LIMIT 20');
-
-		$recentPlaysAutopilot = $GLOBALS['db']->fetchAll('
-		SELECT
-		users.username, scores_ap.userid, scores_ap.time, scores_ap.score, scores_ap.pp, scores_ap.play_mode, scores_ap.mods, beatmaps.song_name, beatmaps.beatmap_id
-		FROM scores_ap
-	INNER JOIN users ON users.id = scores_ap.userid
-	INNER JOIN beatmaps ON scores_ap.beatmap_md5 = beatmaps.beatmap_md5
-	WHERE
-		users.privileges & 1
-	ORDER BY scores_ap.id DESC LIMIT 20');
 		// Top scores
 
 		$topPlaysVanilla = $GLOBALS['db']->fetchAll('
@@ -169,88 +137,6 @@ class P {
 		printAdminPanel('green', 'fa fa-street-view fa-5x', $onlineUsers, 'Online users');
 		//printAdminPanel('yellow', 'fa fa-dot-circle-o fa-5x', $totalPP, 'Total PP');
 		echo '</div>';
-
-		// Recent plays table (Vanilla)
-		echo '<table class="table table-striped table-hover">
-		<thead>
-		<tr><th class="text-left"><i class="fa fa-clock-o"></i>	Recent plays (Vanilla)</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
-		</thead>
-		<tbody>';
-		foreach ($recentPlaysVanilla as $play) {
-			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
-			$bn = $play['song_name'];
-			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
-			if (!$bn) {
-				$bn = $play['beatmap_md5'];
-			}
-			// Get readable play_mode
-			$pm = getPlaymodeText($play['play_mode']);
-			// Print row
-			echo '<tr class="success">';
-			echo '<td><p class="text-left"><b><a href="index.php?p=103&id='.$play["userid"].'">'.$play['username'].'</a></b></p></td>';
-			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
-			echo '<td><p class="text-left">'.$pm.'</p></td>';
-			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
-			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
-			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'pp</b></p></td>';
-			echo '</tr>';
-		}
-		echo '</tbody>';
-
-		// Recent plays table (Relax)
-		echo '<table class="table table-striped table-hover">
-		<thead>
-		<tr><th class="text-left"><i class="fa fa-clock-o"></i>	Recent plays (Relax)</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
-		</thead>
-		<tbody>';
-		foreach ($recentPlaysRelax as $play) {
-			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
-			$bn = $play['song_name'];
-			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
-			if (!$bn) {
-				$bn = $play['beatmap_md5'];
-			}
-			// Get readable play_mode
-			$pm = getPlaymodeText($play['play_mode']);
-			// Print row
-			echo '<tr class="success">';
-			echo '<td><p class="text-left"><b><a href="index.php?p=103&id='.$play["userid"].'">'.$play['username'].'</a></b></p></td>';
-			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
-			echo '<td><p class="text-left">'.$pm.'</p></td>';
-			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
-			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
-			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'pp</b></p></td>';
-			echo '</tr>';
-		}
-		echo '</tbody>';
-
-		// Recent plays table (Autopilot)
-		echo '<table class="table table-striped table-hover">
-		<thead>
-		<tr><th class="text-left"><i class="fa fa-clock-o"></i>	Recent plays (Autopilot)</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
-		</thead>
-		<tbody>';
-		foreach ($recentPlaysAutopilot as $play) {
-			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
-			$bn = $play['song_name'];
-			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
-			if (!$bn) {
-				$bn = $play['beatmap_md5'];
-			}
-			// Get readable play_mode
-			$pm = getPlaymodeText($play['play_mode']);
-			// Print row
-			echo '<tr class="success">';
-			echo '<td><p class="text-left"><b><a href="index.php?p=103&id='.$play["userid"].'">'.$play['username'].'</a></b></p></td>';
-			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
-			echo '<td><p class="text-left">'.$pm.'</p></td>';
-			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
-			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
-			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'pp</b></p></td>';
-			echo '</tr>';
-		}
-		echo '</tbody>';
-
 
 
 		// Top plays table (Vanilla)
