@@ -421,9 +421,8 @@ function printNavbar() {
 	echo '</ul><ul class="nav navbar-nav navbar-right">';
 	// Logged in right elements
 	if (checkLoggedIn()) {
-		global $URL;
 		echo '<li class="dropdown">
-					<a data-toggle="dropdown"><img src="'.URL::Avatar().'/'.getUserID($_SESSION['username']).'" height="22" width="22" />	<b>'.$_SESSION['username'].'</b><span class="caret"></span></a>
+					<a data-toggle="dropdown"><img src="'.URL::PublicAvatarServiceBaseUrl().'/'.getUserID($_SESSION['username']).'" height="22" width="22" />	<b>'.$_SESSION['username'].'</b><span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li class="dropdown-submenu"><a href="index.php?p=103&id='.getUserID($_SESSION['username']).'"><i class="fa fa-user"></i> My profile</a></li>
 						<li class="dropdown-submenu"><a href="submit.php?action=logout&csrf='.csrfToken().'"><i class="fa fa-sign-out"></i>	Logout</a></li>
@@ -1257,7 +1256,7 @@ function bloodcatDirectString($arr, $np = false) {
 
 function printBubble($userID, $username, $message, $time, $through) {
 	echo '
-	<img class="circle" src="' . URL::Avatar() . '/' . $userID . '">
+	<img class="circle" src="' . URL::PublicAvatarServiceBaseUrl() . '/' . $userID . '">
 	<div class="bubble">
 		<b>' . $username . '</b> ' . $message . '<br>
 		<span style="font-size: 80%">' . timeDifference($time, time()) .' through <i>' . $through . '</i></span>
@@ -1339,16 +1338,6 @@ function setYCookie($userID) {
 
 function UNIXTimestampToOsuDate($unix) {
 	return date("ymdHis", $unix);
-}
-
-function isOnline($uid) {
-	global $URL;
-	try {
-		$data = getJsonCurl($URL["bancho"]."/api/v1/isOnline?id=".urlencode($uid));
-		return $data["result"];
-	} catch (Exception $e) {
-		return false;
-	}
 }
 
 function getDonorPrice($months) {

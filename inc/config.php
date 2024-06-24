@@ -18,11 +18,8 @@ define('REDIS_PORT', $_ENV['REDIS_PORT']);
 define('DISCORD_WEBHOOK_URL', $_ENV["DISCORD_WEBHOOK_URL"]);
 
 // Server urls, no slash
-$URL = [
-	'avatar' => $_ENV['AVATAR_BASE_URL'], // 'https://a.akatsuki.pw'
-	'server' => $_ENV['FRONTEND_BASE_URL'], // 'https://akatsuki.pw',
-	'bancho' => $_ENV['BANCHO_BASE_URL'], // 'http://c.akatsuki.pw',
-];
+$PUBLIC_AVATARS_SERVICE_BASE_URL = $_ENV['PUBLIC_AVATARS_SERVICE_BASE_URL'];
+$INTERNAL_BANCHO_SERVICE_BASE_URL = $_ENV['INTERNAL_BANCHO_SERVICE_BASE_URL'];
 
 // S3 config
 $S3Config = [

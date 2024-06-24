@@ -1,21 +1,9 @@
 <?php
 
 class URL {
-	public static function Avatar() {
-		global $URL;
+	public static function PublicAvatarServiceBaseUrl() {
+		global $PUBLIC_AVATARS_SERVICE_BASE_URL;
 
-		return isset($URL['avatar']) ? $URL['avatar'] : 'https://a.akatsuki.pw';
-	}
-
-	public static function Server() {
-		global $URL;
-
-		return isset($URL['server']) ? $URL['server'] : 'https://akatsuki.pw';
-	}
-
-	public static function Bancho() {
-		global $URL;
-
-		return isset($URL['bancho']) ? $URL['bancho'] : 'http://c.akatsuki.pw';
+		return isset($PUBLIC_AVATARS_SERVICE_BASE_URL) ? $PUBLIC_AVATARS_SERVICE_BASE_URL : 'https://a.akatsuki.pw';
 	}
 }
