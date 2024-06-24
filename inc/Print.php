@@ -112,8 +112,8 @@ class P {
 		scores_ap.time > UNIX_TIMESTAMP(NOW()) - 604800
 	ORDER BY scores_ap.pp DESC LIMIT 100');
 
-		global $URL;
-		$onlineUsers = getJsonCurl($URL['bancho'] . "/api/v1/onlineUsers");
+		global $INTERNAL_BANCHO_SERVICE_BASE_URL;
+		$onlineUsers = getJsonCurl($INTERNAL_BANCHO_SERVICE_BASE_URL . "/api/v1/onlineUsers");
 		if (!$onlineUsers) {
 			$onlineUsers = 0;
 		} else {
@@ -738,7 +738,7 @@ class P {
 			<td>Avatar<br><a onclick="sure(\'submit.php?action=resetAvatar&id='.$_GET['id'].'&csrf='.csrfToken().'\')">(reset avatar)</a></td>
 			<td>
 				<p align="center">
-					<img src="'.URL::Avatar().'/'.$_GET['id'].'" height="50" width="50"></img>
+					<img src="'.URL::PublicAvatarServiceBaseUrl().'/'.$_GET['id'].'" height="50" width="50"></img>
 				</p>
 			</td>
 			</tr>';

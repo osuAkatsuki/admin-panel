@@ -718,7 +718,7 @@ class D {
 	 * Rank/unrank a beatmap
 	 */
 	public static function ProcessRankRequest() {
-		global $URL;
+		global $INTERNAL_BANCHO_SERVICE_BASE_URL;
 		global $ScoresConfig;
 		try {
 			if (!isset($_GET["id"]) || !isset($_GET["r"]) || empty($_GET["id"]))
@@ -754,7 +754,7 @@ class D {
 
 				$msg = "[https://osu.ppy.sh/s/" . $bsid . " " . $bm["song_name"] . "] is now ranked!";
 				$to = "#announce";
-				$requesturl = $URL["bancho"] . "/api/v1/fokabotMessage?k=" . urlencode($ScoresConfig["api_key"]) . "&to=" . urlencode($to) . "&msg=" . urlencode($msg);
+				$requesturl = $INTERNAL_BANCHO_SERVICE_BASE_URL . "/api/v1/fokabotMessage?k=" . urlencode($ScoresConfig["api_key"]) . "&to=" . urlencode($to) . "&msg=" . urlencode($msg);
 				$resp = getJsonCurl($requesturl);
 
 				if ($resp["message"] != "ok") {
@@ -1191,7 +1191,7 @@ class D {
 	}
 
 	public static function RankBeatmapNew() {
-		global $URL;
+		global $INTERNAL_BANCHO_SERVICE_BASE_URL;
 		global $ScoresConfig;
 		try {
 			if (!isset($_POST["beatmaps"])) {
@@ -1256,7 +1256,7 @@ class D {
 			$bm = $GLOBALS["db"]->fetch("SELECT beatmapset_id, song_name FROM beatmaps WHERE beatmapset_id = ? LIMIT 1", [$bsid]);
 			$msg = "[https://osu.ppy.sh/s/" . $bsid . " " . $bm["song_name"] . "] is now ranked!";
 			$to = "#announce";
-			$requesturl = $URL["bancho"] . "/api/v1/fokabotMessage?k=" . urlencode($ScoresConfig["api_key"]) . "&to=" . urlencode($to) . "&msg=" . urlencode($msg);
+			$requesturl = $INTERNAL_BANCHO_SERVICE_BASE_URL . "/api/v1/fokabotMessage?k=" . urlencode($ScoresConfig["api_key"]) . "&to=" . urlencode($to) . "&msg=" . urlencode($msg);
 			$resp = getJsonCurl($requesturl);
 			if ($resp["message"] != "ok") {
 				postWebhookMessage(sprintf("failed to send FokaBot message :( Error: %s", print_r($resp["message"], true)));
