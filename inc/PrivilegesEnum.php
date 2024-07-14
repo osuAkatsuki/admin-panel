@@ -25,5 +25,6 @@ class Privileges {
 	const UserTournamentStaff		= 1 << 21;
 	const AdminCaker				= 1 << 22;
 	const UserPremium				= 1 << 23;
-	const AdminFreezeUsers = 1 << 24;
+	const AdminFreezeUsers			= 1 << 24;
+	const AdminManageNominators		= 1 << 25;
 }
