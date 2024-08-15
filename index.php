@@ -13,7 +13,7 @@ if ($c->Check()) {
 		case ValidateValue::UserBanned:
 			addError("You are banned, as such you've been logged out of your account automatically.");
 			break;
-		// /shrugs
+			// /shrugs
 	}
 }
 
@@ -22,12 +22,12 @@ $model = 'old';
 if (isset($_GET['p'])) {
 	$found = false;
 	foreach ($pages as $page) {
-		if (defined(get_class($page).'::PageID') && $page::PageID == $_GET['p']) {
+		if (defined(get_class($page) . '::PageID') && $page::PageID == $_GET['p']) {
 			$found = true;
 			$model = $page;
-			$title = '<title>'.$page::Title.'</title>';
+			$title = '<title>' . $page::Title . '</title>';
 			$p = $page::PageID;
-			if (defined(get_class($page).'::LoggedIn')) {
+			if (defined(get_class($page) . '::LoggedIn')) {
 				if ($page::LoggedIn) {
 					clir();
 				} else {
@@ -56,7 +56,7 @@ if (isset($_GET['p'])) {
 		if ($page::URL == $pages_split[1]) {
 			$found = true;
 			$model = $page;
-			$title = '<title>'.$page::Title.'</title>';
+			$title = '<title>' . $page::Title . '</title>';
 			break;
 		}
 	}
@@ -73,156 +73,154 @@ if (isset($_GET['p'])) {
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="">
-    <meta name="author" content="">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="">
+	<meta name="author" content="">
 
-    <!-- Dynamic title -->
-    <?php echo $title; ?>
+	<!-- Dynamic title -->
+	<?php echo $title; ?>
 
-    <!-- Bootstrap Core CSS -->
-    <link href="./css/bootstrap.min.css" rel="stylesheet">
+	<!-- Bootstrap Core CSS -->
+	<link href="./css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Bootstrap select CSS -->
-    <link href="./css/bootstrap-select.min.css" rel="stylesheet">
+	<!-- Bootstrap select CSS -->
+	<link href="./css/bootstrap-select.min.css" rel="stylesheet">
 
-    <!-- Bootstrap Color Picker CSS -->
-    <link href="./css/bootstrap-colorpicker.min.css" rel="stylesheet">
+	<!-- Bootstrap Color Picker CSS -->
+	<link href="./css/bootstrap-colorpicker.min.css" rel="stylesheet">
 
-    <!-- Datepicker CSS -->
-    <link href="./css/bootstrap-datepicker3.min.css" rel="stylesheet">
+	<!-- Datepicker CSS -->
+	<link href="./css/bootstrap-datepicker3.min.css" rel="stylesheet">
 
-    <!-- Custom CSS -->
-    <link href="./css/style-desktop.css" rel="stylesheet">
+	<!-- Custom CSS -->
+	<link href="./css/style-desktop.css" rel="stylesheet">
 
 	<!-- Style -->
 	<link rel="stylesheet" href="https://unpkg.com/alwan/dist/css/alwan.min.css" />
 
-    <!-- Favicon -->
-    <link rel="manifest" href="/manifest.json?v=xQQWRwyGed">
-    <link rel="mask-icon" href="/safari-pinned-tab.svg?v=xQQWRwyGed" color="#5bbad5">
-    <link rel="shortcut icon" href="/favicon.ico?v=xQQWRwyGed">
-    <meta name="theme-color" content="#ffffff">
+	<!-- Favicon -->
+	<link rel="manifest" href="/manifest.json?v=xQQWRwyGed">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg?v=xQQWRwyGed" color="#5bbad5">
+	<link rel="shortcut icon" href="/favicon.ico?v=xQQWRwyGed">
+	<meta name="theme-color" content="#ffffff">
 
-    <meta name=viewport content="width=device-width, initial-scale=1">
+	<meta name=viewport content="width=device-width, initial-scale=1">
 	<?php
-		if ($isBday && $p == 1) {
-			echo '
+	if ($isBday && $p == 1) {
+		echo '
 				<script src="palloncini/palloncini.js"></script>
 				<script type="text/javascript">
 					particlesJS.load("palloncini", "palloncini/palloncini.conf");
 				</script>';
-	   	}
-   	?>
+	}
+	?>
 </head>
 
 <body>
-    <!-- Navbar -->
-    <?php printNavbar(); ?>
+	<!-- Navbar -->
+	<?php printNavbar(); ?>
 
-    <!-- Page content (< 100: Normal pages, >= 100: Admin CP pages) -->
-    <?php
-$status = '';
-if ($model !== 'old') {
-	P::Messages();
-}
-if ($p < 100) {
-	// Normal page, print normal layout (will fix this in next commit, dw)
-	echo '
+	<!-- Page content (< 100: Normal pages, >= 100: Admin CP pages) -->
+	<?php
+	$status = '';
+	if ($model !== 'old') {
+		P::Messages();
+	}
+	if ($p < 100) {
+		// Normal page, print normal layout (will fix this in next commit, dw)
+		echo '
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">';
 
-                    echo '<div id="content">';
-	if ($model === 'old') {
-		printPage($p);
-	} else {
-		echo $status;
-		checkMustHave($model);
-		$model->P();
-	}
-	echo '
+		echo '<div id="content">';
+		if ($model === 'old') {
+			printPage($p);
+		} else {
+			echo $status;
+			checkMustHave($model);
+			$model->P();
+		}
+		echo '
                     </div>
                 </div>
             </div>
         </div>';
-       if ($isBday && $p == 1) echo '<div id="palloncini"></div>';
-} else {
-	// Admin cp page, print admin cp layout
-	if ($model === 'old') {
-		printPage($p);
+		if ($isBday && $p == 1) echo '<div id="palloncini"></div>';
 	} else {
-		echo $status;
-		$model->P();
+		// Admin cp page, print admin cp layout
+		if ($model === 'old') {
+			printPage($p);
+		} else {
+			echo $status;
+			$model->P();
+		}
 	}
-}
-?>
+	?>
 
-    <!-- jQuery -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <script src="https://code.jquery.com/jquery-migrate-3.0.0.js"></script>
+	<!-- jQuery -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script src="https://code.jquery.com/jquery-migrate-3.0.0.js"></script>
 
-    <!-- Bootstrap Core JavaScript -->
-    <script src="./js/bootstrap.min.js"></script>
+	<!-- Bootstrap Core JavaScript -->
+	<script src="./js/bootstrap.min.js"></script>
 
-    <!-- Bootstrap Select JavaScript -->
-    <script src="./js/bootstrap-select.min.js"></script>
+	<!-- Bootstrap Select JavaScript -->
+	<script src="./js/bootstrap-select.min.js"></script>
 
-    <!-- <!-- Bootstrap Color Picker JavaScript  -->
-    <script src="./js/bootstrap-colorpicker.min.js"></script>
+	<!-- <!-- Bootstrap Color Picker JavaScript  -->
+	<script src="./js/bootstrap-colorpicker.min.js"></script>
 
 	<!-- Datepicker -->
 	<script src="./js/bootstrap-datepicker.min.js"></script>
 
 	<script src="https://unpkg.com/alwan/dist/js/alwan.min.js"></script>
 
-    <!-- Custom JavaScript for every page -->
+	<!-- Custom JavaScript for every page -->
 	<script type="text/javascript">
-        // Are you sure window
-        function sure(redr, pre)
-        {
-        	var msg = ""
-        	if (typeof pre !== "undefined") {
-        		msg += pre+"\n";
-        	}
-        	msg += "Are you sure?";
-            var r = confirm(msg);
-            if (r == true) window.location.replace(redr);
-        }
+		// Are you sure window
+		function sure(redr, pre) {
+			var msg = ""
+			if (typeof pre !== "undefined") {
+				msg += pre + "\n";
+			}
+			msg += "Are you sure?";
+			var r = confirm(msg);
+			if (r == true) window.location.replace(redr);
+		}
 
-        function reallysuredialog()
-        {
-            var r = confirm("This action cannot be undone. Are you sure you want to continue?");
-            if (r == true)
-                r = confirm("Are you REALLY sure?");
-                return r == true;
-        }
+		function reallysuredialog() {
+			var r = confirm("This action cannot be undone. Are you sure you want to continue?");
+			if (r == true)
+				r = confirm("Are you REALLY sure?");
+			return r == true;
+		}
 
-        function reallysure(redr) {
+		function reallysure(redr) {
 			reallysuredialog() && window.location.replace(redr)
 		}
 
 		function play(id) {
-			var audio = $('#audio_'+id)[0];
+			var audio = $('#audio_' + id)[0];
 			if (audio.currentTime <= 0) {
-				$.each($('audio'), function () {
+				$.each($('audio'), function() {
 					this.pause();
 					this.currentTime = 0;
 				});
-				$.each($("i[id^=icon_]"), function () {
+				$.each($("i[id^=icon_]"), function() {
 					this.className = "fa fa-play";
 				});
 				audio.play();
-				$('#icon_'+id)[0].className = "fa fa-stop";
+				$('#icon_' + id)[0].className = "fa fa-stop";
 			} else {
 				audio.pause();
 				audio.currentTime = 0;
-				$('#icon_'+id)[0].className = "fa fa-play";
+				$('#icon_' + id)[0].className = "fa fa-play";
 			}
 		}
 
-		function updateResolution () {
+		function updateResolution() {
 			document.isMobile = window.matchMedia('(max-width: 768px)').matches
 		}
 
@@ -238,11 +236,13 @@ if ($p < 100) {
 			badgeColourPicker.style = 'style="--color: rgba(0, 0, 0, 0);"'
 		}
 
-		$(document).ready(function () {
+		$(document).ready(function() {
 			// Initialize stuff
-			$('.colorpicker').colorpicker({format:"hex"});
+			$('.colorpicker').colorpicker({
+				format: "hex"
+			});
 			$("[data-toggle=popover]").popover();
-			$(window).resize(function () {
+			$(window).resize(function() {
 				updateResolution()
 			})
 			updateResolution()
@@ -268,15 +268,15 @@ if ($p < 100) {
 				i.text("(" + data + ")");
 			});
 		});
-    </script>
+	</script>
 
 
-    <!-- Custom JavaScript for this page here -->
-    <?php
-switch ($p) {
-	// Admin cp - edit user
-	case 103:
-		echo '
+	<!-- Custom JavaScript for this page here -->
+	<?php
+	switch ($p) {
+			// Admin cp - edit user
+		case 103:
+			echo '
                 <script type="text/javascript">
                     function censorUserpage()
                     {
@@ -297,8 +297,8 @@ switch ($p) {
 
 						// Remove donor if needed
 						var selectValue;
-						if (result != '. (Privileges::UserDonor | Privileges::UserNormal | Privileges::UserPublic).') {
-							selectValue = result & ~'.Privileges::UserDonor.'
+						if (result != ' . (Privileges::UserDonor | Privileges::UserNormal | Privileges::UserPublic) . ') {
+							selectValue = result & ~' . Privileges::UserDonor . '
 						} else {
 							selectValue = result;
 						}
@@ -353,10 +353,10 @@ switch ($p) {
 					});
                 </script>
                 ';
-	break;
+			break;
 
-	case 119:
-	echo '
+		case 119:
+			echo '
 		<script type="text/javascript">
 			function updatePrivileges() {
 				var result = 0;
@@ -367,20 +367,20 @@ switch ($p) {
 			}
 		</script>
 	';
-	break;
+			break;
 
-	case 124:
-		$force = (isset($_GET["force"]) && !empty($_GET["force"])) ? '1' : '0';
-		echo '<script type="text/javascript">
-			var bsid='.htmlspecialchars($_GET["bsid"]).';
-			var force='.$force.';
+		case 124:
+			$force = (isset($_GET["force"]) && !empty($_GET["force"])) ? '1' : '0';
+			echo '<script type="text/javascript">
+			var bsid=' . htmlspecialchars($_GET["bsid"]) . ';
+			var force=' . $force . ';
 		</script>
 		<input id="csrf" type="hidden" value="' . csrfToken() . '">
 		<script src="/js/rankbeatmap.js"></script>';
-	break;
+			break;
 
-	case 127:
-		echo '<script>
+		case 127:
+			echo '<script>
 			$(document).ready(function() {
 				$("[data-target=#silenceUserModal]").click(function() {
 					$("#silenceUserModal").find("input[name=u]").val($(this).data("who"));
@@ -389,10 +389,10 @@ switch ($p) {
 				});
 			});
 		</script>';
-	break;
+			break;
 
-	case 134:
-		echo "<script>
+		case 134:
+			echo "<script>
 		$(document).ready(function() {
 			$('.datepicker').datepicker({
 				orientation: 'bottom',
@@ -402,9 +402,9 @@ switch ($p) {
 			})
 		})
 		</script>";
-	break;
-}
-?>
+			break;
+	}
+	?>
 
 </body>
 

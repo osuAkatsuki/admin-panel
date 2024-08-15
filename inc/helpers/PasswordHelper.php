@@ -1,7 +1,9 @@
 <?php
 
-class PasswordHelper {
-	public static function CheckPass($u, $pass, $is_already_md5 = true) {
+class PasswordHelper
+{
+	public static function CheckPass($u, $pass, $is_already_md5 = true)
+	{
 		if (empty($u) || empty($pass)) {
 			return false;
 		}

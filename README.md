@@ -10,17 +10,22 @@ But, since the code is here just for reference, I don't think it's a huge proble
 - Mirror: https://github.com/osuripple/old-frontend
 
 ## Installation
+
 Copy config.sample.php as config.php and edit it
+
 ```
 $ cd inc
 $ cp config.sample.php config.php
 $ nano config.php
 ```
+
 Then, run composer install on the main directory
+
 ```
 $ composer install
 ```
 
 ## License
-All code in this repository is licensed under the GNU AGPL 3 License.  
+
+All code in this repository is licensed under the GNU AGPL 3 License.
 See the "LICENSE" file for more information

@@ -1,6 +1,7 @@
 <?php
 
-class Privileges {
+class Privileges
+{
 	const UserPublic				= 1 << 0;
 	const UserNormal				= 1 << 1;
 	const UserDonor					= 1 << 2;

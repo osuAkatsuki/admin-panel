@@ -1,4 +1,5 @@
 <?php
+
 /**
  * RememberCookieHandler
  * A simple way to remember an user over time.
@@ -6,7 +7,8 @@
  * @author Howl <the@howl.moe>
  * @version 1.1
  */
-class RememberCookieHandler {
+class RememberCookieHandler
+{
 	/**
 	 * Check
 	 * Checks whether the user is currently not logged in and has the required
@@ -14,7 +16,8 @@ class RememberCookieHandler {
 	 *
 	 * @return bool true if the cookies are valid, false otherwise.
 	 */
-	public function Check() {
+	public function Check()
+	{
 		startSessionIfNotStarted();
 		return !isset($_SESSION["username"]) && @$_COOKIE["sli"] != "";
 	}
@@ -26,14 +29,17 @@ class RememberCookieHandler {
 	 * @return int
 	 * @see ValidateValue
 	 */
-	public function Validate() {
+	public function Validate()
+	{
 		$parts = explode("|", $_COOKIE["sli"], 2);
 		if (count($parts) < 2) {
 			$this->UnsetCookies();
 			return ValidateValue::Failure;
 		}
-		$r = $GLOBALS["db"]->fetch("SELECT id, userid, token_sha FROM remember WHERE series_identifier = ? LIMIT 1",
-			[$parts[0]]);
+		$r = $GLOBALS["db"]->fetch(
+			"SELECT id, userid, token_sha FROM remember WHERE series_identifier = ? LIMIT 1",
+			[$parts[0]]
+		);
 		if (!$r) {
 			$this->UnsetCookies();
 			return ValidateValue::Failure;
@@ -56,7 +62,8 @@ class RememberCookieHandler {
 	 * IssueNew
 	 * Issue new permanent cookie for auto-login.
 	 */
-	public function IssueNew($u) {
+	public function IssueNew($u)
+	{
 		$num = unpack("L", random_bytes(4))[1];
 		$tok = base64_encode(random_bytes(75));
 		setcookie("sli", ((string)$num) . "|" . $tok, time() + 60 * 60 * 24 * 30 * 3);
@@ -68,11 +75,14 @@ class RememberCookieHandler {
 	 * Destroy
 	 * Destroys a particular sid and token in the database.
 	 */
-	public function Destroy() {
+	public function Destroy()
+	{
 		if (!isset($_SESSION["userid"]))
 			return;
-		$GLOBALS["db"]->execute("DELETE FROM remember WHERE userid = ? AND series_identifier = ? LIMIT 1;",
-			[$_SESSION["userid"], explode("|", $_COOKIE["sli"])[0]]);
+		$GLOBALS["db"]->execute(
+			"DELETE FROM remember WHERE userid = ? AND series_identifier = ? LIMIT 1;",
+			[$_SESSION["userid"], explode("|", $_COOKIE["sli"])[0]]
+		);
 		$this->UnsetCookies();
 	}
 
@@ -82,7 +92,8 @@ class RememberCookieHandler {
 	 *
 	 * @param int $u UserID
 	 */
-	public function DestroyAll($u) {
+	public function DestroyAll($u)
+	{
 		$GLOBALS["db"]->execute("DELETE FROM rememeber WHERE userid = ?;", [$u]);
 	}
 
@@ -92,7 +103,8 @@ class RememberCookieHandler {
 	 *
 	 * @return int ValidateValue
 	 */
-	private function Login($userID) {
+	private function Login($userID)
+	{
 		$u = $GLOBALS['db']->fetch("SELECT id, username, privileges, password_md5
 			FROM users WHERE id = ? LIMIT 1", [$userID]);
 		if (!$u || (($u["privileges"] & Privileges::UserNormal) === 0)) {
@@ -116,12 +128,14 @@ class RememberCookieHandler {
 	 * UnsetCookies
 	 * Unset the sli cookie in the user's browser.
 	 */
-	public function UnsetCookies() {
+	public function UnsetCookies()
+	{
 		unsetCookie("sli");
 	}
 }
 
-abstract class ValidateValue {
+abstract class ValidateValue
+{
 	const UserBanned  = -2; // user is banned, show warning
 	const Thieving    = -1; // someone appears to be thieving. the token is deleted from db for security
 	const Failure     = 0;  // cookie has been removed

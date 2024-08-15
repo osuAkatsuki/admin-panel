@@ -1,11 +1,13 @@
 <?php
 
-class P {
+class P
+{
 	/*
 	 * AdminDashboard
 	 * Prints the admin panel dashborad page
 	 */
-	public static function AdminDashboard() {
+	public static function AdminDashboard()
+	{
 		// Get admin dashboard data
 		/*
 		$submittedScoresFull = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM scores LIMIT 1'));
@@ -158,12 +160,12 @@ class P {
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="warning">';
-			echo '<td><p class="text-left"><a href="index.php?p=103&id='.$play["userid"].'"><b>'.$play['username'].'</b></a></p></td>';
-			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
-			echo '<td><p class="text-left">'.$pm.'</p></td>';
-			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . $play['username'] . '</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/' . $play['beatmap_id'] . '">' . $bn . '</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left">' . $pm . '</p></td>';
+			echo '<td><p class="text-left">' . timeDifference(time(), $play['time']) . '</p></td>';
 			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
-			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'</b></p></td>';
+			echo '<td><p class="text-right"><b>' . number_format($play['pp']) . '</b></p></td>';
 			echo '</tr>';
 		}
 		echo '</tbody>';
@@ -186,12 +188,12 @@ class P {
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="warning">';
-			echo '<td><p class="text-left"><a href="index.php?p=103&id='.$play["userid"].'"><b>'.$play['username'].'</b></a></p></td>';
-			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
-			echo '<td><p class="text-left">'.$pm.'</p></td>';
-			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . $play['username'] . '</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/' . $play['beatmap_id'] . '">' . $bn . '</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left">' . $pm . '</p></td>';
+			echo '<td><p class="text-left">' . timeDifference(time(), $play['time']) . '</p></td>';
 			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
-			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'</b></p></td>';
+			echo '<td><p class="text-right"><b>' . number_format($play['pp']) . '</b></p></td>';
 			echo '</tr>';
 		}
 		echo '</tbody>';
@@ -215,12 +217,12 @@ class P {
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="warning">';
-			echo '<td><p class="text-left"><a href="index.php?p=103&id='.$play["userid"].'"><b>'.$play['username'].'</b></a></p></td>';
-			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
-			echo '<td><p class="text-left">'.$pm.'</p></td>';
-			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . $play['username'] . '</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/' . $play['beatmap_id'] . '">' . $bn . '</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left">' . $pm . '</p></td>';
+			echo '<td><p class="text-left">' . timeDifference(time(), $play['time']) . '</p></td>';
 			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
-			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'</b></p></td>';
+			echo '<td><p class="text-right"><b>' . number_format($play['pp']) . '</b></p></td>';
 			echo '</tr>';
 		}
 		echo '</tbody>';
@@ -243,12 +245,12 @@ class P {
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="danger">';
-			echo '<td><p class="text-left"><a href="index.php?p=103&id='.$play["userid"].'"><b>'.$play['username'].'</b></a></p></td>';
-			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
-			echo '<td><p class="text-left">'.$pm.'</p></td>';
-			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . $play['username'] . '</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/' . $play['beatmap_id'] . '">' . $bn . '</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left">' . $pm . '</p></td>';
+			echo '<td><p class="text-left">' . timeDifference(time(), $play['time']) . '</p></td>';
 			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
-			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'</b></p></td>';
+			echo '<td><p class="text-right"><b>' . number_format($play['pp']) . '</b></p></td>';
 			echo '</tr>';
 		}
 		echo '</tbody>';
@@ -271,12 +273,12 @@ class P {
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="danger">';
-			echo '<td><p class="text-left"><a href="index.php?p=103&id='.$play["userid"].'"><b>'.$play['username'].'</b></a></p></td>';
-			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
-			echo '<td><p class="text-left">'.$pm.'</p></td>';
-			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . $play['username'] . '</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/' . $play['beatmap_id'] . '">' . $bn . '</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left">' . $pm . '</p></td>';
+			echo '<td><p class="text-left">' . timeDifference(time(), $play['time']) . '</p></td>';
 			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
-			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'</b></p></td>';
+			echo '<td><p class="text-right"><b>' . number_format($play['pp']) . '</b></p></td>';
 			echo '</tr>';
 		}
 		echo '</tbody>';
@@ -299,12 +301,12 @@ class P {
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="danger">';
-			echo '<td><p class="text-left"><a href="index.php?p=103&id='.$play["userid"].'"><b>'.$play['username'].'</b></a></p></td>';
-			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/'.$play['beatmap_id'].'">'.$bn.'</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
-			echo '<td><p class="text-left">'.$pm.'</p></td>';
-			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . $play['username'] . '</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/' . $play['beatmap_id'] . '">' . $bn . '</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left">' . $pm . '</p></td>';
+			echo '<td><p class="text-left">' . timeDifference(time(), $play['time']) . '</p></td>';
 			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
-			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'</b></p></td>';
+			echo '<td><p class="text-right"><b>' . number_format($play['pp']) . '</b></p></td>';
 			echo '</tr>';
 		}
 		echo '</tbody>';
@@ -317,20 +319,21 @@ class P {
 	 * AdminUsers
 	 * Prints the admin panel users page
 	 */
-	public static function AdminUsers() {
+	public static function AdminUsers()
+	{
 		// Get admin dashboard data
 		$totalUsers = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users'));
 		$supporters = current($GLOBALS['db']->fetch('
 		    SELECT COUNT(*)
 			FROM users
-			WHERE privileges & '.Privileges::UserDonor.' > 0
-			AND NOT privileges & '.Privileges::UserPremium.' > 0
-			AND NOT privileges & '.Privileges::AdminManageUsers.' > 0
+			WHERE privileges & ' . Privileges::UserDonor . ' > 0
+			AND NOT privileges & ' . Privileges::UserPremium . ' > 0
+			AND NOT privileges & ' . Privileges::AdminManageUsers . ' > 0
 			AND donor_expire != 2147483647'));
 		$premiums = current($GLOBALS['db']->fetch('
 			SELECT COUNT(*) FROM users
-			WHERE privileges & '.Privileges::UserPremium.' > 0
-			AND NOT privileges & '.Privileges::AdminManageUsers.' > 0
+			WHERE privileges & ' . Privileges::UserPremium . ' > 0
+			AND NOT privileges & ' . Privileges::AdminManageUsers . ' > 0
 			AND donor_expire != 2147483647'));
 		$bannedUsers = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users WHERE privileges & 1 = 0'));
 		/* Unused, premium used instead 4head
@@ -339,7 +342,7 @@ class P {
 		*/
 		$pageInterval = 100;
 		$from = (isset($_GET["from"])) ? $_GET["from"] : 999;
-		$to = $from+$pageInterval;
+		$to = $from + $pageInterval;
 		$users = $GLOBALS['db']->fetchAll('SELECT * FROM users WHERE id >= ? AND id < ?', [$from, $to]);
 		$groups = $GLOBALS["db"]->fetchAll("SELECT * FROM privileges_groups");
 		// Print admin dashboard
@@ -410,15 +413,15 @@ class P {
 
 			// Print row
 			echo '<tr>';
-			echo '<td><p class="text-center">'.$user['id'].'</p></td>';
-			echo '<td><p class="text-center"><b>'.$user['username'].'</b></p></td>';
-			echo '<td><p class="text-center"><span class="label label-'.$groupColor.'">'.$groupText.'</span></p></td>';
-			echo '<td><p class="text-center"><span class="label label-'.$allowedColor.'">'.$allowedText.'</span></p></td>';
+			echo '<td><p class="text-center">' . $user['id'] . '</p></td>';
+			echo '<td><p class="text-center"><b>' . $user['username'] . '</b></p></td>';
+			echo '<td><p class="text-center"><span class="label label-' . $groupColor . '">' . $groupText . '</span></p></td>';
+			echo '<td><p class="text-center"><span class="label label-' . $allowedColor . '">' . $allowedText . '</span></p></td>';
 			echo '<td><p class="text-center">
 			<div class="btn-group-justified">
-			<a title="Edit user" class="btn btn-xs btn-primary" href="index.php?p=103&id='.$user['id'].'"><span class="glyphicon glyphicon-pencil"></span></a>';
+			<a title="Edit user" class="btn btn-xs btn-primary" href="index.php?p=103&id=' . $user['id'] . '"><span class="glyphicon glyphicon-pencil"></span></a>';
 			if (hasPrivilege(Privileges::AdminBanUsers)) {
-				echo '<a title="(Un)restrict user" class="btn btn-xs btn-warning" href="index.php?p=137&id='.$user['id'].'"><span class="glyphicon glyphicon-remove-circle"></span></a>';
+				echo '<a title="(Un)restrict user" class="btn btn-xs btn-warning" href="index.php?p=137&id=' . $user['id'] . '"><span class="glyphicon glyphicon-remove-circle"></span></a>';
 			}
 			//if (hasPrivilege(Privileges::AdminBanUsers)) {
 			//	if (isBanned($user["id"])) {
@@ -432,13 +435,13 @@ class P {
 			//		echo '<a title="Restrict user" class="btn btn-xs btn-warning" onclick="sure(\'submit.php?action=restrictUnrestrictUser&id='.$user['id'].'&csrf='.csrfToken().'\')"><span class="glyphicon glyphicon-remove-circle"></span></a>';
 			//	}*/
 			//}
-			echo '	<a title="Change user identity" class="btn btn-xs btn-danger" href="index.php?p=104&id='.$user['id'].'"><span class="glyphicon glyphicon-refresh"></span></a>
+			echo '	<a title="Change user identity" class="btn btn-xs btn-danger" href="index.php?p=104&id=' . $user['id'] . '"><span class="glyphicon glyphicon-refresh"></span></a>
 			</div>
 			</p></td>';
 			echo '</tr>';
 		}
 		echo '</tbody></table>';
-		echo '<p align="center"><a href="index.php?p=102&from='.($from-($pageInterval+1)).'">< Previous page</a> | <a href="index.php?p=102&from='.($to).'">Next page ></a></p>';
+		echo '<p align="center"><a href="index.php?p=102&from=' . ($from - ($pageInterval + 1)) . '">< Previous page</a> | <a href="index.php?p=102&from=' . ($to) . '">Next page ></a></p>';
 		echo '</div>';
 		// Quick edit modal
 		echo '<div class="modal fade" id="quickEditUserModal" tabindex="-1" role="dialog" aria-labelledby="quickEditUserModalLabel">
@@ -451,7 +454,7 @@ class P {
 		<div class="modal-body">
 		<p>
 		<form id="quick-edit-user-form" action="submit.php" method="POST">
-		<input name="csrf" type="hidden" value="'.csrfToken().'">
+		<input name="csrf" type="hidden" value="' . csrfToken() . '">
 		<input name="action" value="quickEditUser" hidden>
 		<div class="input-group">
 		<span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>
@@ -478,7 +481,7 @@ class P {
 		<div class="modal-body">
 		<p>
 		<form id="quick-edit-user-email-form" action="submit.php" method="POST">
-		<input name="csrf" type="hidden" value="'.csrfToken().'">
+		<input name="csrf" type="hidden" value="' . csrfToken() . '">
 		<input name="action" value="quickEditUserEmail" hidden>
 		<div class="input-group">
 		<span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></span>
@@ -505,7 +508,7 @@ class P {
 		<div class="modal-body">
 		<p>
 		<form id="silence-user-form" action="submit.php" method="POST">
-		<input name="csrf" type="hidden" value="'.csrfToken().'">
+		<input name="csrf" type="hidden" value="' . csrfToken() . '">
 		<input name="action" value="silenceUser" hidden>
 
 		<div class="input-group">
@@ -558,7 +561,7 @@ class P {
 		<div class="modal-body">
 		<p>
 		<form id="kick-user-form" action="submit.php" method="POST">
-		<input name="csrf" type="hidden" value="'.csrfToken().'">
+		<input name="csrf" type="hidden" value="' . csrfToken() . '">
 		<input name="action" value="kickUser" hidden>
 		<div class="input-group">
 		<span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>
@@ -587,7 +590,8 @@ class P {
 	 * AdminEditUser
 	 * Prints the admin panel edit user page
 	 */
-	public static function AdminEditUser() {
+	public static function AdminEditUser()
+	{
 		try {
 			// Check if id is set
 			if (!isset($_GET['id']) || empty($_GET['id'])) {
@@ -661,15 +665,15 @@ class P {
 			echo '<p align="center"><font size=5><i class="fa fa-user"></i>	Edit user</font></p>';
 			echo '<table class="table table-striped table-hover table-75-center edit-user">';
 			echo '<tbody><form id="system-settings-form" action="submit.php" method="POST">
-			<input name="csrf" type="hidden" value="'.csrfToken().'">
+			<input name="csrf" type="hidden" value="' . csrfToken() . '">
 			<input name="action" value="saveEditUser" hidden>';
 			echo '<tr>
 			<td>ID</td>
-			<td><p class="text-center"><input type="number" name="id" class="form-control" value="'.$userData['id'].'" readonly></td>
+			<td><p class="text-center"><input type="number" name="id" class="form-control" value="' . $userData['id'] . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Username</td>
-			<td><p class="text-center"><input type="text" name="u" class="form-control" value="'.$userData['username'].'" readonly></td>
+			<td><p class="text-center"><input type="text" name="u" class="form-control" value="' . $userData['username'] . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Country</td>
@@ -698,11 +702,11 @@ class P {
 			</tr>';
 			echo '<tr>
 			<td>Registered (dd/mm/yyyy) </td>
-			<td>'.date('d/m/Y', $userData['register_datetime']).'</td>
+			<td>' . date('d/m/Y', $userData['register_datetime']) . '</td>
 			</tr>';
 			echo '<tr>
 			<td>Latest activity (dd/mm/yyyy)</td>
-			<td>'.date('d/m/Y', $userData['latest_activity']).'</td>
+			<td>' . date('d/m/Y', $userData['latest_activity']) . '</td>
 			</tr>';
 			echo '<tr>
 			<td>Account Standing</td>
@@ -723,29 +727,31 @@ class P {
 
 			echo '<tr class="single-row">
 			<td>Whitelisted</td>
-			<td><span class="label label-'.$wlCol.'">'.$wlText.'</span></td>
+			<td><span class="label label-' . $wlCol . '">' . $wlText . '</span></td>
 			</tr>';
 			echo '<tr class="single-row">
 			<td>Userpage allowed</td>
-			<td><span class="label label-'.$upCol.'">'.$upText.'</span></td>
+			<td><span class="label label-' . $upCol . '">' . $upText . '</span></td>
 			</tr>';
 			echo '<tr class="single-row">
 			<td>Can edit custom badge</td>
-			<td><span class="label label-'.$cbCol.'">'.$cbText.'</span></td>
+			<td><span class="label label-' . $cbCol . '">' . $cbText . '</span></td>
 			</tr>';
 
 			echo '<tr>
-			<td>Avatar<br><a onclick="sure(\'submit.php?action=resetAvatar&id='.$_GET['id'].'&csrf='.csrfToken().'\')">(reset avatar)</a></td>
+			<td>Avatar<br><a onclick="sure(\'submit.php?action=resetAvatar&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\')">(reset avatar)</a></td>
 			<td>
 				<p align="center">
-					<img src="'.URL::PublicAvatarServiceBaseUrl().'/'.$_GET['id'].'" height="50" width="50"></img>
+					<img src="' . URL::PublicAvatarServiceBaseUrl() . '/' . $_GET['id'] . '" height="50" width="50"></img>
 				</p>
 			</td>
 			</tr>';
 
 			if (isBanned($userData["id"]) || isRestricted($userData["id"])) {
 				$canAppeal = time() - $userData["ban_datetime"] >= 86400 * (30 * 2); // Seconds in a day * days in a month
-				echo '<tr class="'; echo $canAppeal ? 'success' : 'warning'; echo '">
+				echo '<tr class="';
+				echo $canAppeal ? 'success' : 'warning';
+				echo '">
 				<td>Ban/Restricted Date<br><i>(dd/mm/yyyy)</i></td>
 				<td>' . date('d/m/Y', $userData["ban_datetime"]) . "<br>";
 				echo $canAppeal ? '<i> (can appeal)</i>' : '<i> (can\'t appeal yet)<i>';
@@ -756,27 +762,27 @@ class P {
 			if (hasPrivilege(Privileges::UserDonor, $userData["id"])) {
 				$donorExpire = timeDifference($userData["donor_expire"], time(), false);
 				echo '<tr>
-				<td>'.(hasPrivilege(Privileges::UserPremium) ? 'Premium' : 'Supporter').' expires in</td>
-				<td>'.$donorExpire.'</td>
+				<td>' . (hasPrivilege(Privileges::UserPremium) ? 'Premium' : 'Supporter') . ' expires in</td>
+				<td>' . $donorExpire . '</td>
 				</tr>';
 			}
 
 			echo '<tr>
 			<td>A.K.A</td>
-			<td><p class="text-center"><input type="text" name="aka" class="form-control" value="'.htmlspecialchars($userData['username_aka']).'"></td>
+			<td><p class="text-center"><input type="text" name="aka" class="form-control" value="' . htmlspecialchars($userData['username_aka']) . '"></td>
 			</tr>';
 			echo '<tr>
 			<td>Userpage<br><a onclick="censorUserpage();">(reset userpage)</a></td>
-			<td><p class="text-center"><textarea name="up" class="form-control" style="overflow:auto;resize:vertical;height:200px">'.$userData['userpage_content'].'</textarea></td>
+			<td><p class="text-center"><textarea name="up" class="form-control" style="overflow:auto;resize:vertical;height:200px">' . $userData['userpage_content'] . '</textarea></td>
 			</tr>';
 			if (hasPrivilege(Privileges::AdminSilenceUsers)) {
 				echo '<tr>
 				<td>Silence end time<br><a onclick="removeSilence();">(remove silence)</a></td>
-				<td><p class="text-center"><input type="text" name="se" class="form-control" value="'.$userData['silence_end'].'"></td>
+				<td><p class="text-center"><input type="text" name="se" class="form-control" value="' . $userData['silence_end'] . '"></td>
 				</tr>';
 				echo '<tr>
 				<td>Silence reason</td>
-				<td><p class="text-center"><input type="text" name="sr" class="form-control" value="'.$userData['silence_reason'].'"></td>
+				<td><p class="text-center"><input type="text" name="sr" class="form-control" value="' . $userData['silence_reason'] . '"></td>
 				</tr>';
 			}
 			if (hasPrivilege(Privileges::AdminManagePrivileges)) {
@@ -791,25 +797,25 @@ class P {
 						continue;
 					$c = (($userData["privileges"] & $v) > 0) ? "checked" : "";
 					$d = ($v <= 2 && $gd != "disabled") ? "disabled" : "";
-					echo '<label><input name="privilege" value="'.$v.'" type="checkbox" onclick="updatePrivileges();" '.$c.' '.$gd.' '.$d.'>	'.$i.' ('.$v.')</label><br>';
+					echo '<label><input name="privilege" value="' . $v . '" type="checkbox" onclick="updatePrivileges();" ' . $c . ' ' . $gd . ' ' . $d . '>	' . $i . ' (' . $v . ')</label><br>';
 				}
 				echo '</tr>';
 				$ro = $userData["id"] == $_SESSION["userid"] ? "readonly" : "";
 				echo '<tr>
 				<td>Privilege number</td>
-				<td><input class="form-control" id="privileges-value" name="priv" value="'.$userData["privileges"].'" '.$ro.'></td>
+				<td><input class="form-control" id="privileges-value" name="priv" value="' . $userData["privileges"] . '" ' . $ro . '></td>
 				</tr>';
 				echo '<tr>
 				<td>Privilege group<i class="no-mobile">(This is basically a preset and will replace every existing privilege)</i></td>
 				<td>
-					<select id="privileges-group" name="privgroup" class="selectpicker" data-width="100%" onchange="groupUpdated();" '.$gd.'>';
-					$groups = $GLOBALS["db"]->fetchAll("SELECT * FROM privileges_groups");
-					echo "<option value='-1'>None</option>";
-					foreach ($groups as $group) {
-						$s = (($userData["privileges"] == $group["privileges"]) || ($userData["privileges"] == ($group["privileges"] | Privileges::UserDonor)))? "selected": "";
-						echo "<option value='$group[privileges]' $s>$group[name]</option>";
-					}
-					echo '</select>
+					<select id="privileges-group" name="privgroup" class="selectpicker" data-width="100%" onchange="groupUpdated();" ' . $gd . '>';
+				$groups = $GLOBALS["db"]->fetchAll("SELECT * FROM privileges_groups");
+				echo "<option value='-1'>None</option>";
+				foreach ($groups as $group) {
+					$s = (($userData["privileges"] == $group["privileges"]) || ($userData["privileges"] == ($group["privileges"] | Privileges::UserDonor))) ? "selected" : "";
+					echo "<option value='$group[privileges]' $s>$group[name]</option>";
+				}
+				echo '</select>
 				</td>
 				</tr>';
 			}
@@ -818,9 +824,9 @@ class P {
 				<td>Custom badge</td>
 				<td>
 					<p align="center">
-						<i class="fa '.htmlspecialchars($userData["custom_badge_icon"]).' fa-2x"></i>
+						<i class="fa ' . htmlspecialchars($userData["custom_badge_icon"]) . ' fa-2x"></i>
 						<br>
-						<b>'.htmlspecialchars($userData["custom_badge_name"]).'</b>
+						<b>' . htmlspecialchars($userData["custom_badge_name"]) . '</b>
 					</p>
 				</td>
 				</tr>';
@@ -855,56 +861,55 @@ class P {
 							Actions
 							<a title="Pin/Unpin" class="unpin btn btn-xs btn-primary no-mobile"><span class="glyphicon glyphicon-pushpin"></span></a></li>
 							<li class="list-group-item mobile-flex">';
-								if (hasPrivilege(Privileges::AdminManageBadges)) {
-									echo '<a href="index.php?p=110&id='.$_GET['id'].'" class="btn btn-success">Edit badges</a>';
-								}
-								echo '	<a href="index.php?p=104&id='.$_GET['id'].'" class="btn btn-info">Change identity</a>';
-								if (hasPrivilege(Privileges::UserDonor, $_GET["id"])) {
-									echo '	<a onclick="sure(\'submit.php?action=removeDonor&id='.$_GET['id'].'&csrf='.csrfToken().'\');" class="btn btn-danger">Remove donor</a>';
-								}
-								echo '	<a href="index.php?p=121&id='.$_GET['id'].'" class="btn btn-warning">Give supporter</a>';
-								echo '	<a href="https://akatsuki.pw/u/'.$_GET['id'].'" class="btn btn-primary">View profile</a>';
-							echo '</li>
+			if (hasPrivilege(Privileges::AdminManageBadges)) {
+				echo '<a href="index.php?p=110&id=' . $_GET['id'] . '" class="btn btn-success">Edit badges</a>';
+			}
+			echo '	<a href="index.php?p=104&id=' . $_GET['id'] . '" class="btn btn-info">Change identity</a>';
+			if (hasPrivilege(Privileges::UserDonor, $_GET["id"])) {
+				echo '	<a onclick="sure(\'submit.php?action=removeDonor&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">Remove donor</a>';
+			}
+			echo '	<a href="index.php?p=121&id=' . $_GET['id'] . '" class="btn btn-warning">Give supporter</a>';
+			echo '	<a href="https://akatsuki.pw/u/' . $_GET['id'] . '" class="btn btn-primary">View profile</a>';
+			echo '</li>
 						</ul>';
 
-						echo '<ul class="list-group">
+			echo '<ul class="list-group">
 						<li class="list-group-item list-group-item-danger">Dangerous Zone</li>
 						<li class="list-group-item mobile-flex">';
-						if (hasPrivilege(Privileges::AdminWipeUsers)) { // Ok this is pretty cursed lol
-							echo '	<a href="index.php?p=123&id='.$_GET["id"].'" class="btn btn-danger">Wipe account</a>';
-							echo '	<a href="index.php?p=122&id='.$_GET["id"].'" class="btn btn-danger">Rollback account</a>';
-						}
-						if (hasPrivilege(Privileges::AdminCaker)) { // Only allow superadmin to lock from admin panel.
-							echo '	<a onclick="sure(\'submit.php?action=lockUnlockUser&id='.$_GET['id'].'&csrf='.csrfToken().'\', \'Restrictions and bans will be removed from this account if you lock it. Make sure to lock only accounts that are not banned or restricted.\')" class="btn btn-danger">(Un)lock user</a>';
-						}
+			if (hasPrivilege(Privileges::AdminWipeUsers)) { // Ok this is pretty cursed lol
+				echo '	<a href="index.php?p=123&id=' . $_GET["id"] . '" class="btn btn-danger">Wipe account</a>';
+				echo '	<a href="index.php?p=122&id=' . $_GET["id"] . '" class="btn btn-danger">Rollback account</a>';
+			}
+			if (hasPrivilege(Privileges::AdminCaker)) { // Only allow superadmin to lock from admin panel.
+				echo '	<a onclick="sure(\'submit.php?action=lockUnlockUser&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\', \'Restrictions and bans will be removed from this account if you lock it. Make sure to lock only accounts that are not banned or restricted.\')" class="btn btn-danger">(Un)lock user</a>';
+			}
 
-						if (hasPrivilege(Privileges::AdminBanUsers)) {
-							echo '	<a href="index.php?p=137&id='.$_GET["id"].'" class="btn btn-danger">(Un)restrict user</a>';
-							echo '	<a href="index.php?p=139&id='.$_GET["id"].'" class="btn btn-danger">(Un)ban user</a>';
-							/*if (isBanned($_GET["id"])) {
+			if (hasPrivilege(Privileges::AdminBanUsers)) {
+				echo '	<a href="index.php?p=137&id=' . $_GET["id"] . '" class="btn btn-danger">(Un)restrict user</a>';
+				echo '	<a href="index.php?p=139&id=' . $_GET["id"] . '" class="btn btn-danger">(Un)ban user</a>';
+				/*if (isBanned($_GET["id"])) {
 								echo '	<a onclick="sure(\'submit.php?action=banUnbanUser&id='.$_GET['id'].'&csrf=' . csrfToken() . '\')" class="btn btn-danger">Unban user</a>';
 							}
 							if (isRestricted($_GET["id"])) {
 								echo '	<a onclick="sure(\'submit.php?action=restrictUnrestrictUser&id='.$_GET['id'].'&csrf='.csrfToken().'\')" class="btn btn-danger">Unrestrict user</a>';
 							}*/
 
-							echo '	<a onclick="sure(\'submit.php?action=clearHWID&id='.$_GET['id'].'&csrf='.csrfToken().'\');" class="btn btn-danger">Clear HWID matches</a>';
-						}
-						echo '		<a onclick="sure(\'submit.php?action=toggleCustomBadge&id='.$_GET['id'].'&csrf='.csrfToken().'\');" class="btn btn-danger">'.(($userData["can_custom_badge"] == 1) ? "Revoke" : "Grant").' custom badge</a>';
-						if (hasPrivilege(Privileges::AdminSilenceUsers)) {
-							echo '		<a onclick="sure(\'submit.php?action=toggleUserpage&id='.$_GET['id'].'&csrf='.csrfToken().'\');" class="btn btn-danger">'.(($userData["userpage_allowed"] == 1) ? "Disallow" : "Allow").' userpage</a>';
-						}
-						echo '<br>
+				echo '	<a onclick="sure(\'submit.php?action=clearHWID&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">Clear HWID matches</a>';
+			}
+			echo '		<a onclick="sure(\'submit.php?action=toggleCustomBadge&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">' . (($userData["can_custom_badge"] == 1) ? "Revoke" : "Grant") . ' custom badge</a>';
+			if (hasPrivilege(Privileges::AdminSilenceUsers)) {
+				echo '		<a onclick="sure(\'submit.php?action=toggleUserpage&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">' . (($userData["userpage_allowed"] == 1) ? "Disallow" : "Allow") . ' userpage</a>';
+			}
+			echo '<br>
 							</li>
 						</ul>
 					</div>';
 
-				echo '</div>
+			echo '</div>
 				</div>';
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to exception page
-			redirect('index.php?p=102&e='.$e->getMessage());
+			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
 
@@ -913,7 +918,8 @@ class P {
 	 * AdminChangeIdentity
 	 * Prints the admin panel change identity page
 	 */
-	public static function AdminChangeIdentity() {
+	public static function AdminChangeIdentity()
+	{
 		try {
 			// Get user data
 			$userData = $GLOBALS['db']->fetch('SELECT * FROM users WHERE id = ?', $_GET['id']);
@@ -944,15 +950,15 @@ class P {
 			echo '<p align="center"><font size=5><i class="fa fa-refresh"></i>	Change identity</font></p>';
 			echo '<table class="table table-striped table-hover table-50-center">';
 			echo '<tbody><form id="system-settings-form" action="submit.php" method="POST">
-			<input name="csrf" type="hidden" value="'.csrfToken().'">
+			<input name="csrf" type="hidden" value="' . csrfToken() . '">
 			<input name="action" value="changeIdentity" hidden>';
 			echo '<tr>
 			<td>ID</td>
-			<td><p class="text-center"><input type="number" name="id" class="form-control" value="'.$userData['id'].'" readonly></td>
+			<td><p class="text-center"><input type="number" name="id" class="form-control" value="' . $userData['id'] . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Old Username</td>
-			<td><p class="text-center"><input type="text" name="oldu" class="form-control" value="'.$userData['username'].'" readonly></td>
+			<td><p class="text-center"><input type="text" name="oldu" class="form-control" value="' . $userData['username'] . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>New Username</td>
@@ -962,10 +968,9 @@ class P {
 			echo '</table>';
 			echo '<div class="text-center"><button type="submit" form="system-settings-form" class="btn btn-primary">Change identity</button></div>';
 			echo '</div>';
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to exception page
-			redirect('index.php?p=102&e='.$e->getMessage());
+			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
 
@@ -974,7 +979,8 @@ class P {
 	 * AdminSystemSettings
 	 * Prints the admin panel system settings page
 	 */
-	public static function AdminSystemSettings() {
+	public static function AdminSystemSettings()
+	{
 		// Print stuff
 		echo '<div id="wrapper">';
 		printAdminSidebar();
@@ -1018,14 +1024,14 @@ class P {
 		echo '<p align="center"><font size=5><i class="fa fa-cog"></i>	System settings</font></p>';
 		echo '<table class="table table-striped table-hover table-50-center">';
 		echo '<tbody><form id="system-settings-form" action="submit.php" method="POST">
-		<input name="csrf" type="hidden" value="'.csrfToken().'">
+		<input name="csrf" type="hidden" value="' . csrfToken() . '">
 		<input name="action" value="saveSystemSettings" hidden>';
 		echo '<tr>
 		<td>Maintenance mode (website)</td>
 		<td>
 		<select name="wm" class="selectpicker" data-width="100%">
-		<option value="1" '.$selected[0][1].'>On</option>
-		<option value="0" '.$selected[0][2].'>Off</option>
+		<option value="1" ' . $selected[0][1] . '>On</option>
+		<option value="0" ' . $selected[0][2] . '>Off</option>
 		</select>
 		</td>
 		</tr>';
@@ -1033,8 +1039,8 @@ class P {
 		<td>Maintenance mode (in-game)</td>
 		<td>
 		<select name="gm" class="selectpicker" data-width="100%">
-		<option value="1" '.$selected[1][1].'>On</option>
-		<option value="0" '.$selected[1][2].'>Off</option>
+		<option value="1" ' . $selected[1][1] . '>On</option>
+		<option value="0" ' . $selected[1][2] . '>Off</option>
 		</select>
 		</td>
 		</tr>';
@@ -1042,18 +1048,18 @@ class P {
 		<td>Registration</td>
 		<td>
 		<select name="r" class="selectpicker" data-width="100%">
-		<option value="1" '.$selected[2][1].'>On</option>
-		<option value="0" '.$selected[2][2].'>Off</option>
+		<option value="1" ' . $selected[2][1] . '>On</option>
+		<option value="0" ' . $selected[2][2] . '>Off</option>
 		</select>
 		</td>
 		</tr>';
 		echo '<tr>
 		<td>Global alert<br>(visible on every page of the website)</td>
-		<td><textarea type="text" name="ga" class="form-control" maxlength="512" style="overflow:auto;resize:vertical;height:100px">'.$ga.'</textarea></td>
+		<td><textarea type="text" name="ga" class="form-control" maxlength="512" style="overflow:auto;resize:vertical;height:100px">' . $ga . '</textarea></td>
 		</tr>';
 		echo '<tr>
 		<td>Homepage alert<br>(visible only on the home page)</td>
-		<td><textarea type="text" name="ha" class="form-control" maxlength="512" style="overflow:auto;resize:vertical;height:100px">'.$ha.'</textarea></td>
+		<td><textarea type="text" name="ha" class="form-control" maxlength="512" style="overflow:auto;resize:vertical;height:100px">' . $ha . '</textarea></td>
 		</tr>';
 		echo '<tr class="success"><td colspan=2><p align="center">Click <a href="index.php?p=111">here</a> for bancho settings</p></td></tr>';
 		echo '</tbody></form>';
@@ -1069,7 +1075,8 @@ class P {
 	 * AdminBadges
 	 * Prints the admin panel badges page
 	 */
-	public static function AdminBadges() {
+	public static function AdminBadges()
+	{
 		// Get data
 		$badgesData = $GLOBALS['db']->fetchAll('SELECT * FROM badges');
 		// Print docs stuff
@@ -1095,13 +1102,13 @@ class P {
 		foreach ($badgesData as $badge) {
 			// Print row for this badge
 			echo '<tr>
-			<td><p class="text-center">'.$badge['id'].'</p></td>
-			<td><p class="text-center">'.$badge['name'].'</p></td>
-			<td><p class="text-center"><i class="fa '.$badge['icon'].' fa-2x"></i></p></td>
+			<td><p class="text-center">' . $badge['id'] . '</p></td>
+			<td><p class="text-center">' . $badge['name'] . '</p></td>
+			<td><p class="text-center"><i class="fa ' . $badge['icon'] . ' fa-2x"></i></p></td>
 			<td><p class="text-center">
 			<div class="btn-group-justified">
-			<a title="Edit badge" class="btn btn-xs btn-primary" href="index.php?p=109&id='.$badge['id'].'"><span class="glyphicon glyphicon-pencil"></span></a>
-			<a title="Delete badge" class="btn btn-xs btn-danger" onclick="sure(\'submit.php?action=removeBadge&id='.$badge['id'].'&csrf='.csrfToken().'\');"><span class="glyphicon glyphicon-trash"></span></a>
+			<a title="Edit badge" class="btn btn-xs btn-primary" href="index.php?p=109&id=' . $badge['id'] . '"><span class="glyphicon glyphicon-pencil"></span></a>
+			<a title="Delete badge" class="btn btn-xs btn-danger" onclick="sure(\'submit.php?action=removeBadge&id=' . $badge['id'] . '&csrf=' . csrfToken() . '\');"><span class="glyphicon glyphicon-trash"></span></a>
 			</div>
 			</p></td>
 			</tr>';
@@ -1124,7 +1131,7 @@ class P {
 		<div class="modal-body">
 		<p>
 		<form id="quick-edit-user-form" action="submit.php" method="POST">
-		<input name="csrf" type="hidden" value="'.csrfToken().'">
+		<input name="csrf" type="hidden" value="' . csrfToken() . '">
 		<input name="action" value="quickEditUserBadges" hidden>
 		<div class="input-group">
 		<span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>
@@ -1147,7 +1154,8 @@ class P {
 	 * AdminEditBadge
 	 * Prints the admin panel edit badge page
 	 */
-	public static function AdminEditBadge() {
+	public static function AdminEditBadge()
+	{
 		try {
 			// Check if id is set
 			if (!isset($_GET['id'])) {
@@ -1172,33 +1180,32 @@ class P {
 			echo '<p align="center"><font size=5><i class="fa fa-certificate"></i>	Edit badge</font></p>';
 			echo '<table class="table table-striped table-hover table-50-center">';
 			echo '<tbody><form id="edit-badge-form" action="submit.php" method="POST">
-			<input name="csrf" type="hidden" value="'.csrfToken().'">
+			<input name="csrf" type="hidden" value="' . csrfToken() . '">
 			<input name="action" value="saveBadge" hidden>
-			<input name="c" id="badge-colour-value" hidden value="'.$badgeData['colour'].'" >';
+			<input name="c" id="badge-colour-value" hidden value="' . $badgeData['colour'] . '" >';
 			echo '<tr>
 			<td>ID</td>
-			<td><p class="text-center"><input type="number" name="id" class="form-control" value="'.$badgeData['id'].'" readonly></td>
+			<td><p class="text-center"><input type="number" name="id" class="form-control" value="' . $badgeData['id'] . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Name</td>
-			<td><p class="text-center"><input type="text" name="n" class="form-control" value="'.$badgeData['name'].'" ></td>
+			<td><p class="text-center"><input type="text" name="n" class="form-control" value="' . $badgeData['name'] . '" ></td>
 			</tr>';
 			echo '<tr>
 			<td>Icon</td>
-			<td><p class="text-center"><input type="text" name="i" class="form-control icp icp-auto" value="'.$badgeData['icon'].'" ></td>
+			<td><p class="text-center"><input type="text" name="i" class="form-control icp icp-auto" value="' . $badgeData['icon'] . '" ></td>
 			</tr>';
 			echo '<tr>
 			<td>Colour</td>
-			<td style="display: flex; align-items: center; gap: 10px;"><input type="text" id="badge-colour" class="form-control" value="'.$badgeData['colour'].'" > <button type="button" onclick="resetColour()" class="btn btn-danger">Reset colour</button></td>
+			<td style="display: flex; align-items: center; gap: 10px;"><input type="text" id="badge-colour" class="form-control" value="' . $badgeData['colour'] . '" > <button type="button" onclick="resetColour()" class="btn btn-danger">Reset colour</button></td>
 			</tr>';
 			echo '</tbody></form>';
 			echo '</table>';
 			echo '<div class="text-center"><button type="submit" form="edit-badge-form" class="btn btn-primary">Save changes</button></div>';
 			echo '</div>';
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to exception page
-			redirect('index.php?p=108&e='.$e->getMessage());
+			redirect('index.php?p=108&e=' . $e->getMessage());
 		}
 	}
 
@@ -1207,7 +1214,8 @@ class P {
 	 * AdminEditUserBadges
 	 * Prints the admin panel edit user badges page
 	 */
-	public static function AdminEditUserBadges() {
+	public static function AdminEditUserBadges()
+	{
 		try {
 			// Check if id is set
 			if (!isset($_GET['id'])) {
@@ -1228,11 +1236,11 @@ class P {
 			echo '<p align="center"><font size=5><i class="fa fa-certificate"></i>	Edit user badges</font></p>';
 			echo '<table class="table table-striped table-hover table-50-center">';
 			echo '<tbody><form id="edit-user-badges" action="submit.php" method="POST">
-			<input name="csrf" type="hidden" value="'.csrfToken().'">
+			<input name="csrf" type="hidden" value="' . csrfToken() . '">
 			<input name="action" value="saveUserBadges" hidden>';
 			echo '<tr>
 			<td>User</td>
-			<td><p class="text-center"><input type="text" name="u" class="form-control" value="'.$username.'" readonly></td>
+			<td><p class="text-center"><input type="text" name="u" class="form-control" value="' . $username . '" readonly></td>
 			</tr>';
 			for ($i = 1; $i <= 6; $i++) {
 				echo '<tr>
@@ -1241,7 +1249,7 @@ class P {
 				echo "<select name='b0$i' class='selectpicker' data-width='100%'>";
 				foreach ($allBadges as $badge) {
 					$selected = "";
-					if ($badge["id"] == @$userBadges[$i-1]["badge"])
+					if ($badge["id"] == @$userBadges[$i - 1]["badge"])
 						$selected = " selected";
 					echo "<option value='$badge[id]'$selected>$badge[name]</option>";
 				}
@@ -1252,10 +1260,9 @@ class P {
 			echo '</table>';
 			echo '<div class="text-center"><button type="submit" form="edit-user-badges" class="btn btn-primary">Save changes</button></div>';
 			echo '</div>';
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to exception page
-			redirect('index.php?p=108&e='.$e->getMessage());
+			redirect('index.php?p=108&e=' . $e->getMessage());
 		}
 	}
 
@@ -1264,7 +1271,8 @@ class P {
 	 * AdminBanchoSettings
 	 * Prints the admin panel bancho settings page
 	 */
-	public static function AdminBanchoSettings() {
+	public static function AdminBanchoSettings()
+	{
 		// Print stuff
 		echo '<div id="wrapper">';
 		printAdminSidebar();
@@ -1314,19 +1322,19 @@ class P {
 		}
 		echo '<form id="uploadForm" action="submit.php" method="POST" enctype="multipart/form-data">
 		<input form="uploadForm" name="action" value="uploadMainMenuIcon" hidden>
-		<input name="csrf" type="hidden" value="'.csrfToken().'">
+		<input name="csrf" type="hidden" value="' . csrfToken() . '">
 		</form>
 		<p align="center"><font size=5><i class="fa fa-server"></i>	Bancho settings</font></p>';
 		echo '<table class="table table-striped table-hover table-75-center">';
 		echo '<tbody><form id="system-settings-form" action="submit.php" method="POST">
-		<input name="csrf" type="hidden" value="'.csrfToken().'">
+		<input name="csrf" type="hidden" value="' . csrfToken() . '">
 		<input name="action" value="saveBanchoSettings" hidden>';
 		echo '<tr>
 		<td>Bancho maintenance mode</td>
 		<td>
 		<select name="bm" class="selectpicker" data-width="100%">
-		<option value="1" '.$selected[0][1].'>On</option>
-		<option value="0" '.$selected[0][2].'>Off</option>
+		<option value="1" ' . $selected[0][1] . '>On</option>
+		<option value="0" ' . $selected[0][2] . '>Off</option>
 		</select>
 		</td>
 		</tr>';
@@ -1335,18 +1343,18 @@ class P {
 		<td>
 			<table class="table table-striped">
 				<tbody>';
-				foreach ($icons as $icon) {
-					echo'
-					<tr class="' . ($icon["is_current"] ? "success" : ($icon["is_default"] ? "warning": "")) . '">
+		foreach ($icons as $icon) {
+			echo '
+					<tr class="' . ($icon["is_current"] ? "success" : ($icon["is_default"] ? "warning" : "")) . '">
 						<td><a href="https://i.akatsuki.pw/' . $icon["file_id"] . '.png" target="_blank">' . $icon["name"] . '</a> - <a href="' . $icon["url"] . '" target="_blank">' . $icon["url"] . '</td>
 						<td style="text-align: right">
-							<a ' . ($icon["is_current"] ? "disabled" : "") . ' title="Set as main menu icon" class="btn btn-success btn-xs" href="submit.php?action=setMainMenuIcon&id=' . $icon["id"] . '&csrf='.csrfToken(). '"><i class="fa fa-check"></i></a>
-							<a ' . ($icon["is_default"] ? "disabled" : "") . ' title="Set as default main menu icon" class="btn btn-info btn-xs" href="submit.php?action=setDefaultMainMenuIcon&id=' . $icon["id"] . '&csrf='.csrfToken(). '"><i class="fa fa-asterisk"></i></a>
-							<a title="Delete main menu icon" class="btn btn-danger btn-xs" href="submit.php?action=deleteMainMenuIcon&id=' . $icon["id"] . '&csrf='.csrfToken(). '"><i class="fa fa-trash"></i></a>
+							<a ' . ($icon["is_current"] ? "disabled" : "") . ' title="Set as main menu icon" class="btn btn-success btn-xs" href="submit.php?action=setMainMenuIcon&id=' . $icon["id"] . '&csrf=' . csrfToken() . '"><i class="fa fa-check"></i></a>
+							<a ' . ($icon["is_default"] ? "disabled" : "") . ' title="Set as default main menu icon" class="btn btn-info btn-xs" href="submit.php?action=setDefaultMainMenuIcon&id=' . $icon["id"] . '&csrf=' . csrfToken() . '"><i class="fa fa-asterisk"></i></a>
+							<a title="Delete main menu icon" class="btn btn-danger btn-xs" href="submit.php?action=deleteMainMenuIcon&id=' . $icon["id"] . '&csrf=' . csrfToken() . '"><i class="fa fa-trash"></i></a>
 						</td>
 					</tr>';
-				}
-				echo '
+		}
+		echo '
 					<tr class="info">
 						<td colspan="2" style="vertical-align: middle"><input form="uploadForm" type="file" name="file"></td>
 					</tr>
@@ -1368,8 +1376,8 @@ class P {
 					</tr>
 					<tr class="warning">
 						<td colspan="3">
-							<a style="width: 49%; float: left;" ' . ((!$hasDefault || $isDefault) ? "disabled" : "") . ' href="submit.php?action=restoreMainMenuIcon&csrf='.csrfToken(). '" class="btn btn-warning"><i class="fa fa-fast-backward"></i> Restore default</a>
-							<a style="width: 49%; float: right;"' . (!$hasIcon ? "disabled" : "") . ' href="submit.php?action=removeMainMenuIcon&csrf='.csrfToken(). '" class="btn btn-danger"><i class="fa fa-eraser"></i> Remove main menu icon</a>
+							<a style="width: 49%; float: left;" ' . ((!$hasDefault || $isDefault) ? "disabled" : "") . ' href="submit.php?action=restoreMainMenuIcon&csrf=' . csrfToken() . '" class="btn btn-warning"><i class="fa fa-fast-backward"></i> Restore default</a>
+							<a style="width: 49%; float: right;"' . (!$hasIcon ? "disabled" : "") . ' href="submit.php?action=removeMainMenuIcon&csrf=' . csrfToken() . '" class="btn btn-danger"><i class="fa fa-eraser"></i> Remove main menu icon</a>
 						</td>
 					</tr>
 				</tbody>
@@ -1378,7 +1386,7 @@ class P {
 		</tr>';
 		echo '<tr>
 		<td>Login notification</td>
-		<td><textarea type="text" name="ln" class="form-control" maxlength="512" style="overflow:auto;resize:vertical;height:100px">'.$ln.'</textarea></td>
+		<td><textarea type="text" name="ln" class="form-control" maxlength="512" style="overflow:auto;resize:vertical;height:100px">' . $ln . '</textarea></td>
 		</tr>';
 		echo '<tr class="success">
 		<td colspan=2><p align="center"><b>Settings are automatically reloaded on Bancho when you press "Save settings".</b> There\'s no need to do <i>!system reload</i> manually anymore.</p></td>
@@ -1393,7 +1401,8 @@ class P {
 	 * AdminLog
 	 * Prints the admin log page
 	 */
-	public static function AdminLog() {
+	public static function AdminLog()
+	{
 		// TODO: Ask stampa piede COME SI DICHIARANO LE COSTANTY IN PIACCAPPI??
 		$pageInterval = 50;
 
@@ -1406,7 +1415,7 @@ class P {
 			$from = current($GLOBALS["db"]->fetch("SELECT id FROM rap_logs ORDER BY datetime DESC LIMIT 1"));
 			$first = true;
 		}
-		$to = $from-$pageInterval;
+		$to = $from - $pageInterval;
 		$logs = $GLOBALS['db']->fetchAll('SELECT rap_logs.*, users.username FROM rap_logs LEFT JOIN users ON rap_logs.userid = users.id WHERE rap_logs.id <= ? AND rap_logs.id > ? ORDER BY rap_logs.datetime DESC', [$from, $to]);
 		// Print sidebar and template stuff
 		echo '<div id="wrapper">';
@@ -1433,7 +1442,7 @@ class P {
 			foreach ($logs as $entry) {
 				$currentDay = date("z", $entry["datetime"]);
 				if ($lastDay != $currentDay)
-					echo'<div class="line"><div class="line-text"><span class="label label-primary">' . date("d/m/Y", $entry["datetime"]) . '</span></div></div>';
+					echo '<div class="line"><div class="line-text"><span class="label label-primary">' . date("d/m/Y", $entry["datetime"]) . '</span></div></div>';
 				printBubble($entry["userid"], $entry["username"], $entry["text"], $entry["datetime"], $entry["through"]);
 				$lastDay = $currentDay;
 			}
@@ -1441,7 +1450,7 @@ class P {
 		echo '</div>';
 		echo '<br><br><p align="center">';
 		if (!$first)
-			echo '<a href="index.php?p=116&from=' .($from+$pageInterval) . '">< Prev page</a>';
+			echo '<a href="index.php?p=116&from=' . ($from + $pageInterval) . '">< Prev page</a>';
 		if (!$first && $logs)
 			echo ' | ';
 		if ($logs)
@@ -1455,7 +1464,8 @@ class P {
 	 * HomePage
 	 * Prints the homepage
 	 */
-	public static function HomePage() {
+	public static function HomePage()
+	{
 		P::GlobalAlert();
 		// Home success message
 		$success = ['forgetDone' => 'Done! Your "Stay logged in" tokens have been deleted from the database.'];
@@ -1467,12 +1477,20 @@ class P {
 			self::ExceptionMessage($error[$_GET['e']]);
 		}
 		$color = "pink";
-		if (mt_rand(0,9) == 0) {
-			switch(mt_rand(0,3)) {
-				case 0: $color = "red"; break;
-				case 1: $color = "blue"; break;
-				case 2: $color = "green"; break;
-				case 3: $color = "orange"; break;
+		if (mt_rand(0, 9) == 0) {
+			switch (mt_rand(0, 3)) {
+				case 0:
+					$color = "red";
+					break;
+				case 1:
+					$color = "blue";
+					break;
+				case 2:
+					$color = "green";
+					break;
+				case 3:
+					$color = "orange";
+					break;
 			}
 		}
 		echo '<p align="center">
@@ -1495,14 +1513,16 @@ class P {
 	 *
 	 * @param (string) ($e) The custom message (exception) to display.
 	 */
-	public static function ExceptionMessage($e, $ret = false) {
-		$p = '<div class="container alert alert-danger" role="alert" style="width: 100%;"><p align="center"><b>An error occurred:<br></b>'.$e.'</p></div>';
+	public static function ExceptionMessage($e, $ret = false)
+	{
+		$p = '<div class="container alert alert-danger" role="alert" style="width: 100%;"><p align="center"><b>An error occurred:<br></b>' . $e . '</p></div>';
 		if ($ret) {
 			return $p;
 		}
 		echo $p;
 	}
-	public static function ExceptionMessageStaccah($s, $ret = false) {
+	public static function ExceptionMessageStaccah($s, $ret = false)
+	{
 		return P::ExceptionMessage(htmlspecialchars($s), $ret);
 	}
 
@@ -1513,14 +1533,16 @@ class P {
 	 *
 	 * @param (string) ($s) The custom message to display.
 	 */
-	public static function SuccessMessage($s, $ret = false) {
-		$p = '<div class="container alert alert-success" role="alert" style="width:100%;"><p align="center">'.$s.'</p></div>';
+	public static function SuccessMessage($s, $ret = false)
+	{
+		$p = '<div class="container alert alert-success" role="alert" style="width:100%;"><p align="center">' . $s . '</p></div>';
 		if ($ret) {
 			return $p;
 		}
 		echo $p;
 	}
-	public static function SuccessMessageStaccah($s, $ret = false) {
+	public static function SuccessMessageStaccah($s, $ret = false)
+	{
 		return P::SuccessMessage(htmlspecialchars($s), $ret);
 	}
 
@@ -1532,7 +1554,8 @@ class P {
 	 *
 	 * @return bool Whether something was printed.
 	 */
-	public static function Messages() {
+	public static function Messages()
+	{
 		$p = false;
 		if (isset($_SESSION['errors']) && is_array($_SESSION['errors'])) {
 			foreach ($_SESSION['errors'] as $err) {
@@ -1557,7 +1580,8 @@ class P {
 	 * Display a message to the user that he's already logged in.
 	 * Printed when a logged in user tries to view a guest only page.
 	 */
-	public static function LoggedInAlert() {
+	public static function LoggedInAlert()
+	{
 		echo '<div class="alert alert-warning" role="alert">You are already logged in.</i></div>';
 	}
 
@@ -1567,7 +1591,8 @@ class P {
 	 * Prints the maintenance alert and die if we are normal users
 	 * Prints the maintenance alert and keep printing the page if we are mod/admin
 	 */
-	public static function MaintenanceAlert() {
+	public static function MaintenanceAlert()
+	{
 		try {
 			// Check if we are logged in
 			if (!checkLoggedIn()) {
@@ -1579,8 +1604,7 @@ class P {
 			}
 			// Mod/admin, show alert and continue
 			echo '<div class="alert alert-warning" role="alert"><p align="center"><i class="fa fa-cog fa-spin"></i>	Akatsuki\'s website is in <b>maintenance mode</b>. Only moderators and administrators have access to the full website.</p></div>';
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Normal user, show alert and die
 			echo '<div class="alert alert-warning" role="alert"><p align="center"><i class="fa fa-cog fa-spin"></i>	Akatsuki\'s website is in <b>maintenance mode</b>. We are working for you, <b>please come back later.</b></p></div>';
 			die();
@@ -1592,7 +1616,8 @@ class P {
 	 * GameMaintenanceAlert
 	 * Prints the game maintenance alert
 	 */
-	public static function GameMaintenanceAlert() {
+	public static function GameMaintenanceAlert()
+	{
 		try {
 			// Check if we are logged in
 			if (!checkLoggedIn()) {
@@ -1604,8 +1629,7 @@ class P {
 			}
 			// Mod/admin, show alert and continue
 			echo '<div class="alert alert-danger" role="alert"><p align="center"><i class="fa fa-cog fa-spin"></i>	Akatsuki\'s score system is in <b>maintenance mode</b>. <u>Your scores won\'t be saved until maintenance ends.</u><br><b>Make sure to disable game maintenance mode from the admin control panel as soon as possible!</b></p></div>';
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Normal user, show alert and die
 			echo '<div class="alert alert-danger" role="alert"><p align="center"><i class="fa fa-cog fa-spin"></i>	Akatsuki\'s score system is in <b>maintenance mode</b>. <u>Your scores won\'t be saved until maintenance ends.</u></b></p></div>';
 		}
@@ -1616,7 +1640,8 @@ class P {
 	 * BanchoMaintenance
 	 * Prints the game maintenance alert
 	 */
-	public static function BanchoMaintenanceAlert() {
+	public static function BanchoMaintenanceAlert()
+	{
 		try {
 			// Check if we are logged in
 			if (!checkLoggedIn()) {
@@ -1628,8 +1653,7 @@ class P {
 			}
 			// Mod/admin, show alert and continue
 			echo '<div class="alert alert-danger" role="alert"><p align="center"><i class="fa fa-server"></i>	Akatsuki\'s Bancho server is in maintenance mode. You can\'t play on Akatsuki right now. Try again later.<br><b>Make sure to disable game maintenance mode from the admin control panel as soon as possible!</b></p></div>';
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Normal user, show alert and die
 			echo '<div class="alert alert-danger" role="alert"><p align="center"><i class="fa fa-server"></i>	Akatsuki\'s Bancho server is in maintenance mode. You can\'t play on Akatsuki right now. Try again later.</p></div>';
 		}
@@ -1640,7 +1664,8 @@ class P {
 	 * MaintenanceStuff
 	 * Prints website/game maintenance alerts
 	 */
-	public static function MaintenanceStuff() {
+	public static function MaintenanceStuff()
+	{
 		// Check Bancho maintenance
 		if (checkBanchoMaintenance()) {
 			self::BanchoMaintenanceAlert();
@@ -1660,10 +1685,11 @@ class P {
 	 * GlobalAlert
 	 * Prints the global alert (only if not empty)
 	 */
-	public static function GlobalAlert() {
+	public static function GlobalAlert()
+	{
 		$m = current($GLOBALS['db']->fetch("SELECT value_string FROM system_settings WHERE name = 'website_global_alert'"));
 		if ($m != '') {
-			echo '<div class="alert alert-warning" role="alert"><p align="center">'.$m.'</p></div>';
+			echo '<div class="alert alert-warning" role="alert"><p align="center">' . $m . '</p></div>';
 		}
 		self::RestrictedAlert();
 	}
@@ -1673,10 +1699,11 @@ class P {
 	 * HomeAlert
 	 * Prints the home alert (only if not empty)
 	 */
-	public static function HomeAlert() {
+	public static function HomeAlert()
+	{
 		$m = current($GLOBALS['db']->fetch("SELECT value_string FROM system_settings WHERE name = 'website_home_alert'"));
 		if ($m != '') {
-			echo '<div class="alert alert-warning" role="alert"><p align="center">'.$m.'</p></div>';
+			echo '<div class="alert alert-warning" role="alert"><p align="center">' . $m . '</p></div>';
 		}
 	}
 
@@ -1685,7 +1712,8 @@ class P {
 	 * FriendlistPage
 	 * Prints the friendlist page.
 	 */
-	public static function FriendlistPage() {
+	public static function FriendlistPage()
+	{
 		// Maintenance check
 		self::MaintenanceStuff();
 		// Global alert
@@ -1712,7 +1740,7 @@ class P {
 			foreach ($friends as $friend) {
 				$uname = $friend['username'];
 				$mutualIcon = ($friend['user2'] == 999 || getFriendship($friend['user2'], $ourID, true) == 2) ? '<i class="fa fa-heart"></i>' : '';
-				echo '<tr><td><div align="center"><a href="index.php?p=103&id='.$friend['user2'].'">'.$uname.'</a></div></td><td><div align="center">'.$mutualIcon.'</div></td></tr>';
+				echo '<tr><td><div align="center"><a href="index.php?p=103&id=' . $friend['user2'] . '">' . $uname . '</a></div></td><td><div align="center">' . $mutualIcon . '</div></td></tr>';
 			}
 			echo '</tbody></table>';
 		}
@@ -1723,11 +1751,12 @@ class P {
 	 * AdminRankRequests
 	 * Prints the admin rank requests
 	 */
-	public static function AdminRankRequests() {
+	public static function AdminRankRequests()
+	{
 		global $ScoresConfig;
 		// Get data
-		$rankRequestsToday = $GLOBALS["db"]->fetch("SELECT COUNT(*) AS count FROM rank_requests WHERE time > ? LIMIT ".$ScoresConfig["rankRequestsQueueSize"], [time()-(24*3600)]);
-		$rankRequests = $GLOBALS["db"]->fetchAll("SELECT rank_requests.*, users.username FROM rank_requests LEFT JOIN users ON rank_requests.userid = users.id WHERE time > ? ORDER BY id DESC LIMIT ".$ScoresConfig["rankRequestsQueueSize"], [time()-(24*3600)]);
+		$rankRequestsToday = $GLOBALS["db"]->fetch("SELECT COUNT(*) AS count FROM rank_requests WHERE time > ? LIMIT " . $ScoresConfig["rankRequestsQueueSize"], [time() - (24 * 3600)]);
+		$rankRequests = $GLOBALS["db"]->fetchAll("SELECT rank_requests.*, users.username FROM rank_requests LEFT JOIN users ON rank_requests.userid = users.id WHERE time > ? ORDER BY id DESC LIMIT " . $ScoresConfig["rankRequestsQueueSize"], [time() - (24 * 3600)]);
 		// Print sidebar and template stuff
 		echo '<div id="wrapper">';
 		printAdminSidebar();
@@ -1748,7 +1777,7 @@ class P {
 		echo '<div class="page-content-wrapper">';
 		//echo '<div style="width: 50%; margin-left: 25%;" class="alert alert-info" role="alert"><i class="fa fa-info-circle"></i>	Only the requests made in the past 24 hours are shown. <b>Make sure to load every difficulty in-game before ranking a map.</b><br><i>(We\'ll add a system that does it automatically soonTM)</i></div>';
 		echo '<hr>
-		<h2 style="display: inline;">'.$rankRequestsToday["count"].'</h2><h3 style="display: inline;">/'.$ScoresConfig["rankRequestsQueueSize"].'</h3><br><h4>requests submitted today</h4>
+		<h2 style="display: inline;">' . $rankRequestsToday["count"] . '</h2><h3 style="display: inline;">/' . $ScoresConfig["rankRequestsQueueSize"] . '</h3><br><h4>requests submitted today</h4>
 		<hr>';
 		echo '<table class="table table-striped table-hover" style="width: 94%; margin-left: 3%;">
 		<thead>
@@ -1757,7 +1786,7 @@ class P {
 		echo '<tbody>';
 		foreach ($rankRequests as $req) {
 			$criteria = $req["type"] == "s" ? "beatmapset_id" : "beatmap_id";
-			$b = $GLOBALS["db"]->fetch("SELECT beatmapset_id, song_name, ranked FROM beatmaps WHERE ".$criteria." = ? LIMIT 1", [$req["bid"]]);
+			$b = $GLOBALS["db"]->fetch("SELECT beatmapset_id, song_name, ranked FROM beatmaps WHERE " . $criteria . " = ? LIMIT 1", [$req["bid"]]);
 
 			if ($b) {
 				$matches = [];
@@ -1775,7 +1804,7 @@ class P {
 			else
 				$bsid = $b ? $b["beatmapset_id"] : 0;
 
-			$today = !($req["time"] < time()-86400);
+			$today = !($req["time"] < time() - 86400);
 			$beatmaps = $GLOBALS["db"]->fetchAll("SELECT song_name, beatmap_id, ranked FROM beatmaps WHERE beatmapset_id = ? LIMIT 15", [$bsid]);
 			$allUnranked = true;
 			$forceParam = "1";
@@ -1806,10 +1835,10 @@ class P {
 				<td><a href='https://osu.ppy.sh/s/$bsid' target='_blank'>$req[type]/$req[bid]</a></td>
 				<td>$song</td>
 				<td>$req[username]</td>
-				<td>".timeDifference(time(), $req["time"])."</td>
+				<td>" . timeDifference(time(), $req["time"]) . "</td>
 				<td>
 					<p class='text-center'>
-						<a title='Edit ranked status' class='btn btn-xs btn-primary' href='index.php?p=124&bsid=$bsid&force=".$forceParam."'><span class='glyphicon glyphicon-pencil'></span></a>
+						<a title='Edit ranked status' class='btn btn-xs btn-primary' href='index.php?p=124&bsid=$bsid&force=" . $forceParam . "'><span class='glyphicon glyphicon-pencil'></span></a>
 					</p>
 				</td>
 			</tr>";
@@ -1821,7 +1850,8 @@ class P {
 	}
 
 
-	public static function AdminPrivilegesGroupsMain() {
+	public static function AdminPrivilegesGroupsMain()
+	{
 		// Get data
 		$groups = $GLOBALS['db']->fetchAll('SELECT * FROM privileges_groups ORDER BY id ASC');
 		// Print sidebar and template stuff
@@ -1874,7 +1904,8 @@ class P {
 	}
 
 
-	public static function AdminEditPrivilegesGroups() {
+	public static function AdminEditPrivilegesGroups()
+	{
 		try {
 			// Check if id is set, otherwise set it to 0 (new badge)
 			if (!isset($_GET['id']) && !isset($_GET["h"])) {
@@ -1903,15 +1934,15 @@ class P {
 			echo '<p align="center"><font size=5><i class="fa fa-group"></i>	Privilege Group</font></p>';
 			echo '<table class="table table-striped table-hover table-50-center">';
 			echo '<tbody><form id="edit-badge-form" action="submit.php" method="POST">
-			<input name="csrf" type="hidden" value="'.csrfToken().'">
+			<input name="csrf" type="hidden" value="' . csrfToken() . '">
 			<input name="action" value="savePrivilegeGroup" hidden>';
 			echo '<tr>
 			<td>ID</td>
-			<td><input type="number" name="id" class="form-control" value="'.$privilegeGroupData['id'].'" readonly></td>
+			<td><input type="number" name="id" class="form-control" value="' . $privilegeGroupData['id'] . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Name</td>
-			<td><input type="text" name="n" class="form-control" value="'.$privilegeGroupData['name'].'" ></td>
+			<td><input type="text" name="n" class="form-control" value="' . $privilegeGroupData['name'] . '" ></td>
 			</tr>';
 			echo '<tr>
 			<td>Privileges</td>
@@ -1923,36 +1954,48 @@ class P {
 				if ($v <= 0)
 					continue;
 				$c = (($privilegeGroupData["privileges"] & $v) > 0) ? "checked" : "";
-				echo '<label class="colucci"><input name="privileges" value="'.$v.'" type="checkbox" onclick="updatePrivileges();" '.$c.'>	'.$i.' ('.$v.')</label><br>';
+				echo '<label class="colucci"><input name="privileges" value="' . $v . '" type="checkbox" onclick="updatePrivileges();" ' . $c . '>	' . $i . ' (' . $v . ')</label><br>';
 			}
 			echo '</td></tr>';
 
 			echo '<tr>
 			<td>Privileges number</td>
-			<td><input class="form-control" id="privileges-value" name="priv" value="'.$privilegeGroupData["privileges"].'"></td>
+			<td><input class="form-control" id="privileges-value" name="priv" value="' . $privilegeGroupData["privileges"] . '"></td>
 			</tr>';
 
 			// Selected stuff
-			$sel = ["","","","","",""];
-			switch($privilegeGroupData["color"]) {
-				case "default": $sel[0] = "selected"; break;
-				case "success": $sel[1] = "selected"; break;
-				case "warning": $sel[2] = "selected"; break;
-				case "danger": $sel[3] = "selected"; break;
-				case "primary": $sel[4] = "selected"; break;
-				case "info": $sel[5] = "selected"; break;
+			$sel = ["", "", "", "", "", ""];
+			switch ($privilegeGroupData["color"]) {
+				case "default":
+					$sel[0] = "selected";
+					break;
+				case "success":
+					$sel[1] = "selected";
+					break;
+				case "warning":
+					$sel[2] = "selected";
+					break;
+				case "danger":
+					$sel[3] = "selected";
+					break;
+				case "primary":
+					$sel[4] = "selected";
+					break;
+				case "info":
+					$sel[5] = "selected";
+					break;
 			}
 
 			echo '<tr>
 			<td>Color<br><i>(used in RAP users listing page)</i></td>
 			<td>
 			<select name="c" class="selectpicker" data-width="100%">
-				<option value="default" '.$sel[0].'>Gray</option>
-				<option value="success" '.$sel[1].'>Green</option>
-				<option value="warning" '.$sel[2].'>Yellow</option>
-				<option value="danger" '.$sel[3].'>Red</option>
-				<option value="primary" '.$sel[4].'>Blue</option>
-				<option value="info" '.$sel[5].'>Light Blue</option>
+				<option value="default" ' . $sel[0] . '>Gray</option>
+				<option value="success" ' . $sel[1] . '>Green</option>
+				<option value="warning" ' . $sel[2] . '>Yellow</option>
+				<option value="danger" ' . $sel[3] . '>Red</option>
+				<option value="primary" ' . $sel[4] . '>Blue</option>
+				<option value="info" ' . $sel[5] . '>Light Blue</option>
 			</select>
 			</td>
 			</tr>';
@@ -1960,15 +2003,15 @@ class P {
 			echo '</table>';
 			echo '<div class="text-center"><button type="submit" form="edit-badge-form" class="btn btn-primary">Save changes</button></div>';
 			echo '</div>';
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to exception page
-			redirect('index.php?p=119&e='.$e->getMessage());
+			redirect('index.php?p=119&e=' . $e->getMessage());
 		}
 	}
 
 
-	public static function AdminShowUsersInPrivilegeGroup() {
+	public static function AdminShowUsersInPrivilegeGroup()
+	{
 		// Exist check
 		try {
 			if (!isset($_GET["id"])) {
@@ -1980,7 +2023,7 @@ class P {
 			if (!$groupData) {
 				throw new Exception("That group doesn't exist");
 			}
-			$users = $GLOBALS['db']->fetchAll('SELECT * FROM users WHERE privileges = ? OR privileges = ? | '.Privileges::UserDonor, [$groupData["privileges"], $groupData["privileges"]]);
+			$users = $GLOBALS['db']->fetchAll('SELECT * FROM users WHERE privileges = ? OR privileges = ? | ' . Privileges::UserDonor, [$groupData["privileges"], $groupData["privileges"]]);
 			// Print sidebar and template stuff
 			echo '<div id="wrapper">';
 			printAdminSidebar();
@@ -1988,7 +2031,7 @@ class P {
 			// Maintenance check
 			self::MaintenanceStuff();
 			// Header
-			echo '<span class="centered"><h2><i class="fa fa-search"></i>	Users in '.$groupData["name"].' group</h2></span>';
+			echo '<span class="centered"><h2><i class="fa fa-search"></i>	Users in ' . $groupData["name"] . ' group</h2></span>';
 			// Main page content here
 			echo '<div align="center">';
 			echo '<table class="table table-striped table-hover table-75-center">
@@ -2008,13 +2051,14 @@ class P {
 			echo '</div>';
 			// Template end
 			echo '</div>';
-		} catch(Exception $e) {
-			redirect("index.php?p=118?e=".$e->getMessage());
+		} catch (Exception $e) {
+			redirect("index.php?p=118?e=" . $e->getMessage());
 		}
 	}
 
 
-	public static function RestrictedAlert() {
+	public static function RestrictedAlert()
+	{
 		if (!checkLoggedIn()) {
 			return;
 		}
@@ -2030,7 +2074,8 @@ class P {
 	 * AdminRestrict
 	 * Prints the admin wipe page
 	 */
-	public static function AdminRestrictUnrestrictReason() {
+	public static function AdminRestrictUnrestrictReason()
+	{
 		try {
 			// Check if id is set
 			if (!isset($_GET['id'])) {
@@ -2049,15 +2094,15 @@ class P {
 			$username = current($username);
 			echo '<table class="table table-striped table-hover table-50-center"><tbody>';
 			echo '<form id="user-restrict-unrestrict" action="submit.php" method="POST">
-			<input name="csrf" type="hidden" value="'.csrfToken().'">
+			<input name="csrf" type="hidden" value="' . csrfToken() . '">
 			<input name="action" value="restrictUnrestrictUserReason" hidden>';
 			echo '<tr>
 			<td>User ID</td>
-			<td><p class="text-center"><input type="text" name="id" class="form-control" value="'.$_GET["id"].'" readonly></td>
+			<td><p class="text-center"><input type="text" name="id" class="form-control" value="' . $_GET["id"] . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Username</td>
-			<td><p class="text-center"><input type="text" class="form-control" value="'.$username.'" readonly></td>
+			<td><p class="text-center"><input type="text" class="form-control" value="' . $username . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Reason</td>
@@ -2068,17 +2113,17 @@ class P {
 			echo '</table>';
 			echo '<div class="text-center"><button type="submit" form="user-restrict-unrestrict" class="btn btn-primary">(Un)restrict user</button></div>';
 			echo '</div>';
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to exception page
-			redirect('index.php?p=108&e='.$e->getMessage());
+			redirect('index.php?p=108&e=' . $e->getMessage());
 		}
 	}
 
 	/*
 	 * AdminBan
 	 */
-	public static function AdminBanUnbanReason() {
+	public static function AdminBanUnbanReason()
+	{
 		try {
 			// Check if id is set
 			if (!isset($_GET['id'])) {
@@ -2097,15 +2142,15 @@ class P {
 			$username = current($username);
 			echo '<table class="table table-striped table-hover table-50-center"><tbody>';
 			echo '<form id="user-ban-unban" action="submit.php" method="POST">
-			<input name="csrf" type="hidden" value="'.csrfToken().'">
+			<input name="csrf" type="hidden" value="' . csrfToken() . '">
 			<input name="action" value="banUnbanUserReason" hidden>';
 			echo '<tr>
 			<td>User ID</td>
-			<td><p class="text-center"><input type="text" name="id" class="form-control" value="'.$_GET["id"].'" readonly></td>
+			<td><p class="text-center"><input type="text" name="id" class="form-control" value="' . $_GET["id"] . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Username</td>
-			<td><p class="text-center"><input type="text" class="form-control" value="'.$username.'" readonly></td>
+			<td><p class="text-center"><input type="text" class="form-control" value="' . $username . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Reason</td>
@@ -2116,10 +2161,9 @@ class P {
 			echo '</table>';
 			echo '<div class="text-center"><button type="submit" form="user-ban-unban" class="btn btn-primary">(Un)ban user</button></div>';
 			echo '</div>';
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to exception page
-			redirect('index.php?p=108&e='.$e->getMessage());
+			redirect('index.php?p=108&e=' . $e->getMessage());
 		}
 	}
 
@@ -2128,7 +2172,8 @@ class P {
 	 * AdminGiveDonor
 	 * Prints the admin give donor page
 	 */
-	public static function AdminGiveDonor() {
+	public static function AdminGiveDonor()
+	{
 		try {
 			// Check if id is set
 			if (!isset($_GET['id'])) {
@@ -2147,15 +2192,15 @@ class P {
 			$username = current($username);
 			echo '<table class="table table-striped table-hover table-50-center"><tbody>';
 			echo '<form id="edit-user-badges" action="submit.php" method="POST">
-			<input name="csrf" type="hidden" value="'.csrfToken().'">
+			<input name="csrf" type="hidden" value="' . csrfToken() . '">
 			<input name="action" value="giveDonor" hidden>';
 			echo '<tr>
 			<td>User ID</td>
-			<td><p class="text-center"><input type="text" name="id" class="form-control" value="'.$_GET["id"].'" readonly></td>
+			<td><p class="text-center"><input type="text" name="id" class="form-control" value="' . $_GET["id"] . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Username</td>
-			<td><p class="text-center"><input type="text" class="form-control" value="'.$username.'" readonly></td>
+			<td><p class="text-center"><input type="text" class="form-control" value="' . $username . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Period</td>
@@ -2185,10 +2230,9 @@ class P {
 			echo '</table>';
 			echo '<div class="text-center"><button type="submit" form="edit-user-badges" class="btn btn-primary">Give supporter</button></div>';
 			echo '</div>';
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to exception page
-			redirect('index.php?p=108&e='.$e->getMessage());
+			redirect('index.php?p=108&e=' . $e->getMessage());
 		}
 	}
 
@@ -2197,7 +2241,8 @@ class P {
 	 * AdminRollback
 	 * Prints the admin rollback page
 	 */
-	public static function AdminRollback() {
+	public static function AdminRollback()
+	{
 		try {
 			// Check if id is set
 			if (!isset($_GET['id'])) {
@@ -2216,15 +2261,15 @@ class P {
 			$username = current($username);
 			echo '<table class="table table-striped table-hover table-50-center"><tbody>';
 			echo '<form id="user-rollback" action="submit.php" method="POST">
-			<input name="csrf" type="hidden" value="'.csrfToken().'">
+			<input name="csrf" type="hidden" value="' . csrfToken() . '">
 			<input name="action" value="rollback" hidden>';
 			echo '<tr>
 			<td>User ID</td>
-			<td><p class="text-center"><input type="text" name="id" class="form-control" value="'.$_GET["id"].'" readonly></td>
+			<td><p class="text-center"><input type="text" name="id" class="form-control" value="' . $_GET["id"] . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Username</td>
-			<td><p class="text-center"><input type="text" class="form-control" value="'.$username.'" readonly></td>
+			<td><p class="text-center"><input type="text" class="form-control" value="' . $username . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Period</td>
@@ -2244,10 +2289,9 @@ class P {
 			echo '</table>';
 			echo '<div class="text-center"><button type="submit" form="user-rollback" class="btn btn-primary">Rollback account</button></div>';
 			echo '</div>';
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to exception page
-			redirect('index.php?p=108&e='.$e->getMessage());
+			redirect('index.php?p=108&e=' . $e->getMessage());
 		}
 	}
 
@@ -2256,7 +2300,8 @@ class P {
 	 * AdminWipe
 	 * Prints the admin wipe page
 	 */
-	public static function AdminWipe() {
+	public static function AdminWipe()
+	{
 		try {
 			// Check if id is set
 			if (!isset($_GET['id'])) {
@@ -2276,15 +2321,15 @@ class P {
 			$username = current($username);
 			echo '<table class="table table-striped table-hover table-50-center"><tbody>';
 			echo '<form id="user-wipe" action="submit.php" method="POST">
-			<input name="csrf" type="hidden" value="'.csrfToken().'">
+			<input name="csrf" type="hidden" value="' . csrfToken() . '">
 			<input name="action" value="wipeAccount" hidden>';
 			echo '<tr>
 			<td>User ID</td>
-			<td><p class="text-center"><input type="text" name="id" class="form-control" value="'.$_GET["id"].'" readonly></td>
+			<td><p class="text-center"><input type="text" name="id" class="form-control" value="' . $_GET["id"] . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Username</td>
-			<td><p class="text-center"><input type="text" class="form-control" value="'.$username.'" readonly></td>
+			<td><p class="text-center"><input type="text" class="form-control" value="' . $username . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Gamemode</td>
@@ -2311,10 +2356,9 @@ class P {
 			echo '</table>';
 			echo '<div class="text-center"><button type="submit" form="user-wipe" class="btn btn-primary">Wipe account</button></div>';
 			echo '</div>';
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to exception page
-			redirect('index.php?p=108&e='.$e->getMessage());
+			redirect('index.php?p=108&e=' . $e->getMessage());
 		}
 	}
 
@@ -2323,7 +2367,8 @@ class P {
 	 * AdminRankBeatmap
 	 * Prints the admin rank beatmap page
 	 */
-	public static function AdminRankBeatmap() {
+	public static function AdminRankBeatmap()
+	{
 		try {
 			// Check if id is set
 			if (!isset($_GET['bsid']) || empty($_GET['bsid'])) {
@@ -2345,10 +2390,9 @@ class P {
 			</div>';
 			echo '</div>';
 			echo '</div>';
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to exception page
-			redirect('index.php?p=117&e='.$e->getMessage());
+			redirect('index.php?p=117&e=' . $e->getMessage());
 		}
 	}
 
@@ -2357,7 +2401,8 @@ class P {
 	 * AdminRankBeatmap
 	 * Prints the admin rank beatmap page
 	 */
-	public static function AdminRankBeatmapManually() {
+	public static function AdminRankBeatmapManually()
+	{
 		echo '<div id="wrapper">';
 		printAdminSidebar();
 		echo '<div id="page-content-wrapper">';
@@ -2374,7 +2419,7 @@ class P {
 		echo '
 		<div class="narrow-content">
 			<form action="submit.php" method="POST">
-				<input name="csrf" type="hidden" value="'.csrfToken().'">
+				<input name="csrf" type="hidden" value="' . csrfToken() . '">
 				<input name="action" value="redirectRankBeatmap" hidden>
 				<input name="id" type="text" class="form-control" placeholder="Beatmap(set) id" style="width: 40%; display: inline;">
 				<div style="width: 1%; display: inline-block;"></div>
@@ -2392,7 +2437,8 @@ class P {
 	}
 
 
-	public static function AdminViewReports() {
+	public static function AdminViewReports()
+	{
 		echo '<div id="wrapper">';
 		printAdminSidebar();
 		echo '<div id="page-content-wrapper">';
@@ -2425,14 +2471,14 @@ class P {
 				$assignee = '<img class="circle" style="width: 30px; height: 30px; margin-top: 0px;" src="https://a.akatsuki.pw/' . $report['assigned'] . '"> ' . getUserUsername($report['assigned']);
 			}
 			echo '<tr class="' . $rowClass . '">
-			<td><p class="text-center">'.$report['id'].'</p></td>
-			<td><p class="text-center"><a href="index.php?p=103&id=' . $report["from_uid"] . '" target="_blank">'.getUserUsername($report['from_uid']).'</a></p></td>
-			<td><p class="text-center"><b><a href="index.php?p=103&id=' . $report["to_uid"] . '" target="_blank">'.getUserUsername($report['to_uid']).'</a></b></p></td>
-			<td><p>'.htmlspecialchars(substr($report['reason'], 0, 40)).'</p></td>
-			<td><p>'.timeDifference(time(), $report['time']).'</p></td>
+			<td><p class="text-center">' . $report['id'] . '</p></td>
+			<td><p class="text-center"><a href="index.php?p=103&id=' . $report["from_uid"] . '" target="_blank">' . getUserUsername($report['from_uid']) . '</a></p></td>
+			<td><p class="text-center"><b><a href="index.php?p=103&id=' . $report["to_uid"] . '" target="_blank">' . getUserUsername($report['to_uid']) . '</a></b></p></td>
+			<td><p>' . htmlspecialchars(substr($report['reason'], 0, 40)) . '</p></td>
+			<td><p>' . timeDifference(time(), $report['time']) . '</p></td>
 			<td><p class="text-center">' . $assignee . '</p></td>
 			<td><p class="text-center">
-			<a title="View/Edit report" class="btn btn-xs btn-primary" href="index.php?p=127&id='.$report['id'].'"><span class="glyphicon glyphicon-zoom-in"></span></a>
+			<a title="View/Edit report" class="btn btn-xs btn-primary" href="index.php?p=127&id=' . $report['id'] . '"><span class="glyphicon glyphicon-zoom-in"></span></a>
 			<!-- <a title="Set as solved" class="btn btn-xs btn-success"><span class="glyphicon glyphicon-ok"></span></a>-->
 			</p></td>
 			</tr>';
@@ -2444,7 +2490,8 @@ class P {
 		echo '</div>';
 	}
 
-	public static function AdminViewReport() {
+	public static function AdminViewReport()
+	{
 		try {
 			if (!isset($_GET["id"]) || empty($_GET["id"])) {
 				throw new Exception("Missing report id");
@@ -2535,9 +2582,9 @@ class P {
 				<ul class="list-group">
 					<li class="list-group-item list-group-item-warning">Ticket actions</li>
 					<li class="list-group-item mobile-flex">
-						<a class="btn btn-warning ' . $takeButtonDisabled . '" href="submit.php?action=takeReport&id=' . $report["id"] .'&csrf='.csrfToken(). '"><i class="fa fa-bolt"></i> ' . $takeButtonText .' ticket</a>
-						<a class="btn btn-success ' . $solvedButtonDisabled . '" href="submit.php?action=solveUnsolveReport&id=' . $report["id"] .'&csrf='.csrfToken(). '"><i class="fa fa-check"></i> ' . $solvedButtonText . '</a>
-						<a class="btn btn-danger ' . $uselessButtonDisabled . '" href="submit.php?action=uselessUsefulReport&id=' . $report["id"] .'&csrf='.csrfToken(). '"><i class="fa fa-trash"></i> ' . $uselessButtonText . '</a>
+						<a class="btn btn-warning ' . $takeButtonDisabled . '" href="submit.php?action=takeReport&id=' . $report["id"] . '&csrf=' . csrfToken() . '"><i class="fa fa-bolt"></i> ' . $takeButtonText . ' ticket</a>
+						<a class="btn btn-success ' . $solvedButtonDisabled . '" href="submit.php?action=solveUnsolveReport&id=' . $report["id"] . '&csrf=' . csrfToken() . '"><i class="fa fa-check"></i> ' . $solvedButtonText . '</a>
+						<a class="btn btn-danger ' . $uselessButtonDisabled . '" href="submit.php?action=uselessUsefulReport&id=' . $report["id"] . '&csrf=' . csrfToken() . '"><i class="fa fa-trash"></i> ' . $uselessButtonText . '</a>
 					</li>
 				</ul>
 
@@ -2548,9 +2595,9 @@ class P {
 						<div class="btn btn-warning" data-toggle="modal" data-target="#silenceUserModal" data-who="' . getUserUsername($report["to_uid"]) . '"><i class="fa fa-microphone-slash"></i> Silence reported user</div>
 						<div class="btn btn-warning" data-toggle="modal" data-target="#silenceUserModal" data-who="' . getUserUsername($report["from_uid"]) . '"><i class="fa fa-microphone-slash"></i> Silence source user</div>
 						';
-						//$restrictedDisabled = isRestricted($report["to_uid"]) ? "disabled" : "";
-						//echo '<a class="btn btn-danger ' . $restrictedDisabled . '" onclick="sure(\'submit.php?action=restrictUnrestrictUser&id=' . $report["to_uid"] . '&resend=1&csrf='.csrfToken().'\')"><i class="fa fa-times"></i> Restrict reported user</a>';
-					echo '</li>
+			//$restrictedDisabled = isRestricted($report["to_uid"]) ? "disabled" : "";
+			//echo '<a class="btn btn-danger ' . $restrictedDisabled . '" onclick="sure(\'submit.php?action=restrictUnrestrictUser&id=' . $report["to_uid"] . '&resend=1&csrf='.csrfToken().'\')"><i class="fa fa-times"></i> Restrict reported user</a>';
+			echo '</li>
 				</ul>
 
 				<i><b>*</b> Latest 10 public messages sent from reported user before getting reported, trimmed to 50 characters.</i>
@@ -2570,7 +2617,7 @@ class P {
 			<div class="modal-body">
 			<p>
 			<form id="silence-user-form" action="submit.php" method="POST">
-			<input name="csrf" type="hidden" value="'.csrfToken().'">
+			<input name="csrf" type="hidden" value="' . csrfToken() . '">
 			<input name="action" value="silenceUser" hidden>
 			<input name="resend" value="1" hidden>
 
@@ -2616,10 +2663,10 @@ class P {
 		} catch (Exception $e) {
 			redirect("index.php?p=126&e=" . $e->getMessage());
 		}
-
 	}
 
-	public static function AdminSearchUserByIP() {
+	public static function AdminSearchUserByIP()
+	{
 		echo '<div id="wrapper">';
 		printAdminSidebar();
 		echo '<div id="page-content-wrapper">';
@@ -2635,7 +2682,7 @@ class P {
 		echo '
 		<div class="narrow-content">
 			<form action="index.php?p=136" method="POST">
-				<input name="csrf" type="hidden" value="'.csrfToken().'">
+				<input name="csrf" type="hidden" value="' . csrfToken() . '">
 				<div>
 					Specify 1 IP per line
 					<textarea name="ips" class="form-control" style="overflow:auto;resize:vertical;min-height:200px; margin-bottom: 10px;"></textarea>
@@ -2650,7 +2697,8 @@ class P {
 		echo '</div>';
 	}
 
-	public static function AdminRecentTopPlays() {
+	public static function AdminRecentTopPlays()
+	{
 		echo '<div id="wrapper">';
 		printAdminSidebar();
 		echo '<div id="page-content-wrapper">';
@@ -2661,7 +2709,8 @@ class P {
 			self::ExceptionMessageStaccah($_GET['e']);
 		}
 
-		$playsVanilla = $GLOBALS['db']->fetchAll('
+		$playsVanilla = $GLOBALS['db']->fetchAll(
+			'
 			SELECT
 				beatmaps.song_name, beatmaps.beatmap_id, scores.beatmap_md5,
 				users.username, scores.userid, scores.time, scores.score,
@@ -2678,7 +2727,8 @@ class P {
 			ORDER BY scores.pp DESC LIMIT 100'
 		);
 
-		$playsRelax = $GLOBALS['db']->fetchAll('
+		$playsRelax = $GLOBALS['db']->fetchAll(
+			'
 			SELECT
 				beatmaps.song_name, beatmaps.beatmap_id, scores_relax.beatmap_md5,
 				users.username, scores_relax.userid, scores_relax.time, scores_relax.score,
@@ -2703,7 +2753,7 @@ class P {
 		<tbody>';
 		foreach ($playsVanilla as $play) {
 			if ($play['song_name']) {
-				$bn = '<a href="https://akatsuki.pw/b/'.$play['beatmap_id'].'">'.$play['song_name'].'</a>';
+				$bn = '<a href="https://akatsuki.pw/b/' . $play['beatmap_id'] . '">' . $play['song_name'] . '</a>';
 			} else {
 				$bn = $play['beatmap_md5'];
 			}
@@ -2711,12 +2761,12 @@ class P {
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="info">';
-			echo '<td><p class="text-left"><a href="index.php?p=103&id='.$play["userid"].'"><b>'.$play['username'].'</b></a></p></td>';
-			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
-			echo '<td><p class="text-left">'.$pm.'</p></td>';
-			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . $play['username'] . '</b></a></p></td>';
+			echo '<td><p class="text-left">' . $bn . ' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left">' . $pm . '</p></td>';
+			echo '<td><p class="text-left">' . timeDifference(time(), $play['time']) . '</p></td>';
 			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
-			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'</b></p></td>';
+			echo '<td><p class="text-right"><b>' . number_format($play['pp']) . '</b></p></td>';
 			echo '</tr>';
 		}
 		echo '</tbody>';
@@ -2729,7 +2779,7 @@ class P {
 		<tbody>';
 		foreach ($playsRelax as $play) {
 			if ($play['song_name']) {
-				$bn = '<a href="https://akatsuki.pw/b/'.$play['beatmap_id'].'">'.$play['song_name'].'</a>';
+				$bn = '<a href="https://akatsuki.pw/b/' . $play['beatmap_id'] . '">' . $play['song_name'] . '</a>';
 			} else {
 				$bn = $play['beatmap_md5'];
 			}
@@ -2737,18 +2787,19 @@ class P {
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="info">';
-			echo '<td><p class="text-left"><a href="index.php?p=103&id='.$play["userid"].'"><b>'.$play['username'].'</b></a></p></td>';
-			echo '<td><p class="text-left">'.$bn.' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
-			echo '<td><p class="text-left">'.$pm.'</p></td>';
-			echo '<td><p class="text-left">'.timeDifference(time(), $play['time']).'</p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . $play['username'] . '</b></a></p></td>';
+			echo '<td><p class="text-left">' . $bn . ' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left">' . $pm . '</p></td>';
+			echo '<td><p class="text-left">' . timeDifference(time(), $play['time']) . '</p></td>';
 			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
-			echo '<td><p class="text-right"><b>'.number_format($play['pp']).'</b></p></td>';
+			echo '<td><p class="text-right"><b>' . number_format($play['pp']) . '</b></p></td>';
 			echo '</tr>';
 		}
 		echo '</tbody>';
 	}
 
-	public static function AdminSearchUserByIPResults() {
+	public static function AdminSearchUserByIPResults()
+	{
 		try {
 			echo '<div id="wrapper">';
 			printAdminSidebar();
@@ -2836,7 +2887,7 @@ class P {
 
 			echo '<hr>';
 			echo '<form action="submit.php" method="POST">
-			<input name="csrf" type="hidden" value="'.csrfToken().'">
+			<input name="csrf" type="hidden" value="' . csrfToken() . '">
 			<input name="action" value="bulkBan" hidden>';
 			foreach ($results as $row) {
 				echo '<input hidden name="uid[]" value="' . $row["userid"] . '">';
@@ -2851,7 +2902,7 @@ class P {
 			echo '</div>';
 			echo '</div>';
 		} catch (Exception $e) {
-			redirect('index.php?p=135&e='.$e->getMessage());
+			redirect('index.php?p=135&e=' . $e->getMessage());
 		}
 	}
 }

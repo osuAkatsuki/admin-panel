@@ -16,7 +16,7 @@ try {
 	}
 	foreach ($pages as $page) {
 		if ($action == $page::URL) {
-			if (defined(get_class($page).'::LoggedIn')) {
+			if (defined(get_class($page) . '::LoggedIn')) {
 				if ($page::LoggedIn) {
 					clir();
 				} else {
@@ -38,171 +38,170 @@ try {
 		case 'logout':
 			D::Logout();
 			redirect('index.php');
-		break;
-		break;
+			break;
+			break;
 
-		// Admin functions, need sessionCheckAdmin() because can be performed only by admins
+			// Admin functions, need sessionCheckAdmin() because can be performed only by admins
 
 		case 'saveSystemSettings':
 			sessionCheckAdmin(Privileges::AdminManageSettings);
 			D::SaveSystemSettings();
-		break;
+			break;
 		case 'saveBanchoSettings':
 			sessionCheckAdmin(Privileges::AdminManageSettings);
 			D::SaveBanchoSettings();
-		break;
+			break;
 		case 'saveEditUser':
 			sessionCheckAdmin(Privileges::AdminManageUsers);
 			D::SaveEditUser();
-		break;
+			break;
 		case 'banUnbanUser': // TODO
 			sessionCheckAdmin(Privileges::AdminCaker);
 			D::BanUnbanUser();
-		break;
+			break;
 		case 'restrictUnrestrictUser':	// TODO
 			sessionCheckAdmin(Privileges::AdminCaker);
 			D::RestrictUnrestrictUser();
-		break;
+			break;
 		case 'restrictUnrestrictUserReason':
 			sessionCheckAdmin(Privileges::AdminBanUsers);
 			D::RestrictUnrestrictUserReason();
 		case 'banUnbanUserReason':
 			sessionCheckAdmin(Privileges::AdminBanUsers);
 			D::BanUnbanUserReason();
-		break;
+			break;
 		case 'quickEditUser':
 			sessionCheckAdmin(Privileges::AdminManageUsers);
 			D::QuickEditUser(false);
-		break;
+			break;
 		case 'quickEditUserEmail':
 			sessionCheckAdmin(Privileges::AdminManageUsers);
 			D::QuickEditUser(true);
-		break;
+			break;
 		case 'changeIdentity':
 			sessionCheckAdmin(Privileges::AdminManageUsers);
 			D::ChangeIdentity();
-		break;
+			break;
 		case 'removeBadge':	// TODO
 			sessionCheckAdmin(Privileges::AdminManageBadges);
 			D::RemoveBadge();
-		break;
+			break;
 		case 'saveBadge':
 			sessionCheckAdmin(Privileges::AdminManageBadges);
 			D::SaveBadge();
-		break;
+			break;
 		case 'quickEditUserBadges':
 			sessionCheckAdmin(Privileges::AdminManageUsers);
 			D::QuickEditUserBadges();
-		break;
+			break;
 		case 'saveUserBadges':
 			sessionCheckAdmin(Privileges::AdminManageUsers);
 			D::SaveUserBadges();
-		break;
+			break;
 		case 'silenceUser':
 			sessionCheckAdmin(Privileges::AdminSilenceUsers);
 			D::SilenceUser();
-		break;
+			break;
 		case 'kickUser':
 			sessionCheckAdmin(Privileges::AdminSilenceUsers);
 			D::KickUser();
-		break;
+			break;
 		case 'resetAvatar':	// TODO
 			sessionCheckAdmin(Privileges::AdminManageUsers);
 			D::ResetAvatar();
-		break;
+			break;
 		case 'wipeAccount':
 			sessionCheckAdmin(Privileges::AdminWipeUsers);
 			D::WipeAccount();
-		break;
-		/*case 'processRankRequest':
+			break;
+			/*case 'processRankRequest':
 			sessionCheckAdmin(Privileges::AdminManageBeatmaps);
 			D::ProcessRankRequest();
 		break;*/
 		case 'savePrivilegeGroup':
 			sessionCheckAdmin(Privileges::AdminManagePrivileges);
 			D::savePrivilegeGroup();
-		break;
+			break;
 		case 'giveDonor':
 			sessionCheckAdmin(Privileges::AdminCaker);
 			D::GiveDonor();
-		break;
+			break;
 		case 'removeDonor':	// TODO
 			sessionCheckAdmin(Privileges::AdminCaker);
 			D::RemoveDonor();
-		break;
+			break;
 		case 'rollback':
 			sessionCheckAdmin(Privileges::AdminWipeUsers);
 			D::Rollback();
-		break;
+			break;
 		case 'toggleCustomBadge':	// TODO
 			sessionCheckAdmin(Privileges::AdminManageUsers);
 			D::ToggleCustomBadge();
-                break;
+			break;
 		case 'toggleUserpage':
 			sessionCheckAdmin(Privileges::AdminSilenceUsers);
 			D::ToggleUserpage();
-		break;
+			break;
 		case 'lockUnlockUser':	// TODO
 			sessionCheckAdmin(Privileges::AdminCaker);
 			D::LockUnlockUser();
-		break;
+			break;
 		case 'rankBeatmapNew':
 			sessionCheckAdmin(Privileges::AdminManageBeatmaps);
 			D::RankBeatmapNew();
-		break;
+			break;
 		case 'redirectRankBeatmap':
 			sessionCheckAdmin(Privileges::AdminManageBeatmaps);
 			D::RedirectRankBeatmap();
-		break;
+			break;
 		case 'clearHWID':	// TODO
 			sessionCheckAdmin(Privileges::AdminBanUsers);
 			D::ClearHWIDMatches();
-		break;
+			break;
 		case 'takeReport':	// TODO?
 			sessionCheckAdmin(Privileges::AdminManageReports);
 			D::TakeReport();
-		break;
+			break;
 		case 'solveUnsolveReport':	// TODO?
 			sessionCheckAdmin(Privileges::AdminManageReports);
 			D::SolveUnsolveReport();
-		break;
+			break;
 		case 'uselessUsefulReport':	// TODO?
 			sessionCheckAdmin(Privileges::AdminManageReports);
 			D::UselessUsefulReport();
-		break;
+			break;
 		case 'setMainMenuIcon':
 			sessionCheckAdmin(Privileges::AdminManageSettings);
 			D::SetMainMenuIcon();
-		break;
+			break;
 		case 'setDefaultMainMenuIcon':
 			sessionCheckAdmin(Privileges::AdminManageSettings);
 			D::SetDefaultMainMenuIcon();
-		break;
+			break;
 		case 'restoreMainMenuIcon':
 			sessionCheckAdmin(Privileges::AdminManageSettings);
 			D::RestoreMainMenuIcon();
-		break;
+			break;
 		case 'deleteMainMenuIcon':
 			sessionCheckAdmin(Privileges::AdminManageSettings);
 			D::DeleteMainMenuIcon();
-		break;
+			break;
 		case 'uploadMainMenuIcon':
 			sessionCheckAdmin(Privileges::AdminManageSettings);
 			D::UploadMainMenuIcon();
-		break;
+			break;
 		case 'removeMainMenuIcon':
 			sessionCheckAdmin(Privileges::AdminManageSettings);
 			D::RemoveMainMenuIcon();
-		break;
+			break;
 		case 'bulkBan':
 			sessionCheckAdmin(Privileges::AdminBanUsers);
 			D::BulkBan();
-		break;
+			break;
 		default:
 			throw new Exception('Invalid action value');
 	}
-}
-catch(Exception $e) {
+} catch (Exception $e) {
 	// Redirect to Exception page
-	redirect('index.php?p=99&e='.$e->getMessage());
+	redirect('index.php?p=99&e=' . $e->getMessage());
 }

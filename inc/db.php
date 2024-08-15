@@ -4,29 +4,32 @@
 // This version has 2 essential tweaks:
 // uses DATABASE_WHAT to switch between host, a classical TCP connection usually to 127.0.0.1, and a UNIX socket, which is usually way faster.
 // @execute, @fetch, @fetchAll: the operators == are changed to === to be more strict and allow for values like 0 to be inserted inside the database without having to wrap them inside an array on the function calling.
-class DBPDO {
+class DBPDO
+{
 	public $pdo;
 	private $error;
 
-	public function __construct() {
+	public function __construct()
+	{
 		$this->connect();
 	}
 
-	public function prep_query($query) {
+	public function prep_query($query)
+	{
 		return $this->pdo->prepare($query);
 	}
 
-	public function connect() {
+	public function connect()
+	{
 		if (!$this->pdo) {
-			$dsn = 'mysql:dbname='.DATABASE_NAME.';'.DATABASE_WHAT.'='.DATABASE_HOST;
+			$dsn = 'mysql:dbname=' . DATABASE_NAME . ';' . DATABASE_WHAT . '=' . DATABASE_HOST;
 			$user = DATABASE_USER;
 			$password = DATABASE_PASS;
 			try {
 				$this->pdo = new PDO($dsn, $user, $password, [PDO::ATTR_PERSISTENT => true]);
 
 				return true;
-			}
-			catch(PDOException $e) {
+			} catch (PDOException $e) {
 				$this->error = $e->getMessage();
 				die($this->error);
 
@@ -39,14 +42,16 @@ class DBPDO {
 		}
 	}
 
-	public function table_exists($table_name) {
+	public function table_exists($table_name)
+	{
 		$stmt = $this->prep_query('SHOW TABLES LIKE ?');
 		$stmt->execute([$this->add_table_prefix($table_name)]);
 
 		return $stmt->rowCount() > 0;
 	}
 
-	public function execute($query, $values = null) {
+	public function execute($query, $values = null)
+	{
 		if ($values === null) {
 			$values = [];
 		} elseif (!is_array($values)) {
@@ -58,7 +63,8 @@ class DBPDO {
 		return $stmt;
 	}
 
-	public function fetch($query, $values = null) {
+	public function fetch($query, $values = null)
+	{
 		if ($values === null) {
 			$values = [];
 		} elseif (!is_array($values)) {
@@ -69,7 +75,8 @@ class DBPDO {
 		return $stmt->fetch(PDO::FETCH_ASSOC);
 	}
 
-	public function fetchAll($query, $values = null, $key = null) {
+	public function fetchAll($query, $values = null, $key = null)
+	{
 		if ($values === null) {
 			$values = [];
 		} elseif (!is_array($values)) {
@@ -90,7 +97,8 @@ class DBPDO {
 		return $results;
 	}
 
-	public function lastInsertId() {
+	public function lastInsertId()
+	{
 		return $this->pdo->lastInsertId();
 	}
 }

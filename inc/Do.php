@@ -1,12 +1,14 @@
 <?php
 
 // We aren't calling the class Do because otherwise it would conflict with do { } while ();
-class D {
+class D
+{
 	/*
 	 * SaveSystemSettings
 	 * Save system settings function (ADMIN CP)
 	 */
-	public static function SaveSystemSettings() {
+	public static function SaveSystemSettings()
+	{
 		try {
 			// Get values
 			if (isset($_POST['wm'])) {
@@ -45,10 +47,9 @@ class D {
 			rapLog("has updated system settings");
 			// Done, redirect to success page
 			redirect('index.php?p=101&s=Settings saved!');
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to Exception page
-			redirect('index.php?p=101&e='.$e->getMessage());
+			redirect('index.php?p=101&e=' . $e->getMessage());
 		}
 	}
 
@@ -56,7 +57,8 @@ class D {
 	 * SaveBanchoSettings
 	 * Save bancho settings function (ADMIN CP)
 	 */
-	public static function SaveBanchoSettings() {
+	public static function SaveBanchoSettings()
+	{
 		try {
 			// Get values
 			if (isset($_POST['bm'])) {
@@ -110,10 +112,9 @@ class D {
 			rapLog("has updated Bancho settings");
 			// Done, redirect to success page
 			redirect('index.php?p=111&s=Settings saved!');
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to Exception page
-			redirect('index.php?p=111&e='.$e->getMessage());
+			redirect('index.php?p=111&e=' . $e->getMessage());
 		}
 	}
 
@@ -121,7 +122,8 @@ class D {
 	 * SaveEditUser
 	 * Save edit user function (ADMIN CP)
 	 */
-	public static function SaveEditUser() {
+	public static function SaveEditUser()
+	{
 		try {
 			// Check if everything is set (username color, username style, rank, allowed and notes can be empty)
 			if (!isset($_POST['id']) || !isset($_POST['u']) || !isset($_POST['up']) || !isset($_POST['aka']) || empty($_POST['id']) || empty($_POST['u'])) {
@@ -133,7 +135,7 @@ class D {
 				throw new Exception("That user doesn\'t exist");
 			}
 			// Check if we can edit this user
-			if ( (($oldData["privileges"] & Privileges::AdminManageUsers) > 0) && $_POST["u"] != $_SESSION["username"] && $_SESSION["userid"] != 1001) {
+			if ((($oldData["privileges"] & Privileges::AdminManageUsers) > 0) && $_POST["u"] != $_SESSION["username"] && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 
@@ -142,10 +144,10 @@ class D {
 			//$oldse = current($GLOBALS["db"]->fetch("SELECT silence_end FROM users WHERE username = ?", array($_POST["u"])));
 
 			// Save new data (email, and cm notes)
-			$GLOBALS['db']->execute('UPDATE users SET notes = ? WHERE id = ? LIMIT 1', [$_POST['ncm'], $_POST['id'] ]);
+			$GLOBALS['db']->execute('UPDATE users SET notes = ? WHERE id = ? LIMIT 1', [$_POST['ncm'], $_POST['id']]);
 			// Edit silence time if we can silence users
 			if (hasPrivilege(Privileges::AdminSilenceUsers)) {
-				$GLOBALS['db']->execute('UPDATE users SET silence_end = ?, silence_reason = ? WHERE id = ? LIMIT 1', [$_POST['se'], $_POST['sr'], $_POST['id'] ]);
+				$GLOBALS['db']->execute('UPDATE users SET silence_end = ?, silence_reason = ? WHERE id = ? LIMIT 1', [$_POST['se'], $_POST['sr'], $_POST['id']]);
 			}
 			// Edit privileges if we can
 			if (hasPrivilege(Privileges::AdminManagePrivileges) && ($_POST["id"] != $_SESSION["userid"])) {
@@ -170,10 +172,9 @@ class D {
 			rapLog(sprintf("has edited user %s", $_POST["u"]));
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=User edited!');
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to Exception page
-			redirect('index.php?p=102&e='.$e->getMessage());
+			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
 
@@ -181,7 +182,8 @@ class D {
 	 * BanUnbanUser
 	 * Ban/Unban user function (ADMIN CP)
 	 */
-	public static function BanUnbanUser() {
+	public static function BanUnbanUser()
+	{
 		try {
 			// Check if everything is set
 			if (empty($_GET['id'])) {
@@ -193,11 +195,11 @@ class D {
 				throw new Exception("User doesn't exist");
 			}
 			// Check if we can ban this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to ban this user");
 			}
 			// Get new allowed value
-			if ( ($userData["privileges"] & Privileges::UserNormal) > 0) {
+			if (($userData["privileges"] & Privileges::UserNormal) > 0) {
 				// Ban, reset UserNormal and UserPublic bits
 				$banDateTime = time();
 				$newPrivileges = $userData["privileges"] & ~Privileges::UserNormal;
@@ -217,10 +219,9 @@ class D {
 			rapLog(sprintf("has %s user %s", ($newPrivileges & Privileges::UserNormal) > 0 ? "unbanned" : "banned", $userData["username"]));
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=User banned/unbanned/activated!');
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to Exception page
-			redirect('index.php?p=102&e='.$e->getMessage());
+			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
 
@@ -228,7 +229,8 @@ class D {
 	 * QuickEditUser
 	 * Redirects to the edit user page for the user with $_POST["u"] username
 	 */
-	public static function QuickEditUser($email = false) {
+	public static function QuickEditUser($email = false)
+	{
 		try {
 			// Check if everything is set
 			if (empty($_POST['u'])) {
@@ -241,11 +243,10 @@ class D {
 				throw new Exception("That user doesn't exist");
 			}
 			// Done, redirect to edit page
-			redirect('index.php?p=103&id='.$id);
-		}
-		catch(Exception $e) {
+			redirect('index.php?p=103&id=' . $id);
+		} catch (Exception $e) {
 			// Redirect to Exception page
-			redirect('index.php?p=102&e='.$e->getMessage());
+			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
 
@@ -253,7 +254,8 @@ class D {
 	 * QuickEditUserBadges
 	 * Redirects to the edit user badges page for the user with $_POST["u"] username
 	 */
-	public static function QuickEditUserBadges() {
+	public static function QuickEditUserBadges()
+	{
 		try {
 			// Check if everything is set
 			if (empty($_POST['u'])) {
@@ -266,11 +268,10 @@ class D {
 				throw new Exception("That user doesn't exist");
 			}
 			// Done, redirect to edit page
-			redirect('index.php?p=110&id='.$id);
-		}
-		catch(Exception $e) {
+			redirect('index.php?p=110&id=' . $id);
+		} catch (Exception $e) {
 			// Redirect to Exception page
-			redirect('index.php?p=108&e='.$e->getMessage());
+			redirect('index.php?p=108&e=' . $e->getMessage());
 		}
 	}
 
@@ -278,7 +279,8 @@ class D {
 	 * ChangeIdentity
 	 * Change identity function (ADMIN CP)
 	 */
-	public static function ChangeIdentity() {
+	public static function ChangeIdentity()
+	{
 		try {
 			// Check if everything is set
 			if (!isset($_POST['id']) || !isset($_POST['oldu']) || !isset($_POST['newu']) || empty($_POST['id']) || empty($_POST['oldu']) || empty($_POST['newu'])) {
@@ -290,7 +292,7 @@ class D {
 				throw new Exception("User doesn't exist");
 			}
 			$privileges = current($privileges);
-			if ( (($privileges & Privileges::AdminManageUsers) > 0) && $_POST['oldu'] != $_SESSION['username'] && $_SESSION["userid"] != 1001) {
+			if ((($privileges & Privileges::AdminManageUsers) > 0) && $_POST['oldu'] != $_SESSION['username'] && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 			// No username with mixed spaces
@@ -321,10 +323,9 @@ class D {
 			rapLog(sprintf("has changed %s's username to %s", $_POST["oldu"], $_POST["newu"]));
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=User identity changed! It might take a while to change the username if the user is online on Bancho.');
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to Exception page
-			redirect('index.php?p=102&e='.$e->getMessage());
+			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
 
@@ -332,7 +333,8 @@ class D {
 	 * SaveBadge
 	 * Save badge function (ADMIN CP)
 	 */
-	public static function SaveBadge() {
+	public static function SaveBadge()
+	{
 		try {
 			// Check if everything is set
 			if (!isset($_POST['id']) || !isset($_POST['n']) || !isset($_POST['i']) || !isset($_POST['c']) || empty($_POST['n']) || empty($_POST['i'])) {
@@ -358,10 +360,9 @@ class D {
 			rapLog(sprintf("has %s badge %s", $_POST['id'] == 0 ? "created" : "edited", $_POST["n"]));
 			// Done, redirect to success page
 			redirect('index.php?p=108&s=Badge edited!');
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to Exception page
-			redirect('index.php?p=108&e='.$e->getMessage());
+			redirect('index.php?p=108&e=' . $e->getMessage());
 		}
 	}
 
@@ -369,7 +370,8 @@ class D {
 	 * SaveUserBadges
 	 * Save user badges function (ADMIN CP)
 	 */
-	public static function SaveUserBadges() {
+	public static function SaveUserBadges()
+	{
 		try {
 			// Check if everything is set
 			if (!isset($_POST['u']) || !isset($_POST['b01']) || !isset($_POST['b02']) || !isset($_POST['b03']) || !isset($_POST['b04']) || !isset($_POST['b05']) || !isset($_POST['b06']) || empty($_POST['u'])) {
@@ -393,10 +395,9 @@ class D {
 			rapLog(sprintf("has edited %s's badges", $_POST["u"]));
 			// Done, redirect to success page
 			redirect('index.php?p=108&s=Badge edited!');
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to Exception page
-			redirect('index.php?p=108&e='.$e->getMessage());
+			redirect('index.php?p=108&e=' . $e->getMessage());
 		}
 	}
 
@@ -404,7 +405,8 @@ class D {
 	 * RemoveBadge
 	 * Remove badge function (ADMIN CP)
 	 */
-	public static function RemoveBadge() {
+	public static function RemoveBadge()
+	{
 		try {
 			// Make sure that this is not the "None badge"
 			if (empty($_GET['id'])) {
@@ -425,10 +427,9 @@ class D {
 			rapLog(sprintf("has deleted badge %s", current($name)));
 			// Done, redirect to success page
 			redirect('index.php?p=108&s=Badge deleted!');
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to Exception page
-			redirect('index.php?p=108&e='.$e->getMessage());
+			redirect('index.php?p=108&e=' . $e->getMessage());
 		}
 	}
 
@@ -436,7 +437,8 @@ class D {
 	 * SilenceUser
 	 * Silence someone (ADMIN CP)
 	 */
-	public static function silenceUser() {
+	public static function silenceUser()
+	{
 		try {
 			// Check if everything is set
 			if (!isset($_POST['u']) || !isset($_POST['c']) || !isset($_POST['un']) || !isset($_POST['r']) || !isset($_POST["r"]) || empty($_POST['u']) || empty($_POST['un']) || empty($_POST["r"])) {
@@ -468,17 +470,16 @@ class D {
 				$msg = 'index.php?p=102&s=User silence removed!';
 			}
 			if (isset($_POST["resend"])) {
-				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&s='.$msg);
+				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&s=' . $msg);
 			} else {
-				redirect('index.php?p=102&s='.$msg);
+				redirect('index.php?p=102&s=' . $msg);
 			}
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to Exception page
 			if (isset($_POST["resend"])) {
-				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&e='.$e->getMessage());
+				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&e=' . $e->getMessage());
 			} else {
-				redirect('index.php?p=102&e='.$e->getMessage());
+				redirect('index.php?p=102&e=' . $e->getMessage());
 			}
 		}
 	}
@@ -487,7 +488,8 @@ class D {
 	 * KickUser
 	 * Kick someone from bancho (ADMIN CP)
 	 */
-	public static function KickUser() {
+	public static function KickUser()
+	{
 		try {
 			// Check if everything is set
 			if (!isset($_POST['u']) || empty($_POST['u']) || !isset($_POST["r"]) || empty($_POST["r"])) {
@@ -510,10 +512,9 @@ class D {
 			rapLog(sprintf("has kicked %s from the server", getUserUsername($_GET['id'])));
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=User kicked!');
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to Exception page
-			redirect('index.php?p=102&e='.$e->getMessage());
+			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
 
@@ -521,7 +522,8 @@ class D {
 	 * ResetAvatar
 	 * Reset soneone's avatar (ADMIN CP)
 	 */
-	public static function ResetAvatar() {
+	public static function ResetAvatar()
+	{
 		try {
 			// Check if everything is set
 			if (!isset($_GET['id']) || empty($_GET['id'])) {
@@ -538,10 +540,9 @@ class D {
 			rapLog(sprintf("has reset %s's Avatar", getUserUsername($_GET['id'])));
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=Avatar reset!');
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to Exception page
-			redirect('index.php?p=102&e='.$e->getMessage());
+			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
 
@@ -549,7 +550,8 @@ class D {
 	 * Logout
 	 * Logout and return to home
 	 */
-	public static function Logout() {
+	public static function Logout()
+	{
 		// Logging out without being logged in doesn't make much sense
 		if (checkLoggedIn()) {
 			startSessionIfNotStarted();
@@ -571,7 +573,8 @@ class D {
 	 * WipeAccount
 	 * Wipes an account
 	 */
-	public static function WipeAccount() {
+	public static function WipeAccount()
+	{
 		try {
 			if (!isset($_POST['id']) || empty($_POST['id'])) {
 				throw new Exception('Invalid request');
@@ -582,7 +585,7 @@ class D {
 			}
 			$username = $userData["username"];
 			// Check if we can wipe this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to wipe this account");
 			}
 
@@ -614,17 +617,17 @@ class D {
 			if ($_POST["gm"] == -1) {
 
 				if ($_POST["rx"] != 3) {
-					$GLOBALS['db']->execute('DELETE FROM '.$scores_table.' WHERE userid = ?', [$_POST['id']]);
+					$GLOBALS['db']->execute('DELETE FROM ' . $scores_table . ' WHERE userid = ?', [$_POST['id']]);
 					foreach (range(0, 3) as $i) {
-						$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'].','.$_POST['rx'].','.$i);
+						$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'] . ',' . $_POST['rx'] . ',' . $i);
 					}
 				} else {
 					$dt = ['scores', 'scores_relax', 'scores_ap'];
 					foreach ($dt as $st) {
-						$GLOBALS['db']->execute('DELETE FROM'.$st.' WHERE userid = ?', [$_POST['id']]);
+						$GLOBALS['db']->execute('DELETE FROM' . $st . ' WHERE userid = ?', [$_POST['id']]);
 						foreach (range(0, 3) as $i) {
 							foreach ([0, 1, 2] as $m) {
-								$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'].','.$m.','.$i);
+								$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'] . ',' . $m . ',' . $i);
 							}
 						}
 					}
@@ -633,8 +636,7 @@ class D {
 				if ($_POST["rx"] == 3) {
 					$dt = ['scores', 'scores_relax', 'scores_ap'];
 					$ms = [0, 1, 2];
-				}
-				else {
+				} else {
 					$dt = [$scores_table];
 					$ms = [$_POST["rx"]];
 				}
@@ -642,11 +644,11 @@ class D {
 				foreach ($dt as $st) {
 					// TODO: we should not be hard deleting scores, but either marking them as "inactive"
 					// or moving them to another table (e.g. insert into select * from ...)
-					$GLOBALS['db']->execute('DELETE FROM '.$st.' WHERE userid = ? AND play_mode = ?', [$_POST['id'], $_POST["gm"]]);
+					$GLOBALS['db']->execute('DELETE FROM ' . $st . ' WHERE userid = ? AND play_mode = ?', [$_POST['id'], $_POST["gm"]]);
 				}
 
 				foreach ($ms as $m) {
-					$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'].','.$m.','.$_POST['gm']);
+					$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'] . ',' . $m . ',' . $_POST['gm']);
 				}
 			}
 
@@ -676,7 +678,8 @@ class D {
 				}
 			}
 			foreach ($modeInts as $modeInt) {
-				$GLOBALS['db']->execute('
+				$GLOBALS['db']->execute(
+					'
 					UPDATE user_stats
 					   SET max_combo = 0,
 					       ranked_score = 0,
@@ -708,10 +711,9 @@ class D {
 				$wipeText = "Relax";
 			}
 
-			redirect('index.php?p=102&s=User '.$wipeText.' scores and stats have been wiped!');
-		}
-		catch(Exception $e) {
-			redirect('index.php?p=102&e='.$e->getMessage());
+			redirect('index.php?p=102&s=User ' . $wipeText . ' scores and stats have been wiped!');
+		} catch (Exception $e) {
+			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
 
@@ -720,7 +722,8 @@ class D {
 	 * ProcessRankRequest
 	 * Rank/unrank a beatmap
 	 */
-	public static function ProcessRankRequest() {
+	public static function ProcessRankRequest()
+	{
 		global $INTERNAL_BANCHO_SERVICE_BASE_URL;
 		global $ScoresConfig;
 		try {
@@ -772,14 +775,14 @@ class D {
 
 			// Done
 			redirect("index.php?p=117&s=野生のちんちんが現れる");
-		}
-		catch(Exception $e) {
-			redirect("index.php?p=117&e=".$e->getMessage());
+		} catch (Exception $e) {
+			redirect("index.php?p=117&e=" . $e->getMessage());
 		}
 	}
 
 
-	public static function savePrivilegeGroup() {
+	public static function savePrivilegeGroup()
+	{
 		try {
 			// Args check
 			if (!isset($_POST["id"]) || !isset($_POST["n"]) || !isset($_POST["priv"]) || !isset($_POST["c"]))
@@ -806,12 +809,12 @@ class D {
 				$GLOBALS["db"]->execute("UPDATE privileges_groups SET name = ?, privileges = ?, color = ? WHERE id = ? LIMIT 1", [$_POST["n"], $_POST["priv"], $_POST["c"], $_POST["id"]]);
 				// Get users in this group
 				// I genuinely want to kill myself right now.
-				$users = $GLOBALS["db"]->fetchAll("SELECT id FROM users WHERE privileges = ".$oldPriv." OR privileges = ".$oldPriv." | ".Privileges::UserDonor);
+				$users = $GLOBALS["db"]->fetchAll("SELECT id FROM users WHERE privileges = " . $oldPriv . " OR privileges = " . $oldPriv . " | " . Privileges::UserDonor);
 				foreach ($users as $user) {
 					// Remove privileges from previous group
-					$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges & ~".$oldPriv." WHERE id = ? LIMIT 1", [$user["id"]]);
+					$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges & ~" . $oldPriv . " WHERE id = ? LIMIT 1", [$user["id"]]);
 					// Add privileges from new group
-					$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | ".$_POST["priv"]." WHERE id = ? LIMIT 1", [$user["id"]]);
+					$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | " . $_POST["priv"] . " WHERE id = ? LIMIT 1", [$user["id"]]);
 				}
 			}
 
@@ -819,7 +822,7 @@ class D {
 			redirect("index.php?p=118&s=Saved!");
 		} catch (Exception $e) {
 			// There's a memino divertentino
-			redirect("index.php?p=118&e=".$e->getMessage());
+			redirect("index.php?p=118&e=" . $e->getMessage());
 		}
 	}
 
@@ -828,7 +831,8 @@ class D {
 	 * RestrictUnrestrictUserReason
      * (Un)restrict a user with a reason (ADMIN CP)
 	 */
-	public static function RestrictUnrestrictUserReason() {
+	public static function RestrictUnrestrictUserReason()
+	{
 		try {
 			// Check if everything is set
 			if (empty($_POST['id']) || empty($_POST['reason'])) {
@@ -840,7 +844,7 @@ class D {
 				throw new Exception("User doesn't exist");
 			}
 			// Check if we can ban this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to ban this user");
 			}
 
@@ -854,7 +858,7 @@ class D {
 				updateBanBancho($_POST["id"], true);
 				removeFromLeaderboard($_POST['id']);
 
-				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') restricted for: '.$_POST['reason']);
+				appendNotes($_POST['id'], $_SESSION["username"] . ' (' . $_SESSION["userid"] . ') restricted for: ' . $_POST['reason']);
 
 				postWebhookMessage(sprintf("has restricted [%s](https://akatsuki.gg/u/%s)\n**Reason**: %s\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData["username"], $_POST['id'], $_POST["reason"], $_POST['id']));
 				rapLog(sprintf("restricted %s for '%s'.", $userData["username"], $_POST["reason"]));
@@ -866,7 +870,7 @@ class D {
 				// Re-add to cache leaderboards
 				updateBanBancho($_POST["id"], false);
 
-				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') unrestricted for: '.$_POST['reason']);
+				appendNotes($_POST['id'], $_SESSION["username"] . ' (' . $_SESSION["userid"] . ') unrestricted for: ' . $_POST['reason']);
 
 				postWebhookMessage(sprintf("has unrestricted [%s](https://akatsuki.gg/u/%s)\n**Reason**: %s\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData["username"], $_POST['id'], $_POST["reason"], $_POST['id']));
 				rapLog(sprintf("unrestricted %s for '%s'.", $userData["username"], $_POST["reason"]));
@@ -881,13 +885,12 @@ class D {
 			} else {
 				redirect('index.php?p=102&s=User restricted/unrestricted!');
 			}
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to Exception page
 			if (isset($_POST["resend"])) {
-				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&e='.$e->getMessage());
+				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&e=' . $e->getMessage());
 			} else {
-				redirect('index.php?p=102&e='.$e->getMessage());
+				redirect('index.php?p=102&e=' . $e->getMessage());
 			}
 		}
 	}
@@ -896,7 +899,8 @@ class D {
 	 * RestrictUnrestrictUser
 	 * (Un)restrict user function (ADMIN CP)
 	 */
-	public static function RestrictUnrestrictUser() {
+	public static function RestrictUnrestrictUser()
+	{
 		try {
 			// Check if everything is set
 			if (empty($_GET['id'])) {
@@ -908,7 +912,7 @@ class D {
 				throw new Exception("User doesn't exist");
 			}
 			// Check if we can ban this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to ban this user");
 			}
 			// Get new allowed value
@@ -935,17 +939,16 @@ class D {
 			rapLog(sprintf("has %s user %s", $msg, $userData["username"]));
 			// Done, redirect to success page
 			if (isset($_GET["resend"])) {
-				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&s=User '.$msg.'!');
+				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&s=User ' . $msg . '!');
 			} else {
-				redirect('index.php?p=102&s=User '.$msg.'!');
+				redirect('index.php?p=102&s=User ' . $msg . '!');
 			}
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to Exception page
 			if (isset($_GET["resend"])) {
-				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&e='.$e->getMessage());
+				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&e=' . $e->getMessage());
 			} else {
-				redirect('index.php?p=102&e='.$e->getMessage());
+				redirect('index.php?p=102&e=' . $e->getMessage());
 			}
 		}
 	}
@@ -954,7 +957,8 @@ class D {
 	 * BanUnbanUserReason
      * (Un)ban a user with a reason (ADMIN CP)
 	 */
-	public static function BanUnbanUserReason() {
+	public static function BanUnbanUserReason()
+	{
 		try {
 			// Check if everything is set
 			if (empty($_POST['id']) || empty($_POST['reason'])) {
@@ -966,7 +970,7 @@ class D {
 				throw new Exception("User doesn't exist");
 			}
 			// Check if we can ban this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to ban this user");
 			}
 
@@ -980,7 +984,7 @@ class D {
 				updateBanBancho($_POST["id"], true);
 				removeFromLeaderboard($_POST['id']);
 
-				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') banned for: '.$_POST['reason']);
+				appendNotes($_POST['id'], $_SESSION["username"] . ' (' . $_SESSION["userid"] . ') banned for: ' . $_POST['reason']);
 
 				postWebhookMessage(sprintf("has banned user [%s](https://akatsuki.gg/u/%s).\n**Reason**: %s\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData["username"], $_POST['id'], $_POST['reason'], $_POST['id'], $_POST['id']));
 				rapLog(sprintf("banned %s for '%s'.", $userData["username"], $_POST["reason"]));
@@ -989,7 +993,7 @@ class D {
 				$newPrivileges = ($userData["privileges"] | Privileges::UserNormal);
 				$banDateTime = $userData["ban_datetime"];
 
-				appendNotes($_POST['id'], $_SESSION["username"].' ('.$_SESSION["userid"].') unbanned (set to restricted) for: '.$_POST['reason']);
+				appendNotes($_POST['id'], $_SESSION["username"] . ' (' . $_SESSION["userid"] . ') unbanned (set to restricted) for: ' . $_POST['reason']);
 
 				postWebhookMessage(sprintf("has unbanned (set to restricted) user [%s](https://akatsuki.gg/u/%s).\n**Reason**: %s\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData["username"], $_POST['id'], $_POST['reason'], $_POST['id'], $_POST['id']));
 				rapLog(sprintf("unbanned (set to restricted) %s for '%s'.", $userData["username"], $_POST["reason"]));
@@ -1004,18 +1008,18 @@ class D {
 			} else {
 				redirect('index.php?p=102&s=User banned/unbanned!');
 			}
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			// Redirect to Exception page
 			if (isset($_POST["resend"])) {
-				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&e='.$e->getMessage());
+				redirect(stripSuccessError($_SERVER["HTTP_REFERER"]) . '&e=' . $e->getMessage());
 			} else {
-				redirect('index.php?p=102&e='.$e->getMessage());
+				redirect('index.php?p=102&e=' . $e->getMessage());
 			}
 		}
 	}
 
-	public static function GiveDonor() {
+	public static function GiveDonor()
+	{
 		try {
 			if (!isset($_POST["id"]) || empty($_POST["id"]) || !isset($_POST["m"]) || empty($_POST["m"]))
 				throw new Exception("Invalid user");
@@ -1031,19 +1035,19 @@ class D {
 			if ($_POST["stype"] == 1) {
 				postWebhookMessage(sprintf("has given [%s](https://akatsuki.gg/u/%s) %s month(s) of [**Premium**](https://akatsuki.gg/premium) :credit_card:", $username, $_POST["id"], $_POST["m"]));
 				rapLog(sprintf("has given %s (%s) %s month(s) of premium", $username, $_POST["id"], $_POST["m"]), $_SESSION["userid"]);
-				redirect("index.php?p=102&s=Premium status changed. Premium for that user now expires in ".$months." months!");
+				redirect("index.php?p=102&s=Premium status changed. Premium for that user now expires in " . $months . " months!");
 			} else {
 				postWebhookMessage(sprintf("has given [%s](https://akatsuki.gg/u/%s) %s month(s) of [**Supporter**](https://akatsuki.gg/supporter) :blue_heart:", $username, $_POST["id"], $_POST["m"]));
 				rapLog(sprintf("has given %s (%s) %s month(s) of supporter", $username, $_POST["id"], $_POST["m"]), $_SESSION["userid"]);
-				redirect("index.php?p=102&s=Supporter status changed. Supporter for that user now expires in ".$months." months!");
+				redirect("index.php?p=102&s=Supporter status changed. Supporter for that user now expires in " . $months . " months!");
 			}
-		}
-		catch(Exception $e) {
-			redirect('index.php?p=102&e='.$e->getMessage());
+		} catch (Exception $e) {
+			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
 
-	public static function RemoveDonor() {
+	public static function RemoveDonor()
+	{
 		try {
 			if (!isset($_GET["id"]) || empty($_GET["id"]))
 				throw new Exception("Invalid user");
@@ -1063,13 +1067,13 @@ class D {
 			postWebhookMessage(sprintf("has removed [%s](https://akatsuki.gg/u/%s)'s Supporter/Premium", $username, $_GET["id"]));
 			rapLog(sprintf("has removed %s's donation status", $username), $_SESSION["userid"]);
 			redirect("index.php?p=102&s=Supporter status changed!");
-		}
-		catch(Exception $e) {
-			redirect('index.php?p=102&e='.$e->getMessage());
+		} catch (Exception $e) {
+			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
 
-	public static function Rollback() {
+	public static function Rollback()
+	{
 		try {
 			if (!isset($_POST["id"]) || empty($_POST["id"]))
 				throw new Exception("Invalid user");
@@ -1079,19 +1083,31 @@ class D {
 			}
 			$username = $userData["username"];
 			// Check if we can rollback this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to rollback this account");
 			}
 			switch ($_POST["period"]) {
-				case "d": $periodSeconds = 86400; $periodName = "Day"; break;
-				case "w": $periodSeconds = 86400*7; $periodName = "Week"; break;
-				case "m": $periodSeconds = 86400*30; $periodName = "Month"; break;
-				case "y": $periodSeconds = 86400*365; $periodName = "Year"; break;
+				case "d":
+					$periodSeconds = 86400;
+					$periodName = "Day";
+					break;
+				case "w":
+					$periodSeconds = 86400 * 7;
+					$periodName = "Week";
+					break;
+				case "m":
+					$periodSeconds = 86400 * 30;
+					$periodName = "Month";
+					break;
+				case "y":
+					$periodSeconds = 86400 * 365;
+					$periodName = "Year";
+					break;
 			}
 
 			//$removeAfterOsuTime = UNIXTimestampToOsuDate(time()-($_POST["length"]*$periodSeconds));
-			$removeAfter = time()-($_POST["length"]*$periodSeconds);
-			$rollbackString = $_POST["length"]." ".$periodName;
+			$removeAfter = time() - ($_POST["length"] * $periodSeconds);
+			$rollbackString = $_POST["length"] . " " . $periodName;
 			if ($_POST["length"] > 1) {
 				$rollbackString .= "s";
 			}
@@ -1103,12 +1119,13 @@ class D {
 			postWebhookMessage(sprintf("has rolled back %s [%s](https://akatsuki.gg/u/%s)'s account.\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $rollbackString, $username, $_POST["id"], $_POST['id']));
 			rapLog(sprintf("has rolled back %s %s's account", $rollbackString, $username), $_SESSION["userid"]);
 			redirect("index.php?p=102&s=User account has been rolled back!");
-		} catch(Exception $e) {
-			redirect('index.php?p=102&e='.$e->getMessage());
+		} catch (Exception $e) {
+			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
 
-	public static function ToggleCustomBadge() {
+	public static function ToggleCustomBadge()
+	{
 		try {
 			if (!isset($_GET["id"]) || empty($_GET["id"]))
 				throw new Exception("Invalid user");
@@ -1118,7 +1135,7 @@ class D {
 			}
 			$username = $userData["username"];
 			// Check if we can edit this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to grant/revoke custom badge privilege on this account");
 			}
 
@@ -1130,13 +1147,14 @@ class D {
 
 			postWebhookMessage(sprintf("has %s custom badge privilege on [%s](https://akatsuki.gg/u/%s)'s account.\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $grantRevoke, $username, $_GET["id"], $_POST['id']));
 			rapLog(sprintf("has %s custom badge privilege on %s's account", $grantRevoke, $username), $_SESSION["userid"]);
-			redirect("index.php?p=102&s=Custom badge privilege ".$grantRevoke."!");
-		} catch(Exception $e) {
-			redirect('index.php?p=102&e='.$e->getMessage());
+			redirect("index.php?p=102&s=Custom badge privilege " . $grantRevoke . "!");
+		} catch (Exception $e) {
+			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
 
-	public static function ToggleUserpage() {
+	public static function ToggleUserpage()
+	{
 		try {
 			if (!isset($_GET["id"]) || empty($_GET["id"]))
 				throw new Exception("Invalid user");
@@ -1146,7 +1164,7 @@ class D {
 			}
 			$username = $userData["username"];
 			// Check if we can edit this user
-			if ( ($userData["privileges"] & Privileges::AdminSilenceUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if (($userData["privileges"] & Privileges::AdminSilenceUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to grant/revoke userpages on this account");
 			}
 
@@ -1158,13 +1176,14 @@ class D {
 
 			rapLog(sprintf("has %s userpage on %s's account", $grantRevoke, $username), $_SESSION["userid"]);
 			redirect("index.php?p=102&s=Userpage revoked/granted!");
-		} catch(Exception $e) {
-			redirect('index.php?p=102&e='.$e->getMessage());
+		} catch (Exception $e) {
+			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
 
 
-	public static function lockUnlockUser() {
+	public static function lockUnlockUser()
+	{
 		try {
 			if (!isset($_GET["id"]) || empty($_GET["id"]))
 				throw new Exception("Invalid user");
@@ -1173,7 +1192,7 @@ class D {
 				throw new Exception("That user doesn't exist");
 			}
 			// Check if we can edit this user
-			if ( ($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
 				throw new Exception("You don't have enough permissions to lock this account");
 			}
 			// Make sure the user is not banned/restricted
@@ -1187,13 +1206,14 @@ class D {
 
 			postWebhookMessage(sprintf("has %s [%s](https://akatsuki.gg/u/%s)'s account.\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $lockUnlock, $userData["username"], $_GET["id"], $_POST['id']));
 			rapLog(sprintf("has %s %s's account", $lockUnlock, $userData["username"]), $_SESSION["userid"]);
-			redirect("index.php?p=102&s=User ".$lockUnlock."!");
-		} catch(Exception $e) {
-			redirect('index.php?p=102&e='.$e->getMessage());
+			redirect("index.php?p=102&s=User " . $lockUnlock . "!");
+		} catch (Exception $e) {
+			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
 
-	public static function RankBeatmapNew() {
+	public static function RankBeatmapNew()
+	{
 		global $INTERNAL_BANCHO_SERVICE_BASE_URL;
 		global $ScoresConfig;
 		try {
@@ -1220,32 +1240,32 @@ class D {
 
 				// Change beatmap status
 				switch ($status) {
-					// Rank beatmap
+						// Rank beatmap
 					case "rank":
 						$GLOBALS["db"]->execute("UPDATE beatmaps SET ranked = 2, ranked_status_freezed = 1 WHERE beatmap_id = ? LIMIT 1", [$beatmapID]);
 
 						// Restore old scores
 						$GLOBALS["db"]->execute("UPDATE scores s JOIN (SELECT userid, MAX(score) maxscore FROM scores JOIN beatmaps ON scores.beatmap_md5 = beatmaps.beatmap_md5 WHERE beatmaps.beatmap_md5 = (SELECT beatmap_md5 FROM beatmaps WHERE beatmap_id = ? LIMIT 1) GROUP BY userid) s2 ON s.score = s2.maxscore AND s.userid = s2.userid SET completed = 3", [$beatmapID]);
 						$result .= "$beatmapID has been ranked and its scores have been restored. | ";
-					break;
+						break;
 
-					// Force osu!api update (unfreeze)
+						// Force osu!api update (unfreeze)
 					case "update":
 						$updateCache = true;
 						$GLOBALS["db"]->execute("UPDATE beatmaps SET ranked = 0, ranked_status_freezed = 0 WHERE beatmap_id = ? LIMIT 1", [$beatmapID]);
 						$result .= "$beatmapID's ranked status is the same from official osu!. | ";
-					break;
+						break;
 
-					// No changes
+						// No changes
 					case "no":
 						$logToRap = false;
 						$result .= "$beatmapID's ranked status has not been edited!. | ";
-					break;
+						break;
 
-					// EH! VOLEVI!
+						// EH! VOLEVI!
 					default:
 						throw new Exception("Unknown ranked status value.");
-					break;
+						break;
 				}
 
 				// RAP Log
@@ -1267,13 +1287,14 @@ class D {
 			}
 
 			// Done
-			redirect("index.php?p=117&s=".$result);
+			redirect("index.php?p=117&s=" . $result);
 		} catch (Exception $e) {
-			redirect('index.php?p=117&e='.$e->getMessage());
+			redirect('index.php?p=117&e=' . $e->getMessage());
 		}
 	}
 
-	public static function RedirectRankBeatmap() {
+	public static function RedirectRankBeatmap()
+	{
 		try {
 			if (!isset($_POST["id"]) || empty($_POST["id"]) || !isset($_POST["type"]) || empty($_POST["type"])) {
 				throw new Exception("Invalid beatmap id or type");
@@ -1287,13 +1308,14 @@ class D {
 				}
 				$bsid = current($bsid);
 			}
-			redirect("index.php?p=124&bsid=".$bsid);
+			redirect("index.php?p=124&bsid=" . $bsid);
 		} catch (Exception $e) {
-			redirect('index.php?p=125&e='.$e->getMessage());
+			redirect('index.php?p=125&e=' . $e->getMessage());
 		}
 	}
 
-	public static function ClearHWIDMatches() {
+	public static function ClearHWIDMatches()
+	{
 		try {
 			if (!isset($_GET["id"]) || empty($_GET["id"])) {
 				throw new Exception("Invalid user ID");
@@ -1303,11 +1325,12 @@ class D {
 			rapLog(sprintf("has cleared %s's HWID matches.", getUserUsername($_GET["id"])));
 			redirect('index.php?p=102&s=HWID matches cleared! Make sure to clear multiaccounts\' HWID too, or the user might get restricted for multiaccounting!');
 		} catch (Exception $e) {
-			redirect('index.php?p=102&e='.$e->getMessage());
+			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
 
-	public static function TakeReport() {
+	public static function TakeReport()
+	{
 		try {
 			if (!isset($_GET["id"]) || empty($_GET["id"])) {
 				throw new Exception("Missing report id");
@@ -1331,7 +1354,8 @@ class D {
 		}
 	}
 
-	public static function SolveUnsolveReport() {
+	public static function SolveUnsolveReport()
+	{
 		try {
 			if (!isset($_GET["id"]) || empty($_GET["id"])) {
 				throw new Exception("Missing report id");
@@ -1356,7 +1380,8 @@ class D {
 		}
 	}
 
-	public static function UselessUsefulReport() {
+	public static function UselessUsefulReport()
+	{
 		try {
 			if (!isset($_GET["id"]) || empty($_GET["id"])) {
 				throw new Exception("Missing report id");
@@ -1381,7 +1406,8 @@ class D {
 		}
 	}
 
-	public static function UploadMainMenuIcon() {
+	public static function UploadMainMenuIcon()
+	{
 		try {
 			if (!isset($_POST["name"]) || empty($_POST["name"]) || !isset($_POST["url"]) || empty($_POST["url"])) {
 				throw new Exception("Missing required parameter(s).");
@@ -1409,7 +1435,8 @@ class D {
 		}
 	}
 
-	public static function DeleteMainMenuIcon() {
+	public static function DeleteMainMenuIcon()
+	{
 		try {
 			if (!isset($_GET["id"]) || empty($_GET["id"])) {
 				throw new Exception("Missing required parameter");
@@ -1427,7 +1454,8 @@ class D {
 		}
 	}
 
-	public static function SetDefaultMainMenuIcon() {
+	public static function SetDefaultMainMenuIcon()
+	{
 		try {
 			if (!isset($_GET["id"]) || empty($_GET["id"])) {
 				throw new Exception("Missing required parameter");
@@ -1439,7 +1467,8 @@ class D {
 		}
 	}
 
-	public static function SetMainMenuIcon() {
+	public static function SetMainMenuIcon()
+	{
 		try {
 			if (!isset($_GET["id"]) || empty($_GET["id"])) {
 				throw new Exception("Missing required parameter");
@@ -1452,7 +1481,8 @@ class D {
 		}
 	}
 
-	public static function RestoreMainMenuIcon() {
+	public static function RestoreMainMenuIcon()
+	{
 		try {
 			$GLOBALS["db"]->execute("UPDATE main_menu_icons SET is_current = IF((SELECT id FROM (SELECT * FROM main_menu_icons) AS x WHERE x.is_default = 1 AND x.id = main_menu_icons.id LIMIT 1), 1, 0)", [$_GET["id"]]);
 			updateMainMenuIconBancho();
@@ -1462,7 +1492,8 @@ class D {
 		}
 	}
 
-	public static function RemoveMainMenuIcon() {
+	public static function RemoveMainMenuIcon()
+	{
 		try {
 			$GLOBALS["db"]->execute("UPDATE main_menu_icons SET is_current = 0", [$_GET["id"]]);
 			updateMainMenuIconBancho();
@@ -1472,7 +1503,8 @@ class D {
 		}
 	}
 
-	public static function BulkBan() {
+	public static function BulkBan()
+	{
 		try {
 			if (!isset($_POST["uid"]) || empty($_POST["uid"])) {
 				throw new Exception("No user ids provided.");

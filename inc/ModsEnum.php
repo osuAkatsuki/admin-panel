@@ -3,7 +3,8 @@
 // All the mods' values in any mods combination integer.
 // Usage: $modInt & ModsEnum::ModToSeeIfIsInTheModsCombination
 // If you don't really know what are these, lookup "bitwise operators php" on google.
-class ModsEnum {
+class ModsEnum
+{
 	const None			= 0;
 	const NoFail		= 1;
 	const Easy			= 2;

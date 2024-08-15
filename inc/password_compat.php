@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A Compatibility library with PHP 5.5's simplified password hashing API.
  *
@@ -6,6 +7,7 @@
  * @license http://www.opensource.org/licenses/mit-license.html MIT License
  * @copyright 2012 The Authors
  */
+
 namespace {
 
     if (!defined('PASSWORD_BCRYPT')) {
@@ -47,7 +49,7 @@ namespace {
                 return;
             }
             if (!is_int($algo)) {
-                trigger_error('password_hash() expects parameter 2 to be long, '.gettype($algo).' given', E_USER_WARNING);
+                trigger_error('password_hash() expects parameter 2 to be long, ' . gettype($algo) . ' given', E_USER_WARNING);
 
                 return;
             }
@@ -160,7 +162,7 @@ namespace {
             }
             $salt = PasswordCompat\binary\_substr($salt, 0, $required_salt_len);
 
-            $hash = $hash_format.$salt;
+            $hash = $hash_format . $salt;
 
             $ret = crypt($password, $hash);
 
@@ -261,7 +263,6 @@ namespace {
             return $status === 0;
         }
     }
-
 }
 
 namespace PasswordCompat\binary {

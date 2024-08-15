@@ -1,6 +1,7 @@
 <?php
 
-class Curl {
+class Curl
+{
 	const VERSION = '4.6.8';
 	const DEFAULT_TIMEOUT = 30;
 	public $curl;
@@ -40,7 +41,8 @@ class Curl {
 	 *
 	 * @throws \ErrorException
 	 */
-	public function __construct($base_url = null) {
+	public function __construct($base_url = null)
+	{
 		if (!extension_loaded('curl')) {
 			throw new \ErrorException('cURL library is not loaded');
 		}
@@ -61,7 +63,8 @@ class Curl {
 	 *
 	 * @param  $callback
 	 */
-	public function beforeSend($callback) {
+	public function beforeSend($callback)
+	{
 		$this->beforeSendFunction = $callback;
 	}
 
@@ -72,7 +75,8 @@ class Curl {
 	 *
 	 * @return array|string
 	 */
-	public function buildPostData($data) {
+	public function buildPostData($data)
+	{
 		if (is_array($data)) {
 			if (self::is_array_multidim($data)) {
 				if (isset($this->headers['Content-Type']) && preg_match($this->jsonPattern, $this->headers['Content-Type'])) {
@@ -123,7 +127,8 @@ class Curl {
 	/**
 	 * Call.
 	 */
-	public function call() {
+	public function call()
+	{
 		$args = func_get_args();
 		$function = array_shift($args);
 		if (is_callable($function)) {
@@ -135,7 +140,8 @@ class Curl {
 	/**
 	 * Close.
 	 */
-	public function close() {
+	public function close()
+	{
 		if (is_resource($this->curl)) {
 			curl_close($this->curl);
 		}
@@ -148,7 +154,8 @@ class Curl {
 	 *
 	 * @param  $callback
 	 */
-	public function complete($callback) {
+	public function complete($callback)
+	{
 		$this->completeFunction = $callback;
 	}
 
@@ -157,7 +164,8 @@ class Curl {
 	 *
 	 * @param  $callback
 	 */
-	public function progress($callback) {
+	public function progress($callback)
+	{
 		$this->setOpt(CURLOPT_PROGRESSFUNCTION, $callback);
 		$this->setOpt(CURLOPT_NOPROGRESS, false);
 	}
@@ -171,7 +179,8 @@ class Curl {
 	 *
 	 * @return string
 	 */
-	public function delete($url, $query_parameters = [], $data = []) {
+	public function delete($url, $query_parameters = [], $data = [])
+	{
 		if (is_array($url)) {
 			$data = $query_parameters;
 			$query_parameters = $url;
@@ -189,7 +198,8 @@ class Curl {
 	 *
 	 * @param  $fh
 	 */
-	public function downloadComplete($fh) {
+	public function downloadComplete($fh)
+	{
 		if (!$this->error && $this->downloadCompleteFunction) {
 			rewind($fh);
 			$this->call($this->downloadCompleteFunction, $fh);
@@ -221,7 +231,8 @@ class Curl {
 	 *
 	 * @return bool
 	 */
-	public function download($url, $mixed_filename) {
+	public function download($url, $mixed_filename)
+	{
 		if (is_callable($mixed_filename)) {
 			$this->downloadCompleteFunction = $mixed_filename;
 			$fh = tmpfile();
@@ -241,7 +252,8 @@ class Curl {
 	 *
 	 * @param  $callback
 	 */
-	public function error($callback) {
+	public function error($callback)
+	{
 		$this->errorFunction = $callback;
 	}
 
@@ -252,7 +264,8 @@ class Curl {
 	 *
 	 * @return string
 	 */
-	public function exec($ch = null) {
+	public function exec($ch = null)
+	{
 		if (!($ch === null)) {
 			$this->rawResponse = curl_multi_getcontent($ch);
 		} else {
@@ -294,7 +307,8 @@ class Curl {
 	 *
 	 * @return string
 	 */
-	public function get($url, $data = []) {
+	public function get($url, $data = [])
+	{
 		if (is_array($url)) {
 			$data = $url;
 			$url = $this->baseUrl;
@@ -313,7 +327,8 @@ class Curl {
 	 *
 	 * @return mixed
 	 */
-	public function getOpt($option) {
+	public function getOpt($option)
+	{
 		return $this->options[$option];
 	}
 
@@ -325,7 +340,8 @@ class Curl {
 	 *
 	 * @return string
 	 */
-	public function head($url, $data = []) {
+	public function head($url, $data = [])
+	{
 		if (is_array($url)) {
 			$data = $url;
 			$url = $this->baseUrl;
@@ -345,7 +361,8 @@ class Curl {
 	 *
 	 * @return int
 	 */
-	public function headerCallback($ch, $header) {
+	public function headerCallback($ch, $header)
+	{
 		$this->rawResponseHeaders .= $header;
 
 		return strlen($header);
@@ -359,7 +376,8 @@ class Curl {
 	 *
 	 * @return string
 	 */
-	public function options($url, $data = []) {
+	public function options($url, $data = [])
+	{
 		if (is_array($url)) {
 			$data = $url;
 			$url = $this->baseUrl;
@@ -379,7 +397,8 @@ class Curl {
 	 *
 	 * @return string
 	 */
-	public function patch($url, $data = []) {
+	public function patch($url, $data = [])
+	{
 		if (is_array($url)) {
 			$data = $url;
 			$url = $this->baseUrl;
@@ -400,7 +419,8 @@ class Curl {
 	 *
 	 * @return string
 	 */
-	public function post($url, $data = []) {
+	public function post($url, $data = [])
+	{
 		if (is_array($url)) {
 			$data = $url;
 			$url = $this->baseUrl;
@@ -424,7 +444,8 @@ class Curl {
 	 *
 	 * @return string
 	 */
-	public function put($url, $data = []) {
+	public function put($url, $data = [])
+	{
 		if (is_array($url)) {
 			$data = $url;
 			$url = $this->baseUrl;
@@ -446,9 +467,10 @@ class Curl {
 	 * @param  $username
 	 * @param  $password
 	 */
-	public function setBasicAuthentication($username, $password = '') {
+	public function setBasicAuthentication($username, $password = '')
+	{
 		$this->setOpt(CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-		$this->setOpt(CURLOPT_USERPWD, $username.':'.$password);
+		$this->setOpt(CURLOPT_USERPWD, $username . ':' . $password);
 	}
 
 	/**
@@ -457,9 +479,10 @@ class Curl {
 	 * @param  $username
 	 * @param  $password
 	 */
-	public function setDigestAuthentication($username, $password = '') {
+	public function setDigestAuthentication($username, $password = '')
+	{
 		$this->setOpt(CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
-		$this->setOpt(CURLOPT_USERPWD, $username.':'.$password);
+		$this->setOpt(CURLOPT_USERPWD, $username . ':' . $password);
 	}
 
 	/**
@@ -468,7 +491,8 @@ class Curl {
 	 * @param  $key
 	 * @param  $value
 	 */
-	public function setCookie($key, $value) {
+	public function setCookie($key, $value)
+	{
 		$this->cookies[$key] = $value;
 		$this->setOpt(CURLOPT_COOKIE, str_replace(' ', '%20', urldecode(http_build_query($this->cookies, '', '; '))));
 	}
@@ -478,7 +502,8 @@ class Curl {
 	 *
 	 * @param  $port
 	 */
-	public function setPort($port) {
+	public function setPort($port)
+	{
 		$this->setOpt(CURLOPT_PORT, intval($port));
 	}
 
@@ -487,7 +512,8 @@ class Curl {
 	 *
 	 * @param  $seconds
 	 */
-	public function setConnectTimeout($seconds) {
+	public function setConnectTimeout($seconds)
+	{
 		$this->setOpt(CURLOPT_CONNECTTIMEOUT, $seconds);
 	}
 
@@ -496,7 +522,8 @@ class Curl {
 	 *
 	 * @param  $cookie_file
 	 */
-	public function setCookieFile($cookie_file) {
+	public function setCookieFile($cookie_file)
+	{
 		$this->setOpt(CURLOPT_COOKIEFILE, $cookie_file);
 	}
 
@@ -505,14 +532,16 @@ class Curl {
 	 *
 	 * @param  $cookie_jar
 	 */
-	public function setCookieJar($cookie_jar) {
+	public function setCookieJar($cookie_jar)
+	{
 		$this->setOpt(CURLOPT_COOKIEJAR, $cookie_jar);
 	}
 
 	/**
 	 * Set Default JSON Decoder.
 	 */
-	public function setDefaultJsonDecoder() {
+	public function setDefaultJsonDecoder()
+	{
 		$this->jsonDecoder = function ($response) {
 			$json_obj = json_decode($response, false);
 			if (!($json_obj === null)) {
@@ -526,18 +555,20 @@ class Curl {
 	/**
 	 * Set Default Timeout.
 	 */
-	public function setDefaultTimeout() {
+	public function setDefaultTimeout()
+	{
 		$this->setTimeout(self::DEFAULT_TIMEOUT);
 	}
 
 	/**
 	 * Set Default User Agent.
 	 */
-	public function setDefaultUserAgent() {
-		$user_agent = 'PHP-Curl-Class/'.self::VERSION.' (+https://github.com/php-curl-class/php-curl-class)';
-		$user_agent .= ' PHP/'.PHP_VERSION;
+	public function setDefaultUserAgent()
+	{
+		$user_agent = 'PHP-Curl-Class/' . self::VERSION . ' (+https://github.com/php-curl-class/php-curl-class)';
+		$user_agent .= ' PHP/' . PHP_VERSION;
 		$curl_version = curl_version();
-		$user_agent .= ' curl/'.$curl_version['version'];
+		$user_agent .= ' curl/' . $curl_version['version'];
 		$this->setUserAgent($user_agent);
 	}
 
@@ -549,14 +580,15 @@ class Curl {
 	 *
 	 * @return string
 	 */
-	public function setHeader($key, $value) {
+	public function setHeader($key, $value)
+	{
 		$this->headers[$key] = $value;
 		$headers = [];
 		foreach ($this->headers as $key => $value) {
 			$headers[$key] = $value;
 		}
 		$this->setOpt(CURLOPT_HTTPHEADER, array_map(function ($value, $key) {
-			return $key.': '.$value;
+			return $key . ': ' . $value;
 		}, $headers, array_keys($headers)));
 	}
 
@@ -565,7 +597,8 @@ class Curl {
 	 *
 	 * @param  $function
 	 */
-	public function setJsonDecoder($function) {
+	public function setJsonDecoder($function)
+	{
 		if (is_callable($function)) {
 			$this->jsonDecoder = $function;
 		}
@@ -579,10 +612,11 @@ class Curl {
 	 *
 	 * @return bool
 	 */
-	public function setOpt($option, $value) {
+	public function setOpt($option, $value)
+	{
 		$required_options = [CURLINFO_HEADER_OUT => 'CURLINFO_HEADER_OUT', CURLOPT_RETURNTRANSFER => 'CURLOPT_RETURNTRANSFER'];
 		if (in_array($option, array_keys($required_options), true) && !($value === true)) {
-			trigger_error($required_options[$option].' is a required option', E_USER_WARNING);
+			trigger_error($required_options[$option] . ' is a required option', E_USER_WARNING);
 		}
 		$this->options[$option] = $value;
 
@@ -594,7 +628,8 @@ class Curl {
 	 *
 	 * @param  $referer
 	 */
-	public function setReferer($referer) {
+	public function setReferer($referer)
+	{
 		$this->setReferrer($referer);
 	}
 
@@ -603,7 +638,8 @@ class Curl {
 	 *
 	 * @param  $referrer
 	 */
-	public function setReferrer($referrer) {
+	public function setReferrer($referrer)
+	{
 		$this->setOpt(CURLOPT_REFERER, $referrer);
 	}
 
@@ -612,7 +648,8 @@ class Curl {
 	 *
 	 * @param  $seconds
 	 */
-	public function setTimeout($seconds) {
+	public function setTimeout($seconds)
+	{
 		$this->setOpt(CURLOPT_TIMEOUT, $seconds);
 	}
 
@@ -622,7 +659,8 @@ class Curl {
 	 * @param  $url
 	 * @param  $data
 	 */
-	public function setURL($url, $data = []) {
+	public function setURL($url, $data = [])
+	{
 		$this->baseUrl = $url;
 		$this->url = $this->buildURL($url, $data);
 		$this->setOpt(CURLOPT_URL, $this->url);
@@ -633,7 +671,8 @@ class Curl {
 	 *
 	 * @param  $user_agent
 	 */
-	public function setUserAgent($user_agent) {
+	public function setUserAgent($user_agent)
+	{
 		$this->setOpt(CURLOPT_USERAGENT, $user_agent);
 	}
 
@@ -642,7 +681,8 @@ class Curl {
 	 *
 	 * @param  $callback
 	 */
-	public function success($callback) {
+	public function success($callback)
+	{
 		$this->successFunction = $callback;
 	}
 
@@ -651,7 +691,8 @@ class Curl {
 	 *
 	 * @param  $key
 	 */
-	public function unsetHeader($key) {
+	public function unsetHeader($key)
+	{
 		$this->setHeader($key, '');
 		unset($this->headers[$key]);
 	}
@@ -661,14 +702,16 @@ class Curl {
 	 *
 	 * @param  $on
 	 */
-	public function verbose($on = true) {
+	public function verbose($on = true)
+	{
 		$this->setOpt(CURLOPT_VERBOSE, $on);
 	}
 
 	/**
 	 * Destruct.
 	 */
-	public function __destruct() {
+	public function __destruct()
+	{
 		$this->close();
 	}
 
@@ -680,8 +723,9 @@ class Curl {
 	 *
 	 * @return string
 	 */
-	private function buildURL($url, $data = []) {
-		return $url.(empty($data) ? '' : '?'.http_build_query($data));
+	private function buildURL($url, $data = [])
+	{
+		return $url . (empty($data) ? '' : '?' . http_build_query($data));
 	}
 
 	/**
@@ -691,7 +735,8 @@ class Curl {
 	 *
 	 * @return array
 	 */
-	private function parseHeaders($raw_headers) {
+	private function parseHeaders($raw_headers)
+	{
 		$raw_headers = preg_split('/\r\n/', $raw_headers, null, PREG_SPLIT_NO_EMPTY);
 		$http_headers = new CaseInsensitiveArray();
 		$raw_headers_count = count($raw_headers);
@@ -701,7 +746,7 @@ class Curl {
 			$value = trim($value);
 			// Use isset() as array_key_exists() and ArrayAccess are not compatible.
 			if (isset($http_headers[$key])) {
-				$http_headers[$key] .= ','.$value;
+				$http_headers[$key] .= ',' . $value;
 			} else {
 				$http_headers[$key] = $value;
 			}
@@ -717,7 +762,8 @@ class Curl {
 	 *
 	 * @return array
 	 */
-	private function parseRequestHeaders($raw_headers) {
+	private function parseRequestHeaders($raw_headers)
+	{
 		$request_headers = new CaseInsensitiveArray();
 		list($first_line, $headers) = $this->parseHeaders($raw_headers);
 		$request_headers['Request-Line'] = $first_line;
@@ -736,7 +782,8 @@ class Curl {
 	 *
 	 * @return array
 	 */
-	private function parseResponse($response_headers, $raw_response) {
+	private function parseResponse($response_headers, $raw_response)
+	{
 		$response = $raw_response;
 		if (isset($response_headers['Content-Type'])) {
 			if (preg_match($this->jsonPattern, $response_headers['Content-Type'])) {
@@ -762,7 +809,8 @@ class Curl {
 	 *
 	 * @return array
 	 */
-	private function parseResponseHeaders($raw_response_headers) {
+	private function parseResponseHeaders($raw_response_headers)
+	{
 		$response_header_array = explode("\r\n\r\n", $raw_response_headers);
 		$response_header = '';
 		for ($i = count($response_header_array) - 1; $i >= 0; $i--) {
@@ -789,18 +837,19 @@ class Curl {
 	 *
 	 * @return string
 	 */
-	public static function http_build_multi_query($data, $key = null) {
+	public static function http_build_multi_query($data, $key = null)
+	{
 		$query = [];
 		if (empty($data)) {
-			return $key.'=';
+			return $key . '=';
 		}
 		$is_array_assoc = self::is_array_assoc($data);
 		foreach ($data as $k => $value) {
 			if (is_string($value) || is_numeric($value)) {
-				$brackets = $is_array_assoc ? '['.$k.']' : '[]';
-				$query[] = urlencode($key === null ? $k : $key.$brackets).'='.rawurlencode($value);
+				$brackets = $is_array_assoc ? '[' . $k . ']' : '[]';
+				$query[] = urlencode($key === null ? $k : $key . $brackets) . '=' . rawurlencode($value);
 			} elseif (is_array($value)) {
-				$nested = $key === null ? $k : $key.'['.$k.']';
+				$nested = $key === null ? $k : $key . '[' . $k . ']';
 				$query[] = self::http_build_multi_query($value, $nested);
 			}
 		}
@@ -815,7 +864,8 @@ class Curl {
 	 *
 	 * @return bool
 	 */
-	public static function is_array_assoc($array) {
+	public static function is_array_assoc($array)
+	{
 		return (bool) count(array_filter(array_keys($array), 'is_string'));
 	}
 
@@ -826,7 +876,8 @@ class Curl {
 	 *
 	 * @return bool
 	 */
-	public static function is_array_multidim($array) {
+	public static function is_array_multidim($array)
+	{
 		if (!is_array($array)) {
 			return false;
 		}
@@ -834,10 +885,12 @@ class Curl {
 		return (bool) count(array_filter($array, 'is_array'));
 	}
 }
-class CaseInsensitiveArray implements \ArrayAccess, \Countable, \Iterator {
+class CaseInsensitiveArray implements \ArrayAccess, \Countable, \Iterator
+{
 	private $container = [];
 
-	public function offsetSet($offset, $value) {
+	public function offsetSet($offset, $value)
+	{
 		if ($offset === null) {
 			$this->container[] = $value;
 		} else {
@@ -850,15 +903,18 @@ class CaseInsensitiveArray implements \ArrayAccess, \Countable, \Iterator {
 		}
 	}
 
-	public function offsetExists($offset) {
+	public function offsetExists($offset)
+	{
 		return array_key_exists(strtolower($offset), array_change_key_case($this->container, CASE_LOWER));
 	}
 
-	public function offsetUnset($offset) {
+	public function offsetUnset($offset)
+	{
 		unset($this->container[$offset]);
 	}
 
-	public function offsetGet($offset) {
+	public function offsetGet($offset)
+	{
 		$index = array_search(strtolower($offset), array_keys(array_change_key_case($this->container, CASE_LOWER)));
 		if ($index === false) {
 			return;
@@ -868,27 +924,33 @@ class CaseInsensitiveArray implements \ArrayAccess, \Countable, \Iterator {
 		return $values[$index];
 	}
 
-	public function count() {
+	public function count()
+	{
 		return count($this->container);
 	}
 
-	public function current() {
+	public function current()
+	{
 		return current($this->container);
 	}
 
-	public function next() {
+	public function next()
+	{
 		return next($this->container);
 	}
 
-	public function key() {
+	public function key()
+	{
 		return key($this->container);
 	}
 
-	public function valid() {
+	public function valid()
+	{
 		return !($this->current() === false);
 	}
 
-	public function rewind() {
+	public function rewind()
+	{
 		reset($this->container);
 	}
 }

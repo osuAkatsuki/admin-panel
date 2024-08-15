@@ -1,6 +1,6 @@
 <?php
 $df = dirname(__FILE__);
-require_once $df.'/../vendor/vlucas/phpdotenv/src/Dotenv.php';
+require_once $df . '/../vendor/vlucas/phpdotenv/src/Dotenv.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();
@@ -34,7 +34,7 @@ $S3Config = [
 $ScoresConfig = [
 	"enablePP" => true,
 	"useNewBeatmapsTable" => true,		// 0: get beatmaps names from beatmaps_names (old php scores server)
-										// 1: get beatmaps names from beatmaps (LETS)
+	// 1: get beatmaps names from beatmaps (LETS)
 	"api_key" => "",
 	"rankRequestsQueueSize" => 20,
 	"rankRequestsPerUser" => 2
