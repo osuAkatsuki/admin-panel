@@ -128,6 +128,7 @@ function setTitle($p)
 		102 => 'Users',
 		103 => 'Edit user',
 		104 => 'Change identity',
+		105 => 'Change whitelist',
 		108 => 'Badges',
 		109 => 'Edit Badge',
 		110 => 'Edit user badges',
@@ -227,6 +228,11 @@ function printPage($p)
 		case 104:
 			sessionCheckAdmin(Privileges::AdminManageUsers);
 			P::AdminChangeIdentity();
+			break;
+
+		case 105:
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			P::AdminChangeWhitelist();
 			break;
 
 		case 108:
