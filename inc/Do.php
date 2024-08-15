@@ -330,6 +330,48 @@ class D
 	}
 
 	/*
+	 * ChangeWhitelist
+	 * Change whitelist function (ADMIN CP)
+	 */
+	public static function ChangeWhitelist()
+	{
+		try {
+			// Check if everything is set
+			if (!isset($_POST['id']) || !isset($_POST['oldwhitelist']) || !isset($_POST['newwhitelist']) || empty($_POST['id']) || empty($_POST['oldwhitelist']) || empty($_POST['newwhitelist'])) {
+				throw new Exception('Nice troll.');
+			}
+			// Check if we can edit this user
+			$privileges = $GLOBALS["db"]->fetch("SELECT privileges FROM users WHERE id = ? LIMIT 1", [$_POST["id"]]);
+			if (!$privileges) {
+				throw new Exception("User doesn't exist");
+			}
+			$privileges = current($privileges);
+			if ((($privileges & Privileges::AdminManageUsers) > 0) && $_POST['oldwhitelist'] != $_SESSION['whitelist'] && $_SESSION["userid"] != 1001) {
+				throw new Exception("You don't have enough permissions to edit this user");
+			}
+
+			// whitelist must be a value between 0 and 3
+			if ($_POST["newwhitelist"] < 0 || $_POST["newwhitelist"] > 3) {
+				throw new Exception("Invalid whitelist value");
+			}
+
+			$GLOBALS['db']->execute('UPDATE users SET whitelist = ? WHERE id = ?', [$_POST['newwhitelist'], $_POST["id"]]);
+
+			// log this whitelist change to the users rap notes
+			appendNotes($_POST["id"], sprintf("Whitelist change: '%s' -> '%s'", $_POST["oldwhitelist"], $_POST['newwhitelist']));
+
+			// rap log
+			postWebhookMessage(sprintf("has changed %s's whitelist to [%s](https://akatsuki.gg/u/%s).\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $_POST["oldwhitelist"], $_POST['newwhitelist'], $_POST["id"]));
+			rapLog(sprintf("has changed %s's whitelist to %s", $_POST["oldwhitelist"], $_POST["newwhitelist"]));
+			// Done, redirect to success page
+			redirect('index.php?p=102&s=User whitelist changed! It might take a while to change the whitelist if the user is online on Bancho.');
+		} catch (Exception $e) {
+			// Redirect to Exception page
+			redirect('index.php?p=102&e=' . $e->getMessage());
+		}
+	}
+
+	/*
 	 * SaveBadge
 	 * Save badge function (ADMIN CP)
 	 */
