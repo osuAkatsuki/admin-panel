@@ -1018,13 +1018,20 @@ class P
 			<td>ID</td>
 			<td><p class="text-center"><input type="number" name="id" class="form-control" value="' . $userData['id'] . '" readonly></td>
 			</tr>';
+			// not a real input, just for displaying the old value
 			echo '<tr>
 			<td>Old Whitelist</td>
-			<td><p class="text-center"><input type="text" name="oldwhitelist" class="form-control" value="' . $userData['whitelist'] . '" readonly></td>
+			<td><p class="text-center"><input type="text" name="oldwhitelist" class="form-control" value="' . getWhitelist($userData['whitelist']) . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>New Whitelist</td>
-			<td><p class="text-center"><input type="text" name="newwhitelist" class="form-control"></td>
+			<td>
+			<select name="newwhitelist" class="selectpicker" data-width="100%">
+			<option value="0">None</option>
+			<option value="1">Vanilla</option>
+			<option value="2">Relax</option>
+			<option value="3">Vanilla & Relax</option>
+			</select>
 			</tr>';
 			echo '</tbody></form>';
 			echo '</table>';
