@@ -350,6 +350,8 @@ class D
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 
+			$GLOBALS['db']->execute('UPDATE users SET whitelist = ? WHERE id = ?', [$_POST['newwhitelist'], $_POST["id"]]);
+
 			// log this whitelist change to the users rap notes
 			appendNotes($_POST["id"], sprintf("Whitelist change: '%s' -> '%s'", $_POST["oldwhitelist"], $_POST['newwhitelist']));
 
