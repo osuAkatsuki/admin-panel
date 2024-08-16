@@ -337,7 +337,7 @@ class D
 	{
 		try {
 			// Check if everything is set
-			if (!isset($_POST['id']) || !isset($_POST['newwhitelist']) || empty($_POST['id']) || empty($_POST['newwhitelist'])) {
+			if (!isset($_POST['id']) || !isset($_POST['newwhitelist']) || empty($_POST['id'])) {
 				throw new Exception('Nice troll.');
 			}
 			// Check if we can edit this user
