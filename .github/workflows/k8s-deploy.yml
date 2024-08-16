@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - whitelist-selector
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
