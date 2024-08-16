@@ -362,7 +362,7 @@ class D
 
 			// rap log
 			postWebhookMessage(sprintf("has changed %s's whitelist to %s.\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $_SESSION['username'], $_POST['newwhitelist'], $_POST["id"]));
-			rapLog(sprintf("has changed %s's whitelist to %s", $_SESSION['whitelist'], $_POST["newwhitelist"]));
+			rapLog(sprintf("has changed %s's whitelist to %s", $_SESSION['username'], $_POST["newwhitelist"]));
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=User whitelist changed! It might take a while to change the whitelist if the user is online on Bancho.');
 		} catch (Exception $e) {
