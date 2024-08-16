@@ -1547,3 +1547,14 @@ function updateMainMenuIconBancho()
 	redisConnect();
 	$GLOBALS["redis"]->publish("peppy:reload_settings", "reload");
 }
+
+
+function getWhitelist($whitelist)
+{
+	$wl = array();
+	if ($whitelist & 1)
+		array_push($wl, "Vanilla");
+	if ($whitelist & 2)
+		array_push($wl, "Relax");
+	return implode(" & ", $wl);
+}
