@@ -361,7 +361,7 @@ class D
 			appendNotes($_POST["id"], sprintf("Whitelist change: '%s' -> '%s'", $_SESSION['whitelist'], $_POST['newwhitelist']));
 
 			// rap log
-			postWebhookMessage(sprintf("has changed %s's whitelist to [%s](https://akatsuki.gg/u/%s).\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $_SESSION['whitelist'], $_POST['newwhitelist'], $_POST["id"]));
+			postWebhookMessage(sprintf("has changed %s's whitelist to %s.\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $_SESSION['username'], $_POST['newwhitelist'], $_POST["id"]));
 			rapLog(sprintf("has changed %s's whitelist to %s", $_SESSION['whitelist'], $_POST["newwhitelist"]));
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=User whitelist changed! It might take a while to change the whitelist if the user is online on Bancho.');
