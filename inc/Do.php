@@ -1212,7 +1212,7 @@ class D
 				postWebhookMessage("failed to send FokaBot message :( Error: " . print_r($resp["message"], true));
 				rapLog("failed to send FokaBot message :( Error: " . print_r($resp["message"], true));
 			}
-			redirect("index.php?p=117&s=User account has been deleted");
+			redirect("index.php?p=102&s=User account has been deleted");
 		} catch (Exception $e) {
 			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
