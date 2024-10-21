@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - gdpr-ccpa-comply
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
