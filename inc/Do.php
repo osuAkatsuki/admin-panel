@@ -493,18 +493,17 @@ class D
 				throw new Exception("That user doesn't exist");
 			}
 			// Calculate silence period length
-			$sl = $_POST['c'] * $_POST['un'];
-			// Make sure silence time is less than 30 days
-			if ($sl > 2592000) {
+			$silenceLength = $_POST['c'] * $_POST['un'];
+			if ($silenceLength > (60 * 60 * 24 * 30)) {
 				throw new Exception('Invalid silence length. Maximum silence length is 30 days.');
 			}
 			// Silence and reconnect that user
-			$GLOBALS["db"]->execute("UPDATE users SET silence_end = ?, silence_reason = ? WHERE id = ? LIMIT 1", [time() + $sl, $_POST["r"], $id]);
+			$GLOBALS["db"]->execute("UPDATE users SET silence_end = ?, silence_reason = ? WHERE id = ? LIMIT 1", [time() + $silenceLength, $_POST["r"], $id]);
 			updateSilenceBancho($id);
 			// RAP log and redirect
-			if ($sl > 0) {
-				postWebhookMessage(sprintf("has silenced user [%s](https://akatsuki.gg/u/%s) for %s.\n**Reason**: \"%s\"\n\n\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $_POST['u'], $id, timeDifference(time() + $sl, time(), false), $_POST["r"], $_POST['id']));
-				rapLog(sprintf("has silenced user %s for %s for the following reason: \"%s\"", $_POST['u'], timeDifference(time() + $sl, time(), false), $_POST["r"]));
+			if ($silenceLength > 0) {
+				postWebhookMessage(sprintf("has silenced user [%s](https://akatsuki.gg/u/%s) for %s.\n**Reason**: \"%s\"\n\n\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $_POST['u'], $id, timeDifference(time() + $silenceLength, time(), false), $_POST["r"], $_POST['id']));
+				rapLog(sprintf("has silenced user %s for %s for the following reason: \"%s\"", $_POST['u'], timeDifference(time() + $silenceLength, time(), false), $_POST["r"]));
 				$msg = 'index.php?p=102&s=User silenced!';
 			} else {
 				postWebhookMessage(sprintf("has removed [%s](https://akatsuki.gg/u/%s)'s silence", $_POST['u'], $id));
