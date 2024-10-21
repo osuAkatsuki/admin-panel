@@ -1193,8 +1193,9 @@ function makeJsonWebRequest($method, $url, $timeout = 1)
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		if (!isValidHttpMethod($method)) {
-			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+			throw new Exception("Invalid HTTP method");
 		}
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
 		$result = curl_exec($ch);
