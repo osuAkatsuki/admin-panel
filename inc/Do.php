@@ -1206,7 +1206,7 @@ class D
 				throw new Exception("That user doesn't exist");
 			}
 			$requestUrl = $INTERNAL_USERS_SERVICE_BASE_URL . "/api/v1/users/" . $userId;
-			$resp = makeJsonWebRequest("POST", $requestUrl);
+			$resp = makeJsonWebRequest("DELETE", $requestUrl);
 			if ($resp["status"] !== 204) {
 				postWebhookMessage("failed to send FokaBot message :( Error: " . print_r($resp["message"], true));
 				rapLog("failed to send FokaBot message :( Error: " . print_r($resp["message"], true));
