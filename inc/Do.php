@@ -1207,10 +1207,12 @@ class D
 			}
 			$requestUrl = $INTERNAL_USERS_SERVICE_BASE_URL . "/api/v1/users/" . $userId;
 			$resp = makeJsonWebRequest("DELETE", $requestUrl);
-			print_r($resp);
-			if ($resp["status"] !== 204) {
-				postWebhookMessage("failed to send FokaBot message :( Error: " . print_r($resp["message"], true));
-				rapLog("failed to send FokaBot message :( Error: " . print_r($resp["message"], true));
+			if ($resp["status"] === 204) {
+				postWebhookMessage("Successfully processed a GDPR/CCPA user deletion request for user: " . $userId);
+				rapLog("Successfully processed a GDPR/CCPA user deletion request for user: " . $userId);
+			} else {
+				postWebhookMessage("Failed to process a GDPR/CCPA user deletion request for user: " . $userId);
+				rapLog("Failed to process a GDPR/CCPA user deletion request for user: " . $userId);
 			}
 			redirect("index.php?p=102&s=User account has been deleted");
 		} catch (Exception $e) {
