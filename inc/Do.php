@@ -801,8 +801,8 @@ class D
 
 				$msg = "[https://osu.ppy.sh/s/" . $bsid . " " . $bm["song_name"] . "] is now ranked!";
 				$to = "#announce";
-				$requesturl = $INTERNAL_BANCHO_SERVICE_BASE_URL . "/api/v1/fokabotMessage?k=" . urlencode($ScoresConfig["api_key"]) . "&to=" . urlencode($to) . "&msg=" . urlencode($msg);
-				$resp = getJsonCurl($requesturl);
+				$requestUrl = $INTERNAL_BANCHO_SERVICE_BASE_URL . "/api/v1/fokabotMessage?k=" . urlencode($ScoresConfig["api_key"]) . "&to=" . urlencode($to) . "&msg=" . urlencode($msg);
+				$resp = makeJsonWebRequest("GET", $requestUrl);
 
 				if ($resp["message"] != "ok") {
 					postWebhookMessage("failed to send FokaBot message :( Error: " . print_r($resp["message"], true));
@@ -1194,6 +1194,28 @@ class D
 		}
 	}
 
+	public static function DeleteUserAccount()
+	{
+		global $INTERNAL_USERS_SERVICE_BASE_URL;
+		try {
+			if (!isset($_GET["id"]) || empty($_GET["id"]))
+				throw new Exception("Invalid user");
+			$userId = $_GET["id"];
+			$userData = $GLOBALS["db"]->fetch("SELECT username, privileges, userpage_allowed FROM users WHERE id = ? LIMIT 1", [$userId]);
+			if (!$userData) {
+				throw new Exception("That user doesn't exist");
+			}
+			$requestUrl = $INTERNAL_USERS_SERVICE_BASE_URL . "/api/v1/users/" . $userId;
+			$resp = makeJsonWebRequest("POST", $requestUrl);
+			if ($resp["status"] !== 204) {
+				postWebhookMessage("failed to send FokaBot message :( Error: " . print_r($resp["message"], true));
+				rapLog("failed to send FokaBot message :( Error: " . print_r($resp["message"], true));
+			}
+		} catch (Exception $e) {
+			redirect('index.php?p=102&e=' . $e->getMessage());
+		}
+	}
+
 	public static function ToggleUserpage()
 	{
 		try {
@@ -1320,8 +1342,8 @@ class D
 			$bm = $GLOBALS["db"]->fetch("SELECT beatmapset_id, song_name FROM beatmaps WHERE beatmapset_id = ? LIMIT 1", [$bsid]);
 			$msg = "[https://osu.ppy.sh/s/" . $bsid . " " . $bm["song_name"] . "] is now ranked!";
 			$to = "#announce";
-			$requesturl = $INTERNAL_BANCHO_SERVICE_BASE_URL . "/api/v1/fokabotMessage?k=" . urlencode($ScoresConfig["api_key"]) . "&to=" . urlencode($to) . "&msg=" . urlencode($msg);
-			$resp = getJsonCurl($requesturl);
+			$requestUrl = $INTERNAL_BANCHO_SERVICE_BASE_URL . "/api/v1/fokabotMessage?k=" . urlencode($ScoresConfig["api_key"]) . "&to=" . urlencode($to) . "&msg=" . urlencode($msg);
+			$resp = makeJsonWebRequest("GET", $requestUrl);
 			if ($resp["message"] != "ok") {
 				postWebhookMessage(sprintf("failed to send FokaBot message :( Error: %s", print_r($resp["message"], true)));
 				rapLog("failed to send FokaBot message :( Error: " . print_r($resp["message"], true));
