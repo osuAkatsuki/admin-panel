@@ -1207,7 +1207,7 @@ class D
 			}
 			$requestUrl = $INTERNAL_USERS_SERVICE_BASE_URL . "/api/v1/users/" . $userId;
 			$resp = makeJsonWebRequest("DELETE", $requestUrl);
-			if ($resp["status"] === 204) {
+			if ($resp["status"] >= 200 || $resp["status"] < 300) {
 				postWebhookMessage("Successfully processed a GDPR/CCPA user deletion request for user: " . $userId);
 				rapLog("Successfully processed a GDPR/CCPA user deletion request for user: " . $userId);
 			} else {
