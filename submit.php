@@ -146,6 +146,10 @@ try {
 			sessionCheckAdmin(Privileges::AdminSilenceUsers);
 			D::ToggleUserpage();
 			break;
+		case 'deleteUserAccount':
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			D::DeleteUserAccount();
+			break;
 		case 'lockUnlockUser':	// TODO
 			sessionCheckAdmin(Privileges::AdminCaker);
 			D::LockUnlockUser();

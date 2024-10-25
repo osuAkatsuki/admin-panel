@@ -115,7 +115,7 @@ class P
 	ORDER BY scores_ap.pp DESC LIMIT 100');
 
 		global $INTERNAL_BANCHO_SERVICE_BASE_URL;
-		$onlineUsers = getJsonCurl($INTERNAL_BANCHO_SERVICE_BASE_URL . "/api/v1/onlineUsers");
+		$onlineUsers = makeJsonWebRequest("GET", $INTERNAL_BANCHO_SERVICE_BASE_URL . "/api/v1/onlineUsers");
 		if (!$onlineUsers) {
 			$onlineUsers = 0;
 		} else {
@@ -900,6 +900,9 @@ class P
 			echo '		<a onclick="sure(\'submit.php?action=toggleCustomBadge&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">' . (($userData["can_custom_badge"] == 1) ? "Revoke" : "Grant") . ' custom badge</a>';
 			if (hasPrivilege(Privileges::AdminSilenceUsers)) {
 				echo '		<a onclick="sure(\'submit.php?action=toggleUserpage&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">' . (($userData["userpage_allowed"] == 1) ? "Disallow" : "Allow") . ' userpage</a>';
+			}
+			if (hasPrivilege(Privileges::AdminManageUsers)) {
+				echo '		<a onclick="reallysure(\'submit.php?action=deleteUserAccount&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">Delete user account</a>';
 			}
 			echo '<br>
 							</li>

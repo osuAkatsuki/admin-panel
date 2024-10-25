@@ -1182,12 +1182,20 @@ function logIP($uid)
 	);
 }
 
-function getJsonCurl($url, $timeout = 1)
+function isValidHttpMethod($method) {
+	return $method == "GET" || $method == "POST" || $method == "PUT" || $method == "PATCH" || $method == "DELETE";
+}
+
+function makeJsonWebRequest($method, $url, $timeout = 1)
 {
 	try {
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		if (!isValidHttpMethod($method)) {
+			throw new Exception("Invalid HTTP method");
+		}
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
 		$result = curl_exec($ch);
