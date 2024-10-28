@@ -1516,7 +1516,7 @@ function giveDonor($userID, $months, $add = true, $premium = false)
 
 	if ($premium) {
 		$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | 8388612, donor_expire = ? WHERE id = ?", [$unixExpire, $userID]);
-		$donorBadge = $GLOBALS["db"]->fetch("SELECT id FROM badges WHERE name = 'premium' LIMIT 1");
+		$donorBadge = $GLOBALS["db"]->fetch("SELECT id FROM badges WHERE name = 'Akatsuki+ Member' LIMIT 1");
 	} else {
 		$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | 4, donor_expire = ? WHERE id = ?", [$unixExpire, $userID]);
 		$donorBadge = $GLOBALS["db"]->fetch("SELECT id FROM badges WHERE name = 'supporter' OR name = 'support' LIMIT 1");
