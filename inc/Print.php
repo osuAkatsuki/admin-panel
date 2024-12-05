@@ -599,6 +599,7 @@ class P
 			}
 			// Get user data
 			$userData = $GLOBALS['db']->fetch('SELECT * FROM users WHERE id = ? LIMIT 1', $_GET['id']);
+			$lastScoreDetection = $GLOBALS['db']->fetch('SELECT created_at FROM score_detections ORDER BY created_at DESC LIMIT 1');
 			$ips = $GLOBALS['db']->fetchAll('SELECT ip, occurencies FROM ip_user WHERE userid = ? ORDER BY occurencies DESC LIMIT 50', $_GET['id']);
 			// Check if this user exists
 			if (!$userData) {
@@ -723,6 +724,11 @@ class P
 			}
 
 			echo '</td>
+			</tr>';
+
+			echo '<tr>
+			<td>Cheated score last detected at (dd/mm/yyyy)</td>
+			<td>' . $lastScoreDetection && $lastScoreDetection['created_at'] ? date('d/m/Y', $lastScoreDetection['created_at']) : 'Never' . '</td>
 			</tr>';
 
 			echo '<tr class="single-row">
