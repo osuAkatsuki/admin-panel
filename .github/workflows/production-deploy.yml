@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - fix-not-rendering-score-detections
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
