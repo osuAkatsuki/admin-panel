@@ -728,7 +728,7 @@ class P
 
 			echo '<tr>
 			<td>Cheated score last detected at (dd/mm/yyyy)</td>
-			<td>' . (($lastScoreDetection && $lastScoreDetection['created_at']) ? date('d/m/Y', $lastScoreDetection['created_at']) : 'Never') . '</td>
+			<td>' . (($lastScoreDetection && $lastScoreDetection['created_at']) ? new DateTime($lastScoreDetection['created_at'])->format('d/m/Y') : 'Never') . '</td>
 			</tr>';
 
 			echo '<tr class="single-row">
