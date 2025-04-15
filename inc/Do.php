@@ -159,6 +159,7 @@ class D
 			// Update country flag if set
 			if (isset($_POST['country']) && countryCodeToReadable($_POST['country']) != 'unknown country' && $oldData["country"] != $_POST['country']) {
 				$GLOBALS['db']->execute('UPDATE users SET country = ? WHERE id = ?', [$_POST['country'], $_POST['id']]);
+				moveCountryLeaderboards($_POST['id'], $oldData['country'], $_POST['country']);
 				redisConnect();
 				$GLOBALS["redis"]->publish('api:change_flag', $_POST['id']);
 

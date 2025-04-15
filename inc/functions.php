@@ -1441,6 +1441,28 @@ function appendNotes($userID, $notes, $addNl = true, $addTimestamp = true)
 	$GLOBALS["db"]->execute("UPDATE users SET notes=CONCAT(COALESCE(notes, ''), ?) WHERE id = ?", [$fullNote, $userID]);
 }
 
+function moveCountryLeaderboards($userID, $oldCountry, $newCountry)
+{
+	redisConnect();
+	foreach ([
+		"leaderboard" => ["std", "taiko", "ctb", "mania"],
+		"relaxboard" => ["std", "taiko", "ctb"],
+		"autoboard" => ["std"],
+	] as $lb_key => $modes) {
+		foreach ($modes as $mode) {
+			$oldKey = "ripple:".$lb_key.":".$mode.":".strtolower($oldCountry);
+			$score = $GLOBALS["redis"]->zscore($oldKey, $userID);
+			if ($score === null) {
+				continue;
+			}
+			$GLOBALS["redis"]->zrem($oldKey, $userID);
+			
+			$newKey = "ripple:".$lb_key.":".$mode.":".strtolower($newCountry);
+			$GLOBALS["redis"]->zadd($newKey, $score, $userID);
+		}
+	}
+}
+
 function removeFromLeaderboard($userID)
 {
 	redisConnect();
