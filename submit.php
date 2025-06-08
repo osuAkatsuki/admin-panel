@@ -86,6 +86,10 @@ try {
 			sessionCheckAdmin(Privileges::AdminManageUsers);
 			D::ChangeWhitelist();
 			break;
+		case 'changeEmailAddress':
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			D::ChangeEmailAddress();
+			break;
 		case 'removeBadge':	// TODO
 			sessionCheckAdmin(Privileges::AdminManageBadges);
 			D::RemoveBadge();

@@ -872,6 +872,7 @@ class P
 			}
 			echo '	<a href="index.php?p=104&id=' . $_GET['id'] . '" class="btn btn-info">Change identity</a>';
 			echo '	<a href="index.php?p=105&id=' . $_GET['id'] . '" class="btn btn-info">Change whitelist</a>';
+			echo '	<a href="index.php?p=106&id=' . $_GET['id'] . '" class="btn btn-info">Change email address</a>';
 			if (hasPrivilege(Privileges::UserDonor, $_GET["id"])) {
 				echo '	<a onclick="sure(\'submit.php?action=removeDonor&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">Remove donor</a>';
 			}
@@ -1045,6 +1046,62 @@ class P
 			echo '</tbody></form>';
 			echo '</table>';
 			echo '<div class="text-center"><button type="submit" form="system-settings-form" class="btn btn-primary">Change whitelist</button></div>';
+			echo '</div>';
+		} catch (Exception $e) {
+			// Redirect to exception page
+			redirect('index.php?p=102&e=' . $e->getMessage());
+		}
+	}
+
+	/*
+	 * AdminChangeEmailAddress
+	 * Prints the admin panel change email address page
+	 */
+	public static function AdminChangeEmailAddress()
+	{
+		try {
+			// Get user data
+			$userData = $GLOBALS['db']->fetch('SELECT * FROM users WHERE id = ?', $_GET['id']);
+			// Check if this user exists
+			if (!$userData) {
+				throw new Exception("That user doesn't exist");
+			}
+			// Check if we are trying to edit our account or a higher rank account
+			if ($userData['username'] != $_SESSION['username'] && $_SESSION["userid"] != 1001 && (($userData['privileges'] & Privileges::AdminManageUsers) > 0)) {
+
+				throw new Exception("You don't have enough permissions to edit this user.");
+			}
+			// Print edit user stuff
+			echo '<div id="wrapper">';
+			printAdminSidebar();
+			echo '<div id="page-content-wrapper">';
+			// Maintenance check
+			self::MaintenanceStuff();
+			// Print Success if set
+			if (isset($_GET['s']) && !empty($_GET['s'])) {
+				self::SuccessMessageStaccah($_GET['s']);
+			}
+			// Print Exception if set
+			if (isset($_GET['e']) && !empty($_GET['e'])) {
+				self::ExceptionMessageStaccah($_GET['e']);
+			}
+
+			echo '<p align="center"><font size=5><i class="fa fa-refresh"></i>	Change email address</font></p>';
+			echo '<table class="table table-striped table-hover table-50-center">';
+			echo '<tbody><form id="system-settings-form" action="submit.php" method="POST">
+			<input name="csrf" type="hidden" value="' . csrfToken() . '">
+			<input name="action" value="changeEmailAddress" hidden>';
+			echo '<tr>
+			<td>ID</td>
+			<td><p class="text-center"><input type="number" name="id" class="form-control" value="' . $userData['id'] . '" readonly></td>
+			</tr>';
+			echo '<tr>
+			<td>New Email Address</td>
+			<td><p class="text-center"><input type="text" name="newe" class="form-control"></td>
+			</tr>';
+			echo '</tbody></form>';
+			echo '</table>';
+			echo '<div class="text-center"><button type="submit" form="system-settings-form" class="btn btn-primary">Change email address</button></div>';
 			echo '</div>';
 		} catch (Exception $e) {
 			// Redirect to exception page
