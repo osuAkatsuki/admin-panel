@@ -373,6 +373,46 @@ class D
 	}
 
 	/*
+	 * ChangeEmailAddress
+	 * Change email address function (ADMIN CP)
+	 */
+	public static function ChangeEmailAddress()
+	{
+		try {
+			// Check if everything is set
+			if (!isset($_POST['id']) || !isset($_POST['newe']) || empty($_POST['id']) || empty($_POST['newe'])) {
+				throw new Exception('Nice troll.');
+			}
+			// Check if we can edit this user
+			$privileges = $GLOBALS["db"]->fetch("SELECT privileges FROM users WHERE id = ? LIMIT 1", [$_POST["id"]]);
+			if (!$privileges) {
+				throw new Exception("User doesn't exist");
+			}
+			$privileges = current($privileges);
+			if ((($privileges & Privileges::AdminManageUsers) > 0) && $_SESSION["userid"] != 1001) {
+				throw new Exception("You don't have enough permissions to edit this user");
+			}
+			// Validate email address
+			if (!filter_var($_POST["newe"], FILTER_VALIDATE_EMAIL)) {
+				throw new Exception('Invalid email address');
+			}
+			// Check if email address is already in db
+			if ($GLOBALS['db']->fetch('SELECT * FROM users WHERE email = ? AND id != ? LIMIT 1', [$_POST["newe"], $_POST["id"]])) {
+				throw new Exception('Email address already used by another user. No changes have been made.');
+			}
+
+			// log this email address change to the users rap notes
+			appendNotes($_POST["id"], sprintf("Email address changed by admin '%s' (%s)", $_SESSION["username"], $_SESSION["userid"]));
+
+			// Done, redirect to success page
+			redirect('index.php?p=102&s=User email address changed!');
+		} catch (Exception $e) {
+			// Redirect to Exception page
+			redirect('index.php?p=102&e=' . $e->getMessage());
+		}
+	}
+
+	/*
 	 * SaveBadge
 	 * Save badge function (ADMIN CP)
 	 */

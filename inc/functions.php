@@ -235,6 +235,11 @@ function printPage($p)
 			P::AdminChangeWhitelist();
 			break;
 
+		case 106:
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			P::AdminChangeEmailAddress();
+			break;
+
 		case 108:
 			sessionCheckAdmin(Privileges::AdminManageBadges);
 			P::AdminBadges();
@@ -1456,7 +1461,7 @@ function moveCountryLeaderboards($userID, $oldCountry, $newCountry)
 				continue;
 			}
 			$GLOBALS["redis"]->zrem($oldKey, $userID);
-			
+
 			$newKey = "ripple:".$lb_key.":".$mode.":".strtolower($newCountry);
 			$GLOBALS["redis"]->zadd($newKey, $score, $userID);
 		}
