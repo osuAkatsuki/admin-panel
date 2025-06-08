@@ -401,6 +401,8 @@ class D
 				throw new Exception('Email address already used by another user. No changes have been made.');
 			}
 
+			$GLOBALS['db']->execute('UPDATE users SET email = ? WHERE id = ?', [$_POST['newe'], $_POST["id"]]);
+
 			// log this email address change to the users rap notes
 			appendNotes($_POST["id"], sprintf("Email address changed by admin '%s' (%s)", $_SESSION["username"], $_SESSION["userid"]));
 
