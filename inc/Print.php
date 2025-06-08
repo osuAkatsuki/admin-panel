@@ -872,7 +872,7 @@ class P
 			}
 			echo '	<a href="index.php?p=104&id=' . $_GET['id'] . '" class="btn btn-info">Change identity</a>';
 			echo '	<a href="index.php?p=105&id=' . $_GET['id'] . '" class="btn btn-info">Change whitelist</a>';
-			echo '	<a href="index.php?p=105&id=' . $_GET['id'] . '" class="btn btn-info">Change email address</a>';
+			echo '	<a href="index.php?p=106&id=' . $_GET['id'] . '" class="btn btn-info">Change email address</a>';
 			if (hasPrivilege(Privileges::UserDonor, $_GET["id"])) {
 				echo '	<a onclick="sure(\'submit.php?action=removeDonor&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">Remove donor</a>';
 			}

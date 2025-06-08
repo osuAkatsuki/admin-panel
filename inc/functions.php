@@ -129,6 +129,7 @@ function setTitle($p)
 		103 => 'Edit user',
 		104 => 'Change identity',
 		105 => 'Change whitelist',
+		106 => 'Change email address',
 		108 => 'Badges',
 		109 => 'Edit Badge',
 		110 => 'Edit user badges',
