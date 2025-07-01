@@ -1077,6 +1077,9 @@ class D
 				$newPrivileges = ($userData["privileges"] | Privileges::UserNormal);
 				$banDateTime = $userData["ban_datetime"];
 
+				// TODO: re-add the user to hanayo's leaderboards
+				updateBanBancho($_POST["id"], false);
+
 				appendNotes($_POST['id'], $_SESSION["username"] . ' (' . $_SESSION["userid"] . ') unbanned (set to restricted) for: ' . $_POST['reason']);
 
 				postWebhookMessage(sprintf("has unbanned (set to restricted) user [%s](https://akatsuki.gg/u/%s).\n**Reason**: %s\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData["username"], $_POST['id'], $_POST['reason'], $_POST['id'], $_POST['id']));
