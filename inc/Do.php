@@ -1077,7 +1077,6 @@ class D
 				$newPrivileges = ($userData["privileges"] | Privileges::UserNormal);
 				$banDateTime = $userData["ban_datetime"];
 
-				// TODO: re-add the user to hanayo's leaderboards
 				updateBanBancho($_POST["id"], false);
 
 				appendNotes($_POST['id'], $_SESSION["username"] . ' (' . $_SESSION["userid"] . ') unbanned (set to restricted) for: ' . $_POST['reason']);
