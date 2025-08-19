@@ -135,7 +135,7 @@ class D
 				throw new Exception("That user doesn\'t exist");
 			}
 			// Check if we can edit this user
-			if ((($oldData["privileges"] & Privileges::AdminManageUsers) > 0) && $_POST["u"] != $_SESSION["username"] && $_SESSION["userid"] != 1001) {
+			if ((($oldData["privileges"] & Privileges::AdminManageUsers) > 0) && $_POST["u"] != $_SESSION["username"] && !hasPrivilege(Privileges::AdminCaker)) {
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 
@@ -196,7 +196,7 @@ class D
 				throw new Exception("User doesn't exist");
 			}
 			// Check if we can ban this user
-			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && !hasPrivilege(Privileges::AdminCaker)) {
 				throw new Exception("You don't have enough permissions to ban this user");
 			}
 			// Get new allowed value
@@ -293,7 +293,7 @@ class D
 				throw new Exception("User doesn't exist");
 			}
 			$privileges = current($privileges);
-			if ((($privileges & Privileges::AdminManageUsers) > 0) && $_POST['oldu'] != $_SESSION['username'] && $_SESSION["userid"] != 1001) {
+			if ((($privileges & Privileges::AdminManageUsers) > 0) && $_POST['oldu'] != $_SESSION['username'] && !hasPrivilege(Privileges::AdminCaker)) {
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 			// No username with mixed spaces
@@ -347,7 +347,7 @@ class D
 				throw new Exception("User doesn't exist");
 			}
 			$privileges = current($privileges);
-			if ((($privileges & Privileges::AdminManageUsers) > 0) && $_SESSION["userid"] != 1001) {
+			if ((($privileges & Privileges::AdminManageUsers) > 0) && !hasPrivilege(Privileges::AdminCaker)) {
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 
@@ -389,7 +389,7 @@ class D
 				throw new Exception("User doesn't exist");
 			}
 			$privileges = current($privileges);
-			if ((($privileges & Privileges::AdminManageUsers) > 0) && $_SESSION["userid"] != 1001) {
+			if ((($privileges & Privileges::AdminManageUsers) > 0) && !hasPrivilege(Privileges::AdminCaker)) {
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 			// Validate email address
@@ -669,7 +669,7 @@ class D
 			}
 			$username = $userData["username"];
 			// Check if we can wipe this user
-			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && !hasPrivilege(Privileges::AdminCaker)) {
 				throw new Exception("You don't have enough permissions to wipe this account");
 			}
 
@@ -928,7 +928,7 @@ class D
 				throw new Exception("User doesn't exist");
 			}
 			// Check if we can ban this user
-			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && !hasPrivilege(Privileges::AdminCaker)) {
 				throw new Exception("You don't have enough permissions to ban this user");
 			}
 
@@ -996,7 +996,7 @@ class D
 				throw new Exception("User doesn't exist");
 			}
 			// Check if we can ban this user
-			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && !hasPrivilege(Privileges::AdminCaker)) {
 				throw new Exception("You don't have enough permissions to ban this user");
 			}
 			// Get new allowed value
@@ -1054,7 +1054,7 @@ class D
 				throw new Exception("User doesn't exist");
 			}
 			// Check if we can ban this user
-			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && !hasPrivilege(Privileges::AdminCaker)) {
 				throw new Exception("You don't have enough permissions to ban this user");
 			}
 
@@ -1169,7 +1169,7 @@ class D
 			}
 			$username = $userData["username"];
 			// Check if we can rollback this user
-			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && !hasPrivilege(Privileges::AdminCaker)) {
 				throw new Exception("You don't have enough permissions to rollback this account");
 			}
 			switch ($_POST["period"]) {
@@ -1221,7 +1221,7 @@ class D
 			}
 			$username = $userData["username"];
 			// Check if we can edit this user
-			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && !hasPrivilege(Privileges::AdminCaker)) {
 				throw new Exception("You don't have enough permissions to grant/revoke custom badge privilege on this account");
 			}
 
@@ -1276,7 +1276,7 @@ class D
 			}
 			$username = $userData["username"];
 			// Check if we can edit this user
-			if (($userData["privileges"] & Privileges::AdminSilenceUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if (($userData["privileges"] & Privileges::AdminSilenceUsers) > 0 && !hasPrivilege(Privileges::AdminCaker)) {
 				throw new Exception("You don't have enough permissions to grant/revoke userpages on this account");
 			}
 
@@ -1304,7 +1304,7 @@ class D
 				throw new Exception("That user doesn't exist");
 			}
 			// Check if we can edit this user
-			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && $_SESSION["userid"] != 1001) {
+			if (($userData["privileges"] & Privileges::AdminManageUsers) > 0 && !hasPrivilege(Privileges::AdminCaker)) {
 				throw new Exception("You don't have enough permissions to lock this account");
 			}
 			// Make sure the user is not banned/restricted
