@@ -3390,6 +3390,15 @@ class P
 
 								<button type="submit" class="btn btn-primary">Save Changes</button>
 							</form>
+
+							<hr>
+							<h4><i class="fa fa-trash"></i>	Danger Zone</h4>
+							<form action="submit.php" method="POST" style="display:inline;">
+								<input name="csrf" type="hidden" value="' . csrfToken() . '">
+								<input name="action" value="deleteClan" hidden>
+								<input name="id" type="hidden" value="' . $clanData['id'] . '">
+								<button type="submit" class="btn btn-danger" onclick="return confirm(\'Are you sure you want to delete this clan? This will remove all members from the clan and cannot be undone.\')">Delete Clan</button>
+							</form>
 						</div>
 					</div>
 				</div>
