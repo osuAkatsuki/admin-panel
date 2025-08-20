@@ -37,6 +37,7 @@ class DBPDO
 			}
 		} else {
 			$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+			$this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 			return true;
 		}
