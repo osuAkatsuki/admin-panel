@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - clans-featureset
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
