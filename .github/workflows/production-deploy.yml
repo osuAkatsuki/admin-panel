@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - session-config
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
