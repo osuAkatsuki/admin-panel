@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - logging-improvements
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
