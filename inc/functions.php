@@ -19,8 +19,12 @@ require_once $df . '/helpers/PasswordHelper.php';
 require_once $df . '/helpers/URL.php';
 // Controller system v2
 require_once $df . '/pages/Login.php';
+require_once $df . '/pages/Clans.php';
+require_once $df . '/pages/EditClan.php';
 $pages = [
 	new Login(),
+	new Clans(),
+	new EditClan(),
 ];
 // Set timezone to UTC
 date_default_timezone_set('America/Toronto');
@@ -346,6 +350,16 @@ function printPage($p)
 			P::AdminBanUnbanReason();
 			break;
 
+		case 140:
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			P::AdminClans();
+			break;
+
+		case 141:
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			P::AdminEditClan();
+			break;
+
 			// 404 page
 		default:
 			define('NotFound', '<br><h1>404</h1><p>Page not found. Meh.</p>');
@@ -448,6 +462,7 @@ function printAdminSidebar()
 
 	if (hasPrivilege(Privileges::AdminManageUsers)) {
 		echo '<li><a href="index.php?p=102"><i class="fa fa-user"></i>	Users</a></li>';
+		echo '<li><a href="index.php?p=140"><i class="fa fa-users"></i>	Clans</a></li>';
 	}
 
 	if (hasPrivilege(Privileges::AdminManageReports))

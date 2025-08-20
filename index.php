@@ -403,6 +403,22 @@ if (isset($_GET['p'])) {
 		})
 		</script>";
 			break;
+
+		case 140:
+			echo "<script>
+		$(document).ready(function() {
+			// Clans management page - no special JS needed
+		})
+		</script>";
+			break;
+
+		case 141:
+			echo "<script>
+		$(document).ready(function() {
+			// Edit clan page - no special JS needed
+		})
+		</script>";
+			break;
 	}
 	?>
 

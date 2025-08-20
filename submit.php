@@ -210,6 +210,22 @@ try {
 			sessionCheckAdmin(Privileges::AdminBanUsers);
 			D::BulkBan();
 			break;
+		case 'saveClan':
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			D::SaveClan();
+			break;
+		case 'deleteClan':
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			D::DeleteClan();
+			break;
+		case 'transferClanOwnership':
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			D::TransferClanOwnership();
+			break;
+		case 'kickClanMember':
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			D::KickClanMember();
+			break;
 		default:
 			throw new Exception('Invalid action value');
 	}

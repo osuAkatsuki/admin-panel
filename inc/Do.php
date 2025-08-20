@@ -1650,4 +1650,176 @@ class D
 			redirect("index.php?p=102&e=" . $e->getMessage());
 		}
 	}
+
+	/*
+	 * SaveClan
+	 * Save clan details function (ADMIN CP)
+	 */
+	public static function SaveClan()
+	{
+		try {
+			if (!isset($_POST['id']) || empty($_POST['id'])) {
+				throw new Exception('Missing clan ID');
+			}
+
+			$clanId = (int)$_POST['id'];
+			$name = $_POST['name'] ?? '';
+			$tag = $_POST['tag'] ?? '';
+			$description = $_POST['description'] ?? '';
+			$icon = $_POST['icon'] ?? '';
+			$background = $_POST['background'] ?? '';
+			$status = (int)($_POST['status'] ?? 2);
+
+			// Validate required fields
+			if (empty($name)) {
+				throw new Exception('Clan name is required');
+			}
+			if (empty($tag)) {
+				throw new Exception('Clan tag is required');
+			}
+
+			// Check if name/tag already exists for other clans
+			$existing = $GLOBALS['db']->fetch('SELECT id FROM clans WHERE (name = ? OR tag = ?) AND id != ? LIMIT 1', [$name, $tag, $clanId]);
+			if ($existing) {
+				throw new Exception('A clan with this name or tag already exists');
+			}
+
+			// Update clan
+			$GLOBALS['db']->execute('UPDATE clans SET name = ?, tag = ?, description = ?, icon = ?, background = ?, status = ? WHERE id = ? LIMIT 1',
+				[$name, $tag, $description, $icon, $background, $status, $clanId]);
+
+			// RAP log
+			$clan = $GLOBALS['db']->fetch('SELECT name FROM clans WHERE id = ? LIMIT 1', [$clanId]);
+			postWebhookMessage("has updated clan **{$clan['name']}**.\n\n> :gear: Visit [Clans Management](https://old.akatsuki.gg/index.php?p=140) page on **Admin Panel**");
+			rapLog("has updated clan {$clan['name']}");
+
+			redirect('index.php?p=141&id=' . $clanId . '&s=Clan updated successfully!');
+		} catch (Exception $e) {
+			redirect('index.php?p=141&id=' . ($clanId ?? '') . '&e=' . $e->getMessage());
+		}
+	}
+
+	/*
+	 * DeleteClan
+	 * Delete clan and remove all members function (ADMIN CP)
+	 */
+	public static function DeleteClan()
+	{
+		try {
+			if (!isset($_POST['id']) || empty($_POST['id'])) {
+				throw new Exception('Missing clan ID');
+			}
+
+			$clanId = (int)$_POST['id'];
+
+			// Get clan info for logging
+			$clan = $GLOBALS['db']->fetch('SELECT name FROM clans WHERE id = ? LIMIT 1', [$clanId]);
+			if (!$clan) {
+				throw new Exception('Clan not found');
+			}
+
+			// Remove all users from this clan
+			$GLOBALS['db']->execute('UPDATE users SET clan_id = 0 WHERE clan_id = ?', [$clanId]);
+
+			// Delete the clan
+			$GLOBALS['db']->execute('DELETE FROM clans WHERE id = ? LIMIT 1', [$clanId]);
+
+			// RAP log
+			postWebhookMessage("has deleted clan **{$clan['name']}** and removed all members.\n\n> :gear: Visit [Clans Management](https://old.akatsuki.gg/index.php?p=140) page on **Admin Panel**");
+			rapLog("has deleted clan {$clan['name']} and removed all members");
+
+			redirect('index.php?p=140&s=Clan deleted successfully!');
+		} catch (Exception $e) {
+			redirect('index.php?p=140&e=' . $e->getMessage());
+		}
+	}
+
+	/*
+	 * TransferClanOwnership
+	 * Transfer clan ownership to another user function (ADMIN CP)
+	 */
+	public static function TransferClanOwnership()
+	{
+		try {
+			if (!isset($_POST['clan_id']) || empty($_POST['clan_id'])) {
+				throw new Exception('Missing clan ID');
+			}
+			if (!isset($_POST['new_owner_id']) || empty($_POST['new_owner_id'])) {
+				throw new Exception('Missing new owner ID');
+			}
+
+			$clanId = (int)$_POST['clan_id'];
+			$newOwnerId = (int)$_POST['new_owner_id'];
+
+			// Check if clan exists
+			$clan = $GLOBALS['db']->fetch('SELECT name, owner FROM clans WHERE id = ? LIMIT 1', [$clanId]);
+			if (!$clan) {
+				throw new Exception('Clan not found');
+			}
+
+			// Check if new owner exists and is in the clan
+			$newOwner = $GLOBALS['db']->fetch('SELECT username FROM users WHERE id = ? AND clan_id = ? LIMIT 1', [$newOwnerId, $clanId]);
+			if (!$newOwner) {
+				throw new Exception('New owner not found or not a member of this clan');
+			}
+
+			// Transfer ownership
+			$GLOBALS['db']->execute('UPDATE clans SET owner = ? WHERE id = ? LIMIT 1', [$newOwnerId, $clanId]);
+
+			// RAP log
+			postWebhookMessage("has transferred ownership of clan **{$clan['name']}** to **{$newOwner['username']}**.\n\n> :gear: Visit [Clans Management](https://old.akatsuki.gg/index.php?p=140) page on **Admin Panel**");
+			rapLog("has transferred ownership of clan {$clan['name']} to {$newOwner['username']}");
+
+			redirect('index.php?p=141&id=' . $clanId . '&s=Clan ownership transferred successfully!');
+		} catch (Exception $e) {
+			redirect('index.php?p=141&id=' . ($clanId ?? '') . '&e=' . $e->getMessage());
+		}
+	}
+
+	/*
+	 * KickClanMember
+	 * Kick a member from a clan function (ADMIN CP)
+	 */
+	public static function KickClanMember()
+	{
+		try {
+			if (!isset($_POST['clan_id']) || empty($_POST['clan_id'])) {
+				throw new Exception('Missing clan ID');
+			}
+			if (!isset($_POST['user_id']) || empty($_POST['user_id'])) {
+				throw new Exception('Missing user ID');
+			}
+
+			$clanId = (int)$_POST['clan_id'];
+			$userId = (int)$_POST['user_id'];
+
+			// Check if clan exists
+			$clan = $GLOBALS['db']->fetch('SELECT name, owner FROM clans WHERE id = ? LIMIT 1', [$clanId]);
+			if (!$clan) {
+				throw new Exception('Clan not found');
+			}
+
+			// Check if user is in the clan
+			$user = $GLOBALS['db']->fetch('SELECT username FROM users WHERE id = ? AND clan_id = ? LIMIT 1', [$userId, $clanId]);
+			if (!$user) {
+				throw new Exception('User not found or not a member of this clan');
+			}
+
+			// Don't allow kicking the owner
+			if ($clan['owner'] == $userId) {
+				throw new Exception('Cannot kick the clan owner. Transfer ownership first.');
+			}
+
+			// Remove user from clan
+			$GLOBALS['db']->execute('UPDATE users SET clan_id = 0 WHERE id = ? LIMIT 1', [$userId]);
+
+			// RAP log
+			postWebhookMessage("has kicked **{$user['username']}** from clan **{$clan['name']}**.\n\n> :gear: Visit [Clans Management](https://old.akatsuki.gg/index.php?p=140) page on **Admin Panel**");
+			rapLog("has kicked {$user['username']} from clan {$clan['name']}");
+
+			redirect('index.php?p=141&id=' . $clanId . '&s=Member kicked successfully!');
+		} catch (Exception $e) {
+			redirect('index.php?p=141&id=' . ($clanId ?? '') . '&e=' . $e->getMessage());
+		}
+	}
 }

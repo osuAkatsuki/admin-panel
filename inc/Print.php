@@ -701,6 +701,25 @@ class P
 			</select>
 			</td>
 			</tr>';
+
+			// Get clan information
+			$clanInfo = null;
+			if ($userData['clan_id']) {
+				$clanInfo = $GLOBALS['db']->fetch('SELECT id, name, tag FROM clans WHERE id = ? LIMIT 1', [$userData['clan_id']]);
+			}
+
+			echo '<tr>
+			<td>Clan</td>
+			<td>';
+			if ($clanInfo) {
+				echo '<span class="label label-info">' . htmlspecialchars($clanInfo['tag']) . '</span> ';
+				echo '<a href="index.php?p=141&id=' . $clanInfo['id'] . '">' . htmlspecialchars($clanInfo['name']) . '</a>';
+			} else {
+				echo '<em>No clan</em>';
+			}
+			echo '</td>
+			</tr>';
+
 			echo '<tr>
 			<td>Registered (dd/mm/yyyy) </td>
 			<td>' . date('d/m/Y', $userData['register_datetime']) . '</td>
@@ -3038,6 +3057,424 @@ class P
 			echo '</div>';
 		} catch (Exception $e) {
 			redirect('index.php?p=135&e=' . $e->getMessage());
+		}
+	}
+
+	/*
+	 * AdminClans
+	 * Prints the admin panel clans list page
+	 */
+	public static function AdminClans()
+	{
+		try {
+			echo '<div id="wrapper">';
+			printAdminSidebar();
+			echo '<div id="page-content-wrapper">';
+			// Maintenance check
+			self::MaintenanceStuff();
+			// Print Success if set
+			if (isset($_GET['s']) && !empty($_GET['s'])) {
+				self::SuccessMessageStaccah($_GET['s']);
+			}
+			// Print Exception if set
+			if (isset($_GET['e']) && !empty($_GET['e'])) {
+				self::ExceptionMessageStaccah($_GET['e']);
+			}
+
+			echo '<p align="center"><font size=5><i class="fa fa-users"></i>	Clans Management</font></p>';
+
+			// Search functionality
+			$searchName = isset($_GET['search_name']) ? trim($_GET['search_name']) : '';
+			$searchTag = isset($_GET['search_tag']) ? trim($_GET['search_tag']) : '';
+			$searchOwner = isset($_GET['search_owner']) ? trim($_GET['search_owner']) : '';
+
+			// Build search conditions
+			$searchConditions = [];
+			$searchParams = [];
+
+			if (!empty($searchName)) {
+				$searchConditions[] = 'c.name LIKE ?';
+				$searchParams[] = '%' . $searchName . '%';
+			}
+
+			if (!empty($searchTag)) {
+				$searchConditions[] = 'c.tag LIKE ?';
+				$searchParams[] = '%' . $searchTag . '%';
+			}
+
+			if (!empty($searchOwner)) {
+				$searchConditions[] = 'o.username LIKE ?';
+				$searchParams[] = '%' . $searchOwner . '%';
+			}
+
+			$whereClause = '';
+			if (!empty($searchConditions)) {
+				$whereClause = 'WHERE ' . implode(' AND ', $searchConditions);
+			}
+
+			// Pagination setup
+			$pageInterval = 20; // Show 20 clans per page
+			$page = (isset($_GET['page'])) ? (int)$_GET['page'] : 1;
+			if ($page < 1) $page = 1; // Ensure page is at least 1
+			$offset = ($page - 1) * $pageInterval;
+
+			// Get total count of clans with search
+			$countQuery = 'SELECT COUNT(*) FROM clans c LEFT JOIN users o ON c.owner = o.id ' . $whereClause;
+			$totalClans = current($GLOBALS['db']->fetch($countQuery, $searchParams));
+			$totalPages = max(1, ceil($totalClans / $pageInterval)); // Ensure at least 1 page
+
+			// Validate page number
+			if ($page > $totalPages) {
+				$page = $totalPages;
+				$offset = ($page - 1) * $pageInterval;
+			}
+
+			// Get clans with member count and owner info (paginated and filtered)
+			try {
+				$query = '
+					SELECT
+						c.*,
+						COUNT(u.id) as member_count,
+						o.username as owner_name
+					FROM clans c
+					LEFT JOIN users u ON c.id = u.clan_id
+					LEFT JOIN users o ON c.owner = o.id
+					' . $whereClause . '
+					GROUP BY c.id
+					ORDER BY member_count DESC, c.name ASC
+					LIMIT ' . $pageInterval . ' OFFSET ' . $offset;
+
+				$clans = $GLOBALS['db']->fetchAll($query, $searchParams);
+			} catch (Exception $e) {
+				$clans = [];
+				echo '<p align="center"><small>Error getting clans: ' . htmlspecialchars($e->getMessage()) . '</small></p>';
+			}
+
+			// Search buttons
+			echo '<div class="row" style="margin-bottom: 20px;">';
+			echo '<div class="col-md-4">';
+			echo '<form action="index.php?p=140" method="GET" style="display: inline;">';
+			echo '<input type="hidden" name="p" value="140">';
+			echo '<div class="input-group">';
+			echo '<input type="text" name="search_name" class="form-control" placeholder="Search by name..." value="' . htmlspecialchars($searchName) . '">';
+			echo '<span class="input-group-btn">';
+			echo '<button type="submit" class="btn btn-primary">Search by Name</button>';
+			echo '</span>';
+			echo '</div>';
+			echo '</form>';
+			echo '</div>';
+
+			echo '<div class="col-md-4">';
+			echo '<form action="index.php?p=140" method="GET" style="display: inline;">';
+			echo '<input type="hidden" name="p" value="140">';
+			echo '<div class="input-group">';
+			echo '<input type="text" name="search_tag" class="form-control" placeholder="Search by tag..." value="' . htmlspecialchars($searchTag) . '">';
+			echo '<span class="input-group-btn">';
+			echo '<button type="submit" class="btn btn-info">Search by Tag</button>';
+			echo '</span>';
+			echo '</div>';
+			echo '</form>';
+			echo '</div>';
+
+			echo '<div class="col-md-4">';
+			echo '<form action="index.php?p=140" method="GET" style="display: inline;">';
+			echo '<input type="hidden" name="p" value="140">';
+			echo '<div class="input-group">';
+			echo '<input type="text" name="search_owner" class="form-control" placeholder="Search by owner..." value="' . htmlspecialchars($searchOwner) . '">';
+			echo '<span class="input-group-btn">';
+			echo '<button type="submit" class="btn btn-warning">Search by Owner</button>';
+			echo '</span>';
+			echo '</div>';
+			echo '</form>';
+			echo '</div>';
+			echo '</div>';
+
+			// Clear search button
+			if (!empty($searchName) || !empty($searchTag) || !empty($searchOwner)) {
+				echo '<p align="center"><a href="index.php?p=140" class="btn btn-default">Clear Search</a></p>';
+			}
+
+			echo '<table class="table table-striped table-hover table-75-center">
+			<thead>
+			<tr>
+				<th><i class="fa fa-users"></i>	Name</th>
+				<th><i class="fa fa-tag"></i>	Tag</th>
+				<th><i class="fa fa-user"></i>	Owner</th>
+				<th><i class="fa fa-users"></i>	Members</th>
+				<th><i class="fa fa-info-circle"></i>	Status</th>
+				<th><i class="fa fa-cog"></i>	Actions</th>
+			</tr>
+			</thead>
+			<tbody>';
+
+			foreach ($clans as $clan) {
+				// Status colors
+				$statusColors = [
+					0 => ['danger', 'Closed'],
+					1 => ['success', 'Open'],
+					2 => ['warning', 'Invite-Only']
+				];
+				$status = $statusColors[$clan['status']] ?? ['secondary', 'Unknown'];
+
+				echo '<tr>
+					<td><strong>' . htmlspecialchars($clan['name']) . '</strong></td>
+					<td><span class="label label-info">' . htmlspecialchars($clan['tag']) . '</span></td>
+					<td>' . ($clan['owner_name'] ? htmlspecialchars($clan['owner_name']) : '<em>No owner</em>') . '</td>
+					<td>' . $clan['member_count'] . '</td>
+					<td><span class="label label-' . $status[0] . '">' . $status[1] . '</span></td>
+					<td>
+						<a href="index.php?p=141&id=' . $clan['id'] . '" class="btn btn-primary btn-sm">Edit</a>
+						<a onclick="reallysuredialog() && deleteClan(' . $clan['id'] . ');" class="btn btn-danger btn-sm">Delete</a>
+					</td>
+				</tr>';
+			}
+
+			echo '</tbody>
+			</table>';
+
+			// Show message if no clans found
+			if (empty($clans)) {
+				echo '<p align="center"><em>No clans found.</em></p>';
+			}
+
+			// Pagination controls
+			echo '<p align="center">';
+			if ($totalPages > 1) {
+				// Build query parameters for pagination links
+				$queryParams = [];
+				if (!empty($searchName)) $queryParams[] = 'search_name=' . urlencode($searchName);
+				if (!empty($searchTag)) $queryParams[] = 'search_tag=' . urlencode($searchTag);
+				if (!empty($searchOwner)) $queryParams[] = 'search_owner=' . urlencode($searchOwner);
+				$queryString = !empty($queryParams) ? '&' . implode('&', $queryParams) : '';
+
+				if ($page > 1) {
+					echo '<a href="index.php?p=140&page=' . ($page - 1) . $queryString . '">< Previous page</a>';
+				}
+				if ($page > 1 && $page < $totalPages) {
+					echo ' | ';
+				}
+				if ($page < $totalPages) {
+					echo '<a href="index.php?p=140&page=' . ($page + 1) . $queryString . '">Next page ></a>';
+				}
+			} else {
+				// Show current page info even when there's only one page
+				echo '<em>Page 1 of 1</em>';
+			}
+			echo '</p>';
+
+			// Delete clan form
+			echo '<form id="deleteClanForm" action="submit.php" method="POST" style="display:none;">
+				<input name="csrf" type="hidden" value="' . csrfToken() . '">
+				<input name="action" value="deleteClan" hidden>
+				<input name="id" id="deleteClanId" type="hidden">
+			</form>';
+
+			echo '<script>
+			function deleteClan(clanId) {
+				document.getElementById("deleteClanId").value = clanId;
+				document.getElementById("deleteClanForm").submit();
+			}
+			</script>';
+
+			echo '</div>';
+			echo '</div>';
+		} catch (Exception $e) {
+			redirect('index.php?p=140&e=' . $e->getMessage());
+		}
+	}
+
+	/*
+	 * AdminEditClan
+	 * Prints the admin panel edit clan page
+	 */
+	public static function AdminEditClan()
+	{
+		try {
+			// Check if id is set
+			if (!isset($_GET['id']) || empty($_GET['id'])) {
+				throw new Exception('Invalid clan ID!');
+			}
+
+			$clanId = (int)$_GET['id'];
+
+			// Get clan data
+			$clanData = $GLOBALS['db']->fetch('SELECT * FROM clans WHERE id = ? LIMIT 1', [$clanId]);
+			if (!$clanData) {
+				throw new Exception("That clan doesn't exist");
+			}
+
+			// Get clan members
+			$members = $GLOBALS['db']->fetchAll('
+				SELECT u.id, u.username, u.privileges, u.register_datetime
+				FROM users u
+				WHERE u.clan_id = ?
+				ORDER BY u.username ASC
+			', [$clanId]);
+
+			echo '<div id="wrapper">';
+			printAdminSidebar();
+			echo '<div id="page-content-wrapper">';
+			// Maintenance check
+			self::MaintenanceStuff();
+			// Print Success if set
+			if (isset($_GET['s']) && !empty($_GET['s'])) {
+				self::SuccessMessageStaccah($_GET['s']);
+			}
+			// Print Exception if set
+			if (isset($_GET['e']) && !empty($_GET['e'])) {
+				self::ExceptionMessageStaccah($_GET['e']);
+			}
+
+			echo '<p align="center"><font size=5><i class="fa fa-edit"></i>	Edit Clan: ' . htmlspecialchars($clanData['name']) . '</font></p>';
+
+			// Clan details form
+			echo '<div class="row">
+				<div class="col-md-6">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title"><i class="fa fa-cog"></i>	Clan Details</h3>
+						</div>
+						<div class="panel-body">
+							<form action="submit.php" method="POST">
+								<input name="csrf" type="hidden" value="' . csrfToken() . '">
+								<input name="action" value="saveClan" hidden>
+								<input name="id" type="hidden" value="' . $clanData['id'] . '">
+
+								<div class="form-group">
+									<label>Name</label>
+									<input type="text" name="name" class="form-control" value="' . htmlspecialchars($clanData['name']) . '" required>
+								</div>
+
+								<div class="form-group">
+									<label>Tag</label>
+									<input type="text" name="tag" class="form-control" value="' . htmlspecialchars($clanData['tag']) . '" required maxlength="8">
+								</div>
+
+								<div class="form-group">
+									<label>Description</label>
+									<textarea name="description" class="form-control" rows="3" maxlength="256">' . htmlspecialchars($clanData['description']) . '</textarea>
+								</div>
+
+								<div class="form-group">
+									<label>Icon URL</label>
+									<input type="text" name="icon" class="form-control" value="' . htmlspecialchars($clanData['icon']) . '">
+								</div>
+
+								<div class="form-group">
+									<label>Background URL</label>
+									<input type="text" name="background" class="form-control" value="' . htmlspecialchars($clanData['background']) . '">
+								</div>
+
+								<div class="form-group">
+									<label>Status</label>
+									<select name="status" class="form-control">
+										<option value="0"' . ($clanData['status'] == 0 ? ' selected' : '') . '>Inactive</option>
+										<option value="1"' . ($clanData['status'] == 1 ? ' selected' : '') . '>Active</option>
+										<option value="2"' . ($clanData['status'] == 2 ? ' selected' : '') . '>Pending</option>
+									</select>
+								</div>
+
+								<button type="submit" class="btn btn-primary">Save Changes</button>
+							</form>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-6">
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title"><i class="fa fa-users"></i>	Clan Members (' . count($members) . ')</h3>
+						</div>
+						<div class="panel-body">';
+
+			if (empty($members)) {
+				echo '<p class="text-muted">No members in this clan.</p>';
+			} else {
+				echo '<table class="table table-striped table-hover">
+					<thead>
+						<tr>
+							<th>Username</th>
+							<th>Join Date</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>';
+
+				foreach ($members as $member) {
+					$isOwner = ($member['id'] == $clanData['owner']);
+					$ownerBadge = $isOwner ? ' <span class="label label-warning">Owner</span>' : '';
+
+					echo '<tr>
+						<td>' . htmlspecialchars($member['username']) . $ownerBadge . '</td>
+						<td>' . date('Y-m-d', $member['register_datetime']) . '</td>
+						<td>';
+
+					if (!$isOwner) {
+						echo '<a onclick="reallysuredialog() && kickMember(' . $clanData['id'] . ', ' . $member['id'] . ');" class="btn btn-danger btn-xs">Kick</a>';
+					} else {
+						echo '<em>Owner</em>';
+					}
+
+					echo '</td>
+					</tr>';
+				}
+
+				echo '</tbody>
+				</table>';
+
+				// Transfer ownership section
+				if (!empty($members)) {
+					echo '<hr>
+					<h4><i class="fa fa-exchange"></i>	Transfer Ownership</h4>
+					<form action="submit.php" method="POST">
+						<input name="csrf" type="hidden" value="' . csrfToken() . '">
+						<input name="action" value="transferClanOwnership" hidden>
+						<input name="clan_id" type="hidden" value="' . $clanData['id'] . '">
+
+						<div class="form-group">
+							<label>New Owner</label>
+							<select name="new_owner_id" class="form-control" required>
+								<option value="">Select new owner...</option>';
+
+					foreach ($members as $member) {
+						if ($member['id'] != $clanData['owner']) {
+							echo '<option value="' . $member['id'] . '">' . htmlspecialchars($member['username']) . '</option>';
+						}
+					}
+
+					echo '</select>
+						</div>
+
+						<button type="submit" class="btn btn-warning" onclick="return confirm(\'Are you sure you want to transfer ownership?\')">Transfer Ownership</button>
+					</form>';
+				}
+			}
+
+			echo '</div>
+					</div>
+				</div>
+			</div>';
+
+			// Kick member form
+			echo '<form id="kickMemberForm" action="submit.php" method="POST" style="display:none;">
+				<input name="csrf" type="hidden" value="' . csrfToken() . '">
+				<input name="action" value="kickClanMember" hidden>
+				<input name="clan_id" id="kickClanId" type="hidden">
+				<input name="user_id" id="kickUserId" type="hidden">
+			</form>';
+
+			echo '<script>
+			function kickMember(clanId, userId) {
+				document.getElementById("kickClanId").value = clanId;
+				document.getElementById("kickUserId").value = userId;
+				document.getElementById("kickMemberForm").submit();
+			}
+			</script>';
+
+			echo '</div>';
+			echo '</div>';
+		} catch (Exception $e) {
+			redirect('index.php?p=140&e=' . $e->getMessage());
 		}
 	}
 }
