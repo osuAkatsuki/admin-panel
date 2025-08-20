@@ -18,6 +18,10 @@ fi
 
 # TODO: await deps
 
+# Create session directory for fallback
+mkdir -p /tmp/php_sessions
+chmod 755 /tmp/php_sessions
+
 service php7.2-fpm start
 
 exec nginx -g "daemon off;"
