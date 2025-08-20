@@ -631,6 +631,43 @@ class D
 	}
 
 	/*
+	 * ResetDiscordLink
+	 * Reset someone's Discord link (ADMIN CP)
+	 */
+	public static function ResetDiscordLink()
+	{
+		try {
+			// Check if everything is set
+			if (!isset($_GET['id']) || empty($_GET['id'])) {
+				throw new Exception('Invalid request');
+			}
+
+			// Get user data to check if they have a Discord link
+			$userData = $GLOBALS['db']->fetch('SELECT username, discord_account_id FROM users WHERE id = ? LIMIT 1', [$_GET['id']]);
+			if (!$userData) {
+				throw new Exception('User not found');
+			}
+
+			if (empty($userData['discord_account_id'])) {
+				throw new Exception('User does not have a Discord link to reset');
+			}
+
+			// Reset the Discord link
+			$GLOBALS['db']->execute('UPDATE users SET discord_account_id = NULL WHERE id = ? LIMIT 1', [$_GET['id']]);
+
+			// Rap log
+			postWebhookMessage(sprintf("has reset [%s](https://akatsuki.gg/u/%s)'s Discord link\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData['username'], $_GET['id'], $_GET['id']));
+			rapLog(sprintf("has reset %s's Discord link", $userData['username']));
+
+			// Done, redirect to success page
+			redirect('index.php?p=103&id=' . $_GET['id'] . '&s=Discord link reset!');
+		} catch (Exception $e) {
+			// Redirect to Exception page
+			redirect('index.php?p=103&id=' . ($_GET['id'] ?? '') . '&e=' . $e->getMessage());
+		}
+	}
+
+	/*
 	 * Logout
 	 * Logout and return to home
 	 */

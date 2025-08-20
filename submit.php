@@ -118,6 +118,10 @@ try {
 			sessionCheckAdmin(Privileges::AdminManageUsers);
 			D::ResetAvatar();
 			break;
+		case 'resetDiscordLink':	// TODO
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			D::ResetDiscordLink();
+			break;
 		case 'wipeAccount':
 			sessionCheckAdmin(Privileges::AdminWipeUsers);
 			D::WipeAccount();
