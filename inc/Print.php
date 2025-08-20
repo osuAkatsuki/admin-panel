@@ -3083,7 +3083,16 @@ class P
 
 			echo '<p align="center"><font size=5><i class="fa fa-users"></i>	Clans Management</font></p>';
 
-			// Get all clans with member count and owner info
+			// Pagination setup
+			$pageInterval = 20; // Show 20 clans per page
+			$page = (isset($_GET['page'])) ? (int)$_GET['page'] : 1;
+			$offset = ($page - 1) * $pageInterval;
+
+			// Get total count of clans
+			$totalClans = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM clans'));
+			$totalPages = ceil($totalClans / $pageInterval);
+
+			// Get clans with member count and owner info (paginated)
 			$clans = $GLOBALS['db']->fetchAll('
 				SELECT
 					c.*,
@@ -3093,8 +3102,9 @@ class P
 				LEFT JOIN users u ON c.id = u.clan_id
 				LEFT JOIN users o ON c.owner = o.id
 				GROUP BY c.id
-				ORDER BY c.name ASC
-			');
+				ORDER BY member_count DESC, c.name ASC
+				LIMIT ? OFFSET ?
+			', [$pageInterval, $offset]);
 
 			echo '<table class="table table-striped table-hover table-75-center">
 			<thead>
@@ -3133,6 +3143,21 @@ class P
 
 			echo '</tbody>
 			</table>';
+
+			// Pagination controls
+			if ($totalPages > 1) {
+				echo '<p align="center">';
+				if ($page > 1) {
+					echo '<a href="index.php?p=140&page=' . ($page - 1) . '">< Previous page</a>';
+				}
+				if ($page > 1 && $page < $totalPages) {
+					echo ' | ';
+				}
+				if ($page < $totalPages) {
+					echo '<a href="index.php?p=140&page=' . ($page + 1) . '">Next page ></a>';
+				}
+				echo '</p>';
+			}
 
 			// Delete clan form
 			echo '<form id="deleteClanForm" action="submit.php" method="POST" style="display:none;">
