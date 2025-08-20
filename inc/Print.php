@@ -3112,9 +3112,9 @@ class P
 			foreach ($clans as $clan) {
 				// Status colors
 				$statusColors = [
-					0 => ['danger', 'Inactive'],
-					1 => ['success', 'Active'],
-					2 => ['warning', 'Pending']
+					0 => ['danger', 'Closed'],
+					1 => ['success', 'Open'],
+					2 => ['warning', 'Invite-Only']
 				];
 				$status = $statusColors[$clan['status']] ?? ['secondary', 'Unknown'];
 
