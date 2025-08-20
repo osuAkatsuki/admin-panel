@@ -3083,14 +3083,44 @@ class P
 
 			echo '<p align="center"><font size=5><i class="fa fa-users"></i>	Clans Management</font></p>';
 
+			// Search functionality
+			$searchName = isset($_GET['search_name']) ? trim($_GET['search_name']) : '';
+			$searchTag = isset($_GET['search_tag']) ? trim($_GET['search_tag']) : '';
+			$searchOwner = isset($_GET['search_owner']) ? trim($_GET['search_owner']) : '';
+
+			// Build search conditions
+			$searchConditions = [];
+			$searchParams = [];
+
+			if (!empty($searchName)) {
+				$searchConditions[] = 'c.name LIKE ?';
+				$searchParams[] = '%' . $searchName . '%';
+			}
+
+			if (!empty($searchTag)) {
+				$searchConditions[] = 'c.tag LIKE ?';
+				$searchParams[] = '%' . $searchTag . '%';
+			}
+
+			if (!empty($searchOwner)) {
+				$searchConditions[] = 'o.username LIKE ?';
+				$searchParams[] = '%' . $searchOwner . '%';
+			}
+
+			$whereClause = '';
+			if (!empty($searchConditions)) {
+				$whereClause = 'WHERE ' . implode(' AND ', $searchConditions);
+			}
+
 			// Pagination setup
 			$pageInterval = 20; // Show 20 clans per page
 			$page = (isset($_GET['page'])) ? (int)$_GET['page'] : 1;
 			if ($page < 1) $page = 1; // Ensure page is at least 1
 			$offset = ($page - 1) * $pageInterval;
 
-			// Get total count of clans
-			$totalClans = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM clans'));
+			// Get total count of clans with search
+			$countQuery = 'SELECT COUNT(*) FROM clans c LEFT JOIN users o ON c.owner = o.id ' . $whereClause;
+			$totalClans = current($GLOBALS['db']->fetch($countQuery, $searchParams));
 			$totalPages = max(1, ceil($totalClans / $pageInterval)); // Ensure at least 1 page
 
 			// Validate page number
@@ -3099,9 +3129,9 @@ class P
 				$offset = ($page - 1) * $pageInterval;
 			}
 
-			// Get clans with member count and owner info (paginated)
+			// Get clans with member count and owner info (paginated and filtered)
 			try {
-				$clans = $GLOBALS['db']->fetchAll('
+				$query = '
 					SELECT
 						c.*,
 						COUNT(u.id) as member_count,
@@ -3109,13 +3139,59 @@ class P
 					FROM clans c
 					LEFT JOIN users u ON c.id = u.clan_id
 					LEFT JOIN users o ON c.owner = o.id
+					' . $whereClause . '
 					GROUP BY c.id
 					ORDER BY member_count DESC, c.name ASC
-					LIMIT ' . $pageInterval . ' OFFSET ' . $offset
-				);
+					LIMIT ' . $pageInterval . ' OFFSET ' . $offset;
+
+				$clans = $GLOBALS['db']->fetchAll($query, $searchParams);
 			} catch (Exception $e) {
 				$clans = [];
 				echo '<p align="center"><small>Error getting clans: ' . htmlspecialchars($e->getMessage()) . '</small></p>';
+			}
+
+			// Search buttons
+			echo '<div class="row" style="margin-bottom: 20px;">';
+			echo '<div class="col-md-4">';
+			echo '<form action="index.php?p=140" method="GET" style="display: inline;">';
+			echo '<input type="hidden" name="p" value="140">';
+			echo '<div class="input-group">';
+			echo '<input type="text" name="search_name" class="form-control" placeholder="Search by name..." value="' . htmlspecialchars($searchName) . '">';
+			echo '<span class="input-group-btn">';
+			echo '<button type="submit" class="btn btn-primary">Search by Name</button>';
+			echo '</span>';
+			echo '</div>';
+			echo '</form>';
+			echo '</div>';
+
+			echo '<div class="col-md-4">';
+			echo '<form action="index.php?p=140" method="GET" style="display: inline;">';
+			echo '<input type="hidden" name="p" value="140">';
+			echo '<div class="input-group">';
+			echo '<input type="text" name="search_tag" class="form-control" placeholder="Search by tag..." value="' . htmlspecialchars($searchTag) . '">';
+			echo '<span class="input-group-btn">';
+			echo '<button type="submit" class="btn btn-info">Search by Tag</button>';
+			echo '</span>';
+			echo '</div>';
+			echo '</form>';
+			echo '</div>';
+
+			echo '<div class="col-md-4">';
+			echo '<form action="index.php?p=140" method="GET" style="display: inline;">';
+			echo '<input type="hidden" name="p" value="140">';
+			echo '<div class="input-group">';
+			echo '<input type="text" name="search_owner" class="form-control" placeholder="Search by owner..." value="' . htmlspecialchars($searchOwner) . '">';
+			echo '<span class="input-group-btn">';
+			echo '<button type="submit" class="btn btn-warning">Search by Owner</button>';
+			echo '</span>';
+			echo '</div>';
+			echo '</form>';
+			echo '</div>';
+			echo '</div>';
+
+			// Clear search button
+			if (!empty($searchName) || !empty($searchTag) || !empty($searchOwner)) {
+				echo '<p align="center"><a href="index.php?p=140" class="btn btn-default">Clear Search</a></p>';
 			}
 
 			echo '<table class="table table-striped table-hover table-75-center">
@@ -3164,14 +3240,21 @@ class P
 			// Pagination controls
 			echo '<p align="center">';
 			if ($totalPages > 1) {
+				// Build query parameters for pagination links
+				$queryParams = [];
+				if (!empty($searchName)) $queryParams[] = 'search_name=' . urlencode($searchName);
+				if (!empty($searchTag)) $queryParams[] = 'search_tag=' . urlencode($searchTag);
+				if (!empty($searchOwner)) $queryParams[] = 'search_owner=' . urlencode($searchOwner);
+				$queryString = !empty($queryParams) ? '&' . implode('&', $queryParams) : '';
+
 				if ($page > 1) {
-					echo '<a href="index.php?p=140&page=' . ($page - 1) . '">< Previous page</a>';
+					echo '<a href="index.php?p=140&page=' . ($page - 1) . $queryString . '">< Previous page</a>';
 				}
 				if ($page > 1 && $page < $totalPages) {
 					echo ' | ';
 				}
 				if ($page < $totalPages) {
-					echo '<a href="index.php?p=140&page=' . ($page + 1) . '">Next page ></a>';
+					echo '<a href="index.php?p=140&page=' . ($page + 1) . $queryString . '">Next page ></a>';
 				}
 			} else {
 				// Show current page info even when there's only one page
