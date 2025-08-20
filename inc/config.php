@@ -43,3 +43,19 @@ $ScoresConfig = [
 
 // ip env (ip fix with caddy)
 $ipEnv = 'REMOTE_ADDR';	// HTTP_X_FORWARDED_FOR
+
+// Session configuration - use Redis for session storage
+try {
+    // Redis is available, use it for sessions
+    ini_set('session.save_handler', 'redis');
+    ini_set('session.save_path', 'tcp://' . REDIS_HOST . ':' . REDIS_PORT);
+} catch (Exception $e) {
+    // Redis not available, fall back to files
+    error_log('Redis not available for sessions, falling back to files: ' . $e->getMessage());
+    ini_set('session.save_handler', 'files');
+    ini_set('session.save_path', '/tmp/php_sessions');
+}
+
+ini_set('session.cookie_httponly', 1);
+ini_set('session.cookie_secure', 1);
+ini_set('session.use_strict_mode', 1);

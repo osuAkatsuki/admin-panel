@@ -320,7 +320,7 @@ class D
 			appendNotes($_POST["id"], sprintf("Username change: '%s' -> '%s'", $_POST["oldu"], $trimmedName));
 
 			// rap log
-			postWebhookMessage(sprintf("has changed %s's username to [%s](https://akatsuki.gg/u/%s).\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $_POST["oldu"], $trimmedName, $_POST["id"]));
+			postWebhookMessage(sprintf("has changed %s's username to [%s](https://akatsuki.gg/u/%s).\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $_POST["oldu"], $trimmedName, $_POST["id"], $_POST["id"]));
 			rapLog(sprintf("has changed %s's username to %s", $_POST["oldu"], $_POST["newu"]));
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=User identity changed! It might take a while to change the username if the user is online on Bancho.');
