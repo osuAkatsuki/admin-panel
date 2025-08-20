@@ -114,11 +114,11 @@ try {
 			sessionCheckAdmin(Privileges::AdminSilenceUsers);
 			D::KickUser();
 			break;
-		case 'resetAvatar':	// TODO
+		case 'resetAvatar':
 			sessionCheckAdmin(Privileges::AdminManageUsers);
 			D::ResetAvatar();
 			break;
-		case 'resetDiscordLink':	// TODO
+		case 'resetDiscordLink':
 			sessionCheckAdmin(Privileges::AdminManageUsers);
 			D::ResetDiscordLink();
 			break;
