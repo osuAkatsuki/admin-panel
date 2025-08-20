@@ -3111,8 +3111,8 @@ class P
 					LEFT JOIN users o ON c.owner = o.id
 					GROUP BY c.id
 					ORDER BY member_count DESC, c.name ASC
-					LIMIT ? OFFSET ?
-				', [$pageInterval, $offset]);
+					LIMIT ' . $pageInterval . ' OFFSET ' . $offset
+				);
 			} catch (Exception $e) {
 				$clans = [];
 				echo '<p align="center"><small>Error getting clans: ' . htmlspecialchars($e->getMessage()) . '</small></p>';
