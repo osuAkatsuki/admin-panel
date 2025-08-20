@@ -720,6 +720,20 @@ class P
 			echo '</td>
 			</tr>';
 
+			// Discord link status
+			$hasDiscordLink = !empty($userData['discord_account_id']);
+			echo '<tr>
+			<td>Linked Discord</td>
+			<td>';
+			if ($hasDiscordLink) {
+				echo '<span class="label label-success">Yes</span>';
+				echo ' <a onclick="sure(\'submit.php?action=resetDiscordLink&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\')">(reset link)</a>';
+			} else {
+				echo '<span class="label label-danger">No</span>';
+			}
+			echo '</td>
+			</tr>';
+
 			echo '<tr>
 			<td>Registered (dd/mm/yyyy) </td>
 			<td>' . date('d/m/Y', $userData['register_datetime']) . '</td>
@@ -3375,6 +3389,15 @@ class P
 								</div>
 
 								<button type="submit" class="btn btn-primary">Save Changes</button>
+							</form>
+
+							<hr>
+							<h4><i class="fa fa-trash"></i>	Danger Zone</h4>
+							<form action="submit.php" method="POST" style="display:inline;">
+								<input name="csrf" type="hidden" value="' . csrfToken() . '">
+								<input name="action" value="deleteClan" hidden>
+								<input name="id" type="hidden" value="' . $clanData['id'] . '">
+								<button type="submit" class="btn btn-danger" onclick="return confirm(\'Are you sure you want to delete this clan? This will remove all members from the clan and cannot be undone.\')">Delete Clan</button>
 							</form>
 						</div>
 					</div>

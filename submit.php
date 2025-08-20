@@ -114,9 +114,13 @@ try {
 			sessionCheckAdmin(Privileges::AdminSilenceUsers);
 			D::KickUser();
 			break;
-		case 'resetAvatar':	// TODO
+		case 'resetAvatar':
 			sessionCheckAdmin(Privileges::AdminManageUsers);
 			D::ResetAvatar();
+			break;
+		case 'resetDiscordLink':
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			D::ResetDiscordLink();
 			break;
 		case 'wipeAccount':
 			sessionCheckAdmin(Privileges::AdminWipeUsers);
