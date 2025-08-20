@@ -3159,8 +3159,6 @@ class P
 			// Show message if no clans found
 			if (empty($clans)) {
 				echo '<p align="center"><em>No clans found.</em></p>';
-				// log interval and poffset
-				echo '<p align="center"><small>Interval: ' . $pageInterval . ', Offset: ' . $offset . '</small></p>';
 			}
 
 			// Pagination controls
