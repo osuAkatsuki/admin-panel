@@ -3086,25 +3086,37 @@ class P
 			// Pagination setup
 			$pageInterval = 20; // Show 20 clans per page
 			$page = (isset($_GET['page'])) ? (int)$_GET['page'] : 1;
+			if ($page < 1) $page = 1; // Ensure page is at least 1
 			$offset = ($page - 1) * $pageInterval;
 
 			// Get total count of clans
 			$totalClans = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM clans'));
-			$totalPages = ceil($totalClans / $pageInterval);
+			$totalPages = max(1, ceil($totalClans / $pageInterval)); // Ensure at least 1 page
+
+			// Validate page number
+			if ($page > $totalPages) {
+				$page = $totalPages;
+				$offset = ($page - 1) * $pageInterval;
+			}
 
 			// Get clans with member count and owner info (paginated)
-			$clans = $GLOBALS['db']->fetchAll('
-				SELECT
-					c.*,
-					COUNT(u.id) as member_count,
-					o.username as owner_name
-				FROM clans c
-				LEFT JOIN users u ON c.id = u.clan_id
-				LEFT JOIN users o ON c.owner = o.id
-				GROUP BY c.id
-				ORDER BY member_count DESC, c.name ASC
-				LIMIT ? OFFSET ?
-			', [$pageInterval, $offset]);
+			try {
+				$clans = $GLOBALS['db']->fetchAll('
+					SELECT
+						c.*,
+						COUNT(u.id) as member_count,
+						o.username as owner_name
+					FROM clans c
+					LEFT JOIN users u ON c.id = u.clan_id
+					LEFT JOIN users o ON c.owner = o.id
+					GROUP BY c.id
+					ORDER BY member_count DESC, c.name ASC
+					LIMIT ? OFFSET ?
+				', [$pageInterval, $offset]);
+			} catch (Exception $e) {
+				$clans = [];
+				echo '<p align="center"><small>Error getting clans: ' . htmlspecialchars($e->getMessage()) . '</small></p>';
+			}
 
 			echo '<table class="table table-striped table-hover table-75-center">
 			<thead>
@@ -3144,9 +3156,14 @@ class P
 			echo '</tbody>
 			</table>';
 
+			// Show message if no clans found
+			if (empty($clans)) {
+				echo '<p align="center"><em>No clans found.</em></p>';
+			}
+
 			// Pagination controls
+			echo '<p align="center">';
 			if ($totalPages > 1) {
-				echo '<p align="center">';
 				if ($page > 1) {
 					echo '<a href="index.php?p=140&page=' . ($page - 1) . '">< Previous page</a>';
 				}
@@ -3156,8 +3173,11 @@ class P
 				if ($page < $totalPages) {
 					echo '<a href="index.php?p=140&page=' . ($page + 1) . '">Next page ></a>';
 				}
-				echo '</p>';
+			} else {
+				// Show current page info even when there's only one page
+				echo '<em>Page 1 of 1</em>';
 			}
+			echo '</p>';
 
 			// Delete clan form
 			echo '<form id="deleteClanForm" action="submit.php" method="POST" style="display:none;">
