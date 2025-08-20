@@ -406,13 +406,6 @@ class D
 			// log this email address change to the users rap notes
 			appendNotes($_POST["id"], sprintf("Email address changed by admin '%s' (%s)", $_SESSION["username"], $_SESSION["userid"]));
 
-			// Get user data for logging
-			$userData = $GLOBALS['db']->fetch('SELECT username FROM users WHERE id = ? LIMIT 1', [$_POST["id"]]);
-
-			// RAP log
-			postWebhookMessage(sprintf("has changed [%s](https://akatsuki.gg/u/%s)'s email address.\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData['username'], $_POST["id"], $_POST["id"]));
-			rapLog(sprintf("has changed %s's email address", $userData['username']));
-
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=User email address changed!');
 		} catch (Exception $e) {
@@ -1501,19 +1494,10 @@ class D
 			} else if ($status["assigned"] == $_SESSION["userid"]) {
 				// Unassign
 				$GLOBALS["db"]->execute("UPDATE reports SET assigned = 0 WHERE id = ? LIMIT 1", [$_GET["id"]]);
-				$action = "unassigned";
 			} else {
 				// Assign to current user
 				$GLOBALS["db"]->execute("UPDATE reports SET assigned = ? WHERE id = ? LIMIT 1", [$_SESSION["userid"], $_GET["id"]]);
-				$action = "assigned";
 			}
-
-			// Get report data for logging
-			$reportData = $GLOBALS["db"]->fetch("SELECT * FROM reports WHERE id = ? LIMIT 1", [$_GET["id"]]);
-
-			// RAP log
-			postWebhookMessage(sprintf("has %s report #%s.\n\n> :gear: [View this report](https://old.akatsuki.gg/index.php?p=127&id=%s) on **Admin Panel**", $action, $_GET["id"], $_GET["id"]));
-			rapLog(sprintf("has %s report #%s", $action, $_GET["id"]));
 
 			redirect("index.php?p=127&id=" . $_GET["id"] . "&s=Assignee changed!");
 		} catch (Exception $e) {
@@ -1537,17 +1521,10 @@ class D
 			if ($status["assigned"] == -1) {
 				// Unsolve
 				$GLOBALS["db"]->execute("UPDATE reports SET assigned = 0 WHERE id = ? LIMIT 1", [$_GET["id"]]);
-				$action = "unsolved";
 			} else {
 				// Solve
 				$GLOBALS["db"]->execute("UPDATE reports SET assigned = -1 WHERE id = ? LIMIT 1", [$_GET["id"]]);
-				$action = "solved";
 			}
-
-			// RAP log
-			postWebhookMessage(sprintf("has %s report #%s.\n\n> :gear: [View this report](https://old.akatsuki.gg/index.php?p=127&id=%s) on **Admin Panel**", $action, $_GET["id"], $_GET["id"]));
-			rapLog(sprintf("has %s report #%s", $action, $_GET["id"]));
-
 			redirect("index.php?p=127&id=" . $_GET["id"] . "&s=Solved status changed!");
 		} catch (Exception $e) {
 			redirect("index.php?p=127&id=" . $_GET["id"] . "&e=" . $e->getMessage());
@@ -1570,17 +1547,10 @@ class D
 			if ($status["assigned"] == -2) {
 				// Useful (open)
 				$GLOBALS["db"]->execute("UPDATE reports SET assigned = 0 WHERE id = ? LIMIT 1", [$_GET["id"]]);
-				$action = "marked as useful";
 			} else {
 				// Useless
 				$GLOBALS["db"]->execute("UPDATE reports SET assigned = -2 WHERE id = ? LIMIT 1", [$_GET["id"]]);
-				$action = "marked as useless";
 			}
-
-			// RAP log
-			postWebhookMessage(sprintf("has %s report #%s.\n\n> :gear: [View this report](https://old.akatsuki.gg/index.php?p=127&id=%s) on **Admin Panel**", $action, $_GET["id"], $_GET["id"]));
-			rapLog(sprintf("has %s report #%s", $action, $_GET["id"]));
-
 			redirect("index.php?p=127&id=" . $_GET["id"] . "&s=Useful status changed!");
 		} catch (Exception $e) {
 			redirect("index.php?p=127&id=" . $_GET["id"] . "&e=" . $e->getMessage());
