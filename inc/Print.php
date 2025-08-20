@@ -701,6 +701,25 @@ class P
 			</select>
 			</td>
 			</tr>';
+
+			// Get clan information
+			$clanInfo = null;
+			if ($userData['clan_id']) {
+				$clanInfo = $GLOBALS['db']->fetch('SELECT id, name, tag FROM clans WHERE id = ? LIMIT 1', [$userData['clan_id']]);
+			}
+
+			echo '<tr>
+			<td>Clan</td>
+			<td>';
+			if ($clanInfo) {
+				echo '<span class="label label-info">' . htmlspecialchars($clanInfo['tag']) . '</span> ';
+				echo '<a href="index.php?p=141&id=' . $clanInfo['id'] . '">' . htmlspecialchars($clanInfo['name']) . '</a>';
+			} else {
+				echo '<em>No clan</em>';
+			}
+			echo '</td>
+			</tr>';
+
 			echo '<tr>
 			<td>Registered (dd/mm/yyyy) </td>
 			<td>' . date('d/m/Y', $userData['register_datetime']) . '</td>
@@ -3038,6 +3057,296 @@ class P
 			echo '</div>';
 		} catch (Exception $e) {
 			redirect('index.php?p=135&e=' . $e->getMessage());
+		}
+	}
+
+	/*
+	 * AdminClans
+	 * Prints the admin panel clans list page
+	 */
+	public static function AdminClans()
+	{
+		try {
+			echo '<div id="wrapper">';
+			printAdminSidebar();
+			echo '<div id="page-content-wrapper">';
+			// Maintenance check
+			self::MaintenanceStuff();
+			// Print Success if set
+			if (isset($_GET['s']) && !empty($_GET['s'])) {
+				self::SuccessMessageStaccah($_GET['s']);
+			}
+			// Print Exception if set
+			if (isset($_GET['e']) && !empty($_GET['e'])) {
+				self::ExceptionMessageStaccah($_GET['e']);
+			}
+
+			echo '<p align="center"><font size=5><i class="fa fa-users"></i>	Clans Management</font></p>';
+
+			// Get all clans with member count and owner info
+			$clans = $GLOBALS['db']->fetchAll('
+				SELECT
+					c.*,
+					COUNT(u.id) as member_count,
+					o.username as owner_name
+				FROM clans c
+				LEFT JOIN users u ON c.id = u.clan_id
+				LEFT JOIN users o ON c.owner = o.id
+				GROUP BY c.id
+				ORDER BY c.name ASC
+			');
+
+			echo '<table class="table table-striped table-hover table-75-center">
+			<thead>
+			<tr>
+				<th><i class="fa fa-users"></i>	Name</th>
+				<th><i class="fa fa-tag"></i>	Tag</th>
+				<th><i class="fa fa-user"></i>	Owner</th>
+				<th><i class="fa fa-users"></i>	Members</th>
+				<th><i class="fa fa-info-circle"></i>	Status</th>
+				<th><i class="fa fa-cog"></i>	Actions</th>
+			</tr>
+			</thead>
+			<tbody>';
+
+			foreach ($clans as $clan) {
+				// Status colors
+				$statusColors = [
+					0 => ['danger', 'Inactive'],
+					1 => ['success', 'Active'],
+					2 => ['warning', 'Pending']
+				];
+				$status = $statusColors[$clan['status']] ?? ['secondary', 'Unknown'];
+
+				echo '<tr>
+					<td><strong>' . htmlspecialchars($clan['name']) . '</strong></td>
+					<td><span class="label label-info">' . htmlspecialchars($clan['tag']) . '</span></td>
+					<td>' . ($clan['owner_name'] ? htmlspecialchars($clan['owner_name']) : '<em>No owner</em>') . '</td>
+					<td>' . $clan['member_count'] . '</td>
+					<td><span class="label label-' . $status[0] . '">' . $status[1] . '</span></td>
+					<td>
+						<a href="index.php?p=141&id=' . $clan['id'] . '" class="btn btn-primary btn-sm">Edit</a>
+						<a onclick="reallysuredialog() && deleteClan(' . $clan['id'] . ');" class="btn btn-danger btn-sm">Delete</a>
+					</td>
+				</tr>';
+			}
+
+			echo '</tbody>
+			</table>';
+
+			// Delete clan form
+			echo '<form id="deleteClanForm" action="submit.php" method="POST" style="display:none;">
+				<input name="csrf" type="hidden" value="' . csrfToken() . '">
+				<input name="action" value="deleteClan" hidden>
+				<input name="id" id="deleteClanId" type="hidden">
+			</form>';
+
+			echo '<script>
+			function deleteClan(clanId) {
+				document.getElementById("deleteClanId").value = clanId;
+				document.getElementById("deleteClanForm").submit();
+			}
+			</script>';
+
+			echo '</div>';
+			echo '</div>';
+		} catch (Exception $e) {
+			redirect('index.php?p=140&e=' . $e->getMessage());
+		}
+	}
+
+	/*
+	 * AdminEditClan
+	 * Prints the admin panel edit clan page
+	 */
+	public static function AdminEditClan()
+	{
+		try {
+			// Check if id is set
+			if (!isset($_GET['id']) || empty($_GET['id'])) {
+				throw new Exception('Invalid clan ID!');
+			}
+
+			$clanId = (int)$_GET['id'];
+
+			// Get clan data
+			$clanData = $GLOBALS['db']->fetch('SELECT * FROM clans WHERE id = ? LIMIT 1', [$clanId]);
+			if (!$clanData) {
+				throw new Exception("That clan doesn't exist");
+			}
+
+			// Get clan members
+			$members = $GLOBALS['db']->fetchAll('
+				SELECT u.id, u.username, u.privileges, u.register_datetime
+				FROM users u
+				WHERE u.clan_id = ?
+				ORDER BY u.username ASC
+			', [$clanId]);
+
+			echo '<div id="wrapper">';
+			printAdminSidebar();
+			echo '<div id="page-content-wrapper">';
+			// Maintenance check
+			self::MaintenanceStuff();
+			// Print Success if set
+			if (isset($_GET['s']) && !empty($_GET['s'])) {
+				self::SuccessMessageStaccah($_GET['s']);
+			}
+			// Print Exception if set
+			if (isset($_GET['e']) && !empty($_GET['e'])) {
+				self::ExceptionMessageStaccah($_GET['e']);
+			}
+
+			echo '<p align="center"><font size=5><i class="fa fa-edit"></i>	Edit Clan: ' . htmlspecialchars($clanData['name']) . '</font></p>';
+
+			// Clan details form
+			echo '<div class="row">
+				<div class="col-md-6">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title"><i class="fa fa-cog"></i>	Clan Details</h3>
+						</div>
+						<div class="panel-body">
+							<form action="submit.php" method="POST">
+								<input name="csrf" type="hidden" value="' . csrfToken() . '">
+								<input name="action" value="saveClan" hidden>
+								<input name="id" type="hidden" value="' . $clanData['id'] . '">
+
+								<div class="form-group">
+									<label>Name</label>
+									<input type="text" name="name" class="form-control" value="' . htmlspecialchars($clanData['name']) . '" required>
+								</div>
+
+								<div class="form-group">
+									<label>Tag</label>
+									<input type="text" name="tag" class="form-control" value="' . htmlspecialchars($clanData['tag']) . '" required maxlength="8">
+								</div>
+
+								<div class="form-group">
+									<label>Description</label>
+									<textarea name="description" class="form-control" rows="3" maxlength="256">' . htmlspecialchars($clanData['description']) . '</textarea>
+								</div>
+
+								<div class="form-group">
+									<label>Icon URL</label>
+									<input type="text" name="icon" class="form-control" value="' . htmlspecialchars($clanData['icon']) . '">
+								</div>
+
+								<div class="form-group">
+									<label>Background URL</label>
+									<input type="text" name="background" class="form-control" value="' . htmlspecialchars($clanData['background']) . '">
+								</div>
+
+								<div class="form-group">
+									<label>Status</label>
+									<select name="status" class="form-control">
+										<option value="0"' . ($clanData['status'] == 0 ? ' selected' : '') . '>Inactive</option>
+										<option value="1"' . ($clanData['status'] == 1 ? ' selected' : '') . '>Active</option>
+										<option value="2"' . ($clanData['status'] == 2 ? ' selected' : '') . '>Pending</option>
+									</select>
+								</div>
+
+								<button type="submit" class="btn btn-primary">Save Changes</button>
+							</form>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-6">
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title"><i class="fa fa-users"></i>	Clan Members (' . count($members) . ')</h3>
+						</div>
+						<div class="panel-body">';
+
+			if (empty($members)) {
+				echo '<p class="text-muted">No members in this clan.</p>';
+			} else {
+				echo '<table class="table table-striped table-hover">
+					<thead>
+						<tr>
+							<th>Username</th>
+							<th>Join Date</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>';
+
+				foreach ($members as $member) {
+					$isOwner = ($member['id'] == $clanData['owner']);
+					$ownerBadge = $isOwner ? ' <span class="label label-warning">Owner</span>' : '';
+
+					echo '<tr>
+						<td>' . htmlspecialchars($member['username']) . $ownerBadge . '</td>
+						<td>' . date('Y-m-d', $member['register_datetime']) . '</td>
+						<td>';
+
+					if (!$isOwner) {
+						echo '<a onclick="reallysuredialog() && kickMember(' . $clanData['id'] . ', ' . $member['id'] . ');" class="btn btn-danger btn-xs">Kick</a>';
+					} else {
+						echo '<em>Owner</em>';
+					}
+
+					echo '</td>
+					</tr>';
+				}
+
+				echo '</tbody>
+				</table>';
+
+				// Transfer ownership section
+				if (!empty($members)) {
+					echo '<hr>
+					<h4><i class="fa fa-exchange"></i>	Transfer Ownership</h4>
+					<form action="submit.php" method="POST">
+						<input name="csrf" type="hidden" value="' . csrfToken() . '">
+						<input name="action" value="transferClanOwnership" hidden>
+						<input name="clan_id" type="hidden" value="' . $clanData['id'] . '">
+
+						<div class="form-group">
+							<label>New Owner</label>
+							<select name="new_owner_id" class="form-control" required>
+								<option value="">Select new owner...</option>';
+
+					foreach ($members as $member) {
+						if ($member['id'] != $clanData['owner']) {
+							echo '<option value="' . $member['id'] . '">' . htmlspecialchars($member['username']) . '</option>';
+						}
+					}
+
+					echo '</select>
+						</div>
+
+						<button type="submit" class="btn btn-warning" onclick="return confirm(\'Are you sure you want to transfer ownership?\')">Transfer Ownership</button>
+					</form>';
+				}
+			}
+
+			echo '</div>
+					</div>
+				</div>
+			</div>';
+
+			// Kick member form
+			echo '<form id="kickMemberForm" action="submit.php" method="POST" style="display:none;">
+				<input name="csrf" type="hidden" value="' . csrfToken() . '">
+				<input name="action" value="kickClanMember" hidden>
+				<input name="clan_id" id="kickClanId" type="hidden">
+				<input name="user_id" id="kickUserId" type="hidden">
+			</form>';
+
+			echo '<script>
+			function kickMember(clanId, userId) {
+				document.getElementById("kickClanId").value = clanId;
+				document.getElementById("kickUserId").value = userId;
+				document.getElementById("kickMemberForm").submit();
+			}
+			</script>';
+
+			echo '</div>';
+			echo '</div>';
+		} catch (Exception $e) {
+			redirect('index.php?p=140&e=' . $e->getMessage());
 		}
 	}
 }
