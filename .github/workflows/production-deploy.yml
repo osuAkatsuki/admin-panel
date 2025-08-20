@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - discord-link
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
