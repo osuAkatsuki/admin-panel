@@ -746,7 +746,7 @@ class D
 				} else {
 					$dt = ['scores', 'scores_relax', 'scores_ap'];
 					foreach ($dt as $st) {
-						$GLOBALS['db']->execute('DELETE FROM' . $st . ' WHERE userid = ?', [$_POST['id']]);
+						$GLOBALS['db']->execute('DELETE FROM ' . $st . ' WHERE userid = ?', [$_POST['id']]);
 						foreach (range(0, 3) as $i) {
 							foreach ([0, 1, 2] as $m) {
 								$GLOBALS["redis"]->publish("peppy:wipe", $_POST['id'] . ',' . $m . ',' . $i);
