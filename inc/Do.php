@@ -1056,7 +1056,7 @@ class D
 			$msg = ($newPrivileges & Privileges::UserPublic) > 0 ? "unrestricted" : "restricted";
 
 			// Rap log
-			postWebhookMessage(sprintf("has %s user [%s](https://akatsuki.gg/u/%s).\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $msg, $userData["username"], $_GET['id'], $_POST['id']));
+			postWebhookMessage(sprintf("has %s user [%s](https://akatsuki.gg/u/%s).\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $msg, $userData["username"], $_GET['id'], $_GET['id']));
 			rapLog(sprintf("has %s user %s", $msg, $userData["username"]));
 			// Done, redirect to success page
 			if (isset($_GET["resend"])) {

@@ -26,7 +26,7 @@ $pages = [
 	new Clans(),
 	new EditClan(),
 ];
-// Set timezone to UTC
+// Set timezone to America/Toronto
 date_default_timezone_set('America/Toronto');
 // Connect to MySQL Database
 $GLOBALS['db'] = new DBPDO();
