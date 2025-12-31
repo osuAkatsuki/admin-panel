@@ -32,8 +32,6 @@ class DBPDO
 			} catch (PDOException $e) {
 				$this->error = $e->getMessage();
 				die($this->error);
-
-				return false;
 			}
 		} else {
 			$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
