@@ -39,7 +39,6 @@ try {
 			D::Logout();
 			redirect('index.php');
 			break;
-			break;
 
 			// Admin functions, need sessionCheckAdmin() because can be performed only by admins
 
@@ -126,10 +125,6 @@ try {
 			sessionCheckAdmin(Privileges::AdminWipeUsers);
 			D::WipeAccount();
 			break;
-			/*case 'processRankRequest':
-			sessionCheckAdmin(Privileges::AdminManageBeatmaps);
-			D::ProcessRankRequest();
-		break;*/
 		case 'savePrivilegeGroup':
 			sessionCheckAdmin(Privileges::AdminManagePrivileges);
 			D::savePrivilegeGroup();
