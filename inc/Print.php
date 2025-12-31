@@ -910,7 +910,7 @@ class P
 				echo '	<a onclick="sure(\'submit.php?action=removeDonor&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">Remove donor</a>';
 			}
 			echo '	<a href="index.php?p=121&id=' . $_GET['id'] . '" class="btn btn-warning">Give supporter</a>';
-			echo '	<a href="https://akatsuki.pw/u/' . $_GET['id'] . '" class="btn btn-primary">View profile</a>';
+			echo '	<a href="https://akatsuki.gg/u/' . $_GET['id'] . '" class="btn btn-primary">View profile</a>';
 			echo '</li>
 						</ul>';
 
@@ -950,7 +950,7 @@ class P
 					</div>';
 
 			echo '</div>
-				</div>';
+		</div>';
 		} catch (Exception $e) {
 			// Redirect to exception page
 			redirect('index.php?p=102&e=' . $e->getMessage());
@@ -1514,7 +1514,7 @@ class P
 		foreach ($icons as $icon) {
 			echo '
 					<tr class="' . ($icon["is_current"] ? "success" : ($icon["is_default"] ? "warning" : "")) . '">
-						<td><a href="https://i.akatsuki.pw/' . $icon["file_id"] . '.png" target="_blank">' . $icon["name"] . '</a> - <a href="' . $icon["url"] . '" target="_blank">' . $icon["url"] . '</td>
+						<td><a href="https://i.akatsuki.gg/' . $icon["file_id"] . '.png" target="_blank">' . $icon["name"] . '</a> - <a href="' . $icon["url"] . '" target="_blank">' . $icon["url"] . '</td>
 						<td style="text-align: right">
 							<a ' . ($icon["is_current"] ? "disabled" : "") . ' title="Set as main menu icon" class="btn btn-success btn-xs" href="submit.php?action=setMainMenuIcon&id=' . $icon["id"] . '&csrf=' . csrfToken() . '"><i class="fa fa-check"></i></a>
 							<a ' . ($icon["is_default"] ? "disabled" : "") . ' title="Set as default main menu icon" class="btn btn-info btn-xs" href="submit.php?action=setDefaultMainMenuIcon&id=' . $icon["id"] . '&csrf=' . csrfToken() . '"><i class="fa fa-asterisk"></i></a>
@@ -1662,7 +1662,7 @@ class P
 			}
 		}
 		echo '<p align="center">
-		<object data="https://akatsuki.pw/static/images/logos/logo.png" type="image/png" class="akatsuki-logo"></object>
+		<object data="https://akatsuki.gg/static/images/logos/logo.png" type="image/png" class="akatsuki-logo"></object>
 		</p>';
 		global $isBday;
 		if ($isBday) {
@@ -2233,7 +2233,7 @@ class P
 
 		if (!hasPrivilege(Privileges::UserPublic)) {
 			echo '<div class="alert alert-danger" role="alert">
-					<p align="center"><i class="fa fa-exclamation-triangle"></i><b>Your account is currently in restricted mode</b> due to inappropriate behavior or a violation of the <a href=\'index.php?p=23\'>rules</a>.<br>You can\'t interact with other users, you can perform limited actions and your user profile and scores are hidden.<br>Read the <a href=\'index.php?p=23\'>rules</a> again carefully, and if you think this is an error, send an email to <b>support@akatsuki.pw</b>.</p>
+					<p align="center"><i class="fa fa-exclamation-triangle"></i><b>Your account is currently in restricted mode</b> due to inappropriate behavior or a violation of the <a href=\'index.php?p=23\'>rules</a>.<br>You can\'t interact with other users, you can perform limited actions and your user profile and scores are hidden.<br>Read the <a href=\'index.php?p=23\'>rules</a> again carefully, and if you think this is an error, send an email to <b>support@akatsuki.gg</b>.</p>
 				  </div>';
 		}
 	}
@@ -2636,7 +2636,7 @@ class P
 				$assignee = "Useless";
 			} else {
 				$rowClass = "";
-				$assignee = '<img class="circle" style="width: 30px; height: 30px; margin-top: 0px;" src="https://a.akatsuki.pw/' . $report['assigned'] . '"> ' . getUserUsername($report['assigned']);
+				$assignee = '<img class="circle" style="width: 30px; height: 30px; margin-top: 0px;" src="https://a.akatsuki.gg/' . $report['assigned'] . '"> ' . getUserUsername($report['assigned']);
 			}
 			echo '<tr class="' . $rowClass . '">
 			<td><p class="text-center">' . $report['id'] . '</p></td>
@@ -2921,7 +2921,7 @@ class P
 		<tbody>';
 		foreach ($playsVanilla as $play) {
 			if ($play['song_name']) {
-				$bn = '<a href="https://akatsuki.pw/b/' . $play['beatmap_id'] . '">' . $play['song_name'] . '</a>';
+				$bn = '<a href="https://akatsuki.gg/b/' . $play['beatmap_id'] . '">' . $play['song_name'] . '</a>';
 			} else {
 				$bn = $play['beatmap_md5'];
 			}
@@ -2947,7 +2947,7 @@ class P
 		<tbody>';
 		foreach ($playsRelax as $play) {
 			if ($play['song_name']) {
-				$bn = '<a href="https://akatsuki.pw/b/' . $play['beatmap_id'] . '">' . $play['song_name'] . '</a>';
+				$bn = '<a href="https://akatsuki.gg/b/' . $play['beatmap_id'] . '">' . $play['song_name'] . '</a>';
 			} else {
 				$bn = $play['beatmap_md5'];
 			}

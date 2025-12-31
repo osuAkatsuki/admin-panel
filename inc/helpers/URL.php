@@ -6,6 +6,6 @@ class URL
 	{
 		global $PUBLIC_AVATARS_SERVICE_BASE_URL;
 
-		return isset($PUBLIC_AVATARS_SERVICE_BASE_URL) ? $PUBLIC_AVATARS_SERVICE_BASE_URL : 'https://a.akatsuki.pw';
+		return isset($PUBLIC_AVATARS_SERVICE_BASE_URL) ? $PUBLIC_AVATARS_SERVICE_BASE_URL : 'https://a.akatsuki.gg';
 	}
 }
