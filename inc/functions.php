@@ -95,9 +95,9 @@ function outputVariable($v, $fn = "/tmp/ripple.txt")
 function randomString($l, $c = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789')
 {
 	$res = '';
-	srand((float) microtime() * 1000000);
+	$max = strlen($c) - 1;
 	for ($i = 0; $i < $l; $i++) {
-		$res .= $c[rand() % strlen($c)];
+		$res .= $c[random_int(0, $max)];
 	}
 	return $res;
 }
