@@ -1228,7 +1228,6 @@ class D
 					break;
 			}
 
-			//$removeAfterOsuTime = UNIXTimestampToOsuDate(time()-($_POST["length"]*$periodSeconds));
 			$removeAfter = time() - ($_POST["length"] * $periodSeconds);
 			$rollbackString = $_POST["length"] . " " . $periodName;
 			if ($_POST["length"] > 1) {
