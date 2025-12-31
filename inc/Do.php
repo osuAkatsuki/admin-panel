@@ -783,7 +783,6 @@ class D
 				} else if ($_POST["rx"] == 2) {
 					$modeInts = [8];
 				}
-				$modeInts = [0, 1, 2, 3];
 			} else if ((0 <= $_POST["gm"]) && ($_POST["gm"] <= 3)) { // Single mode
 				if ($_POST["rx"] == 0) {
 					$modeInts = [$_POST["gm"]];
