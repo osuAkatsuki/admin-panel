@@ -11,9 +11,11 @@ $finder = PhpCsFixer\Finder::create()
     ->exclude('palloncini')
     ->exclude('css')
     ->exclude('js')
-    ->name('*.php');
+    ->name('*.php')
+    ->notPath('index.php'); // Exclude index.php as it has mixed HTML/PHP content
 
 $config = new PhpCsFixer\Config();
+
 return $config
     ->setRules([
         '@PSR12' => true,
@@ -32,7 +34,6 @@ return $config
         'phpdoc_var_without_name' => true,
         'method_argument_space' => [
             'on_multiline' => 'ensure_fully_multiline',
-            'keep_multiline_spaces_after_colon' => true,
         ],
         'single_trait_insert_per_statement' => true,
         'declare_strict_types' => false, // Keep false for compatibility
@@ -40,5 +41,5 @@ return $config
     ])
     ->setFinder($finder)
     ->setRiskyAllowed(true)
-    ->setIndent("\t") // Match existing code style
+    ->setIndent("    ") // Use 4 spaces to match PSR-12
     ->setLineEnding("\n");

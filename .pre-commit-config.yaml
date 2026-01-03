@@ -1,40 +1,39 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v6.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-json
       - id: check-added-large-files
-        args: ['--maxkb=1000']
+        args: ["--maxkb=1000"]
       - id: check-merge-conflict
       - id: check-case-conflict
       - id: mixed-line-ending
-        args: ['--fix=lf']
+        args: ["--fix=lf"]
       - id: detect-private-key
-
-  - repo: https://github.com/PHP-CS-Fixer/PHP-CS-Fixer
-    rev: v3.48.0
-    hooks:
-      - id: php-cs-fixer
-        args: ['--config=.php-cs-fixer.php', '--allow-risky=yes']
-        types: [php]
-        additional_dependencies: ['php:8.1']
-
-  - repo: https://github.com/squizlabs/PHP_CodeSniffer
-    rev: 3.9.0
-    hooks:
-      - id: phpcs
-        args: ['--standard=.phpcs.xml', '--extensions=php']
-        types: [php]
-        additional_dependencies: ['php:8.1']
 
   - repo: local
     hooks:
       - id: php-syntax-check
         name: PHP Syntax Check
-        entry: bash -c 'for file in "$@"; do php -l "$file" || exit 1; done' --
+        entry: .pre-commit-hooks/php-syntax-check.sh
+        language: system
+        types: [php]
+        pass_filenames: true
+
+      - id: php-cs-fixer
+        name: PHP-CS-Fixer
+        entry: .pre-commit-hooks/php-cs-fixer.sh
+        language: system
+        types: [php]
+        pass_filenames: true
+        require_serial: true
+
+      - id: phpcs
+        name: PHP_CodeSniffer
+        entry: .pre-commit-hooks/phpcs.sh
         language: system
         types: [php]
         pass_filenames: true

@@ -8,65 +8,68 @@ ob_start();
 startSessionIfNotStarted();
 $c = new RememberCookieHandler();
 if ($c->Check()) {
-	$v = $c->Validate();
-	switch ($v) {
-		case ValidateValue::UserBanned:
-			addError("You are banned, as such you've been logged out of your account automatically.");
-			break;
-			// /shrugs
-	}
+    $v = $c->Validate();
+    switch ($v) {
+        case ValidateValue::UserBanned:
+            addError("You are banned, as such you've been logged out of your account automatically.");
+
+            break;
+            // /shrugs
+    }
 }
 
 // CONTROLLER SYSTEM v2
 $model = 'old';
 if (isset($_GET['p'])) {
-	$found = false;
-	foreach ($pages as $page) {
-		if (defined(get_class($page) . '::PageID') && $page::PageID == $_GET['p']) {
-			$found = true;
-			$model = $page;
-			$title = '<title>' . $page::Title . '</title>';
-			$p = $page::PageID;
-			if (defined(get_class($page) . '::LoggedIn')) {
-				if ($page::LoggedIn) {
-					clir();
-				} else {
-					clir(true, 'index.php?p=1&e=1');
-				}
-			}
-			break;
-		}
-	}
-	if (!$found) {
-		if (isset($_GET['p']) && !empty($_GET['p'])) {
-			$p = $_GET['p'];
-		} else {
-			$p = 1;
-		}
-		$title = setTitle($p);
-	}
+    $found = false;
+    foreach ($pages as $page) {
+        if (defined(get_class($page) . '::PageID') && $page::PageID == $_GET['p']) {
+            $found = true;
+            $model = $page;
+            $title = '<title>' . $page::Title . '</title>';
+            $p = $page::PageID;
+            if (defined(get_class($page) . '::LoggedIn')) {
+                if ($page::LoggedIn) {
+                    clir();
+                } else {
+                    clir(true, 'index.php?p=1&e=1');
+                }
+            }
+
+            break;
+        }
+    }
+    if (! $found) {
+        if (isset($_GET['p']) && ! empty($_GET['p'])) {
+            $p = $_GET['p'];
+        } else {
+            $p = 1;
+        }
+        $title = setTitle($p);
+    }
 } elseif (isset($_GET['__PAGE__'])) {
-	$pages_split = explode('/', $_GET['__PAGE__']);
-	if (count($_GET['__PAGE__']) < 2) {
-		$title = '<title>Akatsuki</title>';
-		$p = 1;
-	}
-	$found = false;
-	foreach ($pages as $page) {
-		if ($page::URL == $pages_split[1]) {
-			$found = true;
-			$model = $page;
-			$title = '<title>' . $page::Title . '</title>';
-			break;
-		}
-	}
-	if (!$found) {
-		$p = 1;
-		$title = '<title>Akatsuki</title>';
-	}
+    $pages_split = explode('/', $_GET['__PAGE__']);
+    if (count($_GET['__PAGE__']) < 2) {
+        $title = '<title>Akatsuki</title>';
+        $p = 1;
+    }
+    $found = false;
+    foreach ($pages as $page) {
+        if ($page::URL == $pages_split[1]) {
+            $found = true;
+            $model = $page;
+            $title = '<title>' . $page::Title . '</title>';
+
+            break;
+        }
+    }
+    if (! $found) {
+        $p = 1;
+        $title = '<title>Akatsuki</title>';
+    }
 } else {
-	$p = 1;
-	$title = '<title>Akatsuki</title>';
+    $p = 1;
+    $title = '<title>Akatsuki</title>';
 }
 ?>
 <!DOCTYPE html>
@@ -107,14 +110,14 @@ if (isset($_GET['p'])) {
 
 	<meta name=viewport content="width=device-width, initial-scale=1">
 	<?php
-	if ($isBday && $p == 1) {
-		echo '
+    if ($isBday && $p == 1) {
+        echo '
 				<script src="palloncini/palloncini.js"></script>
 				<script type="text/javascript">
 					particlesJS.load("palloncini", "palloncini/palloncini.conf");
 				</script>';
-	}
-	?>
+    }
+?>
 </head>
 
 <body>
@@ -123,41 +126,43 @@ if (isset($_GET['p'])) {
 
 	<!-- Page content (< 100: Normal pages, >= 100: Admin CP pages) -->
 	<?php
-	$status = '';
-	if ($model !== 'old') {
-		P::Messages();
-	}
-	if ($p < 100) {
-		// Normal page, print normal layout (will fix this in next commit, dw)
-		echo '
+$status = '';
+if ($model !== 'old') {
+    P::Messages();
+}
+if ($p < 100) {
+    // Normal page, print normal layout (will fix this in next commit, dw)
+    echo '
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">';
 
-		echo '<div id="content">';
-		if ($model === 'old') {
-			printPage($p);
-		} else {
-			echo $status;
-			checkMustHave($model);
-			$model->P();
-		}
-		echo '
+    echo '<div id="content">';
+    if ($model === 'old') {
+        printPage($p);
+    } else {
+        echo $status;
+        checkMustHave($model);
+        $model->P();
+    }
+    echo '
                     </div>
                 </div>
             </div>
         </div>';
-		if ($isBday && $p == 1) echo '<div id="palloncini"></div>';
-	} else {
-		// Admin cp page, print admin cp layout
-		if ($model === 'old') {
-			printPage($p);
-		} else {
-			echo $status;
-			$model->P();
-		}
-	}
-	?>
+    if ($isBday && $p == 1) {
+        echo '<div id="palloncini"></div>';
+    }
+} else {
+    // Admin cp page, print admin cp layout
+    if ($model === 'old') {
+        printPage($p);
+    } else {
+        echo $status;
+        $model->P();
+    }
+}
+?>
 
 	<!-- jQuery -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
@@ -248,8 +253,8 @@ if (isset($_GET['p'])) {
 			updateResolution()
 
 			<?php
-			if ($p == 109) {
-				echo "
+        if ($p == 109) {
+            echo "
 					var badgeColour = document.getElementById('badge-colour-value');
 					const alwan = new Alwan('#badge-colour', {color: badgeColour.value, format: 'hex'})
 					alwan.on('color', (colour) => {
@@ -257,8 +262,8 @@ if (isset($_GET['p'])) {
 						badgeColour.defaultValue = colour.hex;
 					});
 				";
-			}
-			?>
+        }
+?>
 		})
 
 		$(".getcountry").click(function() {
@@ -273,10 +278,10 @@ if (isset($_GET['p'])) {
 
 	<!-- Custom JavaScript for this page here -->
 	<?php
-	switch ($p) {
-			// Admin cp - edit user
-		case 103:
-			echo '
+    switch ($p) {
+        // Admin cp - edit user
+        case 103:
+            echo '
                 <script type="text/javascript">
                     function censorUserpage()
                     {
@@ -353,10 +358,11 @@ if (isset($_GET['p'])) {
 					});
                 </script>
                 ';
-			break;
 
-		case 119:
-			echo '
+            break;
+
+        case 119:
+            echo '
 		<script type="text/javascript">
 			function updatePrivileges() {
 				var result = 0;
@@ -367,20 +373,22 @@ if (isset($_GET['p'])) {
 			}
 		</script>
 	';
-			break;
 
-		case 124:
-			$force = (isset($_GET["force"]) && !empty($_GET["force"])) ? '1' : '0';
-			echo '<script type="text/javascript">
+            break;
+
+        case 124:
+            $force = (isset($_GET["force"]) && ! empty($_GET["force"])) ? '1' : '0';
+            echo '<script type="text/javascript">
 			var bsid=' . htmlspecialchars($_GET["bsid"]) . ';
 			var force=' . $force . ';
 		</script>
 		<input id="csrf" type="hidden" value="' . csrfToken() . '">
 		<script src="/js/rankbeatmap.js"></script>';
-			break;
 
-		case 127:
-			echo '<script>
+            break;
+
+        case 127:
+            echo '<script>
 			$(document).ready(function() {
 				$("[data-target=#silenceUserModal]").click(function() {
 					$("#silenceUserModal").find("input[name=u]").val($(this).data("who"));
@@ -389,10 +397,11 @@ if (isset($_GET['p'])) {
 				});
 			});
 		</script>';
-			break;
 
-		case 134:
-			echo "<script>
+            break;
+
+        case 134:
+            echo "<script>
 		$(document).ready(function() {
 			$('.datepicker').datepicker({
 				orientation: 'bottom',
@@ -402,25 +411,28 @@ if (isset($_GET['p'])) {
 			})
 		})
 		</script>";
-			break;
 
-		case 140:
-			echo "<script>
+            break;
+
+        case 140:
+            echo "<script>
 		$(document).ready(function() {
 			// Clans management page - no special JS needed
 		})
 		</script>";
-			break;
 
-		case 141:
-			echo "<script>
+            break;
+
+        case 141:
+            echo "<script>
 		$(document).ready(function() {
 			// Edit clan page - no special JS needed
 		})
 		</script>";
-			break;
-	}
-	?>
+
+            break;
+    }
+?>
 
 </body>
 
@@ -428,6 +440,6 @@ if (isset($_GET['p'])) {
 <?php
 // clear redirpage if we're not on login page
 if ($p != 2) {
-	unset($_SESSION['redirpage']);
+    unset($_SESSION['redirpage']);
 }
 ob_end_flush();

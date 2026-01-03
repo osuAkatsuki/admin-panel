@@ -1,3 +1,4 @@
 vendor
 .env
 .pre-commit
+.php-cs-fixer.cache
