@@ -1,0 +1,39 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        args: ["--maxkb=1000"]
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
+      - id: detect-private-key
+
+  - repo: local
+    hooks:
+      - id: php-syntax-check
+        name: PHP Syntax Check
+        entry: .pre-commit-hooks/php-syntax-check.sh
+        language: system
+        types: [php]
+        pass_filenames: true
+
+      - id: php-cs-fixer
+        name: PHP-CS-Fixer
+        entry: .pre-commit-hooks/php-cs-fixer.sh
+        language: system
+        types: [php]
+        pass_filenames: true
+        require_serial: true
+
+      - id: phpcs
+        name: PHP_CodeSniffer
+        entry: .pre-commit-hooks/phpcs.sh
+        language: system
+        types: [php]
+        pass_filenames: true

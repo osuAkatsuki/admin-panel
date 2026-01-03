@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<ruleset name="Akatsuki Admin Panel">
+    <description>Coding standard for Akatsuki Admin Panel</description>
+
+    <!-- Include the whole project -->
+    <file>.</file>
+
+    <!-- Exclude directories -->
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/chart/*</exclude-pattern>
+    <exclude-pattern>*/fonts/*</exclude-pattern>
+    <exclude-pattern>*/images/*</exclude-pattern>
+    <exclude-pattern>*/audio/*</exclude-pattern>
+    <exclude-pattern>*/palloncini/*</exclude-pattern>
+    <exclude-pattern>*/css/*</exclude-pattern>
+    <exclude-pattern>*/js/*</exclude-pattern>
+    <!-- Exclude index.php as it has mixed HTML/PHP content -->
+    <exclude-pattern>index.php</exclude-pattern>
+
+    <!-- Use PSR12 standard as base -->
+    <rule ref="PSR12"/>
+
+    <!-- Allow tabs for indentation (matching existing code style) -->
+    <rule ref="Generic.WhiteSpace.DisallowTabIndent">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Allow long lines (PHP files can have long lines) -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="200"/>
+            <property name="absoluteLineLimit" value="0"/>
+        </properties>
+    </rule>
+
+    <!-- Allow short array syntax -->
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Report but don't enforce some rules -->
+    <rule ref="PSR1.Files.SideEffects">
+        <severity>5</severity>
+    </rule>
+
+    <!-- Disable method naming rules (legacy codebase) -->
+    <rule ref="PSR1.Methods.CamelCapsMethodName">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Disable constant naming rules (legacy codebase) -->
+    <rule ref="Generic.NamingConventions.UpperCaseConstantName">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PSR12.Properties.ConstantVisibility">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Disable namespace requirement (legacy codebase) -->
+    <rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Allow multiple classes per file (legacy codebase) -->
+    <rule ref="Generic.Files.OneClassPerFile">
+        <severity>0</severity>
+    </rule>
+    <!-- Exclude PSR-1 rule about one class per file -->
+    <rule ref="PSR1.Classes.ClassDeclaration">
+        <exclude name="PSR1.Classes.ClassDeclaration.MultipleClasses"/>
+    </rule>
+</ruleset>

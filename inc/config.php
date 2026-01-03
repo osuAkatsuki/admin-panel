@@ -1,4 +1,5 @@
 <?php
+
 $df = dirname(__FILE__);
 require_once $df . '/../vendor/vlucas/phpdotenv/src/Dotenv.php';
 
@@ -24,21 +25,21 @@ $INTERNAL_USERS_SERVICE_BASE_URL = $_ENV['INTERNAL_USERS_SERVICE_BASE_URL'];
 
 // S3 config
 $S3Config = [
-	'access_key_id' => $_ENV['AWS_ACCESS_KEY_ID'],
-	'secret_access_key' => $_ENV['AWS_SECRET_ACCESS_KEY'],
-	'region' => $_ENV['AWS_DEFAULT_REGION'],
-	'bucket' => $_ENV['AWS_BUCKET_NAME'],
-	'endpoint_url' => $_ENV['AWS_ENDPOINT_URL'],
+    'access_key_id' => $_ENV['AWS_ACCESS_KEY_ID'],
+    'secret_access_key' => $_ENV['AWS_SECRET_ACCESS_KEY'],
+    'region' => $_ENV['AWS_DEFAULT_REGION'],
+    'bucket' => $_ENV['AWS_BUCKET_NAME'],
+    'endpoint_url' => $_ENV['AWS_ENDPOINT_URL'],
 ];
 
 // Scores/PP config
 $ScoresConfig = [
-	"enablePP" => true,
-	"useNewBeatmapsTable" => true,		// 0: get beatmaps names from beatmaps_names (old php scores server)
-	// 1: get beatmaps names from beatmaps (LETS)
-	"api_key" => "",
-	"rankRequestsQueueSize" => 20,
-	"rankRequestsPerUser" => 2
+    "enablePP" => true,
+    "useNewBeatmapsTable" => true,		// 0: get beatmaps names from beatmaps_names (old php scores server)
+    // 1: get beatmaps names from beatmaps (LETS)
+    "api_key" => "",
+    "rankRequestsQueueSize" => 20,
+    "rankRequestsPerUser" => 2,
 ];
 
 // ip env (ip fix with caddy)

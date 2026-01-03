@@ -10,7 +10,7 @@
 
 namespace {
 
-    if (!defined('PASSWORD_BCRYPT')) {
+    if (! defined('PASSWORD_BCRYPT')) {
         /*
          * PHPUnit Process isolation caches constants, but not function declarations.
          * So we need to check if the constants are defined separately from
@@ -22,7 +22,7 @@ namespace {
         define('PASSWORD_BCRYPT_DEFAULT_COST', 10);
     }
 
-    if (!function_exists('password_hash')) {
+    if (! function_exists('password_hash')) {
 
         /**
          * Hash the password using the specified algorithm.
@@ -35,7 +35,7 @@ namespace {
          */
         function password_hash($password, $algo, array $options = [])
         {
-            if (!function_exists('crypt')) {
+            if (! function_exists('crypt')) {
                 trigger_error('Crypt must be loaded for password_hash to function', E_USER_WARNING);
 
                 return;
@@ -43,12 +43,12 @@ namespace {
             if (is_null($password) || is_int($password)) {
                 $password = (string) $password;
             }
-            if (!is_string($password)) {
+            if (! is_string($password)) {
                 trigger_error('password_hash(): Password must be a string', E_USER_WARNING);
 
                 return;
             }
-            if (!is_int($algo)) {
+            if (! is_int($algo)) {
                 trigger_error('password_hash() expects parameter 2 to be long, ' . gettype($algo) . ' given', E_USER_WARNING);
 
                 return;
@@ -72,6 +72,7 @@ namespace {
                     $hash_format = sprintf('$2y$%02d$', $cost);
                     // The expected length of the final crypt() output
                     $resultLength = 60;
+
                     break;
                 default:
                     trigger_error(sprintf('password_hash(): Unknown password hashing algorithm: %s', $algo), E_USER_WARNING);
@@ -87,12 +88,15 @@ namespace {
                     case 'double':
                     case 'string':
                         $salt = (string) $options['salt'];
+
                         break;
                     case 'object':
                         if (method_exists($options['salt'], '__tostring')) {
                             $salt = (string) $options['salt'];
+
                             break;
                         }
+                        // no break
                     case 'array':
                     case 'resource':
                     default:
@@ -110,20 +114,20 @@ namespace {
             } else {
                 $buffer = '';
                 $buffer_valid = false;
-                if (function_exists('mcrypt_create_iv') && !defined('PHALANGER')) {
+                if (function_exists('mcrypt_create_iv') && ! defined('PHALANGER')) {
                     $buffer = mcrypt_create_iv($raw_salt_len, MCRYPT_DEV_URANDOM);
                     if ($buffer) {
                         $buffer_valid = true;
                     }
                 }
-                if (!$buffer_valid && function_exists('openssl_random_pseudo_bytes')) {
+                if (! $buffer_valid && function_exists('openssl_random_pseudo_bytes')) {
                     $strong = false;
                     $buffer = openssl_random_pseudo_bytes($raw_salt_len, $strong);
                     if ($buffer && $strong) {
                         $buffer_valid = true;
                     }
                 }
-                if (!$buffer_valid && @is_readable('/dev/urandom')) {
+                if (! $buffer_valid && @is_readable('/dev/urandom')) {
                     $file = fopen('/dev/urandom', 'r');
                     $read = 0;
                     $local_buffer = '';
@@ -137,7 +141,7 @@ namespace {
                     }
                     $buffer = str_pad($buffer, $raw_salt_len, "\0") ^ str_pad($local_buffer, $raw_salt_len, "\0");
                 }
-                if (!$buffer_valid || PasswordCompat\binary\_strlen($buffer) < $raw_salt_len) {
+                if (! $buffer_valid || PasswordCompat\binary\_strlen($buffer) < $raw_salt_len) {
                     $buffer_length = PasswordCompat\binary\_strlen($buffer);
                     for ($i = 0; $i < $raw_salt_len; $i++) {
                         if ($i < $buffer_length) {
@@ -166,7 +170,7 @@ namespace {
 
             $ret = crypt($password, $hash);
 
-            if (!is_string($ret) || PasswordCompat\binary\_strlen($ret) != $resultLength) {
+            if (! is_string($ret) || PasswordCompat\binary\_strlen($ret) != $resultLength) {
                 return false;
             }
 
@@ -192,9 +196,9 @@ namespace {
         function password_get_info($hash)
         {
             $return = [
-                'algo'     => 0,
+                'algo' => 0,
                 'algoName' => 'unknown',
-                'options'  => [],
+                'options' => [],
             ];
             if (PasswordCompat\binary\_substr($hash, 0, 4) == '$2y$' && PasswordCompat\binary\_strlen($hash) == 60) {
                 $return['algo'] = PASSWORD_BCRYPT;
@@ -229,6 +233,7 @@ namespace {
                     if ($cost !== $info['options']['cost']) {
                         return true;
                     }
+
                     break;
             }
 
@@ -245,13 +250,13 @@ namespace {
          */
         function password_verify($password, $hash)
         {
-            if (!function_exists('crypt')) {
+            if (! function_exists('crypt')) {
                 trigger_error('Crypt must be loaded for password_verify to function', E_USER_WARNING);
 
                 return false;
             }
             $ret = crypt($password, $hash);
-            if (!is_string($ret) || PasswordCompat\binary\_strlen($ret) != PasswordCompat\binary\_strlen($hash) || PasswordCompat\binary\_strlen($ret) <= 13) {
+            if (! is_string($ret) || PasswordCompat\binary\_strlen($ret) != PasswordCompat\binary\_strlen($hash) || PasswordCompat\binary\_strlen($ret) <= 13) {
                 return false;
             }
 
@@ -267,7 +272,7 @@ namespace {
 
 namespace PasswordCompat\binary {
 
-    if (!function_exists('PasswordCompat\\binary\\_strlen')) {
+    if (! function_exists('PasswordCompat\\binary\\_strlen')) {
 
         /**
          * Count the number of bytes in a string.
