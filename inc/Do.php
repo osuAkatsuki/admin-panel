@@ -1901,11 +1901,20 @@ class D
 			postWebhookMessage("approved hardware `{$hwShort}` as shared device ({$userCount} users)");
 			rapLog("approved hardware as shared device: {$hwShort}");
 
+		// Redirect back to device details if we came from there, otherwise to shared devices list
+		if (isset($_POST['return_to']) && $_POST['return_to'] == '143') {
+			redirect('index.php?p=143&mac=' . urlencode($mac) . '&unique_id=' . urlencode($unique_id) . '&disk_id=' . urlencode($disk_id) . '&s=Shared device approved successfully!');
+		} else {
 			redirect('index.php?p=142&s=Shared device approved successfully!');
-		} catch (Exception $e) {
+		}
+	} catch (Exception $e) {
+		if (isset($_POST['return_to']) && $_POST['return_to'] == '143' && isset($_POST['mac']) && isset($_POST['unique_id']) && isset($_POST['disk_id'])) {
+			redirect('index.php?p=143&mac=' . urlencode($_POST['mac']) . '&unique_id=' . urlencode($_POST['unique_id']) . '&disk_id=' . urlencode($_POST['disk_id']) . '&e=' . $e->getMessage());
+		} else {
 			redirect('index.php?p=142&e=' . $e->getMessage());
 		}
 	}
+}
 
 	/*
 	 * UnapproveSharedDevice
@@ -1933,9 +1942,18 @@ class D
 			postWebhookMessage("unapproved shared device `{$hwShort}`");
 			rapLog("unapproved shared device: {$hwShort}");
 
+		// Redirect back to device details if we came from there, otherwise to shared devices list
+		if (isset($_POST['return_to']) && $_POST['return_to'] == '143') {
+			redirect('index.php?p=143&mac=' . urlencode($mac) . '&unique_id=' . urlencode($unique_id) . '&disk_id=' . urlencode($disk_id) . '&s=Shared device unapproved successfully!');
+		} else {
 			redirect('index.php?p=142&s=Shared device unapproved successfully!');
-		} catch (Exception $e) {
+		}
+	} catch (Exception $e) {
+		if (isset($_POST['return_to']) && $_POST['return_to'] == '143' && isset($_POST['mac']) && isset($_POST['unique_id']) && isset($_POST['disk_id'])) {
+			redirect('index.php?p=143&mac=' . urlencode($_POST['mac']) . '&unique_id=' . urlencode($_POST['unique_id']) . '&disk_id=' . urlencode($_POST['disk_id']) . '&e=' . $e->getMessage());
+		} else {
 			redirect('index.php?p=142&e=' . $e->getMessage());
 		}
 	}
+}
 }

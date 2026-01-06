@@ -160,6 +160,7 @@ function setTitle($p)
 		140 => 'Clans',
 		141 => 'Edit Clan',
 		142 => 'Shared Devices',
+		143 => 'Device Details',
 	];
 	if (isset($namesRipple[$p])) {
 		return __maketitle('Akatsuki', $namesRipple[$p]);

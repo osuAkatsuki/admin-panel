@@ -889,6 +889,62 @@ class P
 			echo '</ul></td></tr>';
 			echo '</tbody></form>';
 			echo '</table>';
+
+		// Hardware Devices Section
+		$userDevices = $GLOBALS['db']->fetchAll("
+			SELECT
+				hw.mac,
+				hw.unique_id,
+				hw.disk_id,
+				SUM(hw.occurencies) AS total_occurrences,
+				MAX(hw.created_at) AS last_used,
+				COUNT(DISTINCT hw2.userid) AS user_count
+			FROM hw_user hw
+			LEFT JOIN hw_user hw2 ON hw.mac = hw2.mac AND hw.unique_id = hw2.unique_id AND hw.disk_id = hw2.disk_id
+			WHERE hw.userid = ?
+			GROUP BY hw.mac, hw.unique_id, hw.disk_id
+			ORDER BY last_used DESC
+			LIMIT 10
+		", [$_GET['id']]);
+
+		if (!empty($userDevices)) {
+			echo '<br><p align="center"><font size=4><i class="fa fa-laptop"></i> Hardware Devices</font></p>';
+			echo '<table class="table table-striped table-hover table-75-center">';
+			echo '<thead><tr>';
+			echo '<th class="text-center">Hardware ID</th>';
+			echo '<th class="text-center">Users on Device</th>';
+			echo '<th class="text-center">Occurrences</th>';
+			echo '<th class="text-center">Last Used</th>';
+			echo '<th class="text-center">Actions</th>';
+			echo '</tr></thead>';
+			echo '<tbody>';
+
+			foreach ($userDevices as $device) {
+				$hwHash = substr($device['mac'], 0, 8) . '...' . substr($device['unique_id'], 0, 8) . '...' . substr($device['disk_id'], 0, 8);
+				$lastUsed = date('Y-m-d H:i', strtotime($device['last_used']));
+				$multiUser = $device['user_count'] > 1;
+				$userCountColor = $multiUser ? 'warning' : 'success';
+
+				echo '<tr>';
+				echo '<td class="text-center"><code>' . htmlspecialchars($hwHash) . '</code></td>';
+				echo '<td class="text-center">';
+				if ($multiUser) {
+					echo '<span class="label label-' . $userCountColor . '">' . $device['user_count'] . ' users</span>';
+				} else {
+					echo '<span class="label label-' . $userCountColor . '">1 user</span>';
+				}
+				echo '</td>';
+				echo '<td class="text-center">' . $device['total_occurrences'] . '</td>';
+				echo '<td class="text-center">' . $lastUsed . '</td>';
+				echo '<td class="text-center">';
+				echo '<a href="index.php?p=143&mac=' . urlencode($device['mac']) . '&unique_id=' . urlencode($device['unique_id']) . '&disk_id=' . urlencode($device['disk_id']) . '" class="btn btn-xs btn-info">View Details</a>';
+				echo '</td>';
+				echo '</tr>';
+			}
+
+			echo '</tbody></table>';
+		}
+
 			echo '<div class="text-center table-50-center bottom-padded">
 					<button type="submit" form="system-settings-form" class="btn btn-primary">Save changes</button><br><br>
 					<div class="bottom-fixed">
@@ -3638,11 +3694,7 @@ class P
 
 			echo '<tr>';
 			echo '<td><code>' . htmlspecialchars($hwHash) . '</code></td>';
-			echo '<td><a href="#" onclick="showHardwareUsers(\'' .
-				htmlspecialchars($hw['mac']) . '\', \'' .
-				htmlspecialchars($hw['unique_id']) . '\', \'' .
-				htmlspecialchars($hw['disk_id']) .
-				'\'); return false;"><strong>' . $hw['user_count'] . ' users</strong></a></td>';
+			echo '<td><a href="index.php?p=143&mac=' . urlencode($hw['mac']) . '&unique_id=' . urlencode($hw['unique_id']) . '&disk_id=' . urlencode($hw['disk_id']) . '"><strong>' . $hw['user_count'] . ' users</strong></a></td>';
 			echo '<td><span class="label label-' . $statusColor . '">' . $statusText . '</span></td>';
 			echo '<td>' . htmlspecialchars($approvedBy) . '</td>';
 			echo '<td>' . htmlspecialchars($approvedAt) . '</td>';
@@ -3831,5 +3883,190 @@ class P
 			$("#hardwareDetailsModal").modal("show");
 		}
 		</script>';
+	}
+
+	public static function AdminDeviceDetails()
+	{
+		// Get hardware parameters
+		if (!isset($_GET['mac']) || !isset($_GET['unique_id']) || !isset($_GET['disk_id'])) {
+			redirect('index.php?p=142&e=Invalid device parameters');
+			return;
+		}
+
+		$mac = $_GET['mac'];
+		$unique_id = $_GET['unique_id'];
+		$disk_id = $_GET['disk_id'];
+
+		// Get approval status
+		$approvalData = $GLOBALS['db']->fetch("
+			SELECT id, approved_by_admin_id, approved_at, approval_reason
+			FROM shared_devices
+			WHERE mac = ? AND unique_id = ? AND disk_id = ?
+			LIMIT 1
+		", [$mac, $unique_id, $disk_id]);
+
+		$isApproved = !empty($approvalData);
+
+		// Get users associated with this device
+		$users = $GLOBALS['db']->fetchAll("
+			SELECT
+				u.id,
+				u.username,
+				u.privileges,
+				SUM(hw.occurencies) AS total_occurrences,
+				MAX(hw.activated) AS has_activated,
+				MAX(hw.created_at) AS last_used
+			FROM hw_user hw
+			INNER JOIN users u ON hw.userid = u.id
+			WHERE hw.mac = ? AND hw.unique_id = ? AND hw.disk_id = ?
+			GROUP BY u.id, u.username, u.privileges
+			ORDER BY total_occurrences DESC
+		", [$mac, $unique_id, $disk_id]);
+
+		// Print page
+		echo '<div id="wrapper">';
+		printAdminSidebar();
+		echo '<div id="page-content-wrapper">';
+
+		// Maintenance check
+		self::MaintenanceStuff();
+
+		// Print Success if set
+		if (isset($_GET['s']) && !empty($_GET['s'])) {
+			self::SuccessMessageStaccah($_GET['s']);
+		}
+
+		// Print Exception if set
+		if (isset($_GET['e']) && !empty($_GET['e'])) {
+			self::ExceptionMessageStaccah($_GET['e']);
+		}
+
+		echo '<p align="center"><font size=5><i class="fa fa-laptop"></i> Device Details</font></p>';
+
+		// Back button
+		echo '<p align="center">';
+		echo '<a href="index.php?p=142" class="btn btn-default"><i class="fa fa-arrow-left"></i> Back to Shared Devices</a>';
+		echo '</p>';
+
+		// Device info panel
+		$statusColor = $isApproved ? 'success' : 'warning';
+		$statusText = $isApproved ? 'Approved' : 'Unapproved';
+
+		echo '<div class="panel panel-' . $statusColor . '">';
+		echo '<div class="panel-heading"><h3 class="panel-title">Hardware Information</h3></div>';
+		echo '<div class="panel-body">';
+		echo '<table class="table">';
+		echo '<tr><th width="20%">MAC Address</th><td><code>' . htmlspecialchars($mac) . '</code></td></tr>';
+		echo '<tr><th>Unique ID</th><td><code>' . htmlspecialchars($unique_id) . '</code></td></tr>';
+		echo '<tr><th>Disk ID</th><td><code>' . htmlspecialchars($disk_id) . '</code></td></tr>';
+		echo '<tr><th>Status</th><td><span class="label label-' . $statusColor . '">' . $statusText . '</span></td></tr>';
+
+		if ($isApproved) {
+			$adminData = $GLOBALS['db']->fetch(
+				"SELECT username FROM users WHERE id = ? LIMIT 1",
+				[$approvalData['approved_by_admin_id']]
+			);
+			$adminUsername = $adminData ? current($adminData) : 'Unknown';
+			$approvedAt = date('Y-m-d H:i', strtotime($approvalData['approved_at']));
+
+			echo '<tr><th>Approved By</th><td>' . htmlspecialchars($adminUsername) . '</td></tr>';
+			echo '<tr><th>Approved At</th><td>' . htmlspecialchars($approvedAt) . '</td></tr>';
+			if ($approvalData['approval_reason']) {
+				echo '<tr><th>Approval Reason</th><td>' . htmlspecialchars($approvalData['approval_reason']) . '</td></tr>';
+			}
+		}
+
+		echo '</table>';
+
+		// Action buttons
+		if ($isApproved) {
+			echo '<form action="submit.php" method="POST" style="display:inline;">';
+			echo '<input name="csrf" type="hidden" value="' . csrfToken() . '">';
+			echo '<input name="action" value="unapproveSharedDevice" type="hidden">';
+			echo '<input name="return_to" value="143" type="hidden">';
+			echo '<input name="mac" value="' . htmlspecialchars($mac) . '" type="hidden">';
+			echo '<input name="unique_id" value="' . htmlspecialchars($unique_id) . '" type="hidden">';
+			echo '<input name="disk_id" value="' . htmlspecialchars($disk_id) . '" type="hidden">';
+			echo '<button type="submit" class="btn btn-warning">Unapprove Device</button>';
+			echo '</form>';
+		} else {
+			echo '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#approveDeviceModal">Approve Device</button>';
+		}
+
+		echo '</div></div>';
+
+		// Users table
+		echo '<div class="panel panel-primary">';
+		echo '<div class="panel-heading"><h3 class="panel-title">Associated Users (' . count($users) . ')</h3></div>';
+		echo '<div class="panel-body">';
+
+		if (empty($users)) {
+			echo '<p class="text-center">No users found for this hardware.</p>';
+		} else {
+			echo '<table class="table table-striped table-hover">';
+			echo '<thead><tr>';
+			echo '<th>User ID</th>';
+			echo '<th>Username</th>';
+			echo '<th>Occurrences</th>';
+			echo '<th>Last Used</th>';
+			echo '<th>Status</th>';
+			echo '<th>Actions</th>';
+			echo '</tr></thead>';
+			echo '<tbody>';
+
+			foreach ($users as $user) {
+				$userStatusColor = ($user['privileges'] & 1) ? 'success' : 'danger';
+				$userStatusText = ($user['privileges'] & 1) ? 'Active' : 'Restricted/Banned';
+				$lastUsed = date('Y-m-d H:i', strtotime($user['last_used']));
+
+				echo '<tr>';
+				echo '<td>' . $user['id'] . '</td>';
+				echo '<td><a href="index.php?p=103&id=' . $user['id'] . '">' . htmlspecialchars($user['username']) . '</a></td>';
+				echo '<td>' . $user['total_occurrences'] . '</td>';
+				echo '<td>' . $lastUsed . '</td>';
+				echo '<td><span class="label label-' . $userStatusColor . '">' . $userStatusText . '</span></td>';
+				echo '<td><a href="index.php?p=103&id=' . $user['id'] . '" class="btn btn-xs btn-primary">View Profile</a></td>';
+				echo '</tr>';
+			}
+
+			echo '</tbody></table>';
+		}
+
+		echo '</div></div>';
+
+		echo '</div></div>';
+
+		// Approve modal
+		echo '
+		<div class="modal fade" id="approveDeviceModal" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+						<h4 class="modal-title">Approve Shared Device</h4>
+					</div>
+					<form action="submit.php" method="POST">
+						<input name="csrf" type="hidden" value="' . csrfToken() . '">
+						<input name="action" value="approveSharedDevice" type="hidden">
+						<input name="return_to" value="143" type="hidden">
+						<input name="mac" value="' . htmlspecialchars($mac) . '" type="hidden">
+						<input name="unique_id" value="' . htmlspecialchars($unique_id) . '" type="hidden">
+						<input name="disk_id" value="' . htmlspecialchars($disk_id) . '" type="hidden">
+						<div class="modal-body">
+							<p>Are you sure you want to approve this hardware as a shared device?</p>
+							<div class="form-group">
+								<label>Reason (optional)</label>
+								<textarea name="reason" class="form-control" rows="3"
+									placeholder="E.g., Internet cafe, family computer, etc."></textarea>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							<button type="submit" class="btn btn-success">Approve</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>';
 	}
 }
