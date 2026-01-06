@@ -71,20 +71,6 @@ function redirect($url)
 
 
 /*
- * outputVariable
- * Output $v variable to $fn file
- * Only for debugging purposes
- *
- * @param (string) ($fn) Output file name
- * @param ($v) Variable to output
- */
-function outputVariable($v, $fn = "/tmp/ripple.txt")
-{
-	file_put_contents($fn, var_export($v, true), FILE_APPEND);
-}
-
-
-/*
  * randomString
  * Generate a random string.
  * Used to get screenshot id in osu-screenshot.php
@@ -547,26 +533,6 @@ function countryCodeToReadable($cc)
 }
 
 
-/*
- * getAllowedUsers()
- * Get an associative array, saying whether a user is banned or not on Ripple.
- *
- * @returns (array) see above.
-
-function getAllowedUsers($by = 'username') {
-	// get all the allowed users in Ripple
-	$allowedUsersRaw = $GLOBALS['db']->fetchAll('SELECT '.$by.', allowed FROM users');
-	// Future array containing all the allowed users.
-	$allowedUsers = [];
-	// Fill up the $allowedUsers array.
-	foreach ($allowedUsersRaw as $u) {
-		$allowedUsers[$u[$by]] = ($u['allowed'] == '1' ? true : false);
-	}
-	// Free up some space in the ram by deleting the data in $allowedUsersRaw.
-	unset($allowedUsersRaw);
-
-	return $allowedUsers;
-}*/
 /****************************************
  **	 LOGIN/LOGOUT/SESSION FUNCTIONS	   **
  ****************************************/
@@ -971,51 +937,6 @@ function getScoreMods($m)
 }
 
 
-/*
- * calculateAccuracy
- * Calculates the accuracy of a score in a given gamemode.
- *
- * @param int $n300 The number of 300 hits in a song.
- * @param int $n100 The number of 100 hits in a song.
- * @param int $n50 The number of 50 hits in a song.
- * @param int $ngeki The number of geki hits in a song.
- * @param int $nkatu The number of katu hits in a song.
- * @param int $nmiss The number of missed hits in a song.
- * @param int $mode The game mode.
- */
-function calculateAccuracy($n300, $n100, $n50, $ngeki, $nkatu, $nmiss, $mode)
-{
-	// For reference, see: http://osu.ppy.sh/wiki/Accuracy
-	switch ($mode) {
-		case 0:
-			$totalPoints = ($n50 * 50 + $n100 * 100 + $n300 * 300);
-			$maxHits = ($nmiss + $n50 + $n100 + $n300);
-			$accuracy = $totalPoints / ($maxHits * 300);
-			break;
-		case 1:
-			// Please note this is not what is written on the wiki.
-			// However, what was written on the wiki didn't make any sense at all.
-			$totalPoints = ($n100 * 50 + $n300 * 100);
-			$maxHits = ($nmiss + $n100 + $n300);
-			$accuracy = $totalPoints / ($maxHits * 100);
-			break;
-		case 2:
-			$fruits = $n300 + $n100 + $n50;
-			$totalFruits = $fruits + $nmiss + $nkatu;
-			$accuracy = $fruits / $totalFruits;
-			break;
-		case 3:
-			$totalPoints = ($n50 * 50 + $n100 * 100 + $nkatu * 200 + $n300 * 300 + $ngeki * 300);
-			$maxHits = ($nmiss + $n50 + $n100 + $n300 + $ngeki + $nkatu);
-			$accuracy = $totalPoints / ($maxHits * 300);
-			break;
-	}
-
-	return $accuracy * 100; // we're doing * 100 because $accuracy is like 0.9823[...]
-
-}
-
-
 /**************************
  **   OTHER   FUNCTIONS  **
  **************************/
@@ -1052,30 +973,6 @@ function get_contents_http($url)
 
 	return $output;
 }
-function post_content_http($url, $content, $timeout = 10)
-{
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $url);
-	// Include header in result? (0 = yes, 1 = no)
-	curl_setopt($ch, CURLOPT_HEADER, 0);
-	// Should cURL return or print out the data? (true = return, false = print)
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	// POST data
-	curl_setopt($ch, CURLOPT_POST, true);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
-	// Timeout in seconds
-	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-	// Download the given URL, and return output
-	$output = curl_exec($ch);
-	// Close the cURL resource, and free system resources
-	curl_close($ch);
-
-	return $output;
-}
-
-
 /*
  * checkUserExists
  * Check if given user exists
@@ -1167,17 +1064,6 @@ function checkMustHave($page)
 }
 
 
-/*
- * accuracy
- * Convert accuracy to string, having 2 decimal digits.
- *
- * @param (float) accuracy
- * @return (string) accuracy, formatted into a string
- */
-function accuracy($acc)
-{
-	return number_format(round($acc, 2), 2);
-}
 function addError($e)
 {
 	startSessionIfNotStarted();
@@ -1278,31 +1164,6 @@ function postWebhookMessage($message, $userID = -1)
 	postJsonCurl(DISCORD_WEBHOOK_URL, $data, 5);
 }
 
-/*
- * bloodcatDirectString()
- * Return a osu!direct-like string for a specific song
- * from a bloodcat song array
- *
- * @param (array) ($arr) Bloodcat data array
- * @param (bool) ($np) If true, output chat np beatmap, otherwise output osu direct search beatmap
- * @return (string) osu!direct-like string
- */
-function bloodcatDirectString($arr, $np = false)
-{
-	$s = '';
-	if ($np) {
-		$s = $arr['id'] . '.osz|' . $arr['artist'] . '|' . $arr['title'] . '|' . $arr['creator'] . '|' . $arr['status'] . '|10.00000|' . $arr['synced'] . '|' . $arr['id'] . '|' . $arr['id'] . '|0|0|0|';
-	} else {
-		$s = $arr['id'] . '|' . $arr['artist'] . '|' . $arr['title'] . '|' . $arr['creator'] . '|' . $arr['status'] . '|10.00000|' . $arr['synced'] . '|' . $arr['id'] . '|' . $arr['beatmaps'][0]['id'] . '|0|0|0||';
-		foreach ($arr['beatmaps'] as $diff) {
-			$s .= $diff['name'] . '@' . $diff['mode'] . ',';
-		}
-		$s = rtrim($s, ',');
-		$s .= '|';
-	}
-	return $s;
-}
-
 function printBubble($userID, $username, $message, $time, $through)
 {
 	echo '
@@ -1318,27 +1179,6 @@ function rapLog($message, $userID = -1, $through = "RAP")
 	if ($userID == -1)
 		$userID = $_SESSION["userid"];
 	$GLOBALS["db"]->execute("INSERT INTO rap_logs (id, userid, text, datetime, through) VALUES (NULL, ?, ?, ?, ?);", [$userID, $message, time(), $through]);
-}
-
-function readableRank($rank)
-{
-	switch ($rank) {
-		case 1:
-			return "normal";
-			break;
-		case 2:
-			return "supporter";
-			break;
-		case 3:
-			return "developer";
-			break;
-		case 4:
-			return "community manager";
-			break;
-		default:
-			return "akerino";
-			break;
-	}
 }
 
 function getUserPrivileges($userID)
@@ -1402,21 +1242,6 @@ function setYCookie($userID)
 {
 	$identityToken = getIdentityToken($userID);
 	setcookie("y", $identityToken, time() + 60 * 60 * 24 * 30 * 6, "/");	// y of yee
-}
-
-function UNIXTimestampToOsuDate($unix)
-{
-	return date("ymdHis", $unix);
-}
-
-function getDonorPrice($months)
-{
-	return number_format(pow($months * 30 * 0.2, 0.70), 2, ".", "");
-}
-
-function getDonorMonths($price)
-{
-	return round(pow($price, (1 / 0.70)) / 30 / 0.2);
 }
 
 function unsetCookie($name)
