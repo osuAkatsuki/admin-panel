@@ -3121,9 +3121,9 @@ class P
 				$searchParams[] = '%' . $searchOwner . '%';
 			}
 
-			$whereClause = '';
+			$havingClause = '';
 			if (!empty($searchConditions)) {
-				$whereClause = 'WHERE ' . implode(' AND ', $searchConditions);
+				$havingClause = 'WHERE ' . implode(' AND ', $searchConditions);
 			}
 
 			// Pagination setup
@@ -3133,7 +3133,7 @@ class P
 			$offset = ($page - 1) * $pageInterval;
 
 			// Get total count of clans with search
-			$countQuery = 'SELECT COUNT(*) FROM clans c LEFT JOIN users o ON c.owner = o.id ' . $whereClause;
+			$countQuery = 'SELECT COUNT(*) FROM clans c LEFT JOIN users o ON c.owner = o.id ' . $havingClause;
 			$totalClans = current($GLOBALS['db']->fetch($countQuery, $searchParams));
 			$totalPages = max(1, ceil($totalClans / $pageInterval)); // Ensure at least 1 page
 
@@ -3153,7 +3153,7 @@ class P
 					FROM clans c
 					LEFT JOIN users u ON c.id = u.clan_id
 					LEFT JOIN users o ON c.owner = o.id
-					' . $whereClause . '
+					' . $havingClause . '
 					GROUP BY c.id
 					ORDER BY member_count DESC, c.name ASC
 					LIMIT ' . $pageInterval . ' OFFSET ' . $offset;
@@ -3511,11 +3511,11 @@ class P
 		$filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
 
 		// Build query based on filter
-		$whereClause = '';
+		$havingClause = '';
 		if ($filter == 'approved') {
-			$whereClause = 'HAVING is_shared_device = 1';
+			$havingClause = 'AND CASE WHEN sd.id IS NOT NULL THEN 1 ELSE 0 END = 1';
 		} elseif ($filter == 'unapproved') {
-			$whereClause = 'HAVING is_shared_device = 0';
+			$havingClause = 'AND CASE WHEN sd.id IS NOT NULL THEN 1 ELSE 0 END = 0';
 		}
 
 		// Fetch all hardware entries with multiple users
@@ -3532,7 +3532,8 @@ class P
 			FROM hw_user hw
 			LEFT JOIN shared_devices sd ON hw.mac = sd.mac AND hw.unique_id = sd.unique_id AND hw.disk_id = sd.disk_id
 			GROUP BY hw.mac, hw.unique_id, hw.disk_id
-			$whereClause
+			HAVING COUNT(DISTINCT hw.userid) > 1
+			$havingClause
 			ORDER BY user_count DESC, is_shared_device ASC
 			LIMIT 200
 		");
