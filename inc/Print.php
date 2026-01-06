@@ -3651,7 +3651,7 @@ class P
 			) AS subquery
 		"));
 
-		echo '<div class="row" style="justify-content: center;">';
+		echo '<div class="row" style="display: flex; justify-content: center;">';
 		printAdminPanel('primary', 'fa fa-laptop fa-5x', $totalMultiUser, 'Hardware with Multiple Users');
 		printAdminPanel('success', 'fa fa-check fa-5x', $approvedCount, 'Approved Shared Devices');
 		printAdminPanel('warning', 'fa fa-exclamation-triangle fa-5x', $totalMultiUser - $approvedCount, 'Unapproved Devices');
