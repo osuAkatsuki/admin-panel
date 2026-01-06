@@ -907,18 +907,20 @@ class P
 			LIMIT 10
 		", [$_GET['id']]);
 
-		if (!empty($userDevices)) {
-			echo '<br><p align="center"><font size=4><i class="fa fa-laptop"></i> Hardware Devices</font></p>';
-			echo '<table class="table table-striped table-hover table-75-center">';
-			echo '<thead><tr>';
-			echo '<th class="text-center">Hardware ID</th>';
-			echo '<th class="text-center">Users on Device</th>';
-			echo '<th class="text-center">Occurrences</th>';
-			echo '<th class="text-center">Last Used</th>';
-			echo '<th class="text-center">Actions</th>';
-			echo '</tr></thead>';
-			echo '<tbody>';
+		echo '<p align="center"><font size=4><i class="fa fa-laptop"></i> Hardware Devices</font></p>';
+		echo '<table class="table table-striped table-hover table-75-center">';
+		echo '<thead><tr>';
+		echo '<th class="text-center">Hardware ID</th>';
+		echo '<th class="text-center">Users on Device</th>';
+		echo '<th class="text-center">Occurrences</th>';
+		echo '<th class="text-center">Last Used</th>';
+		echo '<th class="text-center">Actions</th>';
+		echo '</tr></thead>';
+		echo '<tbody>';
 
+		if (empty($userDevices)) {
+			echo '<tr><td colspan="5" class="text-center text-muted">No hardware devices found for this user.</td></tr>';
+		} else {
 			foreach ($userDevices as $device) {
 				$hwHash = substr($device['mac'], 0, 8) . '...' . substr($device['unique_id'], 0, 8) . '...' . substr($device['disk_id'], 0, 8);
 				$lastUsed = date('Y-m-d H:i', strtotime($device['last_used']));
@@ -941,9 +943,10 @@ class P
 				echo '</td>';
 				echo '</tr>';
 			}
-
-			echo '</tbody></table>';
 		}
+
+		echo '</tbody></table>';
+
 
 			echo '<div class="text-center table-50-center bottom-padded">
 					<button type="submit" form="system-settings-form" class="btn btn-primary">Save changes</button><br><br>
