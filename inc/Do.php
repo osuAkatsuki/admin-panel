@@ -1878,15 +1878,15 @@ class D
 			$reason = isset($_POST['reason']) && !empty($_POST['reason']) ? $_POST['reason'] : null;
 			$adminId = $_SESSION['userid'];
 
-			// Update all hw_user entries with this hardware combination
+			// Insert into shared_devices table (or update if already exists)
 			$GLOBALS['db']->execute(
-				"UPDATE hw_user SET
-					is_shared_device = 1,
-					approved_by_admin_id = ?,
-					approved_at = NOW(),
-					approval_reason = ?
-				WHERE mac = ? AND unique_id = ? AND disk_id = ?",
-				[$adminId, $reason, $mac, $unique_id, $disk_id]
+				"INSERT INTO shared_devices (mac, unique_id, disk_id, approved_by_admin_id, approval_reason)
+				VALUES (?, ?, ?, ?, ?)
+				ON DUPLICATE KEY UPDATE
+					approved_by_admin_id = VALUES(approved_by_admin_id),
+					approved_at = CURRENT_TIMESTAMP,
+					approval_reason = VALUES(approval_reason)",
+				[$mac, $unique_id, $disk_id, $adminId, $reason]
 			);
 
 			// Get count of affected users
@@ -1922,14 +1922,9 @@ class D
 			$unique_id = $_POST['unique_id'];
 			$disk_id = $_POST['disk_id'];
 
-			// Update all hw_user entries with this hardware combination
+			// Delete from shared_devices table
 			$GLOBALS['db']->execute(
-				"UPDATE hw_user SET
-					is_shared_device = 0,
-					approved_by_admin_id = NULL,
-					approved_at = NULL,
-					approval_reason = NULL
-				WHERE mac = ? AND unique_id = ? AND disk_id = ?",
+				"DELETE FROM shared_devices WHERE mac = ? AND unique_id = ? AND disk_id = ?",
 				[$mac, $unique_id, $disk_id]
 			);
 

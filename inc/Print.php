@@ -3513,9 +3513,9 @@ class P
 		// Build query based on filter
 		$whereClause = '';
 		if ($filter == 'approved') {
-			$whereClause = 'HAVING MAX(hw.is_shared_device) = 1';
+			$whereClause = 'HAVING is_shared_device = 1';
 		} elseif ($filter == 'unapproved') {
-			$whereClause = 'HAVING MAX(hw.is_shared_device) = 0';
+			$whereClause = 'HAVING is_shared_device = 0';
 		}
 
 		// Fetch all hardware entries with multiple users
@@ -3525,11 +3525,12 @@ class P
 				hw.unique_id,
 				hw.disk_id,
 				COUNT(DISTINCT hw.userid) AS user_count,
-				MAX(hw.is_shared_device) AS is_shared_device,
-				MAX(hw.approved_by_admin_id) AS approved_by_admin_id,
-				MAX(hw.approved_at) AS approved_at,
-				MAX(hw.approval_reason) AS approval_reason
+				CASE WHEN sd.id IS NOT NULL THEN 1 ELSE 0 END AS is_shared_device,
+				sd.approved_by_admin_id,
+				sd.approved_at,
+				sd.approval_reason
 			FROM hw_user hw
+			LEFT JOIN shared_devices sd ON hw.mac = sd.mac AND hw.unique_id = sd.unique_id AND hw.disk_id = sd.disk_id
 			GROUP BY hw.mac, hw.unique_id, hw.disk_id
 			$whereClause
 			ORDER BY user_count DESC, is_shared_device ASC
@@ -3577,7 +3578,7 @@ class P
 			SELECT COUNT(*) FROM (
 				SELECT hw.mac, hw.unique_id, hw.disk_id
 				FROM hw_user hw
-				WHERE hw.is_shared_device = 1
+				INNER JOIN shared_devices sd ON hw.mac = sd.mac AND hw.unique_id = sd.unique_id AND hw.disk_id = sd.disk_id
 				GROUP BY hw.mac, hw.unique_id, hw.disk_id
 				HAVING COUNT(DISTINCT hw.userid) > 1
 			) AS subquery
