@@ -22,11 +22,13 @@ require_once $df . '/pages/Login.php';
 require_once $df . '/pages/Clans.php';
 require_once $df . '/pages/EditClan.php';
 require_once $df . '/pages/SharedDevices.php';
+require_once $df . '/pages/DeviceDetails.php';
 $pages = [
 	new Login(),
 	new Clans(),
 	new EditClan(),
 	new SharedDevices(),
+	new DeviceDetails(),
 ];
 // Set timezone to America/Toronto
 date_default_timezone_set('America/Toronto');
