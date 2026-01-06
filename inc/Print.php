@@ -3519,20 +3519,30 @@ class P
 		}
 
 		// Fetch all hardware entries with multiple users
-		$multiUserHardware = $GLOBALS['db']->fetchAll("
-			SELECT
-				hw.mac,
-				hw.unique_id,
-				hw.disk_id,
-				COUNT(DISTINCT hw.userid) AS user_count,
+		// Group first (using composite index), then join to avoid sorting 6.56M rows
+		$multiUserHardware = $GLOBALS["db"]->fetchAll("
+			WITH hw_grouped AS (
+				SELECT mac, unique_id, disk_id,
+				       COUNT(DISTINCT userid) AS user_count
+				FROM hw_user
+				GROUP BY mac, unique_id, disk_id
+				HAVING COUNT(DISTINCT userid) > 1
+			)
+			 SELECT
+				hw_grouped.mac,
+				hw_grouped.unique_id,
+				hw_grouped.disk_id,
+				hw_grouped.user_count,
 				CASE WHEN sd.id IS NOT NULL THEN 1 ELSE 0 END AS is_shared_device,
 				sd.approved_by_admin_id,
 				sd.approved_at,
 				sd.approval_reason
-			FROM hw_user hw
-			LEFT JOIN shared_devices sd ON hw.mac = sd.mac AND hw.unique_id = sd.unique_id AND hw.disk_id = sd.disk_id
-			GROUP BY hw.mac, hw.unique_id, hw.disk_id
-			HAVING COUNT(DISTINCT hw.userid) > 1
+			FROM hw_grouped
+			LEFT JOIN shared_devices sd
+				ON hw_grouped.mac = sd.mac
+				AND hw_grouped.unique_id = sd.unique_id
+				AND hw_grouped.disk_id = sd.disk_id
+			WHERE 1=1
 			$havingClause
 			ORDER BY user_count DESC, is_shared_device ASC
 			LIMIT 200
