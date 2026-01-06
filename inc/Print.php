@@ -3500,4 +3500,324 @@ class P
 			redirect('index.php?p=140&e=' . $e->getMessage());
 		}
 	}
+
+	/**
+	 * AdminSharedDevices
+	 * Prints the admin panel shared devices management page
+	 */
+	public static function AdminSharedDevices()
+	{
+		// Get filter parameters
+		$filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
+
+		// Build query based on filter
+		$whereClause = '';
+		if ($filter == 'approved') {
+			$whereClause = 'HAVING MAX(hw.is_shared_device) = 1';
+		} elseif ($filter == 'unapproved') {
+			$whereClause = 'HAVING MAX(hw.is_shared_device) = 0';
+		}
+
+		// Fetch all hardware entries with multiple users
+		$multiUserHardware = $GLOBALS['db']->fetchAll("
+			SELECT
+				hw.mac,
+				hw.unique_id,
+				hw.disk_id,
+				COUNT(DISTINCT hw.userid) AS user_count,
+				MAX(hw.is_shared_device) AS is_shared_device,
+				MAX(hw.approved_by_admin_id) AS approved_by_admin_id,
+				MAX(hw.approved_at) AS approved_at,
+				MAX(hw.approval_reason) AS approval_reason
+			FROM hw_user hw
+			GROUP BY hw.mac, hw.unique_id, hw.disk_id
+			$whereClause
+			ORDER BY user_count DESC, is_shared_device ASC
+			LIMIT 200
+		");
+
+		// Print page
+		echo '<div id="wrapper">';
+		printAdminSidebar();
+		echo '<div id="page-content-wrapper">';
+
+		// Maintenance check
+		self::MaintenanceStuff();
+
+		// Print Success if set
+		if (isset($_GET['s']) && !empty($_GET['s'])) {
+			self::SuccessMessageStaccah($_GET['s']);
+		}
+
+		// Print Exception if set
+		if (isset($_GET['e']) && !empty($_GET['e'])) {
+			self::ExceptionMessageStaccah($_GET['e']);
+		}
+
+		echo '<p align="center"><font size=5><i class="fa fa-laptop"></i> Shared Device Management</font></p>';
+
+		// Filter buttons
+		echo '<p align="center">';
+		echo '<a href="index.php?p=138&filter=all" class="btn btn-' . ($filter == 'all' ? 'primary' : 'default') . '">All Devices</a> ';
+		echo '<a href="index.php?p=138&filter=unapproved" class="btn btn-' . ($filter == 'unapproved' ? 'warning' : 'default') . '">Unapproved Only</a> ';
+		echo '<a href="index.php?p=138&filter=approved" class="btn btn-' . ($filter == 'approved' ? 'success' : 'default') . '">Approved Only</a>';
+		echo '</p>';
+
+		// Stats panels
+		$totalMultiUser = current($GLOBALS['db']->fetch("
+			SELECT COUNT(*) FROM (
+				SELECT hw.mac, hw.unique_id, hw.disk_id
+				FROM hw_user hw
+				GROUP BY hw.mac, hw.unique_id, hw.disk_id
+				HAVING COUNT(DISTINCT hw.userid) > 1
+			) AS subquery
+		"));
+
+		$approvedCount = current($GLOBALS['db']->fetch("
+			SELECT COUNT(*) FROM (
+				SELECT hw.mac, hw.unique_id, hw.disk_id
+				FROM hw_user hw
+				WHERE hw.is_shared_device = 1
+				GROUP BY hw.mac, hw.unique_id, hw.disk_id
+				HAVING COUNT(DISTINCT hw.userid) > 1
+			) AS subquery
+		"));
+
+		echo '<div class="row">';
+		printAdminPanel('primary', 'fa fa-laptop fa-5x', $totalMultiUser, 'Hardware with Multiple Users');
+		printAdminPanel('success', 'fa fa-check fa-5x', $approvedCount, 'Approved Shared Devices');
+		printAdminPanel('warning', 'fa fa-exclamation-triangle fa-5x', $totalMultiUser - $approvedCount, 'Unapproved Devices');
+		echo '</div>';
+
+		// Hardware table
+		echo '<br>';
+		echo '<table class="table table-striped table-hover table-50-center">';
+		echo '<thead>';
+		echo '<tr>';
+		echo '<th class="text-center">Hardware ID</th>';
+		echo '<th class="text-center">User Count</th>';
+		echo '<th class="text-center">Status</th>';
+		echo '<th class="text-center">Approved By</th>';
+		echo '<th class="text-center">Approved At</th>';
+		echo '<th class="text-center">Actions</th>';
+		echo '</tr>';
+		echo '</thead>';
+		echo '<tbody>';
+
+		foreach ($multiUserHardware as $hw) {
+			$hwHash = substr($hw['mac'], 0, 8) . '...' . substr($hw['unique_id'], 0, 8) . '...' . substr($hw['disk_id'], 0, 8);
+			$isShared = $hw['is_shared_device'] == 1;
+			$statusColor = $isShared ? 'success' : 'warning';
+			$statusText = $isShared ? 'Approved' : 'Unapproved';
+
+			// Get admin username if approved
+			$approvedBy = 'N/A';
+			if ($hw['approved_by_admin_id']) {
+				$adminData = $GLOBALS['db']->fetch(
+					"SELECT username FROM users WHERE id = ? LIMIT 1",
+					[$hw['approved_by_admin_id']]
+				);
+				if ($adminData) {
+					$approvedBy = current($adminData);
+				}
+			}
+
+			$approvedAt = $hw['approved_at'] ? date('Y-m-d H:i', strtotime($hw['approved_at'])) : 'N/A';
+
+			echo '<tr>';
+			echo '<td><code>' . htmlspecialchars($hwHash) . '</code></td>';
+			echo '<td><a href="#" onclick="showHardwareUsers(\'' .
+				htmlspecialchars($hw['mac']) . '\', \'' .
+				htmlspecialchars($hw['unique_id']) . '\', \'' .
+				htmlspecialchars($hw['disk_id']) .
+				'\'); return false;"><strong>' . $hw['user_count'] . ' users</strong></a></td>';
+			echo '<td><span class="label label-' . $statusColor . '">' . $statusText . '</span></td>';
+			echo '<td>' . htmlspecialchars($approvedBy) . '</td>';
+			echo '<td>' . htmlspecialchars($approvedAt) . '</td>';
+			echo '<td>';
+
+			if ($isShared) {
+				// Show unapprove button
+				echo '<button type="button" class="btn btn-sm btn-warning" onclick="unapproveSharedDevice(\'' .
+					htmlspecialchars($hw['mac']) . '\', \'' .
+					htmlspecialchars($hw['unique_id']) . '\', \'' .
+					htmlspecialchars($hw['disk_id']) .
+					'\')">Unapprove</button>';
+			} else {
+				// Show approve button
+				echo '<button type="button" class="btn btn-sm btn-success" onclick="showApproveModal(\'' .
+					htmlspecialchars($hw['mac']) . '\', \'' .
+					htmlspecialchars($hw['unique_id']) . '\', \'' .
+					htmlspecialchars($hw['disk_id']) .
+					'\')">Approve</button>';
+			}
+
+			// View details button
+			echo ' <button type="button" class="btn btn-sm btn-info" onclick="showHardwareDetails(\'' .
+				htmlspecialchars($hw['mac']) . '\', \'' .
+				htmlspecialchars($hw['unique_id']) . '\', \'' .
+				htmlspecialchars($hw['disk_id']) . '\', \'' .
+				htmlspecialchars($hw['approval_reason'] ?? '') .
+				'\')">Details</button>';
+
+			echo '</td>';
+			echo '</tr>';
+		}
+
+		echo '</tbody>';
+		echo '</table>';
+
+		// Modals for approve/details
+		self::PrintSharedDeviceModals();
+
+		echo '</div>';
+		echo '</div>';
+	}
+
+	/**
+	 * PrintSharedDeviceModals
+	 * Prints modals for shared device management
+	 */
+	private static function PrintSharedDeviceModals()
+	{
+		// Approve modal
+		echo '
+		<div class="modal fade" id="approveSharedDeviceModal" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+						<h4 class="modal-title">Approve Shared Device</h4>
+					</div>
+					<form action="submit.php" method="POST">
+						<input name="csrf" type="hidden" value="' . csrfToken() . '">
+						<input name="action" value="approveSharedDevice" type="hidden">
+						<input name="mac" id="approve_mac" type="hidden">
+						<input name="unique_id" id="approve_unique_id" type="hidden">
+						<input name="disk_id" id="approve_disk_id" type="hidden">
+						<div class="modal-body">
+							<p>Are you sure you want to approve this hardware as a shared device?</p>
+							<div class="form-group">
+								<label>Reason (optional)</label>
+								<textarea name="reason" class="form-control" rows="3"
+									placeholder="E.g., Internet cafe, family computer, etc."></textarea>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							<button type="submit" class="btn btn-success">Approve</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<!-- Hardware Users Modal -->
+		<div class="modal fade" id="hardwareUsersModal" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+						<h4 class="modal-title">Users on This Hardware</h4>
+					</div>
+					<div class="modal-body">
+						<div id="hardwareUsersContent">
+							<p class="text-center"><i class="fa fa-spinner fa-spin"></i> Loading...</p>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Hardware Details Modal -->
+		<div class="modal fade" id="hardwareDetailsModal" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+						<h4 class="modal-title">Hardware Details</h4>
+					</div>
+					<div class="modal-body">
+						<dl class="dl-horizontal">
+							<dt>MAC Hash:</dt>
+							<dd id="detail_mac"></dd>
+							<dt>Unique ID Hash:</dt>
+							<dd id="detail_unique_id"></dd>
+							<dt>Disk ID Hash:</dt>
+							<dd id="detail_disk_id"></dd>
+							<dt>Approval Reason:</dt>
+							<dd id="detail_reason"></dd>
+						</dl>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+		function showApproveModal(mac, unique_id, disk_id) {
+			$("#approve_mac").val(mac);
+			$("#approve_unique_id").val(unique_id);
+			$("#approve_disk_id").val(disk_id);
+			$("#approveSharedDeviceModal").modal("show");
+		}
+
+		function unapproveSharedDevice(mac, unique_id, disk_id) {
+			if (confirm("Are you sure you want to unapprove this shared device?")) {
+				var form = document.createElement("form");
+				form.method = "POST";
+				form.action = "submit.php";
+
+				var fields = {
+					csrf: "' . csrfToken() . '",
+					action: "unapproveSharedDevice",
+					mac: mac,
+					unique_id: unique_id,
+					disk_id: disk_id
+				};
+
+				for (var key in fields) {
+					var input = document.createElement("input");
+					input.type = "hidden";
+					input.name = key;
+					input.value = fields[key];
+					form.appendChild(input);
+				}
+
+				document.body.appendChild(form);
+				form.submit();
+			}
+		}
+
+		function showHardwareUsers(mac, unique_id, disk_id) {
+			$("#hardwareUsersModal").modal("show");
+			$("#hardwareUsersContent").html("<p class=\"text-center\"><i class=\"fa fa-spinner fa-spin\"></i> Loading...</p>");
+
+			$.ajax({
+				url: "api/get_hardware_users.php",
+				method: "GET",
+				data: { mac: mac, unique_id: unique_id, disk_id: disk_id },
+				success: function(response) {
+					$("#hardwareUsersContent").html(response);
+				},
+				error: function() {
+					$("#hardwareUsersContent").html("<p class=\"text-danger\">Error loading users.</p>");
+				}
+			});
+		}
+
+		function showHardwareDetails(mac, unique_id, disk_id, reason) {
+			$("#detail_mac").text(mac);
+			$("#detail_unique_id").text(unique_id);
+			$("#detail_disk_id").text(disk_id);
+			$("#detail_reason").text(reason || "N/A");
+			$("#hardwareDetailsModal").modal("show");
+		}
+		</script>';
+	}
 }

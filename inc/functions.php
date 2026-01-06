@@ -21,10 +21,12 @@ require_once $df . '/helpers/URL.php';
 require_once $df . '/pages/Login.php';
 require_once $df . '/pages/Clans.php';
 require_once $df . '/pages/EditClan.php';
+require_once $df . '/pages/SharedDevices.php';
 $pages = [
 	new Login(),
 	new Clans(),
 	new EditClan(),
+	new SharedDevices(),
 ];
 // Set timezone to America/Toronto
 date_default_timezone_set('America/Toronto');
@@ -153,6 +155,7 @@ function setTitle($p)
 		135 => 'Search users by IP',
 		136 => 'Search users by IP - Results',
 		137 => '(Un)restrict user',
+		138 => 'Shared Devices',
 		139 => '(Un)ban user',
 	];
 	if (isset($namesRipple[$p])) {

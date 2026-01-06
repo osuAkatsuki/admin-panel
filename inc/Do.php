@@ -1860,4 +1860,87 @@ class D
 			redirect('index.php?p=141&id=' . ($clanId ?? '') . '&e=' . $e->getMessage());
 		}
 	}
+
+	/*
+	 * ApproveSharedDevice
+	 * Approve a hardware combination as a shared device
+	 */
+	public static function ApproveSharedDevice()
+	{
+		try {
+			if (!isset($_POST['mac']) || !isset($_POST['unique_id']) || !isset($_POST['disk_id'])) {
+				throw new Exception("Missing hardware parameters");
+			}
+
+			$mac = $_POST['mac'];
+			$unique_id = $_POST['unique_id'];
+			$disk_id = $_POST['disk_id'];
+			$reason = isset($_POST['reason']) && !empty($_POST['reason']) ? $_POST['reason'] : null;
+			$adminId = $_SESSION['userid'];
+
+			// Update all hw_user entries with this hardware combination
+			$GLOBALS['db']->execute(
+				"UPDATE hw_user SET
+					is_shared_device = 1,
+					approved_by_admin_id = ?,
+					approved_at = NOW(),
+					approval_reason = ?
+				WHERE mac = ? AND unique_id = ? AND disk_id = ?",
+				[$adminId, $reason, $mac, $unique_id, $disk_id]
+			);
+
+			// Get count of affected users
+			$userCount = current($GLOBALS['db']->fetch(
+				"SELECT COUNT(DISTINCT userid) FROM hw_user
+				WHERE mac = ? AND unique_id = ? AND disk_id = ?",
+				[$mac, $unique_id, $disk_id]
+			));
+
+			// RAP log
+			$hwShort = substr($mac, 0, 8) . '...' . substr($unique_id, 0, 8) . '...' . substr($disk_id, 0, 8);
+			postWebhookMessage("approved hardware `{$hwShort}` as shared device ({$userCount} users)");
+			rapLog("approved hardware as shared device: {$hwShort}");
+
+			redirect('index.php?p=138&s=Shared device approved successfully!');
+		} catch (Exception $e) {
+			redirect('index.php?p=138&e=' . $e->getMessage());
+		}
+	}
+
+	/*
+	 * UnapproveSharedDevice
+	 * Remove shared device approval from a hardware combination
+	 */
+	public static function UnapproveSharedDevice()
+	{
+		try {
+			if (!isset($_POST['mac']) || !isset($_POST['unique_id']) || !isset($_POST['disk_id'])) {
+				throw new Exception("Missing hardware parameters");
+			}
+
+			$mac = $_POST['mac'];
+			$unique_id = $_POST['unique_id'];
+			$disk_id = $_POST['disk_id'];
+
+			// Update all hw_user entries with this hardware combination
+			$GLOBALS['db']->execute(
+				"UPDATE hw_user SET
+					is_shared_device = 0,
+					approved_by_admin_id = NULL,
+					approved_at = NULL,
+					approval_reason = NULL
+				WHERE mac = ? AND unique_id = ? AND disk_id = ?",
+				[$mac, $unique_id, $disk_id]
+			);
+
+			// RAP log
+			$hwShort = substr($mac, 0, 8) . '...' . substr($unique_id, 0, 8) . '...' . substr($disk_id, 0, 8);
+			postWebhookMessage("unapproved shared device `{$hwShort}`");
+			rapLog("unapproved shared device: {$hwShort}");
+
+			redirect('index.php?p=138&s=Shared device unapproved successfully!');
+		} catch (Exception $e) {
+			redirect('index.php?p=138&e=' . $e->getMessage());
+		}
+	}
 }

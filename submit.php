@@ -230,6 +230,14 @@ try {
 			sessionCheckAdmin(Privileges::AdminManageUsers);
 			D::KickClanMember();
 			break;
+		case 'approveSharedDevice':
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			D::ApproveSharedDevice();
+			break;
+		case 'unapproveSharedDevice':
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			D::UnapproveSharedDevice();
+			break;
 		default:
 			throw new Exception('Invalid action value');
 	}
