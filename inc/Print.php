@@ -3559,9 +3559,9 @@ class P
 
 		// Filter buttons
 		echo '<p align="center">';
-		echo '<a href="index.php?p=138&filter=all" class="btn btn-' . ($filter == 'all' ? 'primary' : 'default') . '">All Devices</a> ';
-		echo '<a href="index.php?p=138&filter=unapproved" class="btn btn-' . ($filter == 'unapproved' ? 'warning' : 'default') . '">Unapproved Only</a> ';
-		echo '<a href="index.php?p=138&filter=approved" class="btn btn-' . ($filter == 'approved' ? 'success' : 'default') . '">Approved Only</a>';
+		echo '<a href="index.php?p=142&filter=all" class="btn btn-' . ($filter == 'all' ? 'primary' : 'default') . '">All Devices</a> ';
+		echo '<a href="index.php?p=142&filter=unapproved" class="btn btn-' . ($filter == 'unapproved' ? 'warning' : 'default') . '">Unapproved Only</a> ';
+		echo '<a href="index.php?p=142&filter=approved" class="btn btn-' . ($filter == 'approved' ? 'success' : 'default') . '">Approved Only</a>';
 		echo '</p>';
 
 		// Stats panels

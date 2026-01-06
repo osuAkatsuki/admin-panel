@@ -1,7 +1,7 @@
 <?php
 
 class SharedDevices {
-	const PageID = 138;
+	const PageID = 142;
 	const URL = 'shared-devices';
 	const Title = 'Akatsuki - Shared Devices';
 	const LoggedIn = true;
@@ -9,14 +9,14 @@ class SharedDevices {
 	public $error_messages = [];
 
 	public function P() {
-		clir();
+		sessionCheckAdmin(Privileges::AdminManageUsers);
 		P::AdminSharedDevices();
 	}
 
 	public function D() {
 		// This page doesn't handle form submissions directly
 		// Actions are handled through submit.php
-		redirect('index.php?p=138');
+		redirect('index.php?p=142');
 	}
 
 	public function PrintGetData() {

@@ -9,7 +9,7 @@ class Clans {
 	public $error_messages = [];
 
 	public function P() {
-		clir();
+		sessionCheckAdmin(Privileges::AdminManageUsers);
 		P::AdminClans();
 	}
 

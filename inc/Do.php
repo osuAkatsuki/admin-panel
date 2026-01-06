@@ -1901,9 +1901,9 @@ class D
 			postWebhookMessage("approved hardware `{$hwShort}` as shared device ({$userCount} users)");
 			rapLog("approved hardware as shared device: {$hwShort}");
 
-			redirect('index.php?p=138&s=Shared device approved successfully!');
+			redirect('index.php?p=142&s=Shared device approved successfully!');
 		} catch (Exception $e) {
-			redirect('index.php?p=138&e=' . $e->getMessage());
+			redirect('index.php?p=142&e=' . $e->getMessage());
 		}
 	}
 
@@ -1933,9 +1933,9 @@ class D
 			postWebhookMessage("unapproved shared device `{$hwShort}`");
 			rapLog("unapproved shared device: {$hwShort}");
 
-			redirect('index.php?p=138&s=Shared device unapproved successfully!');
+			redirect('index.php?p=142&s=Shared device unapproved successfully!');
 		} catch (Exception $e) {
-			redirect('index.php?p=138&e=' . $e->getMessage());
+			redirect('index.php?p=142&e=' . $e->getMessage());
 		}
 	}
 }

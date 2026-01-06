@@ -155,8 +155,11 @@ function setTitle($p)
 		135 => 'Search users by IP',
 		136 => 'Search users by IP - Results',
 		137 => '(Un)restrict user',
-		138 => 'Shared Devices',
+		138 => 'Recent Top Plays',
 		139 => '(Un)ban user',
+		140 => 'Clans',
+		141 => 'Edit Clan',
+		142 => 'Shared Devices',
 	];
 	if (isset($namesRipple[$p])) {
 		return __maketitle('Akatsuki', $namesRipple[$p]);
