@@ -1472,7 +1472,7 @@ class D
 			$GLOBALS["db"]->execute("DELETE FROM hw_user WHERE userid = ?", [$_GET["id"]]);
 			postWebhookMessage(sprintf("has cleared [%s](https://akatsuki.gg/u/%s)'s **HWID matches**.\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", getUserUsername($_GET["id"]), $_GET["id"], $_GET["id"]));
 			rapLog(sprintf("has cleared %s's HWID matches.", getUserUsername($_GET["id"])));
-			redirect('index.php?p=102&s=HWID matches cleared! Make sure to clear multiaccounts\' HWID too, or the user might get restricted for multiaccounting!');
+			redirect('index.php?p=102&s=HWID matches cleared! Make sure to clear HWID of ONLY the multi-accounts (NOT THE MAIN ACCOUNT), as we don\'t want to lose that data!!');
 		} catch (Exception $e) {
 			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
