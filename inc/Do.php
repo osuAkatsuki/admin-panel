@@ -1860,4 +1860,100 @@ class D
 			redirect('index.php?p=141&id=' . ($clanId ?? '') . '&e=' . $e->getMessage());
 		}
 	}
+
+	/*
+	 * ApproveSharedDevice
+	 * Approve a hardware combination as a shared device
+	 */
+	public static function ApproveSharedDevice()
+	{
+		try {
+			if (!isset($_POST['mac']) || !isset($_POST['unique_id']) || !isset($_POST['disk_id'])) {
+				throw new Exception("Missing hardware parameters");
+			}
+
+			$mac = $_POST['mac'];
+			$unique_id = $_POST['unique_id'];
+			$disk_id = $_POST['disk_id'];
+			$reason = isset($_POST['reason']) && !empty($_POST['reason']) ? $_POST['reason'] : null;
+			$adminId = $_SESSION['userid'];
+
+			// Insert into shared_devices table (or update if already exists)
+			$GLOBALS['db']->execute(
+				"INSERT INTO shared_devices (mac, unique_id, disk_id, approved_by_admin_id, approval_reason)
+				VALUES (?, ?, ?, ?, ?)
+				ON DUPLICATE KEY UPDATE
+					approved_by_admin_id = VALUES(approved_by_admin_id),
+					approved_at = CURRENT_TIMESTAMP,
+					approval_reason = VALUES(approval_reason)",
+				[$mac, $unique_id, $disk_id, $adminId, $reason]
+			);
+
+			// Get count of affected users
+			$userCount = current($GLOBALS['db']->fetch(
+				"SELECT COUNT(DISTINCT userid) FROM hw_user
+				WHERE mac = ? AND unique_id = ? AND disk_id = ?",
+				[$mac, $unique_id, $disk_id]
+			));
+
+			// RAP log
+			$hwShort = substr($mac, 0, 8) . '...' . substr($unique_id, 0, 8) . '...' . substr($disk_id, 0, 8);
+			postWebhookMessage("approved hardware `{$hwShort}` as shared device ({$userCount} users)");
+			rapLog("approved hardware as shared device: {$hwShort}");
+
+		// Redirect back to device details if we came from there, otherwise to shared devices list
+		if (isset($_POST['return_to']) && $_POST['return_to'] == '143') {
+			redirect('index.php?p=143&mac=' . urlencode($mac) . '&unique_id=' . urlencode($unique_id) . '&disk_id=' . urlencode($disk_id) . '&s=Shared device approved successfully!');
+		} else {
+			redirect('index.php?p=142&s=Shared device approved successfully!');
+		}
+	} catch (Exception $e) {
+		if (isset($_POST['return_to']) && $_POST['return_to'] == '143' && isset($_POST['mac']) && isset($_POST['unique_id']) && isset($_POST['disk_id'])) {
+			redirect('index.php?p=143&mac=' . urlencode($_POST['mac']) . '&unique_id=' . urlencode($_POST['unique_id']) . '&disk_id=' . urlencode($_POST['disk_id']) . '&e=' . $e->getMessage());
+		} else {
+			redirect('index.php?p=142&e=' . $e->getMessage());
+		}
+	}
+}
+
+	/*
+	 * UnapproveSharedDevice
+	 * Remove shared device approval from a hardware combination
+	 */
+	public static function UnapproveSharedDevice()
+	{
+		try {
+			if (!isset($_POST['mac']) || !isset($_POST['unique_id']) || !isset($_POST['disk_id'])) {
+				throw new Exception("Missing hardware parameters");
+			}
+
+			$mac = $_POST['mac'];
+			$unique_id = $_POST['unique_id'];
+			$disk_id = $_POST['disk_id'];
+
+			// Delete from shared_devices table
+			$GLOBALS['db']->execute(
+				"DELETE FROM shared_devices WHERE mac = ? AND unique_id = ? AND disk_id = ?",
+				[$mac, $unique_id, $disk_id]
+			);
+
+			// RAP log
+			$hwShort = substr($mac, 0, 8) . '...' . substr($unique_id, 0, 8) . '...' . substr($disk_id, 0, 8);
+			postWebhookMessage("unapproved shared device `{$hwShort}`");
+			rapLog("unapproved shared device: {$hwShort}");
+
+		// Redirect back to device details if we came from there, otherwise to shared devices list
+		if (isset($_POST['return_to']) && $_POST['return_to'] == '143') {
+			redirect('index.php?p=143&mac=' . urlencode($mac) . '&unique_id=' . urlencode($unique_id) . '&disk_id=' . urlencode($disk_id) . '&s=Shared device unapproved successfully!');
+		} else {
+			redirect('index.php?p=142&s=Shared device unapproved successfully!');
+		}
+	} catch (Exception $e) {
+		if (isset($_POST['return_to']) && $_POST['return_to'] == '143' && isset($_POST['mac']) && isset($_POST['unique_id']) && isset($_POST['disk_id'])) {
+			redirect('index.php?p=143&mac=' . urlencode($_POST['mac']) . '&unique_id=' . urlencode($_POST['unique_id']) . '&disk_id=' . urlencode($_POST['disk_id']) . '&e=' . $e->getMessage());
+		} else {
+			redirect('index.php?p=142&e=' . $e->getMessage());
+		}
+	}
+}
 }

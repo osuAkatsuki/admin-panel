@@ -21,10 +21,14 @@ require_once $df . '/helpers/URL.php';
 require_once $df . '/pages/Login.php';
 require_once $df . '/pages/Clans.php';
 require_once $df . '/pages/EditClan.php';
+require_once $df . '/pages/SharedDevices.php';
+require_once $df . '/pages/DeviceDetails.php';
 $pages = [
 	new Login(),
 	new Clans(),
 	new EditClan(),
+	new SharedDevices(),
+	new DeviceDetails(),
 ];
 // Set timezone to America/Toronto
 date_default_timezone_set('America/Toronto');
@@ -153,7 +157,12 @@ function setTitle($p)
 		135 => 'Search users by IP',
 		136 => 'Search users by IP - Results',
 		137 => '(Un)restrict user',
+		138 => 'Recent Top Plays',
 		139 => '(Un)ban user',
+		140 => 'Clans',
+		141 => 'Edit Clan',
+		142 => 'Shared Devices',
+		143 => 'Device Details',
 	];
 	if (isset($namesRipple[$p])) {
 		return __maketitle('Akatsuki', $namesRipple[$p]);
@@ -463,6 +472,7 @@ function printAdminSidebar()
 	if (hasPrivilege(Privileges::AdminManageUsers)) {
 		echo '<li><a href="index.php?p=102"><i class="fa fa-user"></i>	Users</a></li>';
 		echo '<li><a href="index.php?p=140"><i class="fa fa-users"></i>	Clans</a></li>';
+		echo '<li><a href="index.php?p=142"><i class="fa fa-laptop"></i>	Shared Devices</a></li>';
 	}
 
 	if (hasPrivilege(Privileges::AdminManageReports))
