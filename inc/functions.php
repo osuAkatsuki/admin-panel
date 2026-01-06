@@ -469,6 +469,7 @@ function printAdminSidebar()
 	if (hasPrivilege(Privileges::AdminManageUsers)) {
 		echo '<li><a href="index.php?p=102"><i class="fa fa-user"></i>	Users</a></li>';
 		echo '<li><a href="index.php?p=140"><i class="fa fa-users"></i>	Clans</a></li>';
+		echo '<li><a href="index.php?p=142"><i class="fa fa-laptop"></i>	Shared Devices</a></li>';
 	}
 
 	if (hasPrivilege(Privileges::AdminManageReports))
