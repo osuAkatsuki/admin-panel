@@ -975,6 +975,8 @@ class D
 				$newPrivileges = ($userData["privileges"] | Privileges::UserNormal) & ~Privileges::UserPublic;
 				$banDateTime = time();
 
+				$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_POST['id']]);
+
 				// Remove from cache & redis leaderboards
 				updateBanBancho($_POST["id"], true);
 				removeFromLeaderboard($_POST['id']);
@@ -988,6 +990,8 @@ class D
 				$newPrivileges = $userData["privileges"] | Privileges::UserNormal | Privileges::UserPublic;
 				$banDateTime = 0;
 
+				$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_POST['id']]);
+
 				// Re-add to cache leaderboards
 				updateBanBancho($_POST["id"], false);
 
@@ -996,9 +1000,6 @@ class D
 				postWebhookMessage(sprintf("has unrestricted [%s](https://akatsuki.gg/u/%s)\n**Reason**: %s\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData["username"], $_POST['id'], $_POST["reason"], $_POST['id']));
 				rapLog(sprintf("unrestricted %s for '%s'.", $userData["username"], $_POST["reason"]));
 			}
-
-			// Change privileges
-			$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_POST['id']]);
 
 			// Done, redirect to success page
 			if (isset($_POST["resend"])) {
@@ -1101,6 +1102,8 @@ class D
 				$newPrivileges = ($userData["privileges"] & ~Privileges::UserNormal) & ~Privileges::UserPublic;
 				$banDateTime = time();
 
+				$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ?', [$newPrivileges, $banDateTime, $_POST['id']]);
+
 				// Remove from cache & redis leaderboards
 				updateBanBancho($_POST["id"], true);
 				removeFromLeaderboard($_POST['id']);
@@ -1114,6 +1117,8 @@ class D
 				$newPrivileges = ($userData["privileges"] | Privileges::UserNormal);
 				$banDateTime = $userData["ban_datetime"];
 
+				$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ?', [$newPrivileges, $banDateTime, $_POST['id']]);
+
 				updateBanBancho($_POST["id"], false);
 
 				appendNotes($_POST['id'], $_SESSION["username"] . ' (' . $_SESSION["userid"] . ') unbanned (set to restricted) for: ' . $_POST['reason']);
@@ -1121,9 +1126,6 @@ class D
 				postWebhookMessage(sprintf("has unbanned (set to restricted) user [%s](https://akatsuki.gg/u/%s).\n**Reason**: %s\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData["username"], $_POST['id'], $_POST['reason'], $_POST['id'], $_POST['id']));
 				rapLog(sprintf("unbanned (set to restricted) %s for '%s'.", $userData["username"], $_POST["reason"]));
 			}
-
-			// Change privilege
-			$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ?', [$newPrivileges, $banDateTime, $_POST['id']]);
 
 			// Done, redirect to success page
 			if (isset($_POST["resend"])) {
