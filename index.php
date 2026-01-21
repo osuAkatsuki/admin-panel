@@ -1,4 +1,11 @@
 <?php
+// Health check endpoint for Kubernetes probes
+if ($_SERVER['REQUEST_URI'] === '/_health') {
+	http_response_code(200);
+	echo 'ok';
+	exit;
+}
+
 // Get functions
 require_once './inc/functions.php';
 // Frontend stuff
