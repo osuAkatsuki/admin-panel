@@ -8,15 +8,14 @@ apps:
         repository: osuakatsuki/admin-panel
         tag: latest
       port: 80
-      # readinessProbe:
-      #   httpGet:
-      #     path: /_health
-      #     port: 80
-      #   initialDelaySeconds: 10
-      #   periodSeconds: 10
-      #   timeoutSeconds: 2
-      #   successThreshold: 1
-      #   failureThreshold: 3
+      readinessProbe:
+        tcpSocket:
+          port: 80
+        initialDelaySeconds: 5
+        periodSeconds: 10
+        timeoutSeconds: 2
+        successThreshold: 1
+        failureThreshold: 3
       resources:
         limits:
           cpu: 200m
