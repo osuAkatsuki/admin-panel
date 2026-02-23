@@ -4072,4 +4072,198 @@ class P
 			</div>
 		</div>';
 	}
+
+
+	/*
+	 * AdminTournamentBadges
+	 * Prints the admin panel tournament badges page
+	 */
+	public static function AdminTournamentBadges()
+	{
+		$badgesData = $GLOBALS['db']->fetchAll('SELECT * FROM tourmnt_badges');
+		echo '<div id="wrapper">';
+		printAdminSidebar();
+		echo '<div id="page-content-wrapper">';
+		self::MaintenanceStuff();
+		if (isset($_GET['s']) && !empty($_GET['s'])) {
+			self::SuccessMessageStaccah($_GET['s']);
+		}
+		if (isset($_GET['e']) && !empty($_GET['e'])) {
+			self::ExceptionMessageStaccah($_GET['e']);
+		}
+		echo '<p align="center"><font size=5><i class="fa fa-trophy"></i>	Tournament Badges</font></p>';
+		echo '<table class="table table-striped table-hover table-50-center">';
+		echo '<thead>
+		<tr><th class="text-center">ID</th><th class="text-center">Name</th><th class="text-center">Icon</th><th class="text-center">Actions</th></tr>
+		</thead>';
+		echo '<tbody>';
+		foreach ($badgesData as $badge) {
+			echo '<tr>
+			<td><p class="text-center">' . $badge['id'] . '</p></td>
+			<td><p class="text-center">' . htmlspecialchars($badge['name']) . '</p></td>
+			<td><p class="text-center"><img src="' . htmlspecialchars($badge['icon']) . '" height="48" alt="' . htmlspecialchars($badge['name']) . '"></p></td>
+			<td><p class="text-center">
+			<div class="btn-group-justified">
+			<a title="Edit badge" class="btn btn-xs btn-primary" href="index.php?p=113&id=' . $badge['id'] . '"><span class="glyphicon glyphicon-pencil"></span></a>
+			<a title="Delete badge" class="btn btn-xs btn-danger" onclick="sure(\'submit.php?action=removeTournamentBadge&id=' . $badge['id'] . '&csrf=' . csrfToken() . '\');"><span class="glyphicon glyphicon-trash"></span></a>
+			</div>
+			</p></td>
+			</tr>';
+		}
+		echo '</tbody>';
+		echo '</table>';
+		echo '<div class="text-center">
+			<a href="index.php?p=113&id=0" type="button" class="btn btn-primary">Add a new tournament badge</a>
+			<a type="button" class="btn btn-success" data-toggle="modal" data-target="#quickEditUserTournamentBadgesModal">Edit user tournament badges</a>
+		</div>';
+		echo '</div>';
+		// Quick edit modal
+		echo '<div class="modal fade" id="quickEditUserTournamentBadgesModal" tabindex="-1" role="dialog" aria-labelledby="quickEditUserTournamentBadgesModalLabel">
+		<div class="modal-dialog">
+		<div class="modal-content">
+		<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<h4 class="modal-title" id="quickEditUserTournamentBadgesModalLabel">Edit user tournament badges</h4>
+		</div>
+		<div class="modal-body">
+		<p>
+		<form id="quick-edit-user-tournament-badges-form" action="submit.php" method="POST">
+		<input name="csrf" type="hidden" value="' . csrfToken() . '">
+		<input name="action" value="quickEditUserTournamentBadges" hidden>
+		<div class="input-group">
+		<span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>
+		<input type="text" name="u" class="form-control" placeholder="Username" aria-describedby="basic-addon1" required>
+		</div>
+		</form>
+		</p>
+		</div>
+		<div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		<button type="submit" form="quick-edit-user-tournament-badges-form" class="btn btn-primary">Edit user tournament badges</button>
+		</div>
+		</div>
+		</div>
+		</div>';
+	}
+
+
+	/*
+	 * AdminEditTournamentBadge
+	 * Prints the admin panel edit tournament badge page
+	 */
+	public static function AdminEditTournamentBadge()
+	{
+		try {
+			if (!isset($_GET['id'])) {
+				throw new Exception('Invalid badge id');
+			}
+			if ($_GET['id'] > 0) {
+				$badgeData = $GLOBALS['db']->fetch('SELECT * FROM tourmnt_badges WHERE id = ?', $_GET['id']);
+			} else {
+				$badgeData = ['id' => 0, 'name' => '', 'icon' => ''];
+			}
+			if (!$badgeData) {
+				throw new Exception("That tournament badge doesn't exist");
+			}
+			echo '<div id="wrapper">';
+			printAdminSidebar();
+			echo '<div id="page-content-wrapper">';
+			self::MaintenanceStuff();
+			echo '<p align="center"><font size=5><i class="fa fa-trophy"></i>	' . ($badgeData['id'] > 0 ? 'Edit' : 'Create') . ' tournament badge</font></p>';
+			echo '<table class="table table-striped table-hover table-50-center">';
+			echo '<tbody><form id="edit-tournament-badge-form" action="submit.php" method="POST" enctype="multipart/form-data">
+			<input name="csrf" type="hidden" value="' . csrfToken() . '">
+			<input name="action" value="saveTournamentBadge" hidden>
+			<input name="id" type="hidden" value="' . $badgeData['id'] . '">';
+			echo '<tr>
+			<td>ID</td>
+			<td><p class="text-center"><input type="number" class="form-control" value="' . $badgeData['id'] . '" readonly></td>
+			</tr>';
+			echo '<tr>
+			<td>Name</td>
+			<td><p class="text-center"><input type="text" name="n" class="form-control" value="' . htmlspecialchars($badgeData['name']) . '" required></td>
+			</tr>';
+			if ($badgeData['id'] > 0 && !empty($badgeData['icon'])) {
+				echo '<tr>
+				<td>Current Icon</td>
+				<td><p class="text-center"><img src="' . htmlspecialchars($badgeData['icon']) . '" height="64" alt="' . htmlspecialchars($badgeData['name']) . '"></p></td>
+				</tr>';
+			}
+			echo '<tr>
+			<td>Icon Image (PNG' . ($badgeData['id'] == 0 ? ', required' : ', optional') . ')</td>
+			<td><p class="text-center"><input type="file" name="icon" class="form-control" accept="image/png"' . ($badgeData['id'] == 0 ? ' required' : '') . '></td>
+			</tr>';
+			echo '</tbody></form>';
+			echo '</table>';
+			echo '<div class="text-center"><button type="submit" form="edit-tournament-badge-form" class="btn btn-primary">Save changes</button></div>';
+			echo '</div>';
+		} catch (Exception $e) {
+			redirect('index.php?p=112&e=' . $e->getMessage());
+		}
+	}
+
+
+	/*
+	 * AdminEditUserTournamentBadges
+	 * Prints the admin panel edit user tournament badges page
+	 */
+	public static function AdminEditUserTournamentBadges()
+	{
+		try {
+			if (!isset($_GET['id'])) {
+				throw new Exception('Invalid user id');
+			}
+			$allBadges = $GLOBALS['db']->fetchAll("SELECT id, name, icon FROM tourmnt_badges");
+			$userBadges = $GLOBALS['db']->fetchAll('SELECT badge FROM user_tourmnt_badges WHERE user = ?', $_GET['id']);
+			$username = current($GLOBALS['db']->fetch('SELECT username FROM users WHERE id = ?', $_GET['id']));
+			if (!$username) {
+				throw new Exception("That user doesn't exist");
+			}
+
+			$userBadgeIds = [];
+			foreach ($userBadges as $ub) {
+				$userBadgeIds[] = $ub['badge'];
+			}
+
+			echo '<div id="wrapper">';
+			printAdminSidebar();
+			echo '<div id="page-content-wrapper">';
+			self::MaintenanceStuff();
+			echo '<p align="center"><font size=5><i class="fa fa-trophy"></i>	Edit user tournament badges</font></p>';
+
+			echo '<form id="edit-user-tournament-badges" action="submit.php" method="POST">
+			<input name="csrf" type="hidden" value="' . csrfToken() . '">
+			<input name="action" value="saveUserTournamentBadges" hidden>
+			<input name="u" type="hidden" value="' . htmlspecialchars($username) . '">';
+
+			echo '<table class="table table-striped table-hover table-50-center">';
+			echo '<tbody>';
+			echo '<tr>
+			<td>User</td>
+			<td><p class="text-center"><input type="text" class="form-control" value="' . htmlspecialchars($username) . '" readonly></td>
+			</tr>';
+
+			echo '<tr><td colspan="2"><p class="text-center"><b>Current Tournament Badges</b></p></td></tr>';
+
+			if (count($userBadgeIds) == 0) {
+				echo '<tr><td colspan="2"><p class="text-center"><i>No tournament badges assigned</i></p></td></tr>';
+			}
+
+			foreach ($allBadges as $badge) {
+				$checked = in_array($badge['id'], $userBadgeIds) ? ' checked' : '';
+				echo '<tr>
+				<td><img src="' . htmlspecialchars($badge['icon']) . '" height="32" alt="' . htmlspecialchars($badge['name']) . '"> ' . htmlspecialchars($badge['name']) . '</td>
+				<td><p class="text-center"><input type="checkbox" name="badges[]" value="' . $badge['id'] . '"' . $checked . '></p></td>
+				</tr>';
+			}
+
+			echo '</tbody>';
+			echo '</table>';
+			echo '<div class="text-center"><button type="submit" form="edit-user-tournament-badges" class="btn btn-primary">Save changes</button></div>';
+			echo '</form>';
+			echo '</div>';
+		} catch (Exception $e) {
+			redirect('index.php?p=112&e=' . $e->getMessage());
+		}
+	}
 }
