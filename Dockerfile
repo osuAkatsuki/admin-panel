@@ -34,6 +34,7 @@ RUN apt install -y \
     php7.2-zip \
     php7.2-redis \
     nginx \
+    gettext-base \
     git \
     curl
 
