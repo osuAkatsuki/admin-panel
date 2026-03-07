@@ -47,9 +47,9 @@ RUN curl -sS https://getcomposer.org/installer -o composer-setup.php \
 
 RUN COMPOSER_ALLOW_SUPERUSER=1 composer install
 
-COPY nginx/nginx.conf /etc/nginx/nginx.conf
+COPY nginx/nginx.conf /etc/nginx/templates/nginx.conf.template
 COPY nginx/fastcgi.conf /etc/nginx/fastcgi.conf
-COPY nginx/sites-enabled/ /etc/nginx/sites-enabled/
+COPY nginx/sites-enabled/ /etc/nginx/templates/sites-enabled/
 
 RUN wget https://bootstrap.pypa.io/get-pip.py \
     && python3.10 get-pip.py \

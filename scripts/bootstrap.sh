@@ -16,11 +16,16 @@ if [[ $PULL_SECRETS_FROM_VAULT -eq 1 ]]; then
   source .env
 fi
 
-# TODO: await deps
-
 # Create session directory for fallback
 mkdir -p /tmp/php_sessions
 chmod 755 /tmp/php_sessions
+
+# Template nginx configs with APP_PORT
+envsubst '${APP_PORT}' < /etc/nginx/templates/nginx.conf.template > /etc/nginx/nginx.conf
+mkdir -p /etc/nginx/sites-enabled
+for tmpl in /etc/nginx/templates/sites-enabled/*.conf; do
+  envsubst '${APP_PORT}' < "$tmpl" > "/etc/nginx/sites-enabled/$(basename "$tmpl")"
+done
 
 service php7.2-fpm start
 
