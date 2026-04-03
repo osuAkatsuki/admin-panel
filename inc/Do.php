@@ -935,7 +935,7 @@ class D
 					// Remove privileges from previous group
 					$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges & ~" . $oldPriv . " WHERE id = ? LIMIT 1", [$user["id"]]);
 					// Add privileges from new group
-					$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | " . $_POST["priv"] . " WHERE id = ? LIMIT 1", [$user["id"]]);
+					$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | ? WHERE id = ? LIMIT 1", [(int)$_POST["priv"], $user["id"]]);
 				}
 			}
 
