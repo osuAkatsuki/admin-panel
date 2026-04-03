@@ -152,7 +152,7 @@ class D
 			// Edit privileges if we can
 			if (hasPrivilege(Privileges::AdminManagePrivileges) && ($_POST["id"] != $_SESSION["userid"])) {
 				$GLOBALS['db']->execute('UPDATE users SET privileges = ? WHERE id = ? LIMIT 1', [$_POST['priv'], $_POST['id']]);
-				updateBanBancho($_POST["id"], $_POST['priv'] & Privileges::UserPublic == 0);
+				updateBanBancho($_POST["id"], ($_POST['priv'] & Privileges::UserPublic) == 0);
 			}
 			// Save new userpage
 			$GLOBALS['db']->execute('UPDATE users SET userpage_content = ? WHERE id = ? LIMIT 1', [$_POST['up'], $_POST['id']]);
@@ -214,7 +214,7 @@ class D
 			//$newPrivileges = $userData["privileges"] ^ Privileges::UserBasic;
 			// Change privileges
 			$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_GET['id']]);
-			updateBanBancho($_GET["id"], $newPrivileges & Privileges::UserPublic == 0);
+			updateBanBancho($_GET["id"], ($newPrivileges & Privileges::UserPublic) == 0);
 			// Rap log
 			postWebhookMessage(sprintf("has %s user [%s](https://akatsuki.gg/u/%s).\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", ($newPrivileges & Privileges::UserNormal) > 0 ? "unbanned" : "banned", $userData["username"], $_GET['id'], $_GET['id']));
 			rapLog(sprintf("has %s user %s", ($newPrivileges & Privileges::UserNormal) > 0 ? "unbanned" : "banned", $userData["username"]));
@@ -1052,7 +1052,7 @@ class D
 			}
 			// Change privileges
 			$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_GET['id']]);
-			updateBanBancho($_GET["id"], $newPrivileges & Privileges::UserPublic == 0);
+			updateBanBancho($_GET["id"], ($newPrivileges & Privileges::UserPublic) == 0);
 
 			$msg = ($newPrivileges & Privileges::UserPublic) > 0 ? "unrestricted" : "restricted";
 
