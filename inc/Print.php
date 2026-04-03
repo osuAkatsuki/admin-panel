@@ -727,7 +727,7 @@ class P
 			<td>';
 			if ($hasDiscordLink) {
 				echo '<span class="label label-success">Yes</span>';
-				echo ' <a onclick="sure(\'submit.php?action=resetDiscordLink&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\')">(reset link)</a>';
+				echo ' <a onclick="sure(\'submit.php?action=resetDiscordLink&id=' . htmlspecialchars($_GET['id']) . '&csrf=' . csrfToken() . '\')">(reset link)</a>';
 			} else {
 				echo '<span class="label label-danger">No</span>';
 			}
@@ -778,10 +778,10 @@ class P
 			</tr>';
 
 			echo '<tr>
-			<td>Avatar<br><a onclick="sure(\'submit.php?action=resetAvatar&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\')">(reset avatar)</a></td>
+			<td>Avatar<br><a onclick="sure(\'submit.php?action=resetAvatar&id=' . htmlspecialchars($_GET['id']) . '&csrf=' . csrfToken() . '\')">(reset avatar)</a></td>
 			<td>
 				<p align="center">
-					<img src="' . URL::PublicAvatarServiceBaseUrl() . '/' . $_GET['id'] . '" height="50" width="50"></img>
+					<img src="' . URL::PublicAvatarServiceBaseUrl() . '/' . htmlspecialchars($_GET['id']) . '" height="50" width="50"></img>
 				</p>
 			</td>
 			</tr>';
@@ -2325,7 +2325,7 @@ class P
 			<input name="action" value="restrictUnrestrictUserReason" hidden>';
 			echo '<tr>
 			<td>User ID</td>
-			<td><p class="text-center"><input type="text" name="id" class="form-control" value="' . $_GET["id"] . '" readonly></td>
+			<td><p class="text-center"><input type="text" name="id" class="form-control" value="' . htmlspecialchars($_GET["id"]) . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Username</td>
@@ -2373,7 +2373,7 @@ class P
 			<input name="action" value="banUnbanUserReason" hidden>';
 			echo '<tr>
 			<td>User ID</td>
-			<td><p class="text-center"><input type="text" name="id" class="form-control" value="' . $_GET["id"] . '" readonly></td>
+			<td><p class="text-center"><input type="text" name="id" class="form-control" value="' . htmlspecialchars($_GET["id"]) . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Username</td>
