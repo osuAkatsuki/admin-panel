@@ -66,6 +66,7 @@ try {
 		case 'restrictUnrestrictUserReason':
 			sessionCheckAdmin(Privileges::AdminBanUsers);
 			D::RestrictUnrestrictUserReason();
+			break;
 		case 'banUnbanUserReason':
 			sessionCheckAdmin(Privileges::AdminBanUsers);
 			D::BanUnbanUserReason();
