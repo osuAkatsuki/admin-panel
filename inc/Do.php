@@ -1958,4 +1958,186 @@ class D
 		}
 	}
 }
+
+
+	/*
+	 * SaveTournamentBadge
+	 * Save tournament badge function (ADMIN CP)
+	 */
+	public static function SaveTournamentBadge()
+	{
+		try {
+			if (!isset($_POST['id']) || !isset($_POST['n']) || empty($_POST['n'])) {
+				throw new Exception('Missing required fields.');
+			}
+
+			$isNew = $_POST['id'] == 0;
+
+			// For new badges, image upload is required
+			if ($isNew && (!isset($_FILES['icon']) || $_FILES['icon']['error'] != 0)) {
+				throw new Exception('Image upload is required for new tournament badges.');
+			}
+
+			$iconUrl = null;
+
+			// Handle image upload if provided
+			if (isset($_FILES['icon']) && $_FILES['icon']['error'] == 0) {
+				$verifyImg = getimagesize($_FILES['icon']['tmp_name']);
+				if ($verifyImg === false || $verifyImg['mime'] !== 'image/png') {
+					throw new Exception('Only PNG images are allowed.');
+				}
+
+				global $S3Config;
+				$fileName = randomString(32);
+				$s3Key = 'tourney-badges/' . $fileName . '.png';
+
+				$GLOBALS['s3']->putObject([
+					'Bucket' => $S3Config['bucket'],
+					'Key' => $s3Key,
+					'Body' => file_get_contents($_FILES['icon']['tmp_name']),
+					'ContentType' => 'image/png',
+					'ACL' => 'public-read',
+				]);
+
+				$iconUrl = $S3Config['endpoint_url'] . '/' . $S3Config['bucket'] . '/' . $s3Key;
+			}
+
+			if ($isNew) {
+				$GLOBALS['db']->execute(
+					'INSERT INTO tourmnt_badges (name, icon) VALUES (?, ?)',
+					[$_POST['n'], $iconUrl]
+				);
+			} else {
+				if ($iconUrl !== null) {
+					$GLOBALS['db']->execute(
+						'UPDATE tourmnt_badges SET name = ?, icon = ? WHERE id = ? LIMIT 1',
+						[$_POST['n'], $iconUrl, $_POST['id']]
+					);
+				} else {
+					$GLOBALS['db']->execute(
+						'UPDATE tourmnt_badges SET name = ? WHERE id = ? LIMIT 1',
+						[$_POST['n'], $_POST['id']]
+					);
+				}
+			}
+
+			postWebhookMessage(sprintf(
+				"has %s tournament badge %s.\n\n> :gear: [View all tournament badges](https://old.akatsuki.gg/index.php?p=112) on **Admin Panel**",
+				$isNew ? 'created' : 'edited',
+				$_POST['n']
+			));
+			rapLog(sprintf("has %s tournament badge %s", $isNew ? 'created' : 'edited', $_POST['n']));
+			redirect('index.php?p=112&s=Tournament badge saved!');
+		} catch (Exception $e) {
+			redirect('index.php?p=112&e=' . $e->getMessage());
+		}
+	}
+
+	/*
+	 * RemoveTournamentBadge
+	 * Remove tournament badge function (ADMIN CP)
+	 */
+	public static function RemoveTournamentBadge()
+	{
+		try {
+			if (empty($_GET['id'])) {
+				throw new Exception("Invalid badge id.");
+			}
+			$badge = $GLOBALS['db']->fetch('SELECT name, icon FROM tourmnt_badges WHERE id = ? LIMIT 1', $_GET['id']);
+			if (!$badge) {
+				throw new Exception("This tournament badge doesn't exist.");
+			}
+
+			// Delete from S3 if possible
+			if (!empty($badge['icon'])) {
+				global $S3Config;
+				$prefix = $S3Config['endpoint_url'] . '/' . $S3Config['bucket'] . '/';
+				if (strpos($badge['icon'], $prefix) === 0) {
+					$s3Key = substr($badge['icon'], strlen($prefix));
+					try {
+						$GLOBALS['s3']->deleteObject([
+							'Bucket' => $S3Config['bucket'],
+							'Key' => $s3Key,
+						]);
+					} catch (Exception $ignored) {
+					}
+				}
+			}
+
+			$GLOBALS['db']->execute('DELETE FROM tourmnt_badges WHERE id = ? LIMIT 1', $_GET['id']);
+			$GLOBALS['db']->execute('DELETE FROM user_tourmnt_badges WHERE badge = ?', $_GET['id']);
+
+			$badgeName = $badge['name'] ?: 'Unknown Badge';
+			postWebhookMessage(sprintf(
+				"has deleted tournament badge %s.\n\n> :gear: [View all tournament badges](https://old.akatsuki.gg/index.php?p=112) on **Admin Panel**",
+				$badgeName
+			));
+			rapLog(sprintf("has deleted tournament badge %s", $badgeName));
+			redirect('index.php?p=112&s=Tournament badge deleted!');
+		} catch (Exception $e) {
+			redirect('index.php?p=112&e=' . $e->getMessage());
+		}
+	}
+
+	/*
+	 * QuickEditUserTournamentBadges
+	 * Redirects to the edit user tournament badges page
+	 */
+	public static function QuickEditUserTournamentBadges()
+	{
+		try {
+			if (empty($_POST['u'])) {
+				throw new Exception('Nice troll.');
+			}
+			$id = current($GLOBALS['db']->fetch('SELECT id FROM users WHERE username = ? LIMIT 1', $_POST['u']));
+			if (!$id) {
+				throw new Exception("That user doesn't exist");
+			}
+			redirect('index.php?p=114&id=' . $id);
+		} catch (Exception $e) {
+			redirect('index.php?p=112&e=' . $e->getMessage());
+		}
+	}
+
+	/*
+	 * SaveUserTournamentBadges
+	 * Save user tournament badges function (ADMIN CP)
+	 */
+	public static function SaveUserTournamentBadges()
+	{
+		try {
+			if (!isset($_POST['u']) || empty($_POST['u'])) {
+				throw new Exception('Nice troll.');
+			}
+			$user = $GLOBALS['db']->fetch('SELECT id FROM users WHERE username = ?', $_POST['u']);
+			if (!$user) {
+				throw new Exception("That user doesn't exist.");
+			}
+
+			// Delete existing tournament badges for this user
+			$GLOBALS['db']->execute('DELETE FROM user_tourmnt_badges WHERE user = ?', [$user['id']]);
+
+			// Insert selected badges
+			if (isset($_POST['badges']) && is_array($_POST['badges'])) {
+				foreach ($_POST['badges'] as $badgeId) {
+					$badgeId = intval($badgeId);
+					if ($badgeId > 0) {
+						$GLOBALS['db']->execute(
+							'INSERT INTO user_tourmnt_badges (user, badge) VALUES (?, ?)',
+							[$user['id'], $badgeId]
+						);
+					}
+				}
+			}
+
+			postWebhookMessage(sprintf(
+				"has edited [%s](https://akatsuki.gg/u/%s)'s tournament badges.\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**",
+				$_POST['u'], $user['id'], $user['id']
+			));
+			rapLog(sprintf("has edited %s's tournament badges", $_POST['u']));
+			redirect('index.php?p=112&s=User tournament badges saved!');
+		} catch (Exception $e) {
+			redirect('index.php?p=112&e=' . $e->getMessage());
+		}
+	}
 }
