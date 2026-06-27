@@ -351,8 +351,8 @@ class D
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 
-			// whitelist must be a value between 0 and 3
-			if ($_POST["newwhitelist"] < 0 || $_POST["newwhitelist"] > 3) {
+			// whitelist must be a value between 0 and 7
+			if ($_POST["newwhitelist"] < 0 || $_POST["newwhitelist"] > 7) {
 				throw new Exception("Invalid whitelist value");
 			}
 

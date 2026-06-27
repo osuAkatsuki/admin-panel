@@ -621,6 +621,8 @@ class P
 					array_push($wl, "Vanilla");
 				if ($userData["whitelist"] & 2)
 					array_push($wl, "Relax");
+				if ($userData["whitelist"] & 4)
+					array_push($wl, "Autopilot");
 				$wlText = implode(" & ", $wl);
 			} else {
 				$wlText = "No";
@@ -1133,6 +1135,10 @@ class P
 			<option value="1">Vanilla</option>
 			<option value="2">Relax</option>
 			<option value="3">Vanilla & Relax</option>
+			<option value="4">Autopilot</option>
+			<option value="5">Vanilla & Autopilot</option>
+			<option value="6">Relax & Autopilot</option>
+			<option value="7">Vanilla & Relax & Autopilot</option>
 			</select>
 			</tr>';
 			echo '</tbody></form>';
@@ -2972,6 +2978,24 @@ class P
 			ORDER BY scores_relax.pp DESC LIMIT 100'
 		);
 
+		$playsAutopilot = $GLOBALS['db']->fetchAll(
+			'
+			SELECT
+				beatmaps.song_name, beatmaps.beatmap_id, scores_ap.beatmap_md5,
+				users.username, scores_ap.userid, scores_ap.time, scores_ap.score,
+				scores_ap.pp, scores_ap.play_mode, scores_ap.mods
+			FROM scores_ap
+			LEFT JOIN beatmaps USING(beatmap_md5)
+			LEFT JOIN users ON users.id = scores_ap.userid
+			WHERE scores_ap.completed = 3
+				AND users.privileges & 1
+				AND users.whitelist & 4
+				AND scores_ap.play_mode = 0
+				AND beatmaps.ranked = 2
+				AND scores_ap.time > UNIX_TIMESTAMP(NOW()) - 604800
+			ORDER BY scores_ap.pp DESC LIMIT 100'
+		);
+
 		// Vanilla
 		echo '<table class="table table-striped table-hover">
 		<thead>
@@ -3005,6 +3029,32 @@ class P
 		</thead>
 		<tbody>';
 		foreach ($playsRelax as $play) {
+			if ($play['song_name']) {
+				$bn = '<a href="https://akatsuki.gg/b/' . $play['beatmap_id'] . '">' . $play['song_name'] . '</a>';
+			} else {
+				$bn = $play['beatmap_md5'];
+			}
+			// Get readable play_mode
+			$pm = getPlaymodeText($play['play_mode']);
+			// Print row
+			echo '<tr class="info">';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . $play['username'] . '</b></a></p></td>';
+			echo '<td><p class="text-left">' . $bn . ' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
+			echo '<td><p class="text-left">' . $pm . '</p></td>';
+			echo '<td><p class="text-left">' . timeDifference(time(), $play['time']) . '</p></td>';
+			//echo '<td><p class="text-left">'.number_format($play['score']).'</p></td>';
+			echo '<td><p class="text-right"><b>' . number_format($play['pp']) . '</b></p></td>';
+			echo '</tr>';
+		}
+		echo '</tbody>';
+
+		// Autopilot
+		echo '<table class="table table-striped table-hover">
+		<thead>
+		<tr><th class="text-left"><i class="fa fa-trophy"></i>	Top Autopilot plays for the week</th><th>Beatmap</th></th><th>Mode</th><th>Sent</th><th class="text-right">PP</th></tr>
+		</thead>
+		<tbody>';
+		foreach ($playsAutopilot as $play) {
 			if ($play['song_name']) {
 				$bn = '<a href="https://akatsuki.gg/b/' . $play['beatmap_id'] . '">' . $play['song_name'] . '</a>';
 			} else {
