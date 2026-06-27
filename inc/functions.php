@@ -1617,5 +1617,7 @@ function getWhitelist($whitelist)
 		array_push($wl, "Vanilla");
 	if ($whitelist & 2)
 		array_push($wl, "Relax");
+	if ($whitelist & 4)
+		array_push($wl, "Autopilot");
 	return implode(" & ", $wl);
 }
