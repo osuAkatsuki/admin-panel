@@ -238,6 +238,22 @@ try {
 			sessionCheckAdmin(Privileges::AdminManageUsers);
 			D::UnapproveSharedDevice();
 			break;
+		case 'saveTournamentBadge':
+			sessionCheckAdmin(Privileges::AdminManageBadges);
+			D::SaveTournamentBadge();
+			break;
+		case 'removeTournamentBadge':
+			sessionCheckAdmin(Privileges::AdminManageBadges);
+			D::RemoveTournamentBadge();
+			break;
+		case 'quickEditUserTournamentBadges':
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			D::QuickEditUserTournamentBadges();
+			break;
+		case 'saveUserTournamentBadges':
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			D::SaveUserTournamentBadges();
+			break;
 		default:
 			throw new Exception('Invalid action value');
 	}
