@@ -631,11 +631,35 @@ class D
 		}
 	}
 
+	private static function connectionLinkDefinitions()
+	{
+		return [
+			'discord' => [
+				'label' => 'Discord',
+				'idColumn' => 'discord_account_id',
+				'selectColumns' => 'username, discord_account_id',
+				'updateSql' => 'UPDATE users SET discord_account_id = NULL WHERE id = ? LIMIT 1',
+			],
+			'twitch' => [
+				'label' => 'Twitch',
+				'idColumn' => 'twitch_account_id',
+				'selectColumns' => 'username, twitch_account_id',
+				'updateSql' => 'UPDATE users SET twitch_account_id = NULL, twitch_username = NULL WHERE id = ? LIMIT 1',
+			],
+			'osu' => [
+				'label' => 'osu!',
+				'idColumn' => 'official_osu_user_id',
+				'selectColumns' => 'username, official_osu_user_id',
+				'updateSql' => 'UPDATE users SET official_osu_user_id = NULL, official_osu_username = NULL WHERE id = ? LIMIT 1',
+			],
+		];
+	}
+
 	/*
-	 * ResetDiscordLink
-	 * Reset someone's Discord link (ADMIN CP)
+	 * ResetConnectionLink
+	 * Reset someone's connected profile link (ADMIN CP)
 	 */
-	public static function ResetDiscordLink()
+	public static function ResetConnectionLink()
 	{
 		try {
 			// Check if everything is set
@@ -643,25 +667,36 @@ class D
 				throw new Exception('Invalid request');
 			}
 
-			// Get user data to check if they have a Discord link
-			$userData = $GLOBALS['db']->fetch('SELECT username, discord_account_id FROM users WHERE id = ? LIMIT 1', [$_GET['id']]);
+			if (!isset($_GET['provider']) || empty($_GET['provider'])) {
+				throw new Exception('Invalid connection provider');
+			}
+
+			$definitions = self::connectionLinkDefinitions();
+			if (!isset($definitions[$_GET['provider']])) {
+				throw new Exception('Invalid connection provider');
+			}
+
+			$definition = $definitions[$_GET['provider']];
+
+			// Get user data to check if they have the requested link
+			$userData = $GLOBALS['db']->fetch('SELECT ' . $definition['selectColumns'] . ' FROM users WHERE id = ? LIMIT 1', [$_GET['id']]);
 			if (!$userData) {
 				throw new Exception('User not found');
 			}
 
-			if (empty($userData['discord_account_id'])) {
-				throw new Exception('User does not have a Discord link to reset');
+			if (empty($userData[$definition['idColumn']])) {
+				throw new Exception('User does not have a ' . $definition['label'] . ' link to reset');
 			}
 
-			// Reset the Discord link
-			$GLOBALS['db']->execute('UPDATE users SET discord_account_id = NULL WHERE id = ? LIMIT 1', [$_GET['id']]);
+			// Reset the requested connection link
+			$GLOBALS['db']->execute($definition['updateSql'], [$_GET['id']]);
 
 			// Rap log
-			postWebhookMessage(sprintf("has reset [%s](https://akatsuki.gg/u/%s)'s Discord link\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData['username'], $_GET['id'], $_GET['id']));
-			rapLog(sprintf("has reset %s's Discord link", $userData['username']));
+			postWebhookMessage(sprintf("has reset [%s](https://akatsuki.gg/u/%s)'s %s link\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData['username'], $_GET['id'], $definition['label'], $_GET['id']));
+			rapLog(sprintf("has reset %s's %s link", $userData['username'], $definition['label']));
 
 			// Done, redirect to success page
-			redirect('index.php?p=103&id=' . $_GET['id'] . '&s=Discord link reset!');
+			redirect('index.php?p=103&id=' . $_GET['id'] . '&s=' . $definition['label'] . ' link reset!');
 		} catch (Exception $e) {
 			// Redirect to Exception page
 			redirect('index.php?p=103&id=' . ($_GET['id'] ?? '') . '&e=' . $e->getMessage());

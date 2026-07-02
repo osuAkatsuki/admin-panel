@@ -119,8 +119,13 @@ try {
 			D::ResetAvatar();
 			break;
 		case 'resetDiscordLink':
+			$_GET['provider'] = 'discord';
 			sessionCheckAdmin(Privileges::AdminManageUsers);
-			D::ResetDiscordLink();
+			D::ResetConnectionLink();
+			break;
+		case 'resetConnectionLink':
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			D::ResetConnectionLink();
 			break;
 		case 'wipeAccount':
 			sessionCheckAdmin(Privileges::AdminWipeUsers);
