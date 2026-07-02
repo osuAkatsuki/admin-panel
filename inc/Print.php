@@ -600,7 +600,7 @@ class P
 			// Get user data
 			$userData = $GLOBALS['db']->fetch('SELECT * FROM users WHERE id = ? LIMIT 1', $_GET['id']);
 			$lastScoreDetection = $GLOBALS['db']->fetch('SELECT created_at FROM score_detections WHERE user_id = ? ORDER BY created_at DESC LIMIT 1', $_GET['id']);
-			$ips = $GLOBALS['db']->fetchAll('SELECT ip, occurencies FROM ip_user WHERE userid = ? ORDER BY occurencies DESC LIMIT 50', $_GET['id']);
+			$ips = $GLOBALS['db']->fetchAll('SELECT ip, occurencies, last_used_at FROM ip_user WHERE userid = ? ORDER BY occurencies DESC LIMIT 50', $_GET['id']);
 			// Check if this user exists
 			if (!$userData) {
 				throw new Exception("That user doesn't exist");
@@ -954,7 +954,8 @@ class P
 				echo '</td><td><ul>';
 
 				foreach ($ips as $ip) {
-					echo "<li>$ip[ip] <a class='getcountry' data-ip='$ip[ip]' title='Click to retrieve IP country'>(?)</a> ($ip[occurencies])</li>";
+					$lastUsedAt = $ip['last_used_at'] ? date('Y-m-d H:i', strtotime($ip['last_used_at'])) : 'Unknown';
+					echo "<li>$ip[ip] <a class='getcountry' data-ip='$ip[ip]' title='Click to retrieve IP country'>(?)</a> ($ip[occurencies], last used $lastUsedAt)</li>";
 				}
 			}
 			echo '</ul></td></tr>';
@@ -3190,6 +3191,7 @@ class P
 				<th>User</th>
 				<th>Privileges</th>
 				<th>Occurrencies</th>
+				<th>Last Used</th>
 			</tr>
 			</thead>';
 			echo '<tbody>';
@@ -3209,18 +3211,20 @@ class P
 				if ($userFilter && $row["userid"] != $_GET["uid"]) {
 					$hax = true;
 				}
+				$lastUsedAt = $row['last_used_at'] ? date('Y-m-d H:i', strtotime($row['last_used_at'])) : 'Unknown';
 				echo "<tr class='" . ($userFilter && $row["userid"] != $_GET["uid"] ? "danger bold" : "") . "'>
 				<td>$row[ip] <a class='getcountry' data-ip='$row[ip]'>(?)</a></td>
 				<td><a href='index.php?p=103&id=$row[userid]' target='_blank'>$row[username]</a> <i>($row[userid])</i></td>
 				<td><span class='label label-$groupColor'>$groupText</span></td>
 				<td>$row[occurencies]</td>
+				<td>$lastUsedAt</td>
 				</tr>";
 			}
 
 			if ($userFilter && !$hax) {
-				echo '<td class="success" style="text-align: center" colspan=4><i class="fa fa-thumbs-up"></i>	<b>Looking good!</b></td>';
+				echo '<td class="success" style="text-align: center" colspan=5><i class="fa fa-thumbs-up"></i>	<b>Looking good!</b></td>';
 			} else if ($userFilter) {
-				echo '<td class="warning" style="text-align: center" colspan=4><i class="fa fa-warning"></i>	<b>Ohoh, opsie wopsie!</b></td>';
+				echo '<td class="warning" style="text-align: center" colspan=5><i class="fa fa-warning"></i>	<b>Ohoh, opsie wopsie!</b></td>';
 			}
 
 			echo '</tbody>
