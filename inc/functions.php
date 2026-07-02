@@ -536,9 +536,9 @@ function getUserCountry()
 		return 'XX'; // Return XX if $ip isn't valid.
 	}
 	// otherwise, retrieve the contents from ip.zxq.co's API
-	$data = get_contents_http("http://ip.vanilla.rocks/$ip/country");
+	$data = get_contents_http("https://ip.zxq.co/" . rawurlencode($ip) . "/country");
 	// And return the country. If it's set, that is.
-	return strlen($data) == 2 ? $data : 'XX';
+	return strlen((string) $data) == 2 ? $data : 'XX';
 }
 // updateUserCountry updates the user's country in the database with the country they
 // are currently connecting from.
@@ -1207,8 +1207,8 @@ function logIP($uid)
 {
 	// botnet-track IP
 	$GLOBALS['db']->execute(
-		"INSERT INTO ip_user (userid, ip, occurencies) VALUES (?, ?, '1')
-							ON DUPLICATE KEY UPDATE occurencies = occurencies + 1",
+		"INSERT INTO ip_user (userid, ip, occurencies, last_used_at) VALUES (?, ?, '1', NOW())
+							ON DUPLICATE KEY UPDATE occurencies = occurencies + 1, last_used_at = NOW()",
 		[$uid, getIP()]
 	);
 }

@@ -270,7 +270,7 @@ if (isset($_GET['p'])) {
 
 		$(".getcountry").click(function() {
 			var i = $(this);
-			$.get("https://ip.zxq.co/" + $(this).data("ip") + "/country", function(data) {
+			$.get("api/get_ip_country.php", {ip: $(this).data("ip")}, function(data) {
 				data = (data === "" ? "dunno" : data);
 				i.text("(" + data + ")");
 			});
