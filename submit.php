@@ -118,9 +118,9 @@ try {
 			sessionCheckAdmin(Privileges::AdminManageUsers);
 			D::ResetAvatar();
 			break;
-		case 'resetDiscordLink':
+		case 'resetConnectionLink':
 			sessionCheckAdmin(Privileges::AdminManageUsers);
-			D::ResetDiscordLink();
+			D::ResetConnectionLink();
 			break;
 		case 'wipeAccount':
 			sessionCheckAdmin(Privileges::AdminWipeUsers);

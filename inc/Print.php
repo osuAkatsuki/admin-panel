@@ -735,6 +735,7 @@ class P
 						</tr>
 					</thead>
 					<tbody>';
+			$resetConnectionLinkURL = 'submit.php?action=resetConnectionLink&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '&provider=';
 
 			echo '<tr>
 				<td><i class="fa fa-comments-o"></i> Discord</td>
@@ -746,7 +747,7 @@ class P
 					Discord ID ' . $discordAccountID . '<br>
 					<a href="https://discord.com/users/' . $discordAccountID . '" target="_blank" rel="noopener noreferrer">View profile</a>
 				</td>
-				<td><a onclick="sure(\'submit.php?action=resetDiscordLink&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\')">Reset link</a></td>';
+				<td><a onclick="sure(\'' . $resetConnectionLinkURL . 'discord\')">Reset link</a></td>';
 			} else {
 				echo '<span class="label label-danger">Not linked</span></td>
 				<td><em>No Discord account linked</em></td>
@@ -770,7 +771,7 @@ class P
 					echo '<br><a href="https://www.twitch.tv/' . rawurlencode($userData['twitch_username']) . '" target="_blank" rel="noopener noreferrer">View profile</a>';
 				}
 				echo '</td>
-				<td>-</td>';
+				<td><a onclick="sure(\'' . $resetConnectionLinkURL . 'twitch\')">Reset link</a></td>';
 			} else {
 				echo '<span class="label label-danger">Not linked</span></td>
 				<td><em>No Twitch account linked</em></td>
@@ -792,7 +793,7 @@ class P
 				echo 'osu! ID ' . $officialOsuUserID . '<br>
 					<a href="https://osu.ppy.sh/users/' . $officialOsuUserID . '" target="_blank" rel="noopener noreferrer">View profile</a>
 				</td>
-				<td>-</td>';
+				<td><a onclick="sure(\'' . $resetConnectionLinkURL . 'osu\')">Reset link</a></td>';
 			} else {
 				echo '<span class="label label-danger">Not linked</span></td>
 				<td><em>No osu! account linked</em></td>
