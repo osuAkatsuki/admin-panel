@@ -981,7 +981,7 @@ class P
 		echo '<p align="center"><font size=4><i class="fa fa-laptop"></i> Hardware Devices</font></p>';
 		echo '<table class="table table-striped table-hover table-75-center">';
 		echo '<thead><tr>';
-		echo '<th class="text-center">Hardware ID</th>';
+		echo '<th class="text-center">Hardware fingerprint<br><small class="text-muted">adapter / uninstall ID / disk signature hashes</small></th>';
 		echo '<th class="text-center">Users on Device</th>';
 		echo '<th class="text-center">Occurrences</th>';
 		echo '<th class="text-center">Last Used</th>';
@@ -3784,7 +3784,7 @@ class P
 		echo '<table class="table table-striped table-hover table-50-center">';
 		echo '<thead>';
 		echo '<tr>';
-		echo '<th class="text-center">Hardware ID</th>';
+		echo '<th class="text-center">Hardware fingerprint<br><small class="text-muted">adapter / uninstall ID / disk signature hashes</small></th>';
 		echo '<th class="text-center">User Count</th>';
 		echo '<th class="text-center">Status</th>';
 		echo '<th class="text-center">Approved By</th>';
@@ -3928,11 +3928,11 @@ class P
 					</div>
 					<div class="modal-body">
 						<dl class="dl-horizontal">
-							<dt>MAC Hash:</dt>
+							<dt>Network adapter hash:</dt>
 							<dd id="detail_mac"></dd>
-							<dt>Unique ID Hash:</dt>
+							<dt>Uninstall ID hash:</dt>
 							<dd id="detail_unique_id"></dd>
-							<dt>Disk ID Hash:</dt>
+							<dt>Disk signature hash:</dt>
 							<dd id="detail_disk_id"></dd>
 							<dt>Approval Reason:</dt>
 							<dd id="detail_reason"></dd>
@@ -4078,9 +4078,9 @@ class P
 		echo '<div class="panel-heading"><h3 class="panel-title">Hardware Information</h3></div>';
 		echo '<div class="panel-body">';
 		echo '<table class="table">';
-		echo '<tr><th width="20%">MAC Address</th><td><code>' . htmlspecialchars($mac) . '</code></td></tr>';
-		echo '<tr><th>Unique ID</th><td><code>' . htmlspecialchars($unique_id) . '</code></td></tr>';
-		echo '<tr><th>Disk ID</th><td><code>' . htmlspecialchars($disk_id) . '</code></td></tr>';
+		echo '<tr><th width="20%">Network adapter hash</th><td><code>' . htmlspecialchars($mac) . '</code></td></tr>';
+		echo '<tr><th>Uninstall ID hash</th><td><code>' . htmlspecialchars($unique_id) . '</code></td></tr>';
+		echo '<tr><th>Disk signature hash</th><td><code>' . htmlspecialchars($disk_id) . '</code></td></tr>';
 		echo '<tr><th>Status</th><td><span class="label label-' . $statusColor . '">' . $statusText . '</span></td></tr>';
 
 		if ($isApproved) {
