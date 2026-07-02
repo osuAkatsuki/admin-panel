@@ -270,9 +270,12 @@ if (isset($_GET['p'])) {
 
 		$(".getcountry").click(function() {
 			var i = $(this);
-			$.get("api/get_ip_country.php", {ip: $(this).data("ip")}, function(data) {
-				data = (data === "" ? "dunno" : data);
-				i.text("(" + data + ")");
+			$.get("api/get_ip_info.php", {ip: $(this).data("ip")}, function(data) {
+				data = data || {summary: "dunno", title: "IP intelligence lookup failed"};
+				i.text("(" + data.summary + ")");
+				i.attr("title", data.title || "");
+			}).fail(function() {
+				i.text("(dunno)");
 			});
 		});
 	</script>
