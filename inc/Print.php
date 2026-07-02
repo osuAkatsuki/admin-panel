@@ -722,18 +722,87 @@ class P
 			echo '</td>
 			</tr>';
 
-			// Discord link status
-			$hasDiscordLink = !empty($userData['discord_account_id']);
 			echo '<tr>
-			<td>Linked Discord</td>
-			<td>';
-			if ($hasDiscordLink) {
-				echo '<span class="label label-success">Yes</span>';
-				echo ' <a onclick="sure(\'submit.php?action=resetDiscordLink&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\')">(reset link)</a>';
+			<td>Connected profiles</td>
+			<td>
+				<table class="table table-condensed table-bordered" style="margin-bottom:0">
+					<thead>
+						<tr>
+							<th>Provider</th>
+							<th>Status</th>
+							<th>Profile</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>';
+
+			echo '<tr>
+				<td><i class="fa fa-comments-o"></i> Discord</td>
+				<td>';
+			if (!empty($userData['discord_account_id'])) {
+				$discordAccountID = htmlspecialchars($userData['discord_account_id']);
+				echo '<span class="label label-success">Linked</span></td>
+				<td>
+					Discord ID ' . $discordAccountID . '<br>
+					<a href="https://discord.com/users/' . $discordAccountID . '" target="_blank" rel="noopener noreferrer">View profile</a>
+				</td>
+				<td><a onclick="sure(\'submit.php?action=resetDiscordLink&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\')">Reset link</a></td>';
 			} else {
-				echo '<span class="label label-danger">No</span>';
+				echo '<span class="label label-danger">Not linked</span></td>
+				<td><em>No Discord account linked</em></td>
+				<td>-</td>';
 			}
-			echo '</td>
+			echo '</tr>';
+
+			echo '<tr>
+				<td><i class="fa fa-video-camera"></i> Twitch</td>
+				<td>';
+			if (!empty($userData['twitch_account_id'])) {
+				$twitchAccountID = htmlspecialchars($userData['twitch_account_id']);
+				$twitchUsername = htmlspecialchars($userData['twitch_username'] ?? '');
+				echo '<span class="label label-success">Linked</span></td>
+				<td>';
+				if ($twitchUsername !== '') {
+					echo '@' . $twitchUsername . '<br>';
+				}
+				echo 'Twitch ID ' . $twitchAccountID;
+				if ($twitchUsername !== '') {
+					echo '<br><a href="https://www.twitch.tv/' . rawurlencode($userData['twitch_username']) . '" target="_blank" rel="noopener noreferrer">View profile</a>';
+				}
+				echo '</td>
+				<td>-</td>';
+			} else {
+				echo '<span class="label label-danger">Not linked</span></td>
+				<td><em>No Twitch account linked</em></td>
+				<td>-</td>';
+			}
+			echo '</tr>';
+
+			echo '<tr>
+				<td><i class="fa fa-dot-circle-o"></i> osu!</td>
+				<td>';
+			if (!empty($userData['official_osu_user_id'])) {
+				$officialOsuUserID = htmlspecialchars($userData['official_osu_user_id']);
+				$officialOsuUsername = htmlspecialchars($userData['official_osu_username'] ?? '');
+				echo '<span class="label label-success">Linked</span></td>
+				<td>';
+				if ($officialOsuUsername !== '') {
+					echo $officialOsuUsername . '<br>';
+				}
+				echo 'osu! ID ' . $officialOsuUserID . '<br>
+					<a href="https://osu.ppy.sh/users/' . $officialOsuUserID . '" target="_blank" rel="noopener noreferrer">View profile</a>
+				</td>
+				<td>-</td>';
+			} else {
+				echo '<span class="label label-danger">Not linked</span></td>
+				<td><em>No osu! account linked</em></td>
+				<td>-</td>';
+			}
+			echo '</tr>';
+
+			echo '</tbody>
+				</table>
+			</td>
 			</tr>';
 
 			echo '<tr>
