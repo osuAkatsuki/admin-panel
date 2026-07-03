@@ -5,7 +5,7 @@ apps:
     replicaCount: 1
     container:
       image:
-        repository: osuakatsuki/admin-panel
+        repository: ghcr.io/osuakatsuki/admin-panel
         tag: latest
       port: 80
       readinessProbe:
