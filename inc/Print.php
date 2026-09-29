@@ -884,7 +884,7 @@ class P
 			</tr>';
 			echo '<tr>
 			<td>Userpage<br><a onclick="censorUserpage();">(reset userpage)</a></td>
-			<td><p class="text-center"><textarea name="up" class="form-control" style="overflow:auto;resize:vertical;height:200px">' . $userData['userpage_content'] . '</textarea></td>
+			<td><p class="text-center"><textarea name="up" class="form-control" style="overflow:auto;resize:vertical;height:200px">' . htmlspecialchars($userData['userpage_content']) . '</textarea></td>
 			</tr>';
 			if (hasPrivilege(Privileges::AdminSilenceUsers)) {
 				echo '<tr>
