@@ -73,6 +73,20 @@ function redirect($url)
 	exit();
 }
 
+function redirectBack($defaultUrl, $success = '', $error = '')
+{
+	$referer = $_SERVER['HTTP_REFERER'] ?? '';
+	$host = parse_url($referer, PHP_URL_HOST);
+	$target = ($referer && (!$host || $host === ($_SERVER['HTTP_HOST'] ?? ''))) ? stripSuccessError($referer) : $defaultUrl;
+	$sep = (strpos($target, '?') !== false) ? '&' : '?';
+	if (!empty($success)) {
+		$target .= $sep . 's=' . urlencode($success);
+	} elseif (!empty($error)) {
+		$target .= $sep . 'e=' . urlencode($error);
+	}
+	redirect($target);
+}
+
 
 /*
  * outputVariable
@@ -1454,11 +1468,19 @@ function updateSilenceBancho($userID)
 
 function stripSuccessError($url)
 {
+	if (empty($url)) {
+		return 'index.php?p=102';
+	}
 	$parts = parse_url($url);
-	parse_str($parts['query'], $query);
-	unset($query["e"]);
-	unset($query["s"]);
-	return $parts["path"] . "?" .  http_build_query($query);
+	$path = isset($parts["path"]) ? $parts["path"] : "index.php";
+	$query = [];
+	if (isset($parts['query']) && !empty($parts['query'])) {
+		parse_str($parts['query'], $query);
+		unset($query["e"]);
+		unset($query["s"]);
+	}
+	$qs = http_build_query($query);
+	return $path . ($qs ? "?" . $qs : "");
 }
 
 function appendNotes($userID, $notes, $addNl = true, $addTimestamp = true)
@@ -1575,15 +1597,15 @@ function giveDonor($userID, $months, $add = true, $premium = false)
 		$donorBadge = $GLOBALS["db"]->fetch("SELECT id FROM badges WHERE name = 'supporter' OR name = 'support' LIMIT 1");
 	}
 
-	if (!$donorBadge) {
-		throw new Exception("There's no such badge in the database.");
-	}
+	if ($donorBadge) {
+		// Check if they already have the supporter/premium badge
+		$hasAlready = $GLOBALS["db"]->fetch("SELECT id FROM user_badges WHERE user = ? AND badge = ? LIMIT 1", [$userID, $donorBadge["id"]]);
 
-	// Check if they already have the supporter/premium badge
-	$hasAlready = $GLOBALS["db"]->fetch("SELECT id FROM user_badges WHERE user = ? AND badge = ? LIMIT 1", [$userID, $donorBadge["id"]]);
-
-	if (!$hasAlready) { // Add their supporter/premium badge
-		$GLOBALS["db"]->execute("INSERT INTO user_badges(user, badge) VALUES (?, ?)", [$userID, $donorBadge["id"]]);
+		if (!$hasAlready) { // Add their supporter/premium badge
+			$GLOBALS["db"]->execute("INSERT INTO user_badges(user, badge) VALUES (?, ?)", [$userID, $donorBadge["id"]]);
+		}
+	} else {
+		error_log("giveDonor: donor badge not found in database for user " . $userID);
 	}
 
 	// To finish off, let's give them permissions to edit their custom badge.

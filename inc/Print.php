@@ -1469,7 +1469,7 @@ class P
 			if ($_GET['id'] > 0) {
 				$badgeData = $GLOBALS['db']->fetch('SELECT * FROM badges WHERE id = ?', $_GET['id']);
 			} else {
-				$badgeData = ['id' => 0, 'name' => 'New Badge', 'icon' => ''];
+				$badgeData = ['id' => 0, 'name' => 'New Badge', 'icon' => '', 'colour' => ''];
 			}
 			// Check if this doc page exists
 			if (!$badgeData) {
@@ -2557,6 +2557,14 @@ class P
 			echo '<div id="page-content-wrapper">';
 			// Maintenance check
 			self::MaintenanceStuff();
+			// Print Success if set
+			if (isset($_GET['s']) && !empty($_GET['s'])) {
+				self::SuccessMessageStaccah($_GET['s']);
+			}
+			// Print Exception if set
+			if (isset($_GET['e']) && !empty($_GET['e'])) {
+				self::ExceptionMessageStaccah($_GET['e']);
+			}
 			echo '<p align="center"><font size=5><i class="fa fa-fast-backward"></i>	Rollback account</font></p>';
 			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
 			if (!$username) {
@@ -2616,6 +2624,14 @@ class P
 			echo '<div id="page-content-wrapper">';
 			// Maintenance check
 			self::MaintenanceStuff();
+			// Print Success if set
+			if (isset($_GET['s']) && !empty($_GET['s'])) {
+				self::SuccessMessageStaccah($_GET['s']);
+			}
+			// Print Exception if set
+			if (isset($_GET['e']) && !empty($_GET['e'])) {
+				self::ExceptionMessageStaccah($_GET['e']);
+			}
 			echo '<div class="container alert alert-danger" role="alert" style="width: 100%;"><p align="center"><b>Reminder:<br></b>Admins should not provide wipes for users who have not purchased supporter, unless it is warranted.</p></div>';
 			echo '<p align="center"><font size=5><i class="fa fa-eraser"></i>	Wipe account</font></p>';
 			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
@@ -2639,11 +2655,11 @@ class P
 			<td>Gamemode</td>
 			<td>
 			<select name="gm" class="selectpicker" data-width="100%">
-				<option value="-1">All</option>
 				<option value="0">osu!</option>
 				<option value="1">osu!taiko</option>
 				<option value="2">osu!catch</option>
 				<option value="3">osu!mania</option>
+				<option value="-1">All</option>
 			</select>';
 			echo '<tr>
 			<td>Akatsuki Mode</td>
@@ -2652,6 +2668,7 @@ class P
 				<option value="0">Vanilla</option>
 				<option value="1">Relax</option>
 				<option value="2">Autopilot</option>
+				<option value="3">All</option>
 			</select>
 			</td>
 			</tr>';
