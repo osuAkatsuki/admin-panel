@@ -305,12 +305,20 @@ if (isset($_GET['p'])) {
 							result = Number(result) + Number($(this).val());
 						});
 
-						// Remove donor if needed
-						var selectValue;
-						if (result != ' . (Privileges::UserDonor | Privileges::UserNormal | Privileges::UserPublic) . ') {
-							selectValue = result & ~' . Privileges::UserDonor . '
-						} else {
-							selectValue = result;
+						var selectValue = -1;
+						$("#privileges-group option").each(function(){
+							if (Number($(this).val()) === result) {
+								selectValue = result;
+							}
+						});
+						if (selectValue === -1) {
+							$("#privileges-group option").each(function(){
+								var groupPrivileges = Number($(this).val());
+								var rolePrivileges = groupPrivileges & ~' . Privileges::UserSubscription . ';
+								if (groupPrivileges >= 0 && (result === (groupPrivileges | ' . Privileges::UserSubscription . ') || (rolePrivileges > 3 && (result & ~' . Privileges::UserSubscription . ') === rolePrivileges))) {
+									selectValue = groupPrivileges;
+								}
+							});
 						}
 
 						$("#privileges-value").val(result);

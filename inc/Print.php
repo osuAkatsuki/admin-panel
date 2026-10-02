@@ -323,13 +323,6 @@ class P
 	{
 		// Get admin dashboard data
 		$totalUsers = current($GLOBALS['db']->fetch('SELECT COUNT(*) FROM users'));
-		$supporters = current($GLOBALS['db']->fetch('
-		    SELECT COUNT(*)
-			FROM users
-			WHERE privileges & ' . Privileges::UserDonor . ' > 0
-			AND NOT privileges & ' . Privileges::UserPremium . ' > 0
-			AND NOT privileges & ' . Privileges::AdminManageUsers . ' > 0
-			AND donor_expire != 2147483647'));
 		$premiums = current($GLOBALS['db']->fetch('
 			SELECT COUNT(*) FROM users
 			WHERE privileges & ' . Privileges::UserPremium . ' > 0
@@ -363,9 +356,8 @@ class P
 		echo '<div class="row">';
 		printAdminPanel('primary', 'fa fa-user fa-5x', $totalUsers, 'Total users');
 		printAdminPanel('red', 'fa fa-thumbs-down fa-5x', $bannedUsers, 'Banned users');
-		printAdminPanel('yellow', 'fa fa-money fa-5x', $supporters, 'Supporters');
 		//printAdminPanel('green', 'fa fa-star fa-5x', $modUsers, 'Admins');
-		printAdminPanel('info', 'fa fa-star fa-5x', $premiums, 'Premium members');
+		printAdminPanel('info', 'fa fa-star fa-5x', $premiums, 'AKATSUKI+ members');
 		echo '</div>';
 		// Quick edit/silence/kick user button
 		echo '<br><p align="center" class="mobile-flex"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#quickEditUserModal">Quick edit user (username)</button>';
@@ -387,11 +379,10 @@ class P
 			// Get group color/text
 			$groupColor = "default";
 			$groupText = "None";
-			foreach ($groups as $group) {
-				if ($user["privileges"] == $group["privileges"] || $user["privileges"] == ($group["privileges"] | Privileges::UserDonor)) {
-					$groupColor = $group["color"];
-					$groupText = $group["name"];
-				}
+			$group = getPrivilegeGroup($user["privileges"], $groups);
+			if ($group) {
+				$groupColor = $group["color"];
+				$groupText = $group["name"];
 			}
 
 			// Get allowed color/text
@@ -873,7 +864,7 @@ class P
 			if (hasPrivilege(Privileges::UserDonor, $userData["id"])) {
 				$donorExpire = timeDifference($userData["donor_expire"], time(), false);
 				echo '<tr>
-				<td>' . (hasPrivilege(Privileges::UserPremium) ? 'Premium' : 'Supporter') . ' expires in</td>
+				<td>AKATSUKI+ expires in</td>
 				<td>' . $donorExpire . '</td>
 				</tr>';
 			}
@@ -903,10 +894,12 @@ class P
 				<td>';
 				$refl = new ReflectionClass("Privileges");
 				$privilegesList = $refl->getConstants();
+				unset($privilegesList["UserDonor"], $privilegesList["UserPremium"], $privilegesList["UserSubscription"]);
+				$privilegesList["AKATSUKI+"] = Privileges::UserSubscription;
 				foreach ($privilegesList as $i => $v) {
 					if ($v <= 0)
 						continue;
-					$c = (($userData["privileges"] & $v) > 0) ? "checked" : "";
+					$c = (($userData["privileges"] & $v) == $v) ? "checked" : "";
 					$d = ($v <= 2 && $gd != "disabled") ? "disabled" : "";
 					echo '<label><input name="privilege" value="' . $v . '" type="checkbox" onclick="updatePrivileges();" ' . $c . ' ' . $gd . ' ' . $d . '>	' . $i . ' (' . $v . ')</label><br>';
 				}
@@ -922,8 +915,9 @@ class P
 					<select id="privileges-group" name="privgroup" class="selectpicker" data-width="100%" onchange="groupUpdated();" ' . $gd . '>';
 				$groups = $GLOBALS["db"]->fetchAll("SELECT * FROM privileges_groups");
 				echo "<option value='-1'>None</option>";
+				$selectedGroup = getPrivilegeGroup($userData["privileges"], $groups);
 				foreach ($groups as $group) {
-					$s = (($userData["privileges"] == $group["privileges"]) || ($userData["privileges"] == ($group["privileges"] | Privileges::UserDonor))) ? "selected" : "";
+					$s = ($selectedGroup && $selectedGroup["id"] == $group["id"]) ? "selected" : "";
 					echo "<option value='$group[privileges]' $s>$group[name]</option>";
 				}
 				echo '</select>
@@ -1039,9 +1033,9 @@ class P
 			echo '	<a href="index.php?p=105&id=' . $_GET['id'] . '" class="btn btn-info">Change whitelist</a>';
 			echo '	<a href="index.php?p=106&id=' . $_GET['id'] . '" class="btn btn-info">Change email address</a>';
 			if (hasPrivilege(Privileges::UserDonor, $_GET["id"])) {
-				echo '	<a onclick="sure(\'submit.php?action=removeDonor&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">Remove donor</a>';
+				echo '	<a onclick="sure(\'submit.php?action=removeDonor&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">Remove AKATSUKI+</a>';
 			}
-			echo '	<a href="index.php?p=121&id=' . $_GET['id'] . '" class="btn btn-warning">Give supporter</a>';
+			echo '	<a href="index.php?p=121&id=' . $_GET['id'] . '" class="btn btn-warning">Give AKATSUKI+</a>';
 			echo '	<a href="https://akatsuki.gg/u/' . $_GET['id'] . '" class="btn btn-primary">View profile</a>';
 			echo '</li>
 						</ul>';
@@ -2254,10 +2248,12 @@ class P
 
 			$refl = new ReflectionClass("Privileges");
 			$privilegesList = $refl->getConstants();
+			unset($privilegesList["UserDonor"], $privilegesList["UserPremium"], $privilegesList["UserSubscription"]);
+			$privilegesList["AKATSUKI+"] = Privileges::UserSubscription;
 			foreach ($privilegesList as $i => $v) {
 				if ($v <= 0)
 					continue;
-				$c = (($privilegeGroupData["privileges"] & $v) > 0) ? "checked" : "";
+				$c = (($privilegeGroupData["privileges"] & $v) == $v) ? "checked" : "";
 				echo '<label class="colucci"><input name="privileges" value="' . $v . '" type="checkbox" onclick="updatePrivileges();" ' . $c . '>	' . $i . ' (' . $v . ')</label><br>';
 			}
 			echo '</td></tr>';
@@ -2327,7 +2323,8 @@ class P
 			if (!$groupData) {
 				throw new Exception("That group doesn't exist");
 			}
-			$users = $GLOBALS['db']->fetchAll('SELECT * FROM users WHERE privileges = ? OR privileges = ? | ' . Privileges::UserDonor, [$groupData["privileges"], $groupData["privileges"]]);
+			$rolePrivileges = $groupData["privileges"] & ~Privileges::UserSubscription;
+			$users = $GLOBALS['db']->fetchAll('SELECT * FROM users WHERE privileges = ? OR privileges = ? OR (privileges = ? AND ? > 3)', [$groupData["privileges"], $groupData["privileges"] | Privileges::UserSubscription, $rolePrivileges, $rolePrivileges]);
 			// Print sidebar and template stuff
 			echo '<div id="wrapper">';
 			printAdminSidebar();
@@ -2488,7 +2485,7 @@ class P
 			echo '<div id="page-content-wrapper">';
 			// Maintenance check
 			self::MaintenanceStuff();
-			echo '<p align="center"><font size=5><i class="fa fa-money"></i>	Give supporter</font></p>';
+			echo '<p align="center"><font size=5><i class="fa fa-money"></i>	Give AKATSUKI+</font></p>';
 			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
 			if (!$username) {
 				throw new Exception("Invalid user");
@@ -2520,19 +2517,12 @@ class P
 				<option value=1>Replace months</option>
 			</select></td>
 			</tr>';
-			echo '<tr>
-			<td> Supporter type</td>
-			<td>
-			<select name="stype" class="selectpicker" data-width="100%">
-				<option value=0 selected>Supporter</option>
-				<option value=1>Premium</option>
-			</select></td>
-			</tr>';
+
 
 
 			echo '</tbody></form>';
 			echo '</table>';
-			echo '<div class="text-center"><button type="submit" form="edit-user-badges" class="btn btn-primary">Give supporter</button></div>';
+			echo '<div class="text-center"><button type="submit" form="edit-user-badges" class="btn btn-primary">Give AKATSUKI+</button></div>';
 			echo '</div>';
 		} catch (Exception $e) {
 			// Redirect to exception page
@@ -2616,7 +2606,7 @@ class P
 			echo '<div id="page-content-wrapper">';
 			// Maintenance check
 			self::MaintenanceStuff();
-			echo '<div class="container alert alert-danger" role="alert" style="width: 100%;"><p align="center"><b>Reminder:<br></b>Admins should not provide wipes for users who have not purchased supporter, unless it is warranted.</p></div>';
+			echo '<div class="container alert alert-danger" role="alert" style="width: 100%;"><p align="center"><b>Reminder:<br></b>Admins should not provide wipes for users who have not purchased AKATSUKI+, unless it is warranted.</p></div>';
 			echo '<p align="center"><font size=5><i class="fa fa-eraser"></i>	Wipe account</font></p>';
 			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
 			if (!$username) {
