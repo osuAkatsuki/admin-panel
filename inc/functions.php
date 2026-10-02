@@ -1578,7 +1578,7 @@ function giveDonor($userID, $months, $add = true)
 	$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | 8388612, donor_expire = ?, can_custom_badge = 1, show_custom_badge = 1 WHERE id = ?", [$unixExpire, $userID]);
 	$GLOBALS["db"]->execute("DELETE FROM user_badges WHERE user = ? AND badge = 36", [$userID]);
 	$hasAlready = $GLOBALS["db"]->fetch("SELECT id FROM user_badges WHERE user = ? AND badge = 59 LIMIT 1", [$userID]);
-	if (!$hasAlready) {
+	if (!$hasAlready && current($GLOBALS["db"]->fetch("SELECT COUNT(*) FROM user_badges WHERE user = ?", [$userID])) < 6) {
 		$GLOBALS["db"]->execute("INSERT INTO user_badges(user, badge) VALUES (?, 59)", [$userID]);
 	}
 
