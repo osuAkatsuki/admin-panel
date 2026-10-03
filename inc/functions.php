@@ -147,7 +147,7 @@ function setTitle($p)
 		118 => 'Privilege Groups',
 		119 => 'Edit privilege group',
 		120 => 'View users in privilege group',
-		121 => 'Give Supporter',
+		121 => 'Give AKATSUKI+',
 		122 => 'Rollback user',
 		123 => 'Wipe user',
 		124 => 'Rank beatmap',
@@ -1419,16 +1419,6 @@ function UNIXTimestampToOsuDate($unix)
 	return date("ymdHis", $unix);
 }
 
-function getDonorPrice($months)
-{
-	return number_format(pow($months * 30 * 0.2, 0.70), 2, ".", "");
-}
-
-function getDonorMonths($price)
-{
-	return round(pow($price, (1 / 0.70)) / 30 / 0.2);
-}
-
 function unsetCookie($name)
 {
 	unset($_COOKIE[$name]);
@@ -1543,51 +1533,43 @@ function csrfCheck($givenToken = NULL, $regen = true)
 	return hash_equals($rightToken, $givenToken);
 }
 
-function giveDonor($userID, $months, $add = true, $premium = false)
+function getPrivilegeGroup($privileges, $groups)
 {
-	$userData = $GLOBALS["db"]->fetch("SELECT username, email, donor_expire FROM users WHERE id = ? LIMIT 1", [$userID]);
+	$matchedGroup = null;
+	foreach ($groups as $group) {
+		if ($privileges == $group["privileges"]) {
+			return $group;
+		}
+		if ($matchedGroup === null && ($privileges & ~Privileges::UserSubscription) == ($group["privileges"] & ~Privileges::UserSubscription)) {
+			$matchedGroup = $group;
+		}
+	}
+	return $matchedGroup;
+}
+
+function giveDonor($userID, $months, $add = true)
+{
+	$userData = $GLOBALS["db"]->fetch("SELECT username, privileges, donor_expire FROM users WHERE id = ? LIMIT 1", [$userID]);
 
 	if (!$userData) {
 		throw new Exception("That user doesn't exist");
 	}
 
-	$isDonor = hasPrivilege(Privileges::UserDonor, $userID);
-
-	$username = $userData["username"];
-
-	if (!$isDonor || !$add) {
-		$start = time();
-	} else {
-		$start = $userData["donor_expire"];
-		if ($start < time()) {
-			$start = time();
-		}
+	$isDonor = ($userData["privileges"] & Privileges::UserSubscription) == Privileges::UserSubscription;
+	$start = time();
+	if ($isDonor && $add) {
+		$start = max($start, $userData["donor_expire"]);
 	}
 
-	$unixExpire = $start + ((30 * 86400) * $months);
+	$unixExpire = min($start + ((30 * 86400) * $months), 2147483647);
 	$monthsExpire = round(($unixExpire - time()) / (30 * 86400));
 
-	if ($premium) {
-		$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | 8388612, donor_expire = ? WHERE id = ?", [$unixExpire, $userID]);
-		$donorBadge = $GLOBALS["db"]->fetch("SELECT id FROM badges WHERE name = 'Akatsuki+ Member' LIMIT 1");
-	} else {
-		$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | 4, donor_expire = ? WHERE id = ?", [$unixExpire, $userID]);
-		$donorBadge = $GLOBALS["db"]->fetch("SELECT id FROM badges WHERE name = 'supporter' OR name = 'support' LIMIT 1");
+	$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | 8388612, donor_expire = ?, can_custom_badge = 1, show_custom_badge = 1 WHERE id = ?", [$unixExpire, $userID]);
+	$GLOBALS["db"]->execute("DELETE FROM user_badges WHERE user = ? AND badge = 36", [$userID]);
+	$hasAlready = $GLOBALS["db"]->fetch("SELECT id FROM user_badges WHERE user = ? AND badge = 59 LIMIT 1", [$userID]);
+	if (!$hasAlready && current($GLOBALS["db"]->fetch("SELECT COUNT(*) FROM user_badges WHERE user = ?", [$userID])) < 6) {
+		$GLOBALS["db"]->execute("INSERT INTO user_badges(user, badge) VALUES (?, 59)", [$userID]);
 	}
-
-	if (!$donorBadge) {
-		throw new Exception("There's no such badge in the database.");
-	}
-
-	// Check if they already have the supporter/premium badge
-	$hasAlready = $GLOBALS["db"]->fetch("SELECT id FROM user_badges WHERE user = ? AND badge = ? LIMIT 1", [$userID, $donorBadge["id"]]);
-
-	if (!$hasAlready) { // Add their supporter/premium badge
-		$GLOBALS["db"]->execute("INSERT INTO user_badges(user, badge) VALUES (?, ?)", [$userID, $donorBadge["id"]]);
-	}
-
-	// To finish off, let's give them permissions to edit their custom badge.
-	$GLOBALS["db"]->execute("UPDATE users SET can_custom_badge = 1, show_custom_badge = 1 WHERE id = ?", [$userID]);
 
 	return $monthsExpire;
 }

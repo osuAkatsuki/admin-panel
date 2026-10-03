@@ -963,14 +963,11 @@ class D
 				$oldPriv = current($oldPriv);
 				// Update existing group
 				$GLOBALS["db"]->execute("UPDATE privileges_groups SET name = ?, privileges = ?, color = ? WHERE id = ? LIMIT 1", [$_POST["n"], $_POST["priv"], $_POST["c"], $_POST["id"]]);
-				// Get users in this group
-				// I genuinely want to kill myself right now.
-				$users = $GLOBALS["db"]->fetchAll("SELECT id FROM users WHERE privileges = " . $oldPriv . " OR privileges = " . $oldPriv . " | " . Privileges::UserDonor);
+				// Keep subscription benefits when changing the underlying role.
+				$rolePrivileges = $oldPriv & ~Privileges::UserSubscription;
+				$users = $GLOBALS["db"]->fetchAll("SELECT id FROM users WHERE privileges = ? OR privileges = ? OR (privileges = ? AND ? > 3)", [$oldPriv, $oldPriv | Privileges::UserSubscription, $rolePrivileges, $rolePrivileges]);
 				foreach ($users as $user) {
-					// Remove privileges from previous group
-					$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges & ~" . $oldPriv . " WHERE id = ? LIMIT 1", [$user["id"]]);
-					// Add privileges from new group
-					$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges | " . $_POST["priv"] . " WHERE id = ? LIMIT 1", [$user["id"]]);
+					$GLOBALS["db"]->execute("UPDATE users SET privileges = (privileges & ~?) | ? WHERE id = ? LIMIT 1", [$rolePrivileges, $_POST["priv"], $user["id"]]);
 				}
 			}
 
@@ -1190,17 +1187,11 @@ class D
 			}
 			$username = current($username);
 
-			$months = giveDonor($_POST["id"], $_POST["m"], $_POST["type"] == 0, $_POST["stype"] == 1);
+			$months = giveDonor($_POST["id"], $_POST["m"], $_POST["type"] == 0);
 
-			if ($_POST["stype"] == 1) {
-				postWebhookMessage(sprintf("has given [%s](https://akatsuki.gg/u/%s) %s month(s) of [**Premium**](https://akatsuki.gg/premium) :credit_card:", $username, $_POST["id"], $_POST["m"]));
-				rapLog(sprintf("has given %s (%s) %s month(s) of premium", $username, $_POST["id"], $_POST["m"]), $_SESSION["userid"]);
-				redirect("index.php?p=102&s=Premium status changed. Premium for that user now expires in " . $months . " months!");
-			} else {
-				postWebhookMessage(sprintf("has given [%s](https://akatsuki.gg/u/%s) %s month(s) of [**Supporter**](https://akatsuki.gg/supporter) :blue_heart:", $username, $_POST["id"], $_POST["m"]));
-				rapLog(sprintf("has given %s (%s) %s month(s) of supporter", $username, $_POST["id"], $_POST["m"]), $_SESSION["userid"]);
-				redirect("index.php?p=102&s=Supporter status changed. Supporter for that user now expires in " . $months . " months!");
-			}
+			postWebhookMessage(sprintf("has given [%s](https://akatsuki.gg/u/%s) %s month(s) of [**AKATSUKI+**](https://akatsuki.gg/premium) :credit_card:", $username, $_POST["id"], $_POST["m"]));
+			rapLog(sprintf("has given %s (%s) %s month(s) of premium", $username, $_POST["id"], $_POST["m"]), $_SESSION["userid"]);
+			redirect("index.php?p=102&s=AKATSUKI+ status changed. AKATSUKI+ for that user now expires in " . $months . " months!");
 		} catch (Exception $e) {
 			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
@@ -1217,16 +1208,16 @@ class D
 				throw new Exception("That user doesn't exist");
 			}
 			$username = current($username);
-			$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges & ~8388612, donor_expire = 0 WHERE id = ? LIMIT 1", [$_GET["id"]]);
+			$GLOBALS["db"]->execute("UPDATE users SET privileges = privileges & ~8388612, donor_expire = 0, can_custom_badge = 0 WHERE id = ? LIMIT 1", [$_GET["id"]]);
 
 			// Remove supporter badge
 			// 36 = supporter badge id
 			// 59 = premium badge id
 			$GLOBALS["db"]->execute("DELETE FROM user_badges WHERE user = ? AND (badge = ? OR badge = ?)", [$_GET["id"], 36, 59]);
 
-			postWebhookMessage(sprintf("has removed [%s](https://akatsuki.gg/u/%s)'s Supporter/Premium", $username, $_GET["id"]));
+			postWebhookMessage(sprintf("has removed [%s](https://akatsuki.gg/u/%s)'s AKATSUKI+", $username, $_GET["id"]));
 			rapLog(sprintf("has removed %s's donation status", $username), $_SESSION["userid"]);
-			redirect("index.php?p=102&s=Supporter status changed!");
+			redirect("index.php?p=102&s=AKATSUKI+ status changed!");
 		} catch (Exception $e) {
 			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
