@@ -151,7 +151,6 @@ class D
 			}
 			// Edit privileges if we can
 			if (hasPrivilege(Privileges::AdminManagePrivileges) && ($_POST["id"] != $_SESSION["userid"])) {
-				$_POST['priv'] = normalizeSubscriptionPrivileges($_POST['priv']);
 				$GLOBALS['db']->execute('UPDATE users SET privileges = ? WHERE id = ? LIMIT 1', [$_POST['priv'], $_POST['id']]);
 				updateBanBancho($_POST["id"], $_POST['priv'] & Privileges::UserPublic == 0);
 			}
@@ -944,8 +943,6 @@ class D
 			// Args check
 			if (!isset($_POST["id"]) || !isset($_POST["n"]) || !isset($_POST["priv"]) || !isset($_POST["c"]))
 				throw new Exception("DON'T YOU TRYYYY!!");
-
-			$_POST["priv"] = normalizeSubscriptionPrivileges($_POST["priv"]);
 
 			if ($_POST["id"] == 0) {
 				// New group

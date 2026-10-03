@@ -1533,15 +1533,6 @@ function csrfCheck($givenToken = NULL, $regen = true)
 	return hash_equals($rightToken, $givenToken);
 }
 
-function normalizeSubscriptionPrivileges($privileges)
-{
-	$privileges = (int)$privileges;
-	if ($privileges & Privileges::UserSubscription) {
-		$privileges |= Privileges::UserSubscription;
-	}
-	return $privileges;
-}
-
 function getPrivilegeGroup($privileges, $groups)
 {
 	$matchedGroup = null;
