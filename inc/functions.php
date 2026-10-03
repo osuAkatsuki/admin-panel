@@ -1544,18 +1544,16 @@ function normalizeSubscriptionPrivileges($privileges)
 
 function getPrivilegeGroup($privileges, $groups)
 {
+	$matchedGroup = null;
 	foreach ($groups as $group) {
 		if ($privileges == $group["privileges"]) {
 			return $group;
 		}
-	}
-	foreach ($groups as $group) {
-		$rolePrivileges = $group["privileges"] & ~Privileges::UserSubscription;
-		if ($privileges == ($group["privileges"] | Privileges::UserSubscription) || ($rolePrivileges > 3 && ($privileges & ~Privileges::UserSubscription) == $rolePrivileges)) {
-			return $group;
+		if ($matchedGroup === null && ($privileges & ~Privileges::UserSubscription) == ($group["privileges"] & ~Privileges::UserSubscription)) {
+			$matchedGroup = $group;
 		}
 	}
-	return null;
+	return $matchedGroup;
 }
 
 function giveDonor($userID, $months, $add = true)

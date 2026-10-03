@@ -307,19 +307,15 @@ if (isset($_GET['p'])) {
 
 						var selectValue = -1;
 						$("#privileges-group option").each(function(){
-							if (Number($(this).val()) === result) {
-								selectValue = result;
+							var groupPrivileges = Number($(this).val());
+							if (groupPrivileges === result) {
+								selectValue = groupPrivileges;
+								return false;
+							}
+							if (selectValue === -1 && (groupPrivileges & ~' . Privileges::UserSubscription . ') === (result & ~' . Privileges::UserSubscription . ')) {
+								selectValue = groupPrivileges;
 							}
 						});
-						if (selectValue === -1) {
-							$("#privileges-group option").each(function(){
-								var groupPrivileges = Number($(this).val());
-								var rolePrivileges = groupPrivileges & ~' . Privileges::UserSubscription . ';
-								if (groupPrivileges >= 0 && (result === (groupPrivileges | ' . Privileges::UserSubscription . ') || (rolePrivileges > 3 && (result & ~' . Privileges::UserSubscription . ') === rolePrivileges))) {
-									selectValue = groupPrivileges;
-								}
-							});
-						}
 
 						$("#privileges-value").val(result);
 						$("#privileges-group").val(selectValue);
