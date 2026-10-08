@@ -163,6 +163,9 @@ function setTitle($p)
 		141 => 'Edit Clan',
 		142 => 'Shared Devices',
 		143 => 'Device Details',
+		112 => 'Tournament Badges',
+		113 => 'Edit Tournament Badge',
+		114 => 'Edit User Tournament Badges',
 	];
 	if (isset($namesRipple[$p])) {
 		return __maketitle('Akatsuki', $namesRipple[$p]);
@@ -272,6 +275,21 @@ function printPage($p)
 		case 111:
 			sessionCheckAdmin(Privileges::AdminManageSettings);
 			P::AdminBanchoSettings();
+			break;
+
+		case 112:
+			sessionCheckAdmin(Privileges::AdminManageBadges);
+			P::AdminTournamentBadges();
+			break;
+
+		case 113:
+			sessionCheckAdmin(Privileges::AdminManageBadges);
+			P::AdminEditTournamentBadge();
+			break;
+
+		case 114:
+			sessionCheckAdmin(Privileges::AdminManageUsers);
+			P::AdminEditUserTournamentBadges();
 			break;
 
 		case 116:
@@ -481,8 +499,10 @@ function printAdminSidebar()
 	if (hasPrivilege(Privileges::AdminManagePrivileges))
 		echo '<li><a href="index.php?p=118"><i class="fa fa-group"></i>	Privilege Groups</a></li>';
 
-	if (hasPrivilege(Privileges::AdminManageBadges))
+	if (hasPrivilege(Privileges::AdminManageBadges)) {
 		echo '<li><a href="index.php?p=108"><i class="fa fa-certificate"></i>	Badges</a></li>';
+		echo '<li><a href="index.php?p=112"><i class="fa fa-trophy"></i>	Tournament Badges</a></li>';
+	}
 
 	/*
 						if (hasPrivilege(Privileges::AdminManageBeatmaps)) {
