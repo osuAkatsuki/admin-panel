@@ -1,60 +1,46 @@
-FROM ubuntu:22.04
+FROM php:8.4-fpm
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
 
 WORKDIR /usr/src/app
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        nginx \
+        gettext-base \
+        git \
+        unzip \
+        python3-venv \
+        $PHPIZE_DEPS \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && docker-php-ext-install pdo_mysql \
+    && apt-get purge -y --auto-remove $PHPIZE_DEPS \
+    && rm -rf /var/lib/apt/lists/*
+
+# 8.4.27 fixes CVE-2026-109618 and CVE-2026-109619; refuse to build anything older
+RUN php -r 'exit(version_compare(PHP_VERSION, "8.4.27", ">=") ? 0 : 1);'
+
+RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+# Unused by the app, and an attack surface PHP recommends disabling (GHSA-6wmf-4rv5-p3rp)
+RUN echo "session.upload_progress.enabled = 0" > "$PHP_INI_DIR/conf.d/zz-admin-panel.ini"
+# Keep the container environment (e.g. VAULT_TOKEN) out of PHP workers, and only accept
+# FastCGI from this container's nginx rather than the whole Docker network
+RUN printf "[www]\nclear_env = yes\nlisten = 127.0.0.1:9000\n" > /usr/local/etc/php-fpm.d/zzz-admin-panel.conf
+
+RUN python3 -m venv /opt/akatsuki-cli \
+    && /opt/akatsuki-cli/bin/pip install git+https://github.com/osuAkatsuki/akatsuki-cli \
+    && ln -s /opt/akatsuki-cli/bin/akatsuki /usr/local/bin/akatsuki
+
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
+
 COPY . .
 COPY scripts /scripts
 
-RUN apt update && apt install -y software-properties-common wget
-RUN add-apt-repository -y ppa:ondrej/php && apt update
-
-RUN apt install -y \
-    php7.2-cli \
-    php7.2-common \
-    php7.2-fpm \
-    php7.2-bcmath \
-    php7.2-bz2 \
-    php7.2-curl \
-    php7.2-dom \
-    php7.2-gd \
-    php7.2-iconv \
-    php7.2-intl \
-    php7.2-json \
-    php7.2-mbstring \
-    php7.2-mysql \
-    php7.2-opcache \
-    php7.2-pdo \
-    php7.2-soap \
-    php7.2-sqlite3 \
-    php7.2-xml \
-    php7.2-xmlrpc \
-    php7.2-zip \
-    php7.2-redis \
-    nginx \
-    gettext-base \
-    git \
-    curl
-
-RUN update-alternatives --set php /usr/bin/php7.2
-
-RUN curl -sS https://getcomposer.org/installer -o composer-setup.php \
-    && HASH=$(curl -sS https://composer.github.io/installer.sig) \
-    && php -r "if (hash_file('SHA384', 'composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); exit(1); } echo PHP_EOL;" \
-    && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
-    && rm composer-setup.php
-
-RUN COMPOSER_ALLOW_SUPERUSER=1 composer install
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction
 
 COPY nginx/nginx.conf /etc/nginx/templates/nginx.conf.template
 COPY nginx/fastcgi.conf /etc/nginx/fastcgi.conf
 COPY nginx/sites-enabled/ /etc/nginx/templates/sites-enabled/
-
-RUN wget https://bootstrap.pypa.io/get-pip.py \
-    && python3.10 get-pip.py \
-    && pip install git+https://github.com/osuAkatsuki/akatsuki-cli \
-    && rm get-pip.py
 
 ENTRYPOINT [ "/scripts/bootstrap.sh" ]

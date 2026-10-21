@@ -54,10 +54,8 @@ if (isset($_GET['p'])) {
 	}
 } elseif (isset($_GET['__PAGE__'])) {
 	$pages_split = explode('/', $_GET['__PAGE__']);
-	if (count($_GET['__PAGE__']) < 2) {
-		$title = '<title>Akatsuki</title>';
-		$p = 1;
-	}
+	$title = '<title>Akatsuki</title>';
+	$p = 1;
 	$found = false;
 	foreach ($pages as $page) {
 		if ($page::URL == $pages_split[1]) {

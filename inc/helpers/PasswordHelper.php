@@ -12,7 +12,7 @@ class PasswordHelper
 		}
 		$uPass = $GLOBALS['db']->fetch('SELECT password_md5 FROM users WHERE username_safe = ?', [safeUsername($u)]);
 		// Check it exists
-		if ($uPass === false) {
+		if (!$uPass) {
 			return false;
 		}
 		$res = password_verify($pass, $uPass['password_md5']);

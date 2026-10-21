@@ -9,7 +9,6 @@ $df = dirname(__FILE__);
 require_once $df . '/../vendor/autoload.php';
 require_once $df . '/config.php';
 require_once $df . '/db.php';
-require_once $df . '/password_compat.php';
 require_once $df . '/Do.php';
 require_once $df . '/Print.php';
 require_once $df . '/RememberCookieHandler.php';
@@ -34,14 +33,6 @@ $pages = [
 date_default_timezone_set('America/Toronto');
 // Connect to MySQL Database
 $GLOBALS['db'] = new DBPDO();
-$GLOBALS["s3"] = new Aws\S3\S3Client([
-	'region' => $S3Config['region'],
-	'endpoint' => $S3Config['endpoint_url'],
-	'credentials' => [
-		'key' => $S3Config['access_key_id'],
-		'secret' => $S3Config['secret_access_key'],
-	],
-]);
 // Birthday
 global $isBday;
 $isBday = date("dm") == "1003";
@@ -50,12 +41,9 @@ $isBday = date("dm") == "1003";
  ****************************************/
 function redisConnect()
 {
-	if (!isset($_GLOBALS["redis"])) {
-		$GLOBALS["redis"] = new Predis\Client([
-			'scheme' => 'tcp',
-			'host' => REDIS_HOST,
-			'port' => REDIS_PORT,
-		]);
+	if (!isset($GLOBALS["redis"])) {
+		$GLOBALS["redis"] = new Redis();
+		$GLOBALS["redis"]->connect(REDIS_HOST, (int) REDIS_PORT);
 	}
 }
 
@@ -800,7 +788,7 @@ function checkBanchoMaintenance()
 	}
 }
 // ******** GET USER ID/USERNAME FUNCTIONS *********
-$cachedID = false;
+$cachedID = [];
 /*
  * getUserID
  * Get the user ID of the $u user
@@ -1124,8 +1112,8 @@ function getFriendship($u0, $u1, $id = false)
 		return 0;
 	}
 	// If user1 is friend of user2, check for mutual.
-	if ($GLOBALS['db']->fetch('SELECT id FROM users_relationships WHERE user1 = ? AND user2 = ?', [$u0, $u1]) !== false) {
-		if ($u1 == 999 || $GLOBALS['db']->fetch('SELECT id FROM users_relationships WHERE user2 = ? AND user1 = ?', [$u0, $u1]) !== false) {
+	if ($GLOBALS['db']->fetch('SELECT id FROM users_relationships WHERE user1 = ? AND user2 = ?', [$u0, $u1])) {
+		if ($u1 == 999 || $GLOBALS['db']->fetch('SELECT id FROM users_relationships WHERE user2 = ? AND user1 = ?', [$u0, $u1])) {
 			return 2;
 		}
 
@@ -1473,7 +1461,7 @@ function moveCountryLeaderboards($userID, $oldCountry, $newCountry)
 		foreach ($modes as $mode) {
 			$oldKey = "ripple:".$lb_key.":".$mode.":".strtolower($oldCountry);
 			$score = $GLOBALS["redis"]->zscore($oldKey, $userID);
-			if ($score === null) {
+			if ($score === false) {
 				continue;
 			}
 			$GLOBALS["redis"]->zrem($oldKey, $userID);

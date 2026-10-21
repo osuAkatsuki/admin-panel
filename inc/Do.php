@@ -537,7 +537,7 @@ class D
 				throw new Exception("That user doesn't exist");
 			}
 			// Calculate silence period length
-			$silenceLength = $_POST['c'] * $_POST['un'];
+			$silenceLength = (int) $_POST['c'] * (int) $_POST['un'];
 			if ($silenceLength > (60 * 60 * 24 * 30)) {
 				throw new Exception('Invalid silence length. Maximum silence length is 30 days.');
 			}
@@ -614,12 +614,20 @@ class D
 			if (!isset($_GET['id']) || empty($_GET['id'])) {
 				throw new Exception('Invalid request');
 			}
-			global $S3Config;
-			// Remove the avatar file from S3
-			$GLOBALS["s3"]->deleteObject([
-				"Bucket" => $S3Config["bucket"],
-				"Key" => "avatars/" . $_GET["id"] . ".png"
+			global $INTERNAL_ASSETS_SERVICE_BASE_URL;
+			// Remove the avatar via the assets service
+			$ch = curl_init($INTERNAL_ASSETS_SERVICE_BASE_URL . "/api/v1/users/" . (int) $_GET["id"] . "/avatar");
+			curl_setopt_array($ch, [
+				CURLOPT_CUSTOMREQUEST => "DELETE",
+				CURLOPT_HTTPHEADER => ["X-Api-Key: " . ASSETS_SERVICE_API_KEY],
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_TIMEOUT => 5,
 			]);
+			curl_exec($ch);
+			$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			if ($status !== 204) {
+				throw new Exception("Failed to reset avatar (assets service returned HTTP $status)");
+			}
 			// Rap log
 			postWebhookMessage(sprintf("has reset [%s](https://akatsuki.gg/u/%s)'s Avatar\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", getUserUsername($_GET['id']), $_GET['id'], $_GET['id']));
 			rapLog(sprintf("has reset %s's Avatar", getUserUsername($_GET['id'])));
@@ -825,12 +833,12 @@ class D
 					if ($_POST["gm"] == 3) {
 						throw new Exception("Relax does not support mania");
 					}
-					$modeInts = [$_POST["gm"] + 4];
+					$modeInts = [(int) $_POST["gm"] + 4];
 				} else if ($_POST["rx"] == 2) {
 					if ($_POST["gm"] != 0) {
 						throw new Exception("Autopilot only supports standard");
 					}
-					$modeInts = [$_POST["gm"] + 8];
+					$modeInts = [(int) $_POST["gm"] + 8];
 				}
 			}
 			foreach ($modeInts as $modeInt) {
@@ -1257,7 +1265,7 @@ class D
 			}
 
 			//$removeAfterOsuTime = UNIXTimestampToOsuDate(time()-($_POST["length"]*$periodSeconds));
-			$removeAfter = time() - ($_POST["length"] * $periodSeconds);
+			$removeAfter = time() - ((int) $_POST["length"] * $periodSeconds);
 			$rollbackString = $_POST["length"] . " " . $periodName;
 			if ($_POST["length"] > 1) {
 				$rollbackString .= "s";

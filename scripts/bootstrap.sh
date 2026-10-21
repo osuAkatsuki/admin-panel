@@ -27,6 +27,6 @@ for tmpl in /etc/nginx/templates/sites-enabled/*.conf; do
   envsubst '${APP_PORT}' < "$tmpl" > "/etc/nginx/sites-enabled/$(basename "$tmpl")"
 done
 
-service php7.2-fpm start
+php-fpm --daemonize
 
 exec nginx -g "daemon off;"
