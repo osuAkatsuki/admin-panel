@@ -26,7 +26,13 @@ class DBPDO
 			$user = DATABASE_USER;
 			$password = DATABASE_PASS;
 			try {
-				$this->pdo = new PDO($dsn, $user, $password, [PDO::ATTR_PERSISTENT => true]);
+				// The code relies on failed queries returning false and on string result values,
+				// which PHP 8 no longer defaults to
+				$this->pdo = new PDO($dsn, $user, $password, [
+					PDO::ATTR_PERSISTENT => true,
+					PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT,
+					PDO::ATTR_STRINGIFY_FETCHES => true,
+				]);
 
 				return true;
 			} catch (PDOException $e) {
@@ -70,7 +76,9 @@ class DBPDO
 		}
 		$stmt = $this->execute($query, $values);
 
-		return $stmt->fetch(PDO::FETCH_ASSOC);
+		// An empty array rather than false when there is no row, since callers pass the
+		// result straight to array functions like current(), which throw on false in PHP 8
+		return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
 	}
 
 	public function fetchAll($query, $values = null, $key = null)
