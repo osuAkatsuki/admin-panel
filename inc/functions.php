@@ -1225,6 +1225,31 @@ function makeJsonWebRequest($method, $url, $timeout = 1)
 	}
 }
 
+/*
+ * makeWebRequest
+ * Like makeJsonWebRequest, but also returns the HTTP status code, for endpoints
+ * whose status matters (e.g. 204 No Content responses with an empty body).
+ * Returns ["status" => int, "body" => mixed]; status is 0 if the request failed.
+ */
+function makeWebRequest($method, $url, $timeout = 1)
+{
+	if (!isValidHttpMethod($method)) {
+		throw new Exception("Invalid HTTP method");
+	}
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+	$result = curl_exec($ch);
+	$status = $result === false ? 0 : curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	curl_close($ch);
+	return [
+		"status" => $status,
+		"body" => is_string($result) ? json_decode($result, true) : null,
+	];
+}
+
 function postJsonCurl($url, $data, $timeout = 1)
 {
 	try {
