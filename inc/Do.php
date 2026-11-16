@@ -1324,14 +1324,16 @@ class D
 				throw new Exception("That user doesn't exist");
 			}
 			$requestUrl = $INTERNAL_USERS_SERVICE_BASE_URL . "/api/v1/users/" . $userId;
-			$resp = makeJsonWebRequest("DELETE", $requestUrl);
-			if ($resp["status"] >= 200 || $resp["status"] < 300) {
-				postWebhookMessage("Successfully processed a GDPR/CCPA user deletion request for user: " . $userId);
-				rapLog("Successfully processed a GDPR/CCPA user deletion request for user: " . $userId);
-			} else {
+			// Deletion runs several steps in one transaction (including an assets service call),
+			// and the users service cancels it if we disconnect, so don't use the 1s default
+			$resp = makeWebRequest("DELETE", $requestUrl, 30);
+			if ($resp["status"] < 200 || $resp["status"] >= 300) {
 				postWebhookMessage("Failed to process a GDPR/CCPA user deletion request for user: " . $userId);
 				rapLog("Failed to process a GDPR/CCPA user deletion request for user: " . $userId);
+				throw new Exception("Failed to delete user account (users service returned HTTP " . $resp["status"] . ")");
 			}
+			postWebhookMessage("Successfully processed a GDPR/CCPA user deletion request for user: " . $userId);
+			rapLog("Successfully processed a GDPR/CCPA user deletion request for user: " . $userId);
 			redirect("index.php?p=102&s=User account has been deleted");
 		} catch (Exception $e) {
 			redirect('index.php?p=102&e=' . $e->getMessage());
