@@ -889,7 +889,6 @@ class D
 	public static function ProcessRankRequest()
 	{
 		global $INTERNAL_BANCHO_SERVICE_BASE_URL;
-		global $ScoresConfig;
 		try {
 			if (!isset($_GET["id"]) || !isset($_GET["r"]) || empty($_GET["id"]))
 				throw new Exception("no");
@@ -924,8 +923,9 @@ class D
 
 				$msg = "[https://osu.ppy.sh/s/" . $bsid . " " . $bm["song_name"] . "] is now ranked!";
 				$to = "#announce";
-				$requestUrl = $INTERNAL_BANCHO_SERVICE_BASE_URL . "/api/v1/fokabotMessage?k=" . urlencode($ScoresConfig["api_key"]) . "&to=" . urlencode($to) . "&msg=" . urlencode($msg);
-				$resp = makeJsonWebRequest("GET", $requestUrl);
+				$requestUrl = $INTERNAL_BANCHO_SERVICE_BASE_URL . "/api/v1/fokabotMessage?" . http_build_query(["to" => $to, "msg" => $msg]);
+				$response = makeWebRequest("GET", $requestUrl, 1, ["X-Fokabot-Key: " . ($_ENV["FOKABOT_KEY"] ?? "")]);
+				$resp = $response["body"] ?? ["message" => "Bancho request failed"];
 
 				if ($resp["message"] != "ok") {
 					postWebhookMessage("failed to send FokaBot message :( Error: " . print_r($resp["message"], true));
@@ -1326,7 +1326,7 @@ class D
 			$requestUrl = $INTERNAL_USERS_SERVICE_BASE_URL . "/api/v1/users/" . $userId;
 			// Deletion runs several steps in one transaction (including an assets service call),
 			// and the users service cancels it if we disconnect, so don't use the 1s default
-			$resp = makeWebRequest("DELETE", $requestUrl, 30);
+			$resp = makeWebRequest("DELETE", $requestUrl, 30, ["X-Users-Service-Token: " . ($_ENV["USERS_SERVICE_INTERNAL_TOKEN"] ?? "")]);
 			if ($resp["status"] < 200 || $resp["status"] >= 300) {
 				postWebhookMessage("Failed to process a GDPR/CCPA user deletion request for user: " . $userId);
 				rapLog("Failed to process a GDPR/CCPA user deletion request for user: " . $userId);
@@ -1402,7 +1402,6 @@ class D
 	public static function RankBeatmapNew()
 	{
 		global $INTERNAL_BANCHO_SERVICE_BASE_URL;
-		global $ScoresConfig;
 		try {
 			if (!isset($_POST["beatmaps"])) {
 				throw new Exception("Invalid form data");
@@ -1466,8 +1465,9 @@ class D
 			$bm = $GLOBALS["db"]->fetch("SELECT beatmapset_id, song_name FROM beatmaps WHERE beatmapset_id = ? LIMIT 1", [$bsid]);
 			$msg = "[https://osu.ppy.sh/s/" . $bsid . " " . $bm["song_name"] . "] is now ranked!";
 			$to = "#announce";
-			$requestUrl = $INTERNAL_BANCHO_SERVICE_BASE_URL . "/api/v1/fokabotMessage?k=" . urlencode($ScoresConfig["api_key"]) . "&to=" . urlencode($to) . "&msg=" . urlencode($msg);
-			$resp = makeJsonWebRequest("GET", $requestUrl);
+			$requestUrl = $INTERNAL_BANCHO_SERVICE_BASE_URL . "/api/v1/fokabotMessage?" . http_build_query(["to" => $to, "msg" => $msg]);
+			$response = makeWebRequest("GET", $requestUrl, 1, ["X-Fokabot-Key: " . ($_ENV["FOKABOT_KEY"] ?? "")]);
+			$resp = $response["body"] ?? ["message" => "Bancho request failed"];
 			if ($resp["message"] != "ok") {
 				postWebhookMessage(sprintf("failed to send FokaBot message :( Error: %s", print_r($resp["message"], true)));
 				rapLog("failed to send FokaBot message :( Error: " . print_r($resp["message"], true));
