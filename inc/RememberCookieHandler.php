@@ -9,6 +9,17 @@
  */
 class RememberCookieHandler
 {
+	private const LIFETIME_SECONDS = 90 * 24 * 60 * 60;
+
+	private function SetCookie(string $value, int $expires): void
+	{
+		setcookie("sli", $value, [
+			'expires' => $expires,
+			'secure' => true,
+			'httponly' => true,
+			'samesite' => 'Lax',
+		]);
+	}
 	/**
 	 * Check
 	 * Checks whether the user is currently not logged in and has the required
@@ -19,7 +30,7 @@ class RememberCookieHandler
 	public function Check()
 	{
 		startSessionIfNotStarted();
-		return !isset($_SESSION["username"]) && @$_COOKIE["sli"] != "";
+		return !isset($_SESSION["username"]) && is_string($_COOKIE["sli"] ?? null) && $_COOKIE["sli"] !== "";
 	}
 
 	/**
@@ -31,28 +42,23 @@ class RememberCookieHandler
 	 */
 	public function Validate()
 	{
-		$parts = explode("|", $_COOKIE["sli"], 2);
-		if (count($parts) < 2) {
+		$parts = explode("|", $_COOKIE["sli"], 3);
+		if (count($parts) !== 3 || !ctype_digit($parts[1]) || (int)$parts[1] <= time()) {
 			$this->UnsetCookies();
 			return ValidateValue::Failure;
 		}
 		$r = $GLOBALS["db"]->fetch(
-			"SELECT id, userid, token_sha FROM remember WHERE series_identifier = ? LIMIT 1",
+			"SELECT r.id, r.userid, r.token_sha, u.password_md5, u.username, u.privileges
+			 FROM remember r JOIN users u ON u.id = r.userid WHERE r.series_identifier = ? LIMIT 1",
 			[$parts[0]]
 		);
 		if (!$r) {
 			$this->UnsetCookies();
 			return ValidateValue::Failure;
 		}
-		if ($r["token_sha"] == hash("sha256", $parts[1])) {
-			// all checks successful, login
-			// login will return either NowLoggedIn or UserBanned
-			return $this->Login($r["userid"]);
+		if (hash_equals($r["token_sha"], hash("sha256", $parts[1] . "|" . $parts[2] . "|" . $r["password_md5"]))) {
+			return $this->Login($r);
 		}
-		// was not equal
-		// this means that someone's trying to access this user's account
-		// kick their dick
-		// glory to arstotzka
 		$GLOBALS["db"]->execute("DELETE FROM remember WHERE id = ? LIMIT 1", [$r['id']]);
 		$this->UnsetCookies();
 		return ValidateValue::Thieving;
@@ -62,13 +68,15 @@ class RememberCookieHandler
 	 * IssueNew
 	 * Issue new permanent cookie for auto-login.
 	 */
-	public function IssueNew($u)
+	public function IssueNew($userID, string $passwordHash)
 	{
-		$num = unpack("L", random_bytes(4))[1];
-		$tok = base64_encode(random_bytes(75));
-		setcookie("sli", ((string)$num) . "|" . $tok, time() + 60 * 60 * 24 * 30 * 3);
-		$GLOBALS["db"]->execute("INSERT INTO remember(userid, series_identifier, token_sha) VALUES
-			(?, ?, ?)", [$u, $num, hash("sha256", $tok)]);
+		$series = unpack("L", random_bytes(4))[1];
+		$token = base64_encode(random_bytes(75));
+		$expires = time() + self::LIFETIME_SECONDS;
+		$tokenHash = hash("sha256", $expires . "|" . $token . "|" . $passwordHash);
+		$GLOBALS["db"]->execute("INSERT INTO remember(userid, series_identifier, token_sha) VALUES (?, ?, ?)",
+			[$userID, $series, $tokenHash]);
+		$this->SetCookie($series . "|" . $expires . "|" . $token, $expires);
 	}
 
 	/**
@@ -77,7 +85,7 @@ class RememberCookieHandler
 	 */
 	public function Destroy()
 	{
-		if (!isset($_SESSION["userid"]))
+		if (!isset($_SESSION["userid"]) || !is_string($_COOKIE["sli"] ?? null))
 			return;
 		$GLOBALS["db"]->execute(
 			"DELETE FROM remember WHERE userid = ? AND series_identifier = ? LIMIT 1;",
@@ -94,7 +102,7 @@ class RememberCookieHandler
 	 */
 	public function DestroyAll($u)
 	{
-		$GLOBALS["db"]->execute("DELETE FROM rememeber WHERE userid = ?;", [$u]);
+		$GLOBALS["db"]->execute("DELETE FROM remember WHERE userid = ?;", [$u]);
 	}
 
 	/**
@@ -103,24 +111,22 @@ class RememberCookieHandler
 	 *
 	 * @return int ValidateValue
 	 */
-	private function Login($userID)
+	private function Login(array $u)
 	{
-		$u = $GLOBALS['db']->fetch("SELECT id, username, privileges, password_md5
-			FROM users WHERE id = ? LIMIT 1", [$userID]);
-		if (!$u || (($u["privileges"] & Privileges::UserNormal) === 0)) {
+		if (($u["privileges"] & Privileges::UserNormal) === 0 || ($u["privileges"] & Privileges::AdminAccessRAP) === 0) {
 			$this->UnsetCookies();
 			return ValidateValue::UserBanned;
 		}
-		// set cookie for another 3 months
-		setcookie("sli", $_COOKIE["sli"], time() + 60 * 60 * 24 * 30 * 3);
 		startSessionIfNotStarted();
+		session_regenerate_id(true);
+		$_SESSION['csrf'] = generateCsrfToken();
 		$_SESSION['username'] = $u['username'];
-		$_SESSION['userid'] = $u['id'];
+		$_SESSION['userid'] = $u['userid'];
 		$_SESSION['password'] = $u['password_md5'];
 		$_SESSION['passwordChanged'] = false;
-		logIP($u['id']);
+		logIP($u['userid']);
 		// Save latest activity
-		updateLatestActivity($u['id']);
+		updateLatestActivity($u['userid']);
 		return ValidateValue::NowLoggedIn;
 	}
 
@@ -130,7 +136,7 @@ class RememberCookieHandler
 	 */
 	public function UnsetCookies()
 	{
-		unsetCookie("sli");
+		$this->SetCookie("", time() - 3600);
 	}
 }
 

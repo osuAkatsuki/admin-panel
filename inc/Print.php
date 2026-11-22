@@ -151,16 +151,16 @@ class P
 		//echo '<tr class="danger"><td colspan=5>Disabled</td></tr>';
 		foreach ($topPlaysVanilla as $play) {
 			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
-			$bn = $play['song_name'];
+			$bn = htmlspecialchars($play['song_name'] ?? '');
 			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
 			if (!$bn) {
-				$bn = $play['beatmap_md5'];
+				$bn = htmlspecialchars($play['beatmap_md5']);
 			}
 			// Get readable play_mode
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="warning">';
-			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . $play['username'] . '</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . htmlspecialchars($play['username'] ?? '') . '</b></a></p></td>';
 			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/' . $play['beatmap_id'] . '">' . $bn . '</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">' . $pm . '</p></td>';
 			echo '<td><p class="text-left">' . timeDifference(time(), $play['time']) . '</p></td>';
@@ -179,16 +179,16 @@ class P
 		//echo '<tr class="danger"><td colspan=5>Disabled</td></tr>';
 		foreach ($topPlaysRelax as $play) {
 			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
-			$bn = $play['song_name'];
+			$bn = htmlspecialchars($play['song_name'] ?? '');
 			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
 			if (!$bn) {
-				$bn = $play['beatmap_md5'];
+				$bn = htmlspecialchars($play['beatmap_md5']);
 			}
 			// Get readable play_mode
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="warning">';
-			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . $play['username'] . '</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . htmlspecialchars($play['username'] ?? '') . '</b></a></p></td>';
 			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/' . $play['beatmap_id'] . '">' . $bn . '</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">' . $pm . '</p></td>';
 			echo '<td><p class="text-left">' . timeDifference(time(), $play['time']) . '</p></td>';
@@ -208,16 +208,16 @@ class P
 		//echo '<tr class="danger"><td colspan=5>Disabled</td></tr>';
 		foreach ($topPlaysAutopilot as $play) {
 			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
-			$bn = $play['song_name'];
+			$bn = htmlspecialchars($play['song_name'] ?? '');
 			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
 			if (!$bn) {
-				$bn = $play['beatmap_md5'];
+				$bn = htmlspecialchars($play['beatmap_md5']);
 			}
 			// Get readable play_mode
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="warning">';
-			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . $play['username'] . '</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . htmlspecialchars($play['username'] ?? '') . '</b></a></p></td>';
 			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/' . $play['beatmap_id'] . '">' . $bn . '</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">' . $pm . '</p></td>';
 			echo '<td><p class="text-left">' . timeDifference(time(), $play['time']) . '</p></td>';
@@ -236,16 +236,16 @@ class P
 		//echo '<tr class="danger"><td colspan=5>Disabled</td></tr>';
 		foreach ($topRecentPlaysVanilla as $play) {
 			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
-			$bn = $play['song_name'];
+			$bn = htmlspecialchars($play['song_name'] ?? '');
 			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
 			if (!$bn) {
-				$bn = $play['beatmap_md5'];
+				$bn = htmlspecialchars($play['beatmap_md5']);
 			}
 			// Get readable play_mode
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="danger">';
-			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . $play['username'] . '</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . htmlspecialchars($play['username'] ?? '') . '</b></a></p></td>';
 			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/' . $play['beatmap_id'] . '">' . $bn . '</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">' . $pm . '</p></td>';
 			echo '<td><p class="text-left">' . timeDifference(time(), $play['time']) . '</p></td>';
@@ -264,16 +264,16 @@ class P
 		//echo '<tr class="danger"><td colspan=5>Disabled</td></tr>';
 		foreach ($topRecentPlaysRelax as $play) {
 			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
-			$bn = $play['song_name'];
+			$bn = htmlspecialchars($play['song_name'] ?? '');
 			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
 			if (!$bn) {
-				$bn = $play['beatmap_md5'];
+				$bn = htmlspecialchars($play['beatmap_md5']);
 			}
 			// Get readable play_mode
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="danger">';
-			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . $play['username'] . '</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . htmlspecialchars($play['username'] ?? '') . '</b></a></p></td>';
 			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/' . $play['beatmap_id'] . '">' . $bn . '</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">' . $pm . '</p></td>';
 			echo '<td><p class="text-left">' . timeDifference(time(), $play['time']) . '</p></td>';
@@ -292,16 +292,16 @@ class P
 		//echo '<tr class="danger"><td colspan=5>Disabled</td></tr>';
 		foreach ($topRecentPlaysAutopilot as $play) {
 			// set $bn to song name by default. If empty or null, replace with the beatmap md5.
-			$bn = $play['song_name'];
+			$bn = htmlspecialchars($play['song_name'] ?? '');
 			// Check if this beatmap has a name cached, if yes show it, otherwise show its md5
 			if (!$bn) {
-				$bn = $play['beatmap_md5'];
+				$bn = htmlspecialchars($play['beatmap_md5']);
 			}
 			// Get readable play_mode
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="danger">';
-			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . $play['username'] . '</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . htmlspecialchars($play['username'] ?? '') . '</b></a></p></td>';
 			echo '<td><p class="text-left"><a href="https://osu.ppy.sh/beatmaps/' . $play['beatmap_id'] . '">' . $bn . '</a> <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">' . $pm . '</p></td>';
 			echo '<td><p class="text-left">' . timeDifference(time(), $play['time']) . '</p></td>';
@@ -405,7 +405,7 @@ class P
 			// Print row
 			echo '<tr>';
 			echo '<td><p class="text-center">' . $user['id'] . '</p></td>';
-			echo '<td><p class="text-center"><b>' . $user['username'] . '</b></p></td>';
+			echo '<td><p class="text-center"><b>' . htmlspecialchars($user['username'] ?? '') . '</b></p></td>';
 			echo '<td><p class="text-center"><span class="label label-' . $groupColor . '">' . $groupText . '</span></p></td>';
 			echo '<td><p class="text-center"><span class="label label-' . $allowedColor . '">' . $allowedText . '</span></p></td>';
 			echo '<td><p class="text-center">
@@ -583,15 +583,16 @@ class P
 	 */
 	public static function AdminEditUser()
 	{
+		$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 0;
 		try {
 			// Check if id is set
-			if (!isset($_GET['id']) || empty($_GET['id'])) {
+			if ($id === 0) {
 				throw new Exception('Invalid user ID!');
 			}
 			// Get user data
-			$userData = $GLOBALS['db']->fetch('SELECT * FROM users WHERE id = ? LIMIT 1', $_GET['id']);
-			$lastScoreDetection = $GLOBALS['db']->fetch('SELECT created_at FROM score_detections WHERE user_id = ? ORDER BY created_at DESC LIMIT 1', $_GET['id']);
-			$ips = $GLOBALS['db']->fetchAll('SELECT ip, occurencies, last_used_at FROM ip_user WHERE userid = ? ORDER BY occurencies DESC LIMIT 50', $_GET['id']);
+			$userData = $GLOBALS['db']->fetch('SELECT * FROM users WHERE id = ? LIMIT 1', $id);
+			$lastScoreDetection = $GLOBALS['db']->fetch('SELECT created_at FROM score_detections WHERE user_id = ? ORDER BY created_at DESC LIMIT 1', $id);
+			$ips = $GLOBALS['db']->fetchAll('SELECT ip, occurencies, last_used_at FROM ip_user WHERE userid = ? ORDER BY occurencies DESC LIMIT 50', $id);
 			// Check if this user exists
 			if (!$userData) {
 				throw new Exception("That user doesn't exist");
@@ -632,7 +633,7 @@ class P
 			$readonly[1] = ''; // Username color/style stuff
 			$selectDisabled = '';
 			// Check if we are editing our account
-			if ($userData['username'] == $_SESSION['username'] || hasPrivilege(Privileges::AdminCaker)) {
+			if ((int)$userData['id'] === (int)$_SESSION['userid'] || hasPrivilege(Privileges::AdminCaker)) {
 				// Allow to edit only user stats
 				$readonly[0] = 'readonly';
 				$selectDisabled = 'disabled';
@@ -667,7 +668,7 @@ class P
 			</tr>';
 			echo '<tr>
 			<td>Username</td>
-			<td><p class="text-center"><input type="text" name="u" class="form-control" value="' . $userData['username'] . '" readonly></td>
+			<td><p class="text-center"><input type="text" name="u" class="form-control" value="' . htmlspecialchars($userData['username'] ?? '') . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Country</td>
@@ -726,7 +727,7 @@ class P
 						</tr>
 					</thead>
 					<tbody>';
-			$resetConnectionLinkURL = 'submit.php?action=resetConnectionLink&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '&provider=';
+			$resetConnectionLinkURL = 'submit.php?action=resetConnectionLink&id=' . $id . '&csrf=' . csrfToken() . '&provider=';
 
 			echo '<tr>
 				<td><i class="fa fa-comments-o"></i> Discord</td>
@@ -841,10 +842,10 @@ class P
 			</tr>';
 
 			echo '<tr>
-			<td>Avatar<br><a onclick="sure(\'submit.php?action=resetAvatar&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\')">(reset avatar)</a></td>
+			<td>Avatar<br><a onclick="sure(\'submit.php?action=resetAvatar&id=' . $id . '&csrf=' . csrfToken() . '\')">(reset avatar)</a></td>
 			<td>
 				<p align="center">
-					<img src="' . URL::PublicAvatarServiceBaseUrl() . '/' . $_GET['id'] . '" height="50" width="50"></img>
+					<img src="' . URL::PublicAvatarServiceBaseUrl() . '/' . $id . '" height="50" width="50"></img>
 				</p>
 			</td>
 			</tr>';
@@ -884,7 +885,7 @@ class P
 				</tr>';
 				echo '<tr>
 				<td>Silence reason</td>
-				<td><p class="text-center"><input type="text" name="sr" class="form-control" value="' . $userData['silence_reason'] . '"></td>
+				<td><p class="text-center"><input type="text" name="sr" class="form-control" value="' . htmlspecialchars($userData['silence_reason'] ?? '') . '"></td>
 				</tr>';
 			}
 			if (hasPrivilege(Privileges::AdminManagePrivileges)) {
@@ -924,7 +925,7 @@ class P
 				</td>
 				</tr>';
 			}
-			if (hasPrivilege(Privileges::UserDonor, $_GET["id"])) {
+			if (hasPrivilege(Privileges::UserDonor, $id)) {
 				echo '<tr>
 				<td>Custom badge</td>
 				<td>
@@ -940,17 +941,18 @@ class P
 			<td>Notes for CMs
 			<br>
 			<i>(visible only from RAP)</i></td>
-			<td><textarea name="ncm" class="form-control" style="overflow:auto;resize:vertical;height:500px">' . $userData["notes"] . '</textarea></td>
+			<td><textarea name="ncm" class="form-control" style="overflow:auto;resize:vertical;height:500px">' . htmlspecialchars($userData["notes"] ?? '') . '</textarea></td>
 			</tr>';
 
 			if (hasPrivilege(Privileges::AdminManagePrivileges)) {
 				echo '<tr><td>Top 50 IPs (descending by occurrence count)<br>';
-				echo '<i><a href="index.php?p=136&uid=' . $_GET["id"] . '">(search users with these IPs)</a></i>';
+				echo '<i><a href="index.php?p=136&uid=' . $id . '">(search users with these IPs)</a></i>';
 				echo '</td><td><ul>';
 
 				foreach ($ips as $ip) {
 					$lastUsedAt = $ip['last_used_at'] ? date('Y-m-d H:i', strtotime($ip['last_used_at'])) : 'Unknown';
-					echo "<li>$ip[ip] <a class='getcountry' data-ip='$ip[ip]' title='Click to retrieve IP country'>(?)</a> ($ip[occurencies], last used $lastUsedAt)</li>";
+					$address = htmlspecialchars($ip['ip']);
+					echo "<li>$address <a class='getcountry' data-ip='$address' title='Click to retrieve IP country'>(?)</a> ($ip[occurencies], last used $lastUsedAt)</li>";
 				}
 			}
 			echo '</ul></td></tr>';
@@ -972,7 +974,7 @@ class P
 			GROUP BY hw.mac, hw.unique_id, hw.disk_id
 			ORDER BY last_used DESC
 			LIMIT 10
-		", [$_GET['id']]);
+		", [$id]);
 
 		echo '<p align="center"><font size=4><i class="fa fa-laptop"></i> Hardware Devices</font></p>';
 		echo '<table class="table table-striped table-hover table-75-center">';
@@ -1027,16 +1029,16 @@ class P
 							<a title="Pin/Unpin" class="unpin btn btn-xs btn-primary no-mobile"><span class="glyphicon glyphicon-pushpin"></span></a></li>
 							<li class="list-group-item mobile-flex">';
 			if (hasPrivilege(Privileges::AdminManageBadges)) {
-				echo '<a href="index.php?p=110&id=' . $_GET['id'] . '" class="btn btn-success">Edit badges</a>';
+				echo '<a href="index.php?p=110&id=' . $id . '" class="btn btn-success">Edit badges</a>';
 			}
-			echo '	<a href="index.php?p=104&id=' . $_GET['id'] . '" class="btn btn-info">Change identity</a>';
-			echo '	<a href="index.php?p=105&id=' . $_GET['id'] . '" class="btn btn-info">Change whitelist</a>';
-			echo '	<a href="index.php?p=106&id=' . $_GET['id'] . '" class="btn btn-info">Change email address</a>';
-			if (hasPrivilege(Privileges::UserDonor, $_GET["id"])) {
-				echo '	<a onclick="sure(\'submit.php?action=removeDonor&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">Remove AKATSUKI+</a>';
+			echo '	<a href="index.php?p=104&id=' . $id . '" class="btn btn-info">Change identity</a>';
+			echo '	<a href="index.php?p=105&id=' . $id . '" class="btn btn-info">Change whitelist</a>';
+			echo '	<a href="index.php?p=106&id=' . $id . '" class="btn btn-info">Change email address</a>';
+			if (hasPrivilege(Privileges::UserDonor, $id)) {
+				echo '	<a onclick="sure(\'submit.php?action=removeDonor&id=' . $id . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">Remove AKATSUKI+</a>';
 			}
-			echo '	<a href="index.php?p=121&id=' . $_GET['id'] . '" class="btn btn-warning">Give AKATSUKI+</a>';
-			echo '	<a href="https://akatsuki.gg/u/' . $_GET['id'] . '" class="btn btn-primary">View profile</a>';
+			echo '	<a href="index.php?p=121&id=' . $id . '" class="btn btn-warning">Give AKATSUKI+</a>';
+			echo '	<a href="https://akatsuki.gg/u/' . $id . '" class="btn btn-primary">View profile</a>';
 			echo '</li>
 						</ul>';
 
@@ -1044,31 +1046,31 @@ class P
 						<li class="list-group-item list-group-item-danger">Dangerous Zone</li>
 						<li class="list-group-item mobile-flex">';
 			if (hasPrivilege(Privileges::AdminWipeUsers)) { // Ok this is pretty cursed lol
-				echo '	<a href="index.php?p=123&id=' . $_GET["id"] . '" class="btn btn-danger">Wipe account</a>';
-				echo '	<a href="index.php?p=122&id=' . $_GET["id"] . '" class="btn btn-danger">Rollback account</a>';
+				echo '	<a href="index.php?p=123&id=' . $id . '" class="btn btn-danger">Wipe account</a>';
+				echo '	<a href="index.php?p=122&id=' . $id . '" class="btn btn-danger">Rollback account</a>';
 			}
 			if (hasPrivilege(Privileges::AdminCaker)) { // Only allow superadmin to lock from admin panel.
-				echo '	<a onclick="sure(\'submit.php?action=lockUnlockUser&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\', \'Restrictions and bans will be removed from this account if you lock it. Make sure to lock only accounts that are not banned or restricted.\')" class="btn btn-danger">(Un)lock user</a>';
+				echo '	<a onclick="sure(\'submit.php?action=lockUnlockUser&id=' . $id . '&csrf=' . csrfToken() . '\', \'Restrictions and bans will be removed from this account if you lock it. Make sure to lock only accounts that are not banned or restricted.\')" class="btn btn-danger">(Un)lock user</a>';
 			}
 
 			if (hasPrivilege(Privileges::AdminBanUsers)) {
-				echo '	<a href="index.php?p=137&id=' . $_GET["id"] . '" class="btn btn-danger">(Un)restrict user</a>';
-				echo '	<a href="index.php?p=139&id=' . $_GET["id"] . '" class="btn btn-danger">(Un)ban user</a>';
-				/*if (isBanned($_GET["id"])) {
-								echo '	<a onclick="sure(\'submit.php?action=banUnbanUser&id='.$_GET['id'].'&csrf=' . csrfToken() . '\')" class="btn btn-danger">Unban user</a>';
+				echo '	<a href="index.php?p=137&id=' . $id . '" class="btn btn-danger">(Un)restrict user</a>';
+				echo '	<a href="index.php?p=139&id=' . $id . '" class="btn btn-danger">(Un)ban user</a>';
+				/*if (isBanned($id)) {
+								echo '	<a onclick="sure(\'submit.php?action=banUnbanUser&id='.$id.'&csrf=' . csrfToken() . '\')" class="btn btn-danger">Unban user</a>';
 							}
-							if (isRestricted($_GET["id"])) {
-								echo '	<a onclick="sure(\'submit.php?action=restrictUnrestrictUser&id='.$_GET['id'].'&csrf='.csrfToken().'\')" class="btn btn-danger">Unrestrict user</a>';
+							if (isRestricted($id)) {
+								echo '	<a onclick="sure(\'submit.php?action=restrictUnrestrictUser&id='.$id.'&csrf='.csrfToken().'\')" class="btn btn-danger">Unrestrict user</a>';
 							}*/
 
-				echo '	<a onclick="sure(\'submit.php?action=clearHWID&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">Clear HWID matches</a>';
+				echo '	<a onclick="sure(\'submit.php?action=clearHWID&id=' . $id . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">Clear HWID matches</a>';
 			}
-			echo '		<a onclick="sure(\'submit.php?action=toggleCustomBadge&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">' . (($userData["can_custom_badge"] == 1) ? "Revoke" : "Grant") . ' custom badge</a>';
+			echo '		<a onclick="sure(\'submit.php?action=toggleCustomBadge&id=' . $id . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">' . (($userData["can_custom_badge"] == 1) ? "Revoke" : "Grant") . ' custom badge</a>';
 			if (hasPrivilege(Privileges::AdminSilenceUsers)) {
-				echo '		<a onclick="sure(\'submit.php?action=toggleUserpage&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">' . (($userData["userpage_allowed"] == 1) ? "Disallow" : "Allow") . ' userpage</a>';
+				echo '		<a onclick="sure(\'submit.php?action=toggleUserpage&id=' . $id . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">' . (($userData["userpage_allowed"] == 1) ? "Disallow" : "Allow") . ' userpage</a>';
 			}
 			if (hasPrivilege(Privileges::AdminManageUsers)) {
-				echo '		<a onclick="reallysure(\'submit.php?action=deleteUserAccount&id=' . $_GET['id'] . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">Delete user account</a>';
+				echo '		<a onclick="reallysure(\'submit.php?action=deleteUserAccount&id=' . $id . '&csrf=' . csrfToken() . '\');" class="btn btn-danger">Delete user account</a>';
 			}
 			echo '<br>
 							</li>
@@ -1098,7 +1100,7 @@ class P
 				throw new Exception("That user doesn't exist");
 			}
 			// Check if we are trying to edit our account or a higher rank account
-			if ($userData['username'] != $_SESSION['username'] && !hasPrivilege(Privileges::AdminCaker) && (($userData['privileges'] & Privileges::AdminManageUsers) > 0)) {
+			if ((int)$userData['id'] !== (int)$_SESSION['userid'] && !hasPrivilege(Privileges::AdminCaker) && (($userData['privileges'] & Privileges::AdminManageUsers) > 0)) {
 
 				throw new Exception("You don't have enough permissions to edit this user.");
 			}
@@ -1128,7 +1130,7 @@ class P
 			</tr>';
 			echo '<tr>
 			<td>Old Username</td>
-			<td><p class="text-center"><input type="text" name="oldu" class="form-control" value="' . $userData['username'] . '" readonly></td>
+			<td><p class="text-center"><input type="text" name="oldu" class="form-control" value="' . htmlspecialchars($userData['username'] ?? '') . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>New Username</td>
@@ -1159,7 +1161,7 @@ class P
 				throw new Exception("That user doesn't exist");
 			}
 			// Check if we are trying to edit our account or a higher rank account
-			if ($userData['username'] != $_SESSION['username'] && !hasPrivilege(Privileges::AdminCaker) && (($userData['privileges'] & Privileges::AdminManageUsers) > 0)) {
+			if ((int)$userData['id'] !== (int)$_SESSION['userid'] && !hasPrivilege(Privileges::AdminCaker) && (($userData['privileges'] & Privileges::AdminManageUsers) > 0)) {
 
 				throw new Exception("You don't have enough permissions to edit this user.");
 			}
@@ -1230,7 +1232,7 @@ class P
 				throw new Exception("That user doesn't exist");
 			}
 			// Check if we are trying to edit our account or a higher rank account
-			if ($userData['username'] != $_SESSION['username'] && !hasPrivilege(Privileges::AdminCaker) && (($userData['privileges'] & Privileges::AdminManageUsers) > 0)) {
+			if ((int)$userData['id'] !== (int)$_SESSION['userid'] && !hasPrivilege(Privileges::AdminCaker) && (($userData['privileges'] & Privileges::AdminManageUsers) > 0)) {
 
 				throw new Exception("You don't have enough permissions to edit this user.");
 			}
@@ -1538,7 +1540,7 @@ class P
 			<input name="action" value="saveUserBadges" hidden>';
 			echo '<tr>
 			<td>User</td>
-			<td><p class="text-center"><input type="text" name="u" class="form-control" value="' . $username . '" readonly></td>
+			<td><p class="text-center"><input type="text" name="u" class="form-control" value="' . htmlspecialchars($username ?? '') . '" readonly></td>
 			</tr>';
 			for ($i = 1; $i <= 6; $i++) {
 				echo '<tr>
@@ -2038,7 +2040,7 @@ class P
 			foreach ($friends as $friend) {
 				$uname = $friend['username'];
 				$mutualIcon = ($friend['user2'] == 999 || getFriendship($friend['user2'], $ourID, true) == 2) ? '<i class="fa fa-heart"></i>' : '';
-				echo '<tr><td><div align="center"><a href="index.php?p=103&id=' . $friend['user2'] . '">' . $uname . '</a></div></td><td><div align="center">' . $mutualIcon . '</div></td></tr>';
+				echo '<tr><td><div align="center"><a href="index.php?p=103&id=' . $friend['user2'] . '">' . htmlspecialchars($uname ?? '') . '</a></div></td><td><div align="center">' . $mutualIcon . '</div></td></tr>';
 			}
 			echo '</tbody></table>';
 		}
@@ -2132,7 +2134,7 @@ class P
 			echo "<tr class='$rowClass'>
 				<td><a href='https://osu.ppy.sh/s/$bsid' target='_blank'>$req[type]/$req[bid]</a></td>
 				<td>$song</td>
-				<td>$req[username]</td>
+				<td>" . htmlspecialchars($req['username']) . "</td>
 				<td>" . timeDifference(time(), $req["time"]) . "</td>
 				<td>
 					<p class='text-center'>
@@ -2343,7 +2345,7 @@ class P
 			foreach ($users as $user) {
 				echo "<tr>
 						<td style='text-align: center;'>$user[id]</td>
-						<td style='text-align: center;'><a href='index.php?p=103&id=$user[id]'>$user[username]</a></td>
+						<td style='text-align: center;'><a href='index.php?p=103&id=$user[id]'>" . htmlspecialchars($user['username']) . "</a></td>
 					</tr>";
 			}
 			echo '</tbody>
@@ -2377,9 +2379,10 @@ class P
 	 */
 	public static function AdminRestrictUnrestrictReason()
 	{
+		$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 0;
 		try {
 			// Check if id is set
-			if (!isset($_GET['id'])) {
+			if ($id === 0) {
 				throw new Exception('Invalid user id');
 			}
 			echo '<div id="wrapper">';
@@ -2388,7 +2391,7 @@ class P
 			// Maintenance check
 			self::MaintenanceStuff();
 			echo '<p align="center"><font size=5><i class="fa fa-eraser"></i>	(Un)restrict account</font></p>';
-			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
+			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$id]);
 			if (!$username) {
 				throw new Exception("Invalid user");
 			}
@@ -2399,11 +2402,11 @@ class P
 			<input name="action" value="restrictUnrestrictUserReason" hidden>';
 			echo '<tr>
 			<td>User ID</td>
-			<td><p class="text-center"><input type="text" name="id" class="form-control" value="' . $_GET["id"] . '" readonly></td>
+			<td><p class="text-center"><input type="text" name="id" class="form-control" value="' . $id . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Username</td>
-			<td><p class="text-center"><input type="text" class="form-control" value="' . $username . '" readonly></td>
+			<td><p class="text-center"><input type="text" class="form-control" value="' . htmlspecialchars($username ?? '') . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Reason</td>
@@ -2425,9 +2428,10 @@ class P
 	 */
 	public static function AdminBanUnbanReason()
 	{
+		$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 0;
 		try {
 			// Check if id is set
-			if (!isset($_GET['id'])) {
+			if ($id === 0) {
 				throw new Exception('Invalid user id');
 			}
 			echo '<div id="wrapper">';
@@ -2436,7 +2440,7 @@ class P
 			// Maintenance check
 			self::MaintenanceStuff();
 			echo '<p align="center"><font size=5><i class="fa fa-eraser"></i>	(Un)ban account</font></p>';
-			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
+			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$id]);
 			if (!$username) {
 				throw new Exception("Invalid user");
 			}
@@ -2447,11 +2451,11 @@ class P
 			<input name="action" value="banUnbanUserReason" hidden>';
 			echo '<tr>
 			<td>User ID</td>
-			<td><p class="text-center"><input type="text" name="id" class="form-control" value="' . $_GET["id"] . '" readonly></td>
+			<td><p class="text-center"><input type="text" name="id" class="form-control" value="' . $id . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Username</td>
-			<td><p class="text-center"><input type="text" class="form-control" value="' . $username . '" readonly></td>
+			<td><p class="text-center"><input type="text" class="form-control" value="' . htmlspecialchars($username ?? '') . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Reason</td>
@@ -2475,9 +2479,10 @@ class P
 	 */
 	public static function AdminGiveDonor()
 	{
+		$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 0;
 		try {
 			// Check if id is set
-			if (!isset($_GET['id'])) {
+			if ($id === 0) {
 				throw new Exception('Invalid user id');
 			}
 			echo '<div id="wrapper">';
@@ -2486,7 +2491,7 @@ class P
 			// Maintenance check
 			self::MaintenanceStuff();
 			echo '<p align="center"><font size=5><i class="fa fa-money"></i>	Give AKATSUKI+</font></p>';
-			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
+			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$id]);
 			if (!$username) {
 				throw new Exception("Invalid user");
 			}
@@ -2497,11 +2502,11 @@ class P
 			<input name="action" value="giveDonor" hidden>';
 			echo '<tr>
 			<td>User ID</td>
-			<td><p class="text-center"><input type="text" name="id" class="form-control" value="' . $_GET["id"] . '" readonly></td>
+			<td><p class="text-center"><input type="text" name="id" class="form-control" value="' . $id . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Username</td>
-			<td><p class="text-center"><input type="text" class="form-control" value="' . $username . '" readonly></td>
+			<td><p class="text-center"><input type="text" class="form-control" value="' . htmlspecialchars($username ?? '') . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Period</td>
@@ -2537,9 +2542,10 @@ class P
 	 */
 	public static function AdminRollback()
 	{
+		$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 0;
 		try {
 			// Check if id is set
-			if (!isset($_GET['id'])) {
+			if ($id === 0) {
 				throw new Exception('Invalid user id');
 			}
 			echo '<div id="wrapper">';
@@ -2548,7 +2554,7 @@ class P
 			// Maintenance check
 			self::MaintenanceStuff();
 			echo '<p align="center"><font size=5><i class="fa fa-fast-backward"></i>	Rollback account</font></p>';
-			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
+			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$id]);
 			if (!$username) {
 				throw new Exception("Invalid user");
 			}
@@ -2559,11 +2565,11 @@ class P
 			<input name="action" value="rollback" hidden>';
 			echo '<tr>
 			<td>User ID</td>
-			<td><p class="text-center"><input type="text" name="id" class="form-control" value="' . $_GET["id"] . '" readonly></td>
+			<td><p class="text-center"><input type="text" name="id" class="form-control" value="' . $id . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Username</td>
-			<td><p class="text-center"><input type="text" class="form-control" value="' . $username . '" readonly></td>
+			<td><p class="text-center"><input type="text" class="form-control" value="' . htmlspecialchars($username ?? '') . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Period</td>
@@ -2596,9 +2602,10 @@ class P
 	 */
 	public static function AdminWipe()
 	{
+		$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 0;
 		try {
 			// Check if id is set
-			if (!isset($_GET['id'])) {
+			if ($id === 0) {
 				throw new Exception('Invalid user id');
 			}
 			echo '<div id="wrapper">';
@@ -2608,7 +2615,7 @@ class P
 			self::MaintenanceStuff();
 			echo '<div class="container alert alert-danger" role="alert" style="width: 100%;"><p align="center"><b>Reminder:<br></b>Admins should not provide wipes for users who have not purchased AKATSUKI+, unless it is warranted.</p></div>';
 			echo '<p align="center"><font size=5><i class="fa fa-eraser"></i>	Wipe account</font></p>';
-			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$_GET["id"]]);
+			$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", [$id]);
 			if (!$username) {
 				throw new Exception("Invalid user");
 			}
@@ -2619,11 +2626,11 @@ class P
 			<input name="action" value="wipeAccount" hidden>';
 			echo '<tr>
 			<td>User ID</td>
-			<td><p class="text-center"><input type="text" name="id" class="form-control" value="' . $_GET["id"] . '" readonly></td>
+			<td><p class="text-center"><input type="text" name="id" class="form-control" value="' . $id . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Username</td>
-			<td><p class="text-center"><input type="text" class="form-control" value="' . $username . '" readonly></td>
+			<td><p class="text-center"><input type="text" class="form-control" value="' . htmlspecialchars($username ?? '') . '" readonly></td>
 			</tr>';
 			echo '<tr>
 			<td>Gamemode</td>
@@ -2762,12 +2769,12 @@ class P
 				$assignee = "Useless";
 			} else {
 				$rowClass = "";
-				$assignee = '<img class="circle" style="width: 30px; height: 30px; margin-top: 0px;" src="https://a.akatsuki.gg/' . $report['assigned'] . '"> ' . getUserUsername($report['assigned']);
+				$assignee = '<img class="circle" style="width: 30px; height: 30px; margin-top: 0px;" src="https://a.akatsuki.gg/' . $report['assigned'] . '"> ' . htmlspecialchars(getUserUsername($report['assigned']) ?? '');
 			}
 			echo '<tr class="' . $rowClass . '">
 			<td><p class="text-center">' . $report['id'] . '</p></td>
-			<td><p class="text-center"><a href="index.php?p=103&id=' . $report["from_uid"] . '" target="_blank">' . getUserUsername($report['from_uid']) . '</a></p></td>
-			<td><p class="text-center"><b><a href="index.php?p=103&id=' . $report["to_uid"] . '" target="_blank">' . getUserUsername($report['to_uid']) . '</a></b></p></td>
+			<td><p class="text-center"><a href="index.php?p=103&id=' . $report["from_uid"] . '" target="_blank">' . htmlspecialchars(getUserUsername($report['from_uid']) ?? '') . '</a></p></td>
+			<td><p class="text-center"><b><a href="index.php?p=103&id=' . $report["to_uid"] . '" target="_blank">' . htmlspecialchars(getUserUsername($report['to_uid']) ?? '') . '</a></b></p></td>
 			<td><p>' . htmlspecialchars(substr($report['reason'], 0, 40)) . '</p></td>
 			<td><p>' . timeDifference(time(), $report['time']) . '</p></td>
 			<td><p class="text-center">' . $assignee . '</p></td>
@@ -2804,7 +2811,7 @@ class P
 				$status = "Useless";
 				$statusRowClass = "warning";
 			} else {
-				$status = "Assigned to " . getUserUsername($report["assigned"]);
+				$status = "Assigned to " . htmlspecialchars(getUserUsername($report["assigned"]) ?? "");
 				if ($report["assigned"] == $_SESSION["userid"]) {
 					$statusRowClass = "success";
 				}
@@ -2843,11 +2850,11 @@ class P
 				<table class="table table-striped table-hover table-100-center"><tbody>
 					<tr>
 						<td><b>From</b></td>
-						<td>' . getUserUsername($report["from_uid"]) . '</td>
+						<td>' . htmlspecialchars(getUserUsername($report["from_uid"]) ?? '') . '</td>
 					</tr>
 					<tr>
 						<td><b>Reported user</b></td>
-						<td><a href="index.php?p=103&id=' . $report["to_uid"] . '" target="_blank" class="badguy">' . getUserUsername($report["to_uid"]) . '</a></td>
+						<td><a href="index.php?p=103&id=' . $report["to_uid"] . '" target="_blank" class="badguy">' . htmlspecialchars(getUserUsername($report["to_uid"]) ?? '') . '</a></td>
 					</tr>
 					<tr>
 						<td><b>Reason</b></td>
@@ -2859,17 +2866,17 @@ class P
 					</tr>
 					<tr>
 						<td><b>Chatlog*</b></td>
-						<td class="code">' . $report["chatlog"] .  '</td>
+						<td class="code">' . htmlspecialchars($report["chatlog"] ?? '') .  '</td>
 					</tr>
 					<tr class="' . $statusRowClass . '">
 						<td><b>Status</b></td>
 						<td>' . $status . '</td>
 					</tr>
 					<tr class="info">
-						<td colspan=2><b>' . getUserUsername($report["to_uid"]) . '</b> has been reported <b>' . $reportedCount . '</b> times in the last month</td>
+						<td colspan=2><b>' . htmlspecialchars(getUserUsername($report["to_uid"]) ?? '') . '</b> has been reported <b>' . $reportedCount . '</b> times in the last month</td>
 					</tr>
 					<tr class="info">
-						<td colspan=2><b>' . getUserUsername($report["from_uid"]) . '</b> has sent <b>' . $uselessCount . '</b> useless reports in the last month</td>
+						<td colspan=2><b>' . htmlspecialchars(getUserUsername($report["from_uid"]) ?? '') . '</b> has sent <b>' . $uselessCount . '</b> useless reports in the last month</td>
 					</tr>
 				</table>
 
@@ -2886,8 +2893,8 @@ class P
 					<li class="list-group-item list-group-item-danger">Quick actions</li>
 					<li class="list-group-item mobile-flex">
 						<a class="btn btn-primary" href="index.php?p=103&id=' . $report["to_uid"] . '"><i class="fa fa-expand"></i> View reported user in RAP</a>
-						<div class="btn btn-warning" data-toggle="modal" data-target="#silenceUserModal" data-who="' . getUserUsername($report["to_uid"]) . '"><i class="fa fa-microphone-slash"></i> Silence reported user</div>
-						<div class="btn btn-warning" data-toggle="modal" data-target="#silenceUserModal" data-who="' . getUserUsername($report["from_uid"]) . '"><i class="fa fa-microphone-slash"></i> Silence source user</div>
+						<div class="btn btn-warning" data-toggle="modal" data-target="#silenceUserModal" data-who="' . htmlspecialchars(getUserUsername($report["to_uid"]) ?? '') . '"><i class="fa fa-microphone-slash"></i> Silence reported user</div>
+						<div class="btn btn-warning" data-toggle="modal" data-target="#silenceUserModal" data-who="' . htmlspecialchars(getUserUsername($report["from_uid"]) ?? '') . '"><i class="fa fa-microphone-slash"></i> Silence source user</div>
 						';
 			//$restrictedDisabled = isRestricted($report["to_uid"]) ? "disabled" : "";
 			//echo '<a class="btn btn-danger ' . $restrictedDisabled . '" onclick="sure(\'submit.php?action=restrictUnrestrictUser&id=' . $report["to_uid"] . '&resend=1&csrf='.csrfToken().'\')"><i class="fa fa-times"></i> Restrict reported user</a>';
@@ -3065,15 +3072,15 @@ class P
 		<tbody>';
 		foreach ($playsVanilla as $play) {
 			if ($play['song_name']) {
-				$bn = '<a href="https://akatsuki.gg/b/' . $play['beatmap_id'] . '">' . $play['song_name'] . '</a>';
+				$bn = '<a href="https://akatsuki.gg/b/' . $play['beatmap_id'] . '">' . htmlspecialchars($play['song_name']) . '</a>';
 			} else {
-				$bn = $play['beatmap_md5'];
+				$bn = htmlspecialchars($play['beatmap_md5']);
 			}
 			// Get readable play_mode
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="info">';
-			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . $play['username'] . '</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . htmlspecialchars($play['username'] ?? '') . '</b></a></p></td>';
 			echo '<td><p class="text-left">' . $bn . ' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">' . $pm . '</p></td>';
 			echo '<td><p class="text-left">' . timeDifference(time(), $play['time']) . '</p></td>';
@@ -3091,15 +3098,15 @@ class P
 		<tbody>';
 		foreach ($playsRelax as $play) {
 			if ($play['song_name']) {
-				$bn = '<a href="https://akatsuki.gg/b/' . $play['beatmap_id'] . '">' . $play['song_name'] . '</a>';
+				$bn = '<a href="https://akatsuki.gg/b/' . $play['beatmap_id'] . '">' . htmlspecialchars($play['song_name']) . '</a>';
 			} else {
-				$bn = $play['beatmap_md5'];
+				$bn = htmlspecialchars($play['beatmap_md5']);
 			}
 			// Get readable play_mode
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="info">';
-			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . $play['username'] . '</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . htmlspecialchars($play['username'] ?? '') . '</b></a></p></td>';
 			echo '<td><p class="text-left">' . $bn . ' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">' . $pm . '</p></td>';
 			echo '<td><p class="text-left">' . timeDifference(time(), $play['time']) . '</p></td>';
@@ -3117,15 +3124,15 @@ class P
 		<tbody>';
 		foreach ($playsAutopilot as $play) {
 			if ($play['song_name']) {
-				$bn = '<a href="https://akatsuki.gg/b/' . $play['beatmap_id'] . '">' . $play['song_name'] . '</a>';
+				$bn = '<a href="https://akatsuki.gg/b/' . $play['beatmap_id'] . '">' . htmlspecialchars($play['song_name']) . '</a>';
 			} else {
-				$bn = $play['beatmap_md5'];
+				$bn = htmlspecialchars($play['beatmap_md5']);
 			}
 			// Get readable play_mode
 			$pm = getPlaymodeText($play['play_mode']);
 			// Print row
 			echo '<tr class="info">';
-			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . $play['username'] . '</b></a></p></td>';
+			echo '<td><p class="text-left"><a href="index.php?p=103&id=' . $play["userid"] . '"><b>' . htmlspecialchars($play['username'] ?? '') . '</b></a></p></td>';
 			echo '<td><p class="text-left">' . $bn . ' <b>' . getScoreMods($play['mods']) . '</b></p></td>';
 			echo '<td><p class="text-left">' . $pm . '</p></td>';
 			echo '<td><p class="text-left">' . timeDifference(time(), $play['time']) . '</p></td>';
@@ -3204,8 +3211,8 @@ class P
 				}
 				$lastUsedAt = $row['last_used_at'] ? date('Y-m-d H:i', strtotime($row['last_used_at'])) : 'Unknown';
 				echo "<tr class='" . ($userFilter && $row["userid"] != $_GET["uid"] ? "danger bold" : "") . "'>
-				<td>$row[ip] <a class='getcountry' data-ip='$row[ip]'>(?)</a></td>
-				<td><a href='index.php?p=103&id=$row[userid]' target='_blank'>$row[username]</a> <i>($row[userid])</i></td>
+				<td>" . htmlspecialchars($row['ip']) . " <a class='getcountry' data-ip='" . htmlspecialchars($row['ip']) . "'>(?)</a></td>
+				<td><a href='index.php?p=103&id=$row[userid]' target='_blank'>" . htmlspecialchars($row['username']) . "</a> <i>($row[userid])</i></td>
 				<td><span class='label label-$groupColor'>$groupText</span></td>
 				<td>$row[occurencies]</td>
 				<td>$lastUsedAt</td>
@@ -3817,29 +3824,16 @@ class P
 			echo '<td>' . htmlspecialchars($approvedAt) . '</td>';
 			echo '<td>';
 
-			if ($isShared) {
-				// Show unapprove button
-				echo '<button type="button" class="btn btn-sm btn-warning" onclick="unapproveSharedDevice(\'' .
-					htmlspecialchars($hw['mac']) . '\', \'' .
-					htmlspecialchars($hw['unique_id']) . '\', \'' .
-					htmlspecialchars($hw['disk_id']) .
-					'\')">Unapprove</button>';
-			} else {
-				// Show approve button
-				echo '<button type="button" class="btn btn-sm btn-success" onclick="showApproveModal(\'' .
-					htmlspecialchars($hw['mac']) . '\', \'' .
-					htmlspecialchars($hw['unique_id']) . '\', \'' .
-					htmlspecialchars($hw['disk_id']) .
-					'\')">Approve</button>';
-			}
+			$args = [$hw['mac'], $hw['unique_id'], $hw['disk_id']];
+			$action = $isShared ? 'unapproveSharedDevice' : 'showApproveModal';
+			$buttonClass = $isShared ? 'btn-warning' : 'btn-success';
+			$label = $isShared ? 'Unapprove' : 'Approve';
+			$onClick = htmlspecialchars($action . '(...' . json_encode($args, JSON_INVALID_UTF8_SUBSTITUTE) . ')');
+			echo '<button type="button" class="btn btn-sm ' . $buttonClass . '" onclick="' . $onClick . '">' . $label . '</button>';
 
-			// View details button
-			echo ' <button type="button" class="btn btn-sm btn-info" onclick="showHardwareDetails(\'' .
-				htmlspecialchars($hw['mac']) . '\', \'' .
-				htmlspecialchars($hw['unique_id']) . '\', \'' .
-				htmlspecialchars($hw['disk_id']) . '\', \'' .
-				htmlspecialchars($hw['approval_reason'] ?? '') .
-				'\')">Details</button>';
+			$args[] = $hw['approval_reason'] ?? '';
+			$onClick = htmlspecialchars('showHardwareDetails(...' . json_encode($args, JSON_INVALID_UTF8_SUBSTITUTE) . ')');
+			echo ' <button type="button" class="btn btn-sm btn-info" onclick="' . $onClick . '">Details</button>';
 
 			echo '</td>';
 			echo '</tr>';

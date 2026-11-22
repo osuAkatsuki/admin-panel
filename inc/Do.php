@@ -125,17 +125,18 @@ class D
 	public static function SaveEditUser()
 	{
 		try {
+			$id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
 			// Check if everything is set (username color, username style, rank, allowed and notes can be empty)
-			if (!isset($_POST['id']) || !isset($_POST['u']) || !isset($_POST['up']) || !isset($_POST['aka']) || empty($_POST['id']) || empty($_POST['u'])) {
+			if (!$id || !isset($_POST['up'], $_POST['aka'])) {
 				throw new Exception('Nice troll');
 			}
 			// Check if this user exists and get old data
-			$oldData = $GLOBALS["db"]->fetch("SELECT privileges, country FROM users WHERE id = ?", [$_POST["id"]]);
+			$oldData = $GLOBALS["db"]->fetch("SELECT privileges, country, username FROM users WHERE id = ?", [$id]);
 			if (!$oldData) {
 				throw new Exception("That user doesn\'t exist");
 			}
 			// Check if we can edit this user
-			if ((($oldData["privileges"] & Privileges::AdminManageUsers) > 0) && $_POST["u"] != $_SESSION["username"] && !hasPrivilege(Privileges::AdminCaker)) {
+			if ((($oldData["privileges"] & Privileges::AdminManageUsers) > 0) && $id !== (int)$_SESSION["userid"] && !hasPrivilege(Privileges::AdminCaker)) {
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 
@@ -144,33 +145,38 @@ class D
 			//$oldse = current($GLOBALS["db"]->fetch("SELECT silence_end FROM users WHERE username = ?", array($_POST["u"])));
 
 			// Save new data (email, and cm notes)
-			$GLOBALS['db']->execute('UPDATE users SET notes = ? WHERE id = ? LIMIT 1', [$_POST['ncm'], $_POST['id']]);
+			$GLOBALS['db']->execute('UPDATE users SET notes = ? WHERE id = ? LIMIT 1', [$_POST['ncm'], $id]);
 			// Edit silence time if we can silence users
 			if (hasPrivilege(Privileges::AdminSilenceUsers)) {
-				$GLOBALS['db']->execute('UPDATE users SET silence_end = ?, silence_reason = ? WHERE id = ? LIMIT 1', [$_POST['se'], $_POST['sr'], $_POST['id']]);
+				$GLOBALS['db']->execute('UPDATE users SET silence_end = ?, silence_reason = ? WHERE id = ? LIMIT 1', [$_POST['se'], $_POST['sr'], $id]);
 			}
 			// Edit privileges if we can
-			if (hasPrivilege(Privileges::AdminManagePrivileges) && ($_POST["id"] != $_SESSION["userid"])) {
-				$GLOBALS['db']->execute('UPDATE users SET privileges = ? WHERE id = ? LIMIT 1', [$_POST['priv'], $_POST['id']]);
-				updateBanBancho($_POST["id"], $_POST['priv'] & Privileges::UserPublic == 0);
+			if (hasPrivilege(Privileges::AdminManagePrivileges) && ($id != $_SESSION["userid"])) {
+				$privileges = (int)($_POST['priv'] ?? 0);
+				$restricted = ($privileges & Privileges::UserPublic) === 0;
+				if ($restricted) {
+					$privileges &= ~Privileges::UserPendingVerification;
+				}
+				$GLOBALS['db']->execute('UPDATE users SET privileges = ? WHERE id = ? LIMIT 1', [$privileges, $id]);
+				updateBanBancho($id, $restricted);
 			}
 			// Save new userpage
-			$GLOBALS['db']->execute('UPDATE users SET userpage_content = ? WHERE id = ? LIMIT 1', [$_POST['up'], $_POST['id']]);
+			$GLOBALS['db']->execute('UPDATE users SET userpage_content = ? WHERE id = ? LIMIT 1', [$_POST['up'], $id]);
 			// Update country flag if set
 			if (isset($_POST['country']) && countryCodeToReadable($_POST['country']) != 'unknown country' && $oldData["country"] != $_POST['country']) {
-				$GLOBALS['db']->execute('UPDATE users SET country = ? WHERE id = ?', [$_POST['country'], $_POST['id']]);
-				moveCountryLeaderboards($_POST['id'], $oldData['country'], $_POST['country']);
+				$GLOBALS['db']->execute('UPDATE users SET country = ? WHERE id = ?', [$_POST['country'], $id]);
+				moveCountryLeaderboards($id, $oldData['country'], $_POST['country']);
 				redisConnect();
-				$GLOBALS["redis"]->publish('api:change_flag', $_POST['id']);
+				$GLOBALS["redis"]->publish('api:change_flag', $id);
 
-				postWebhookMessage(sprintf("has changed [%s](https://akatsuki.gg/u/%s)'s flag to :flag_%s:", $_POST["u"], $_POST['id'], strtolower($_POST['country'])));
-				rapLog(sprintf("has changed %s's flag to %s", $_POST["u"], $_POST['country']));
+				postWebhookMessage(sprintf("has changed [%s](https://akatsuki.gg/u/%s)'s flag to :flag_%s:", $oldData["username"], $id, strtolower($_POST['country'])));
+				rapLog(sprintf("has changed %s's flag to %s", $oldData["username"], $_POST['country']));
 			}
 			// Set username style/color/aka
-			$GLOBALS['db']->execute('UPDATE users SET username_aka = ? WHERE id = ?', [$_POST['aka'], $_POST['id']]);
+			$GLOBALS['db']->execute('UPDATE users SET username_aka = ? WHERE id = ?', [$_POST['aka'], $id]);
 			// RAP log
-			postWebhookMessage(sprintf("has edited [%s](https://akatsuki.gg/u/%s)\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $_POST["u"], $_POST['id'], $_POST['id']));
-			rapLog(sprintf("has edited user %s", $_POST["u"]));
+			postWebhookMessage(sprintf("has edited [%s](https://akatsuki.gg/u/%s)\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $oldData["username"], $id, $id));
+			rapLog(sprintf("has edited user %s", $oldData["username"]));
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=User edited!');
 		} catch (Exception $e) {
@@ -204,7 +210,7 @@ class D
 				// Ban, reset UserNormal and UserPublic bits
 				$banDateTime = time();
 				$newPrivileges = $userData["privileges"] & ~Privileges::UserNormal;
-				$newPrivileges &= ~Privileges::UserPublic;
+				$newPrivileges &= ~(Privileges::UserPublic | Privileges::UserPendingVerification);
 				removeFromLeaderboard($_GET['id']);
 			} else {
 				// Unban, set UserNormal and UserPublic bits
@@ -214,7 +220,7 @@ class D
 			//$newPrivileges = $userData["privileges"] ^ Privileges::UserBasic;
 			// Change privileges
 			$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_GET['id']]);
-			updateBanBancho($_GET["id"], $newPrivileges & Privileges::UserPublic == 0);
+			updateBanBancho($_GET["id"], ($newPrivileges & Privileges::UserPublic) === 0);
 			// Rap log
 			postWebhookMessage(sprintf("has %s user [%s](https://akatsuki.gg/u/%s).\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", ($newPrivileges & Privileges::UserNormal) > 0 ? "unbanned" : "banned", $userData["username"], $_GET['id'], $_GET['id']));
 			rapLog(sprintf("has %s user %s", ($newPrivileges & Privileges::UserNormal) > 0 ? "unbanned" : "banned", $userData["username"]));
@@ -889,7 +895,6 @@ class D
 	public static function ProcessRankRequest()
 	{
 		global $INTERNAL_BANCHO_SERVICE_BASE_URL;
-		global $ScoresConfig;
 		try {
 			if (!isset($_GET["id"]) || !isset($_GET["r"]) || empty($_GET["id"]))
 				throw new Exception("no");
@@ -924,8 +929,9 @@ class D
 
 				$msg = "[https://osu.ppy.sh/s/" . $bsid . " " . $bm["song_name"] . "] is now ranked!";
 				$to = "#announce";
-				$requestUrl = $INTERNAL_BANCHO_SERVICE_BASE_URL . "/api/v1/fokabotMessage?k=" . urlencode($ScoresConfig["api_key"]) . "&to=" . urlencode($to) . "&msg=" . urlencode($msg);
-				$resp = makeJsonWebRequest("GET", $requestUrl);
+				$requestUrl = $INTERNAL_BANCHO_SERVICE_BASE_URL . "/api/v1/fokabotMessage?" . http_build_query(["to" => $to, "msg" => $msg]);
+				$response = makeWebRequest("GET", $requestUrl, 1, ["X-Fokabot-Key: " . ($_ENV["FOKABOT_KEY"] ?? "")]);
+				$resp = $response["body"] ?? ["message" => "Bancho request failed"];
 
 				if ($resp["message"] != "ok") {
 					postWebhookMessage("failed to send FokaBot message :( Error: " . print_r($resp["message"], true));
@@ -1012,7 +1018,7 @@ class D
 			// Toggle restriction status depending on it's current value
 			if (!isRestricted($_POST["id"])) {
 				// Restrict, set UserNormal and reset UserPublic
-				$newPrivileges = ($userData["privileges"] | Privileges::UserNormal) & ~Privileges::UserPublic;
+				$newPrivileges = ($userData["privileges"] | Privileges::UserNormal) & ~(Privileges::UserPublic | Privileges::UserPendingVerification);
 				$banDateTime = time();
 
 				$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_POST['id']]);
@@ -1082,7 +1088,7 @@ class D
 				// Restrict, set UserNormal and reset UserPublic
 				$banDateTime = time();
 				$newPrivileges = $userData["privileges"] | Privileges::UserNormal;
-				$newPrivileges &= ~Privileges::UserPublic;
+				$newPrivileges &= ~(Privileges::UserPublic | Privileges::UserPendingVerification);
 				removeFromLeaderboard($_GET['id']);
 			} else {
 				// Remove restrictions, set both UserPublic and UserNormal
@@ -1092,7 +1098,7 @@ class D
 			}
 			// Change privileges
 			$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_GET['id']]);
-			updateBanBancho($_GET["id"], $newPrivileges & Privileges::UserPublic == 0);
+			updateBanBancho($_GET["id"], ($newPrivileges & Privileges::UserPublic) === 0);
 
 			$msg = ($newPrivileges & Privileges::UserPublic) > 0 ? "unrestricted" : "restricted";
 
@@ -1139,7 +1145,7 @@ class D
 			// Toggle ban status depending on it's current value
 			if (!isBanned($_POST["id"])) {
 				// Remove normal & public privileges
-				$newPrivileges = ($userData["privileges"] & ~Privileges::UserNormal) & ~Privileges::UserPublic;
+				$newPrivileges = ($userData["privileges"] & ~Privileges::UserNormal) & ~(Privileges::UserPublic | Privileges::UserPendingVerification);
 				$banDateTime = time();
 
 				$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ?', [$newPrivileges, $banDateTime, $_POST['id']]);
@@ -1326,7 +1332,7 @@ class D
 			$requestUrl = $INTERNAL_USERS_SERVICE_BASE_URL . "/api/v1/users/" . $userId;
 			// Deletion runs several steps in one transaction (including an assets service call),
 			// and the users service cancels it if we disconnect, so don't use the 1s default
-			$resp = makeWebRequest("DELETE", $requestUrl, 30);
+			$resp = makeWebRequest("DELETE", $requestUrl, 30, ["X-Users-Service-Token: " . ($_ENV["USERS_SERVICE_INTERNAL_TOKEN"] ?? "")]);
 			if ($resp["status"] < 200 || $resp["status"] >= 300) {
 				postWebhookMessage("Failed to process a GDPR/CCPA user deletion request for user: " . $userId);
 				rapLog("Failed to process a GDPR/CCPA user deletion request for user: " . $userId);
@@ -1402,7 +1408,6 @@ class D
 	public static function RankBeatmapNew()
 	{
 		global $INTERNAL_BANCHO_SERVICE_BASE_URL;
-		global $ScoresConfig;
 		try {
 			if (!isset($_POST["beatmaps"])) {
 				throw new Exception("Invalid form data");
@@ -1466,8 +1471,9 @@ class D
 			$bm = $GLOBALS["db"]->fetch("SELECT beatmapset_id, song_name FROM beatmaps WHERE beatmapset_id = ? LIMIT 1", [$bsid]);
 			$msg = "[https://osu.ppy.sh/s/" . $bsid . " " . $bm["song_name"] . "] is now ranked!";
 			$to = "#announce";
-			$requestUrl = $INTERNAL_BANCHO_SERVICE_BASE_URL . "/api/v1/fokabotMessage?k=" . urlencode($ScoresConfig["api_key"]) . "&to=" . urlencode($to) . "&msg=" . urlencode($msg);
-			$resp = makeJsonWebRequest("GET", $requestUrl);
+			$requestUrl = $INTERNAL_BANCHO_SERVICE_BASE_URL . "/api/v1/fokabotMessage?" . http_build_query(["to" => $to, "msg" => $msg]);
+			$response = makeWebRequest("GET", $requestUrl, 1, ["X-Fokabot-Key: " . ($_ENV["FOKABOT_KEY"] ?? "")]);
+			$resp = $response["body"] ?? ["message" => "Bancho request failed"];
 			if ($resp["message"] != "ok") {
 				postWebhookMessage(sprintf("failed to send FokaBot message :( Error: %s", print_r($resp["message"], true)));
 				rapLog("failed to send FokaBot message :( Error: " . print_r($resp["message"], true));

@@ -32,8 +32,11 @@ class Login {
 	public function D() {
 		$d = $this->DoGetData();
 		if (isset($d['success'])) {
-			if (isset($_SESSION['redirpage']) && $_SESSION['redirpage'] != '')
-				redirect($_SESSION['redirpage']);
+			$query = $_SESSION['redirpage'] ?? null;
+			unset($_SESSION['redirpage']);
+			if (is_array($query) && isset($query['p'])) {
+				redirect('index.php?' . http_build_query($query));
+			}
 			redirect('index.php?p=1');
 		} else {
 			addError($d['error']);
@@ -70,16 +73,17 @@ class Login {
 
 			// Everything ok, create session and do login stuff
 			startSessionIfNotStarted();
+			session_regenerate_id(true);
 			$_SESSION['username'] = $username;
 			$_SESSION['userid'] = $us['id'];
 			$_SESSION['password'] = $us['password_md5'];
 			$_SESSION['passwordChanged'] = false;
-			$_SESSION['csrf'] = csrfToken();
+			$_SESSION['csrf'] = generateCsrfToken();
 
 			// Check if the user requested to be remembered. If they did, initialise cookies.
 			if (isset($_POST['remember']) && (bool) $_POST['remember']) {
 				$m = new RememberCookieHandler();
-				$m->IssueNew($us['id']);
+				$m->IssueNew($us['id'], $us['password_md5']);
 			}
 			// Save latest activity
 			updateLatestActivity($us['id']);
