@@ -428,7 +428,7 @@ function printNavbar()
 	// Logged in right elements
 	if (checkLoggedIn()) {
 		echo '<li class="dropdown">
-					<a data-toggle="dropdown"><img src="' . URL::PublicAvatarServiceBaseUrl() . '/' . getUserID($_SESSION['username']) . '" height="22" width="22" />	<b>' . $_SESSION['username'] . '</b><span class="caret"></span></a>
+					<a data-toggle="dropdown"><img src="' . URL::PublicAvatarServiceBaseUrl() . '/' . getUserID($_SESSION['username']) . '" height="22" width="22" />	<b>' . htmlspecialchars($_SESSION['username']) . '</b><span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li class="dropdown-submenu"><a href="index.php?p=103&id=' . getUserID($_SESSION['username']) . '"><i class="fa fa-user"></i> My profile</a></li>
 						<li class="dropdown-submenu"><a href="submit.php?action=logout&csrf=' . csrfToken() . '"><i class="fa fa-sign-out"></i>	Logout</a></li>
@@ -574,8 +574,14 @@ function getAllowedUsers($by = 'username') {
  */
 function startSessionIfNotStarted()
 {
-	if (session_status() == PHP_SESSION_NONE)
-		session_start();
+	if (session_status() == PHP_SESSION_NONE) {
+		session_start([
+			'use_strict_mode' => true,
+			'cookie_secure' => true,
+			'cookie_httponly' => true,
+			'cookie_samesite' => 'Lax',
+		]);
+	}
 	if (isset($_SESSION['username']) && !isset($_SESSION['userid']))
 		$_SESSION['userid'] = getUserID($_SESSION['username']);
 }
@@ -594,7 +600,7 @@ function sessionCheck()
 		// Check if we are logged in
 		if (!isset($_SESSION["username"])) {
 			unset($_SESSION['redirpage']);
-			$_SESSION['redirpage'] = $_SERVER['REQUEST_URI'];
+			$_SESSION['redirpage'] = $_GET;
 			throw new Exception('You are not logged in.');
 		}
 		// Check if we've changed our password
@@ -1331,8 +1337,8 @@ function printBubble($userID, $username, $message, $time, $through)
 	echo '
 	<img class="circle" src="' . URL::PublicAvatarServiceBaseUrl() . '/' . $userID . '">
 	<div class="bubble">
-		<b>' . $username . '</b> ' . $message . '<br>
-		<span style="font-size: 80%">' . timeDifference($time, time()) . ' through <i>' . $through . '</i></span>
+		<b>' . htmlspecialchars($username) . '</b> ' . htmlspecialchars($message) . '<br>
+		<span style="font-size: 80%">' . timeDifference($time, time()) . ' through <i>' . htmlspecialchars($through) . '</i></span>
 	</div>';
 }
 

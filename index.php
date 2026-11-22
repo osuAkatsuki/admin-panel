@@ -1,4 +1,7 @@
 <?php
+header("Content-Security-Policy: frame-ancestors 'none'; object-src 'none'; base-uri 'self'");
+header('X-Frame-Options: DENY');
+header('X-Content-Type-Options: nosniff');
 // Health check endpoint for Kubernetes probes
 if ($_SERVER['REQUEST_URI'] === '/_health') {
 	http_response_code(200);
@@ -384,7 +387,7 @@ if (isset($_GET['p'])) {
 		case 124:
 			$force = (isset($_GET["force"]) && !empty($_GET["force"])) ? '1' : '0';
 			echo '<script type="text/javascript">
-			var bsid=' . htmlspecialchars($_GET["bsid"]) . ';
+			var bsid=' . (filter_input(INPUT_GET, 'bsid', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 0) . ';
 			var force=' . $force . ';
 		</script>
 		<input id="csrf" type="hidden" value="' . csrfToken() . '">

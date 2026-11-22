@@ -125,18 +125,29 @@ class D
 	public static function SaveEditUser()
 	{
 		try {
+			$id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
 			// Check if everything is set (username color, username style, rank, allowed and notes can be empty)
-			if (!isset($_POST['id']) || !isset($_POST['u']) || !isset($_POST['up']) || !isset($_POST['aka']) || empty($_POST['id']) || empty($_POST['u'])) {
+			if (!$id || !isset($_POST['up'], $_POST['aka'])) {
 				throw new Exception('Nice troll');
 			}
 			// Check if this user exists and get old data
-			$oldData = $GLOBALS["db"]->fetch("SELECT privileges, country FROM users WHERE id = ?", [$_POST["id"]]);
+			$oldData = $GLOBALS["db"]->fetch("SELECT privileges, country, username FROM users WHERE id = ?", [$id]);
 			if (!$oldData) {
 				throw new Exception("That user doesn\'t exist");
 			}
 			// Check if we can edit this user
-			if ((($oldData["privileges"] & Privileges::AdminManageUsers) > 0) && $_POST["u"] != $_SESSION["username"] && !hasPrivilege(Privileges::AdminCaker)) {
+			if ((($oldData["privileges"] & Privileges::AdminManageUsers) > 0) && $id !== (int)$_SESSION["userid"] && !hasPrivilege(Privileges::AdminCaker)) {
 				throw new Exception("You don't have enough permissions to edit this user");
+			}
+
+			$privileges = null;
+			if ($id !== (int)$_SESSION["userid"] && hasPrivilege(Privileges::AdminManagePrivileges)) {
+				$privileges = filter_input(INPUT_POST, 'priv', FILTER_VALIDATE_INT, [
+					'options' => ['min_range' => 0, 'max_range' => 2147483647],
+				]);
+				if ($privileges === false) {
+					throw new Exception('Invalid privilege value');
+				}
 			}
 
 			// Check if silence end has changed. if so, we have to kick the client
@@ -144,33 +155,37 @@ class D
 			//$oldse = current($GLOBALS["db"]->fetch("SELECT silence_end FROM users WHERE username = ?", array($_POST["u"])));
 
 			// Save new data (email, and cm notes)
-			$GLOBALS['db']->execute('UPDATE users SET notes = ? WHERE id = ? LIMIT 1', [$_POST['ncm'], $_POST['id']]);
+			$GLOBALS['db']->execute('UPDATE users SET notes = ? WHERE id = ? LIMIT 1', [$_POST['ncm'], $id]);
 			// Edit silence time if we can silence users
 			if (hasPrivilege(Privileges::AdminSilenceUsers)) {
-				$GLOBALS['db']->execute('UPDATE users SET silence_end = ?, silence_reason = ? WHERE id = ? LIMIT 1', [$_POST['se'], $_POST['sr'], $_POST['id']]);
+				$GLOBALS['db']->execute('UPDATE users SET silence_end = ?, silence_reason = ? WHERE id = ? LIMIT 1', [$_POST['se'], $_POST['sr'], $id]);
 			}
 			// Edit privileges if we can
-			if (hasPrivilege(Privileges::AdminManagePrivileges) && ($_POST["id"] != $_SESSION["userid"])) {
-				$GLOBALS['db']->execute('UPDATE users SET privileges = ? WHERE id = ? LIMIT 1', [$_POST['priv'], $_POST['id']]);
-				updateBanBancho($_POST["id"], $_POST['priv'] & Privileges::UserPublic == 0);
+			if ($privileges !== null) {
+				$restricted = ($privileges & Privileges::UserPublic) === 0;
+				if ($restricted) {
+					$privileges &= ~Privileges::UserPendingVerification;
+				}
+				$GLOBALS['db']->execute('UPDATE users SET privileges = ? WHERE id = ? LIMIT 1', [$privileges, $id]);
+				updateBanBancho($id, $restricted);
 			}
 			// Save new userpage
-			$GLOBALS['db']->execute('UPDATE users SET userpage_content = ? WHERE id = ? LIMIT 1', [$_POST['up'], $_POST['id']]);
+			$GLOBALS['db']->execute('UPDATE users SET userpage_content = ? WHERE id = ? LIMIT 1', [$_POST['up'], $id]);
 			// Update country flag if set
 			if (isset($_POST['country']) && countryCodeToReadable($_POST['country']) != 'unknown country' && $oldData["country"] != $_POST['country']) {
-				$GLOBALS['db']->execute('UPDATE users SET country = ? WHERE id = ?', [$_POST['country'], $_POST['id']]);
-				moveCountryLeaderboards($_POST['id'], $oldData['country'], $_POST['country']);
+				$GLOBALS['db']->execute('UPDATE users SET country = ? WHERE id = ?', [$_POST['country'], $id]);
+				moveCountryLeaderboards($id, $oldData['country'], $_POST['country']);
 				redisConnect();
-				$GLOBALS["redis"]->publish('api:change_flag', $_POST['id']);
+				$GLOBALS["redis"]->publish('api:change_flag', $id);
 
-				postWebhookMessage(sprintf("has changed [%s](https://akatsuki.gg/u/%s)'s flag to :flag_%s:", $_POST["u"], $_POST['id'], strtolower($_POST['country'])));
-				rapLog(sprintf("has changed %s's flag to %s", $_POST["u"], $_POST['country']));
+				postWebhookMessage(sprintf("has changed [%s](https://akatsuki.gg/u/%s)'s flag to :flag_%s:", $oldData["username"], $id, strtolower($_POST['country'])));
+				rapLog(sprintf("has changed %s's flag to %s", $oldData["username"], $_POST['country']));
 			}
 			// Set username style/color/aka
-			$GLOBALS['db']->execute('UPDATE users SET username_aka = ? WHERE id = ?', [$_POST['aka'], $_POST['id']]);
+			$GLOBALS['db']->execute('UPDATE users SET username_aka = ? WHERE id = ?', [$_POST['aka'], $id]);
 			// RAP log
-			postWebhookMessage(sprintf("has edited [%s](https://akatsuki.gg/u/%s)\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $_POST["u"], $_POST['id'], $_POST['id']));
-			rapLog(sprintf("has edited user %s", $_POST["u"]));
+			postWebhookMessage(sprintf("has edited [%s](https://akatsuki.gg/u/%s)\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $oldData["username"], $id, $id));
+			rapLog(sprintf("has edited user %s", $oldData["username"]));
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=User edited!');
 		} catch (Exception $e) {
@@ -204,7 +219,7 @@ class D
 				// Ban, reset UserNormal and UserPublic bits
 				$banDateTime = time();
 				$newPrivileges = $userData["privileges"] & ~Privileges::UserNormal;
-				$newPrivileges &= ~Privileges::UserPublic;
+				$newPrivileges &= ~(Privileges::UserPublic | Privileges::UserPendingVerification);
 				removeFromLeaderboard($_GET['id']);
 			} else {
 				// Unban, set UserNormal and UserPublic bits
@@ -214,7 +229,7 @@ class D
 			//$newPrivileges = $userData["privileges"] ^ Privileges::UserBasic;
 			// Change privileges
 			$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_GET['id']]);
-			updateBanBancho($_GET["id"], $newPrivileges & Privileges::UserPublic == 0);
+			updateBanBancho($_GET["id"], ($newPrivileges & Privileges::UserPublic) === 0);
 			// Rap log
 			postWebhookMessage(sprintf("has %s user [%s](https://akatsuki.gg/u/%s).\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", ($newPrivileges & Privileges::UserNormal) > 0 ? "unbanned" : "banned", $userData["username"], $_GET['id'], $_GET['id']));
 			rapLog(sprintf("has %s user %s", ($newPrivileges & Privileges::UserNormal) > 0 ? "unbanned" : "banned", $userData["username"]));
@@ -284,16 +299,16 @@ class D
 	{
 		try {
 			// Check if everything is set
-			if (!isset($_POST['id']) || !isset($_POST['oldu']) || !isset($_POST['newu']) || empty($_POST['id']) || empty($_POST['oldu']) || empty($_POST['newu'])) {
+			$id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+			if (!$id || empty($_POST['newu'])) {
 				throw new Exception('Nice troll.');
 			}
 			// Check if we can edit this user
-			$privileges = $GLOBALS["db"]->fetch("SELECT privileges FROM users WHERE id = ? LIMIT 1", [$_POST["id"]]);
-			if (!$privileges) {
+			$userData = $GLOBALS["db"]->fetch("SELECT privileges, username FROM users WHERE id = ? LIMIT 1", [$id]);
+			if (!$userData) {
 				throw new Exception("User doesn't exist");
 			}
-			$privileges = current($privileges);
-			if ((($privileges & Privileges::AdminManageUsers) > 0) && $_POST['oldu'] != $_SESSION['username'] && !hasPrivilege(Privileges::AdminCaker)) {
+			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $id !== (int)$_SESSION["userid"] && !hasPrivilege(Privileges::AdminCaker)) {
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 			// No username with mixed spaces
@@ -303,25 +318,25 @@ class D
 			// Check if username is already in db
 			$safe = safeUsername($_POST["newu"]);
 			$trimmedName = trim($_POST["newu"]);
-			if ($GLOBALS['db']->fetch('SELECT * FROM users WHERE username_safe = ? AND id != ? LIMIT 1', [$safe, $_POST["id"]])) {
+			if ($GLOBALS['db']->fetch('SELECT * FROM users WHERE username_safe = ? AND id != ? LIMIT 1', [$safe, $id])) {
 				throw new Exception('Username already used by another user. No changes have been made.');
 			}
 
 			// Send username change work to pep.py
 			redisConnect();
 			$GLOBALS["redis"]->publish("peppy:change_username", json_encode([
-				"userID" => intval($_POST["id"]),
+				"userID" => $id,
 				"newUsername" => $trimmedName
 			]));
 
-			$GLOBALS["redis"]->publish("api:change_username", $_POST["id"]);
+			$GLOBALS["redis"]->publish("api:change_username", $id);
 
 			// log this username change to the users rap notes
-			appendNotes($_POST["id"], sprintf("Username change: '%s' -> '%s'", $_POST["oldu"], $trimmedName));
+			appendNotes($id, sprintf("Username change: '%s' -> '%s'", $userData["username"], $trimmedName));
 
 			// rap log
-			postWebhookMessage(sprintf("has changed %s's username to [%s](https://akatsuki.gg/u/%s).\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $_POST["oldu"], $trimmedName, $_POST["id"], $_POST["id"]));
-			rapLog(sprintf("has changed %s's username to %s", $_POST["oldu"], $_POST["newu"]));
+			postWebhookMessage(sprintf("has changed %s's username to [%s](https://akatsuki.gg/u/%s).\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData["username"], $trimmedName, $id, $id));
+			rapLog(sprintf("has changed %s's username to %s", $userData["username"], $trimmedName));
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=User identity changed! It might take a while to change the username if the user is online on Bancho.');
 		} catch (Exception $e) {
@@ -1012,7 +1027,7 @@ class D
 			// Toggle restriction status depending on it's current value
 			if (!isRestricted($_POST["id"])) {
 				// Restrict, set UserNormal and reset UserPublic
-				$newPrivileges = ($userData["privileges"] | Privileges::UserNormal) & ~Privileges::UserPublic;
+				$newPrivileges = ($userData["privileges"] | Privileges::UserNormal) & ~(Privileges::UserPublic | Privileges::UserPendingVerification);
 				$banDateTime = time();
 
 				$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_POST['id']]);
@@ -1082,7 +1097,7 @@ class D
 				// Restrict, set UserNormal and reset UserPublic
 				$banDateTime = time();
 				$newPrivileges = $userData["privileges"] | Privileges::UserNormal;
-				$newPrivileges &= ~Privileges::UserPublic;
+				$newPrivileges &= ~(Privileges::UserPublic | Privileges::UserPendingVerification);
 				removeFromLeaderboard($_GET['id']);
 			} else {
 				// Remove restrictions, set both UserPublic and UserNormal
@@ -1092,7 +1107,7 @@ class D
 			}
 			// Change privileges
 			$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ? LIMIT 1', [$newPrivileges, $banDateTime, $_GET['id']]);
-			updateBanBancho($_GET["id"], $newPrivileges & Privileges::UserPublic == 0);
+			updateBanBancho($_GET["id"], ($newPrivileges & Privileges::UserPublic) === 0);
 
 			$msg = ($newPrivileges & Privileges::UserPublic) > 0 ? "unrestricted" : "restricted";
 
@@ -1139,7 +1154,7 @@ class D
 			// Toggle ban status depending on it's current value
 			if (!isBanned($_POST["id"])) {
 				// Remove normal & public privileges
-				$newPrivileges = ($userData["privileges"] & ~Privileges::UserNormal) & ~Privileges::UserPublic;
+				$newPrivileges = ($userData["privileges"] & ~Privileges::UserNormal) & ~(Privileges::UserPublic | Privileges::UserPendingVerification);
 				$banDateTime = time();
 
 				$GLOBALS['db']->execute('UPDATE users SET privileges = ?, ban_datetime = ? WHERE id = ?', [$newPrivileges, $banDateTime, $_POST['id']]);
