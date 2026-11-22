@@ -140,6 +140,16 @@ class D
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 
+			$privileges = null;
+			if ($id !== (int)$_SESSION["userid"] && hasPrivilege(Privileges::AdminManagePrivileges)) {
+				$privileges = filter_input(INPUT_POST, 'priv', FILTER_VALIDATE_INT, [
+					'options' => ['min_range' => 0, 'max_range' => 2147483647],
+				]);
+				if ($privileges === false) {
+					throw new Exception('Invalid privilege value');
+				}
+			}
+
 			// Check if silence end has changed. if so, we have to kick the client
 			// in order to silence him
 			//$oldse = current($GLOBALS["db"]->fetch("SELECT silence_end FROM users WHERE username = ?", array($_POST["u"])));
@@ -151,8 +161,7 @@ class D
 				$GLOBALS['db']->execute('UPDATE users SET silence_end = ?, silence_reason = ? WHERE id = ? LIMIT 1', [$_POST['se'], $_POST['sr'], $id]);
 			}
 			// Edit privileges if we can
-			if (hasPrivilege(Privileges::AdminManagePrivileges) && ($id != $_SESSION["userid"])) {
-				$privileges = (int)($_POST['priv'] ?? 0);
+			if ($privileges !== null) {
 				$restricted = ($privileges & Privileges::UserPublic) === 0;
 				if ($restricted) {
 					$privileges &= ~Privileges::UserPendingVerification;
@@ -290,16 +299,16 @@ class D
 	{
 		try {
 			// Check if everything is set
-			if (!isset($_POST['id']) || !isset($_POST['oldu']) || !isset($_POST['newu']) || empty($_POST['id']) || empty($_POST['oldu']) || empty($_POST['newu'])) {
+			$id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+			if (!$id || empty($_POST['newu'])) {
 				throw new Exception('Nice troll.');
 			}
 			// Check if we can edit this user
-			$privileges = $GLOBALS["db"]->fetch("SELECT privileges FROM users WHERE id = ? LIMIT 1", [$_POST["id"]]);
-			if (!$privileges) {
+			$userData = $GLOBALS["db"]->fetch("SELECT privileges, username FROM users WHERE id = ? LIMIT 1", [$id]);
+			if (!$userData) {
 				throw new Exception("User doesn't exist");
 			}
-			$privileges = current($privileges);
-			if ((($privileges & Privileges::AdminManageUsers) > 0) && $_POST['oldu'] != $_SESSION['username'] && !hasPrivilege(Privileges::AdminCaker)) {
+			if ((($userData["privileges"] & Privileges::AdminManageUsers) > 0) && $id !== (int)$_SESSION["userid"] && !hasPrivilege(Privileges::AdminCaker)) {
 				throw new Exception("You don't have enough permissions to edit this user");
 			}
 			// No username with mixed spaces
@@ -309,25 +318,25 @@ class D
 			// Check if username is already in db
 			$safe = safeUsername($_POST["newu"]);
 			$trimmedName = trim($_POST["newu"]);
-			if ($GLOBALS['db']->fetch('SELECT * FROM users WHERE username_safe = ? AND id != ? LIMIT 1', [$safe, $_POST["id"]])) {
+			if ($GLOBALS['db']->fetch('SELECT * FROM users WHERE username_safe = ? AND id != ? LIMIT 1', [$safe, $id])) {
 				throw new Exception('Username already used by another user. No changes have been made.');
 			}
 
 			// Send username change work to pep.py
 			redisConnect();
 			$GLOBALS["redis"]->publish("peppy:change_username", json_encode([
-				"userID" => intval($_POST["id"]),
+				"userID" => $id,
 				"newUsername" => $trimmedName
 			]));
 
-			$GLOBALS["redis"]->publish("api:change_username", $_POST["id"]);
+			$GLOBALS["redis"]->publish("api:change_username", $id);
 
 			// log this username change to the users rap notes
-			appendNotes($_POST["id"], sprintf("Username change: '%s' -> '%s'", $_POST["oldu"], $trimmedName));
+			appendNotes($id, sprintf("Username change: '%s' -> '%s'", $userData["username"], $trimmedName));
 
 			// rap log
-			postWebhookMessage(sprintf("has changed %s's username to [%s](https://akatsuki.gg/u/%s).\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $_POST["oldu"], $trimmedName, $_POST["id"], $_POST["id"]));
-			rapLog(sprintf("has changed %s's username to %s", $_POST["oldu"], $_POST["newu"]));
+			postWebhookMessage(sprintf("has changed %s's username to [%s](https://akatsuki.gg/u/%s).\n\n> :bust_in_silhouette: [View this user](https://old.akatsuki.gg/index.php?p=103&id=%s) on **Admin Panel**", $userData["username"], $trimmedName, $id, $id));
+			rapLog(sprintf("has changed %s's username to %s", $userData["username"], $trimmedName));
 			// Done, redirect to success page
 			redirect('index.php?p=102&s=User identity changed! It might take a while to change the username if the user is online on Bancho.');
 		} catch (Exception $e) {
