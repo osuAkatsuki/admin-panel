@@ -1341,7 +1341,7 @@ class D
 			$requestUrl = $INTERNAL_USERS_SERVICE_BASE_URL . "/api/v1/users/" . $userId;
 			// Deletion runs several steps in one transaction (including an assets service call),
 			// and the users service cancels it if we disconnect, so don't use the 1s default
-			$resp = makeWebRequest("DELETE", $requestUrl, 30);
+			$resp = makeWebRequest("DELETE", $requestUrl, 30, ["X-Api-Key: " . ($_ENV["USERS_SERVICE_API_KEY"] ?? "")]);
 			if ($resp["status"] < 200 || $resp["status"] >= 300) {
 				postWebhookMessage("Failed to process a GDPR/CCPA user deletion request for user: " . $userId);
 				rapLog("Failed to process a GDPR/CCPA user deletion request for user: " . $userId);
