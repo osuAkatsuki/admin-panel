@@ -1748,7 +1748,15 @@ class P
 		</thead>';
 		echo '<tbody>';
 		foreach ($news as $item) {
-			$url = $item['url'] === null ? '' : '<a href="' . htmlspecialchars($item['url']) . '" target="_blank" rel="noopener noreferrer">' . htmlspecialchars($item['url']) . '</a>';
+			// Only http and https URLs are links. Anything else, as a URL written to the
+			// table some other way, is shown as text: escaping alone doesn't stop javascript:.
+			$url = '';
+			if ($item['url'] !== null) {
+				$scheme = strtolower((string) parse_url($item['url'], PHP_URL_SCHEME));
+				$url = in_array($scheme, ['http', 'https'], true)
+					? '<a href="' . htmlspecialchars($item['url']) . '" target="_blank" rel="noopener noreferrer">' . htmlspecialchars($item['url']) . '</a>'
+					: htmlspecialchars($item['url']);
+			}
 			echo '<tr>
 			<td><p class="text-center">' . htmlspecialchars($item['kind']) . '</p></td>
 			<td><p class="text-center">' . htmlspecialchars($item['title']) . '</p></td>
