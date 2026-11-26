@@ -151,6 +151,7 @@ function setTitle($p)
 		141 => 'Edit Clan',
 		142 => 'Shared Devices',
 		143 => 'Device Details',
+		144 => 'News',
 	];
 	if (isset($namesRipple[$p])) {
 		return __maketitle('Akatsuki', $namesRipple[$p]);
@@ -357,6 +358,11 @@ function printPage($p)
 			P::AdminEditClan();
 			break;
 
+		case 144:
+			sessionCheckAdmin(Privileges::AdminManageSettings);
+			P::AdminNews();
+			break;
+
 			// 404 page
 		default:
 			define('NotFound', '<br><h1>404</h1><p>Page not found. Meh.</p>');
@@ -455,7 +461,8 @@ function printAdminSidebar()
 
 	if (hasPrivilege(Privileges::AdminManageSettings))
 		echo '<li><a href="index.php?p=101"><i class="fa fa-cog"></i>	System settings</a></li>
-							<li><a href="index.php?p=111"><i class="fa fa-server"></i>	Bancho settings</a></li>';
+							<li><a href="index.php?p=111"><i class="fa fa-server"></i>	Bancho settings</a></li>
+							<li><a href="index.php?p=144"><i class="fa fa-newspaper-o"></i>	News</a></li>';
 
 	if (hasPrivilege(Privileges::AdminManageUsers)) {
 		echo '<li><a href="index.php?p=102"><i class="fa fa-user"></i>	Users</a></li>';
