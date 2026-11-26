@@ -1698,6 +1698,75 @@ class P
 
 
 	/*
+	 * AdminNews
+	 * Prints the admin panel news page: a form to add an announcement, and every news item, newest first
+	 */
+	public static function AdminNews()
+	{
+		// Get data
+		$news = $GLOBALS['db']->fetchAll('SELECT news.*, users.username FROM news LEFT JOIN users ON news.author_id = users.id ORDER BY news.created_at DESC, news.id DESC');
+		// Print stuff
+		echo '<div id="wrapper">';
+		printAdminSidebar();
+		echo '<div id="page-content-wrapper">';
+		// Maintenance check
+		self::MaintenanceStuff();
+		// Print Success if set
+		if (isset($_GET['s']) && !empty($_GET['s'])) {
+			self::SuccessMessageStaccah($_GET['s']);
+		}
+		// Print Exception if set
+		if (isset($_GET['e']) && !empty($_GET['e'])) {
+			self::ExceptionMessageStaccah($_GET['e']);
+		}
+		echo '<p align="center"><font size=5><i class="fa fa-newspaper-o"></i>	News</font></p>';
+		echo '<form id="add-news-form" action="submit.php" method="POST">
+		<input name="csrf" type="hidden" value="' . csrfToken() . '">
+		<input name="action" value="addNews" hidden>
+		<table class="table table-striped table-hover table-50-center">
+		<tbody>
+		<tr>
+		<td>Title</td>
+		<td><input type="text" name="title" class="form-control" maxlength="255" required></td>
+		</tr>
+		<tr>
+		<td>Body (optional)</td>
+		<td><textarea name="body" class="form-control" style="overflow:auto;resize:vertical;height:100px"></textarea></td>
+		</tr>
+		<tr>
+		<td>URL (optional)</td>
+		<td><input type="url" name="url" class="form-control" maxlength="512" placeholder="https://"></td>
+		</tr>
+		</tbody>
+		</table>
+		<div class="text-center"><button type="submit" class="btn btn-primary">Add announcement</button></div>
+		</form>
+		<hr>';
+		echo '<table class="table table-striped table-hover table-75-center">';
+		echo '<thead>
+		<tr><th class="text-center">Kind</th><th class="text-center">Title</th><th class="text-center">Body</th><th class="text-center">URL</th><th class="text-center">Author</th><th class="text-center">Created at</th><th class="text-center">Actions</th></tr>
+		</thead>';
+		echo '<tbody>';
+		foreach ($news as $item) {
+			$url = $item['url'] === null ? '' : '<a href="' . htmlspecialchars($item['url']) . '" target="_blank" rel="noopener noreferrer">' . htmlspecialchars($item['url']) . '</a>';
+			echo '<tr>
+			<td><p class="text-center">' . htmlspecialchars($item['kind']) . '</p></td>
+			<td><p class="text-center">' . htmlspecialchars($item['title']) . '</p></td>
+			<td><p class="text-center">' . nl2br(htmlspecialchars($item['body'] ?? '')) . '</p></td>
+			<td><p class="text-center">' . $url . '</p></td>
+			<td><p class="text-center">' . htmlspecialchars($item['username'] ?? '') . '</p></td>
+			<td><p class="text-center">' . htmlspecialchars($item['created_at']) . '</p></td>
+			<td><p class="text-center"><a title="Delete news item" class="btn btn-xs btn-danger" onclick="sure(\'submit.php?action=deleteNews&id=' . (int) $item['id'] . '&csrf=' . csrfToken() . '\');"><span class="glyphicon glyphicon-trash"></span></a></p></td>
+			</tr>';
+		}
+		echo '</tbody>';
+		echo '</table>';
+		echo '</div>';
+		echo '</div>';
+	}
+
+
+	/*
 	 * AdminLog
 	 * Prints the admin log page
 	 */

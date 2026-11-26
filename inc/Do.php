@@ -1426,6 +1426,8 @@ class D
 			$bsid = -1;
 			$result = "";
 			$updateCache = false;
+			// Song names of the difficulties this submission makes ranked, by beatmap id
+			$newlyRanked = [];
 
 			// Do stuff for each beatmap
 			foreach ($_POST["beatmaps"] as $beatmapID => $status) {
@@ -1444,6 +1446,11 @@ class D
 				switch ($status) {
 						// Rank beatmap
 					case "rank":
+						// Approved (3) already counts as ranked, so only other statuses newly become ranked
+						$before = $GLOBALS["db"]->fetch("SELECT ranked, song_name FROM beatmaps WHERE beatmap_id = ? LIMIT 1", [$beatmapID]);
+						if ($before && !in_array((int) $before["ranked"], [2, 3], true)) {
+							$newlyRanked[$beatmapID] = $before["song_name"];
+						}
 						$GLOBALS["db"]->execute("UPDATE beatmaps SET ranked = 2, ranked_status_freezed = 1 WHERE beatmap_id = ? LIMIT 1", [$beatmapID]);
 
 						// Restore old scores
@@ -1477,9 +1484,37 @@ class D
 				}
 			}
 
+			$setUrl = "https://osu.ppy.sh/s/" . $bsid;
+
+			// One news item for the difficulties this made ranked. The statuses are already saved,
+			// so a failure here is reported but doesn't stop the rest
+			if ($newlyRanked) {
+				try {
+					$title = reset($newlyRanked);
+					$body = null;
+					$newsBeatmapID = key($newlyRanked);
+					if (count($newlyRanked) > 1) {
+						// "Artist - Title [Version]" -> "Artist - Title"
+						$versionStart = strrpos($title, " [");
+						if ($versionStart !== false && str_ends_with($title, "]")) {
+							$title = substr($title, 0, $versionStart);
+						}
+						$body = count($newlyRanked) . " difficulties";
+						$newsBeatmapID = null;
+					}
+					$stmt = $GLOBALS["db"]->execute("INSERT INTO news (kind, title, body, url, author_id, beatmapset_id, beatmap_id) VALUES ('ranked', ?, ?, ?, ?, ?, ?)", [mb_substr($title, 0, 255), $body, $setUrl, $_SESSION["userid"], $bsid, $newsBeatmapID]);
+					if ($stmt->rowCount() !== 1) {
+						throw new Exception($stmt->errorInfo()[2] ?? "nothing was inserted");
+					}
+				} catch (Throwable $e) {
+					error_log("Couldn't write the ranked news item for beatmap set " . $bsid . ": " . $e->getMessage());
+					$result .= "Couldn't write the news item for this set. | ";
+				}
+			}
+
 			// Send a message to #announce
 			$bm = $GLOBALS["db"]->fetch("SELECT beatmapset_id, song_name FROM beatmaps WHERE beatmapset_id = ? LIMIT 1", [$bsid]);
-			$msg = "[https://osu.ppy.sh/s/" . $bsid . " " . $bm["song_name"] . "] is now ranked!";
+			$msg = "[" . $setUrl . " " . $bm["song_name"] . "] is now ranked!";
 			$to = "#announce";
 			$requestUrl = $INTERNAL_BANCHO_SERVICE_BASE_URL . "/api/v1/fokabotMessage?k=" . urlencode($ScoresConfig["api_key"]) . "&to=" . urlencode($to) . "&msg=" . urlencode($msg);
 			$resp = makeJsonWebRequest("GET", $requestUrl);
@@ -1703,6 +1738,62 @@ class D
 			redirect("index.php?p=111&s=Main menu icon removed successfully!");
 		} catch (Exception $e) {
 			redirect("index.php?p=111&e=" . $e->getMessage());
+		}
+	}
+
+	/*
+	 * AddNews
+	 * Add a news announcement (ADMIN CP)
+	 */
+	public static function AddNews()
+	{
+		try {
+			$title = trim($_POST["title"] ?? "");
+			$body = trim($_POST["body"] ?? "");
+			$url = trim($_POST["url"] ?? "");
+			if ($title === "") {
+				throw new Exception("Missing title");
+			}
+			if (mb_strlen($title) > 255) {
+				throw new Exception("The title can't be longer than 255 characters");
+			}
+			if ($url !== "" && (!filter_var($url, FILTER_VALIDATE_URL) || !in_array(strtolower(parse_url($url, PHP_URL_SCHEME)), ["http", "https"], true) || strlen($url) > 512)) {
+				throw new Exception("The URL must be an http or https URL of at most 512 characters");
+			}
+			$stmt = $GLOBALS["db"]->execute("INSERT INTO news (kind, title, body, url, author_id) VALUES ('announcement', ?, ?, ?, ?)", [$title, $body === "" ? null : $body, $url === "" ? null : $url, $_SESSION["userid"]]);
+			if ($stmt->rowCount() !== 1) {
+				throw new Exception("Couldn't add the news item");
+			}
+			// RAP log
+			postWebhookMessage(sprintf("has added news item \"%s\".\n\n> :gear: [View all news](https://old.akatsuki.gg/index.php?p=144) on **Admin Panel**", $title));
+			rapLog(sprintf("has added news item \"%s\"", $title));
+			redirect("index.php?p=144&s=News item added!");
+		} catch (Exception $e) {
+			redirect("index.php?p=144&e=" . $e->getMessage());
+		}
+	}
+
+	/*
+	 * DeleteNews
+	 * Delete a news item (ADMIN CP)
+	 */
+	public static function DeleteNews()
+	{
+		try {
+			if (!isset($_GET["id"]) || empty($_GET["id"])) {
+				throw new Exception("Missing required parameter");
+			}
+			$item = $GLOBALS["db"]->fetch("SELECT title FROM news WHERE id = ? LIMIT 1", [$_GET["id"]]);
+			if (!$item) {
+				throw new Exception("The news item doesn't exist");
+			}
+			$GLOBALS["db"]->execute("DELETE FROM news WHERE id = ? LIMIT 1", [$_GET["id"]]);
+			// RAP log
+			postWebhookMessage(sprintf("has deleted news item \"%s\".\n\n> :gear: [View all news](https://old.akatsuki.gg/index.php?p=144) on **Admin Panel**", $item["title"]));
+			rapLog(sprintf("has deleted news item \"%s\"", $item["title"]));
+			redirect("index.php?p=144&s=News item deleted!");
+		} catch (Exception $e) {
+			redirect("index.php?p=144&e=" . $e->getMessage());
 		}
 	}
 

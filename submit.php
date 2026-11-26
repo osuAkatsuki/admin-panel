@@ -210,6 +210,14 @@ try {
 			sessionCheckAdmin(Privileges::AdminManageSettings);
 			D::RemoveMainMenuIcon();
 			break;
+		case 'addNews':
+			sessionCheckAdmin(Privileges::AdminManageSettings);
+			D::AddNews();
+			break;
+		case 'deleteNews':
+			sessionCheckAdmin(Privileges::AdminManageSettings);
+			D::DeleteNews();
+			break;
 		case 'bulkBan':
 			sessionCheckAdmin(Privileges::AdminBanUsers);
 			D::BulkBan();
